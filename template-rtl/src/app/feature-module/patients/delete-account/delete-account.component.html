@@ -1,0 +1,52 @@
+<app-patient-breadcrumb></app-patient-breadcrumb>
+
+			<!-- Page Content -->
+			<div class="content doctor-content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-4 col-xl-3 theiaStickySidebar">
+						
+							<!-- Profile Sidebar -->
+                            <app-patient-sidebar class="col-lg-4 col-xl-3"></app-patient-sidebar>
+							<!-- /Profile Sidebar -->
+							
+						</div>
+						
+						<!-- Change Password -->
+						<div class="col-lg-8 col-xl-9">
+							<nav class="settings-tab mb-1">
+								<ul class="nav nav-tabs-bottom" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link " [routerLink]="routes.profileSettings">Profile</a>
+                                     </li>
+                                     <li class="nav-item" role="presentation">
+                                        <a class="nav-link " [routerLink]="routes.patientsChangePassword">Change Password</a>
+                                     </li>
+                                     <li class="nav-item" role="presentation">
+                                        <a class="nav-link" [routerLink]="routes.twoFactorAuthentication">2 Factor Authentication</a>
+                                     </li>
+                                     <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" [routerLink]="routes.deleteAccount">Delete Account</a>
+                                     </li>
+								</ul>
+							</nav>
+							<div class="card mb-0">
+								<div class="card-body">
+									<div class="border-bottom pb-3 mb-3">
+										<h5>Delete Account</h5>
+									</div>
+									<h6 class="fs-16">Are you sure you want to delete your account?</h6>
+                                    <p>Refers to the action of permanently removing a user's account and associated data from a system, service and platform.</p>
+                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient rounded-pill" data-bs-toggle="modal" data-bs-target="#del-acc">Delete Account</a>
+								</div>
+							</div>
+						</div>
+						<!-- /Change Password -->
+
+					</div>
+				</div>
+
+			</div>		
+			<!-- /Page Content -->
+   
+

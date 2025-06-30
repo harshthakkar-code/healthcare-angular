@@ -1,0 +1,272 @@
+			<!-- Breadcrumb -->
+			<div class="breadcrumb-bar">
+				<div class="container">
+					<div class="row align-items-center inner-banner">
+						<div class="col-md-12 col-12 text-center">
+							<nav aria-label="breadcrumb" class="page-breadcrumb">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home-15"></i></a></li>
+									<li class="breadcrumb-item" aria-current="page">Pharmacy</li>
+									<li class="breadcrumb-item active">Cart</li>
+								</ol>
+								<h2 class="breadcrumb-title">Cart</h2>
+							</nav>
+						</div>
+					</div>
+				</div>
+				<div class="breadcrumb-bg">
+					<img src="assets/img/bg/breadcrumb-bg-01.png" alt="img" class="breadcrumb-bg-01">
+					<img src="assets/img/bg/breadcrumb-bg-02.png" alt="img" class="breadcrumb-bg-02">
+					<img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-03">
+					<img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-04">
+				</div>
+			</div>
+			<!-- /Breadcrumb -->
+
+<!-- Page Content -->
+<div class="content">
+    <div class="container">			
+        
+        <div class="card card-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink] = "routes.productDescription" class="avatar avatar-sm me-2"><img class="avatar-img" src="assets/img/products/product.jpg" alt="User Image"></a>
+                                    </h2>
+                                    <a [routerLink] = "routes.productDescription">Benzaxapine Croplex</a>
+                                </td>
+                                <td>26565</td>
+                                <td>$19</td>					
+                                <td>
+                                <div class="custom-increment cart">
+                                    <div class="input-group1">
+                                        <span class="input-group-btn" (click)="reducePos(0)" (keydown)="reducePos(0)" tabindex="1">
+                                            <button type="button" class="quantity-left-minus btn btn-danger btn-number"  data-type="minus" data-field="">
+                                              <span><i class="fas fa-minus"></i></span>
+                                            </button>
+                                        </span>
+                                        <input [(ngModel)]="cartValue[0]" type="text" id="quantity" name="quantity" class=" input-number" value="10">
+                                        <span class="input-group-btn" (click)="addPos(0)" (keydown)="addPos(0)" tabindex="1">
+                                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span><i class="fas fa-plus"></i></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                </td>
+                                <td>$19</td>
+                                <td>
+                                    <div class="table-action">
+                                        <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink] = "routes.productDescription" class="avatar avatar-sm me-2"><img class="avatar-img" src="assets/img/products/product1.jpg" alt="User Image"></a>
+                                    </h2>
+                                    <a [routerLink] = "routes.productDescription">Ombinazol Bonibamol</a>
+                                </td>
+                                <td>865727</td>
+                                <td>$22</td>					
+                                <td>
+                                <div class="custom-increment cart">
+                                    <div class="input-group1">
+                                        <span class="input-group-btn" (click)="reducePos(1)" (keydown)="reducePos(1)" tabindex="1">
+                                            <button type="button" class="quantity-left-minus2 btn btn-danger btn-number"  data-type="minus" data-field="">
+                                              <span><i class="fas fa-minus"></i></span>
+                                            </button>
+                                        </span>
+                                        <input [(ngModel)]="cartValue[1]" type="text" id="quantity2" name="quantity2" class=" input-number" value="10">
+                                        <span class="input-group-btn" (click)="addPos(1)" (keydown)="addPos(1)" tabindex="1">
+                                            <button type="button" class="quantity-right-plus2 btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span><i class="fas fa-plus"></i></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                </td>
+                                <td>$22</td>
+                                <td>
+                                    <div class="table-action">
+                                        <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink] = "routes.productDescription" class="avatar avatar-sm me-2"><img class="avatar-img" src="assets/img/products/product2.jpg" alt="User Image"></a>
+                                    </h2>
+                                    <a [routerLink] = "routes.productDescription">Dantotate Dantodazole</a>
+                                </td>
+                                <td>978656</td>
+                                <td>$10</td>					
+                                <td>
+                                <div class="custom-increment cart">
+                                    <div class="input-group1">
+                                        <span class="input-group-btn" (click)="reducePos(2)" (keydown)="reducePos(2)" tabindex="1">
+                                            <button type="button" class="quantity-left-minus3 btn btn-danger btn-number"  data-type="minus" data-field="">
+                                              <span><i class="fas fa-minus"></i></span>
+                                            </button>
+                                        </span>
+                                        <input [(ngModel)]="cartValue[2]" type="text" id="quantity3" name="quantity3" class=" input-number" value="10">
+                                        <span class="input-group-btn" (click)="addPos(2)" (keydown)="addPos(2)" tabindex="1">
+                                            <button type="button" class="quantity-right-plus3 btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span><i class="fas fa-plus"></i></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                </td>
+                                <td>$10</td>
+                                <td>
+                                    <div class="table-action">
+                                        <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink] = "routes.productDescription" class="avatar avatar-sm me-2"><img class="avatar-img" src="assets/img/products/product3.jpg" alt="User Image"></a>
+                                    </h2>
+                                    <a [routerLink] = "routes.productDescription">Alispirox Aerorenone</a>
+                                </td>
+                                <td>543252</td>
+                                <td>$26</td>					
+                                <td>
+                                <div class="custom-increment cart">
+                                    <div class="input-group1">
+                                        <span class="input-group-btn" (click)="reducePos(3)" (keydown)="reducePos(3)" tabindex="1">
+                                            <button type="button" class="quantity-left-minus4 btn btn-danger btn-number"  data-type="minus" data-field="">
+                                              <span><i class="fas fa-minus"></i></span>
+                                            </button>
+                                        </span>
+                                        <input [(ngModel)]="cartValue[3]" type="text" id="quantity4" name="quantity4" class=" input-number" value="10">
+                                        <span class="input-group-btn" (click)="addPos(3)" (keydown)="addPos(3)" tabindex="1">
+                                            <button type="button" class="quantity-right-plus4 btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span><i class="fas fa-plus"></i></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                </td>
+                                <td>$26</td>
+                                <td>
+                                    <div class="table-action">
+                                        <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink] = "routes.productDescription" class="avatar avatar-sm me-2"><img class="avatar-img" src="assets/img/products/product4.jpg" alt="User Image"></a>
+                                    </h2>
+                                    <a [routerLink] = "routes.productDescription">Nitrolozin Zithrotropin</a>
+                                </td>
+                                <td>634534</td>
+                                <td>$12</td>					
+                                <td>
+                                <div class="custom-increment cart">
+                                    <div class="input-group1">
+                                        <span class="input-group-btn" (click)="reducePos(4)" (keydown)="reducePos(4)" tabindex="1">
+                                            <button type="button" class="quantity-left-minus5 btn btn-danger btn-number"  data-type="minus" data-field="">
+                                              <span><i class="fas fa-minus"></i></span>
+                                            </button>
+                                        </span>
+                                        <input [(ngModel)]="cartValue[4]" type="text" id="quantity5" name="quantity5" class=" input-number" value="10">
+                                        <span class="input-group-btn" (click)="addPos(4)" (keydown)="addPos(4)" tabindex="1">
+                                            <button type="button" class="quantity-right-plus5 btn btn-success btn-number" data-type="plus" data-field="">
+                                                <span><i class="fas fa-plus"></i></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                </td>
+                                <td>$12</td>
+                                <td>
+                                    <div class="table-action">
+                                        <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>		
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-7 col-lg-8">
+            </div>
+            
+            <div class="col-md-5 col-lg-4">
+            
+                <!-- Booking Summary -->
+                <div class="card booking-card">
+                    <div class="card-header">
+                        <h4 class="card-title">Cart Total</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="booking-summary">
+                            <div class="booking-item-wrap">
+                                <ul class="booking-date d-block pb-0">
+                                    <li>Subtotal <span>$5,877.00</span></li>
+                                    <li>Shipping <span>$25.00<a href="javascript:void(0)">Calculate shipping</a></span></li>
+                                </ul>
+                                <ul class="booking-fee pt-4">
+                                    <li>Tax <span>$0.00</span></li>
+                                </ul>
+                                <div class="booking-total">
+                                    <ul class="booking-total-list">
+                                        <li>
+                                            <span>Total</span>
+                                            <span class="total-cost">$160</span>
+                                        </li>
+                                        <li>
+                                            <div class="clinic-booking pt-4">
+                                                <a class="btn btn-primary" [routerLink] = "routes.productCheckout">Proceed to checkout</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Booking Summary -->
+                
+            </div>
+        </div>
+
+    </div>
+</div>		
+<!-- /Page Content -->

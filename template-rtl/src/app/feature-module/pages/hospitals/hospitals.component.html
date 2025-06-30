@@ -1,0 +1,627 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar">
+    <div class="container">
+        <div class="row align-items-center inner-banner">
+            <div class="col-md-12 col-12 text-center">
+                <nav aria-label="breadcrumb" class="page-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink] = "routes.home1"><i class="isax isax-home-15"></i></a></li>
+                        <li class="breadcrumb-item active">Hospitals</li>
+                    </ol>
+                    <h2 class="breadcrumb-title">Hospitals</h2>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="breadcrumb-bg">
+        <img src="assets/img/bg/breadcrumb-bg-01.png" alt="img" class="breadcrumb-bg-01">
+        <img src="assets/img/bg/breadcrumb-bg-02.png" alt="img" class="breadcrumb-bg-02">
+        <img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-03">
+        <img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-04">
+    </div>
+</div>
+<!-- /Breadcrumb -->
+
+<!-- Terms -->
+<div class="content doctor-content">
+    <div class="container">
+        
+        <!-- Hospital Tabs -->
+        <nav class="settings-tab hospital-tab">
+            <ul class="nav nav-tabs-bottom justify-content-center " role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <a class="nav-link active" [routerLink]="routes.Hospitals">Hospitals</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a class="nav-link" [routerLink]="routes.Speciality">Specialities</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" [routerLink]="routes.Clinic">Clinics</a>
+                    </li>
+            </ul>
+        </nav>
+        <!-- /Hospital Tabs -->
+
+        <!-- Show Result -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap result-wrap gap-3">
+                    <h5>Showing <span class="text-secondary">450</span> Hospitals For You</h5>
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <mat-select class="custom-mat-select" placeholder="United States Of America">
+							<mat-option value="1">United States Of America</mat-option>
+							<mat-option value="2">United Kingdom</mat-option>
+						</mat-select>
+                        <div class="input-block dash-search-input">
+                            <input type="text" class="form-control" placeholder="Search Hospitals">
+                            <span class="search-icon"><i class="isax isax-search-normal"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Show Result -->
+
+        <div class="d-flex align-items-center flex-wrap hospital-form">
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input mt-0" type="radio" name="Radio" id="all-hospital" value="all-hospital" (change)="changeContent(1)" [checked]="currentStep === 1">
+                <label class="form-check-label fs-14 fw-medium ms-2" for="all-hospital">
+                    All Hospitals
+                </label>
+            </div>
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input mt-0" type="radio" name="Radio" id="virtual" value="virtual" (change)="changeContent(2)"  [checked]="currentStep === 2">
+                <label class="form-check-label fs-14 fw-medium ms-2" for="virtual">
+                    Virtual
+                </label>
+            </div>
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input mt-0" type="radio" name="Radio" id="appointment" value="appointment"(change)="changeContent(3)"  [checked]="currentStep === 3">
+                <label class="form-check-label fs-14 fw-medium ms-2" for="appointment">
+                    Appointments
+                </label>
+            </div>
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input mt-0" type="radio" name="Radio" id="clinic" value="clinic" (change)="changeContent(4)"  [checked]="currentStep === 4">
+                <label class="form-check-label fs-14 fw-medium ms-2" for="clinic">
+                    Hospitals / Clinics
+                </label>
+            </div>
+        </div>
+
+        <!-- All Hospitals -->
+        <div class="all-hospital" [ngClass]="currentStep===1 ? 'd-block':'d-none' ">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a href="javascript:void(0);" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-01.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a href="javascript:void(0);">Cleveland Clinic</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-02.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid"> Apollo Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Philadelphia, PA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-03.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Asian Institute</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Piscataway, NJ</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-04.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Manipal North Side</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Albuquerque, NM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-05.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Johns Hopkins Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Roswell, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-06.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Athol Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Chesterfield, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-07.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Austen Riggs Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Atlanta, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-08.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baldpate Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Burbank, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-09.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baystate Noble Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Lena, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-10.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Berkshire Medical Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Saginaw, MI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-11.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Beverly Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Westchester, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-12.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Good Health City Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Santa Fe Springs, CA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader-item text-center">
+                <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                    <i class="isax isax-d-cube-scan me-2"></i>Load More 425 Hospitals
+                </a>
+            </div>
+        </div>
+        <!-- /All Hospitals -->
+
+        <!-- Virtual Hospitals -->
+        <div class="virtual-hospital" [ngClass]="currentStep===2 ? 'd-block':'d-none' ">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-02.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid"> Apollo Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Philadelphia, PA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-01.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Cleveland Clinic</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-04.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Manipal North Side</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Albuquerque, NM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-03.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Asian Institute</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Piscataway, NJ</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-06.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Athol Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Chesterfield, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-05.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Johns Hopkins Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Roswell, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-07.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Austen Riggs Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Atlanta, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-08.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baldpate Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Burbank, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-10.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Berkshire Medical Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Saginaw, MI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-11.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Beverly Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Westchester, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-09.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baystate Noble Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Lena, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-12.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Good Health City Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Santa Fe Springs, CA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader-item text-center">
+                <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                    <i class="isax isax-d-cube-scan me-2"></i>Load More 425 Hospitals
+                </a>
+            </div>
+        </div>
+        <!-- /Virtual Hospitals -->
+
+        <!-- Appointment Hospitals -->
+        <div class="appointment-hospital" [ngClass]="currentStep===3 ? 'd-block':'d-none' ">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-03.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Asian Institute</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Piscataway, NJ</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-02.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid"> Apollo Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Philadelphia, PA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-04.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Manipal North Side</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Albuquerque, NM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-05.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Johns Hopkins Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Roswell, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-01.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Cleveland Clinic</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-07.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Austen Riggs Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Atlanta, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-08.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baldpate Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Burbank, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-09.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baystate Noble Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Lena, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-06.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Athol Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Chesterfield, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-10.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Berkshire Medical Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Saginaw, MI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-11.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Beverly Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Westchester, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-12.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Good Health City Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Santa Fe Springs, CA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader-item text-center">
+                <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                    <i class="isax isax-d-cube-scan me-2"></i>Load More 425 Hospitals
+                </a>
+            </div>
+        </div>
+        <!-- /Appointment Hospitals -->
+
+        <!-- All Hospitals -->
+        <div class="all-clinic" [ngClass]="currentStep===4 ? 'd-block':'d-none' ">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-05.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Johns Hopkins Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Roswell, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-01.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Cleveland Clinic</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-06.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Athol Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Chesterfield, IL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-07.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Austen Riggs Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Atlanta, GA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <div class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-08.svg" alt="img">
+                            </div>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Baldpate Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Burbank, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-10.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Berkshire Medical Center</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Saginaw, MI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-12.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Good Health City Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Santa Fe Springs, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card hospital-item">
+                        <div class="card-body text-center">
+                            <a [routerLink]="routes.doctorGrid" class="hospital-icon">
+                                <img src="assets/img/hospitals/hospital-11.svg" alt="img">
+                            </a>
+                            <h6 class="mb-1"><a [routerLink]="routes.doctorGrid">Beverly Hospital</a></h6>
+                            <p class="fs-14 mb-0"><i class="isax isax-location me-2"></i>Westchester, IL</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loader-item text-center">
+                <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                    <i class="isax isax-d-cube-scan me-2"></i>Load More 425 Hospitals
+                </a>
+            </div>
+        </div>
+        <!-- /All Hospitals -->
+
+
+    </div>
+</div>
+<!-- /Terms -->		

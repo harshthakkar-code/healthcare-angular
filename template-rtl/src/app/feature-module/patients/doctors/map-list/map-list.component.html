@@ -1,0 +1,400 @@
+<app-breadcrumb-search/>    
+
+
+
+
+<!-- Page Content -->
+<div class="content mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <h3>Showing <span class="text-secondary">450</span> Doctors For You</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center justify-content-end mb-4">
+                    <div class="dropdown header-dropdown me-2">
+                        <a class="dropdown-toggle sort-dropdown" data-bs-toggle="dropdown" href="javascript:void(0);" aria-expanded="false">
+                            <span>Sort By</span>Price (Low to High)
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a href="javascript:void(0);" class="dropdown-item">
+                                Price (Low to High)
+                            </a>
+                            <a href="javascript:void(0);" class="dropdown-item">
+                                Price (High to Low)
+                            </a>
+                        </div>
+                    </div>
+                    <a [routerLink]="routes.search1" class="btn btn-sm head-icon me-2"><i class="isax isax-grid-7"></i></a>
+                    <a [routerLink]="routes.search2" class="btn btn-sm head-icon me-2"><i class="isax isax-row-vertical"></i></a>
+                    <a [routerLink]="routes.mapList" class="btn btn-sm head-icon active"><i class="isax isax-location"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-sm-4 col-6">
+                                <div class="mb-4">
+                                    <mat-select class="custom-mat-select select" placeholder="Specialities">
+                                        <mat-option value="1">Specialities</mat-option>
+                                        <mat-option value="1">Urology</mat-option>
+                                        <mat-option value="1">Psychiatry</mat-option>
+                                        <mat-option value="1">Psychiatry</mat-option>
+                                        <mat-option value="1">Cardiology</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-6">
+                                <div class="mb-4">
+                                    <mat-select class="custom-mat-select select" placeholder="Reviews">
+                                        <mat-option value="1">Reviews</mat-option>
+                                        <mat-option value="1">5 Star</mat-option>
+                                        <mat-option value="1">4 Star</mat-option>
+                                        <mat-option value="1">3 Star</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-6">
+                                <div class="mb-4">
+                                    <mat-select class="custom-mat-select select" placeholder="Clinic">
+                                        <mat-option value="1">Clinic</mat-option>
+                                        <mat-option value="1">Bright Smiles Dental Clinic</mat-option>
+                                        <mat-option value="1">Family Care Clinic</mat-option>
+                                        <mat-option value="1">Express Health Clinic</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-end mb-3">
+                            <a href="javascript:void(0);" class="fw-medium text-secondary text-decoration-underline">Clear All</a>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3">
+                    <div class="doctor-filter-availability">
+                        <p>Availability</p>
+                        <div class="status-toggle status-tog">
+                            <input type="checkbox" id="status_6" class="check">
+                            <label for="status_6" class="checktoggle">checkbox</label>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a [routerLink]="routes.mapGrid" class="btn btn-sm head-icon me-2"><i class="isax isax-grid-7"></i></a>
+                        <a [routerLink]="routes.mapList" class="btn btn-sm head-icon active"><i class="isax isax-row-vertical"></i></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card doctor-list-card">
+                            <div class="d-md-flex align-items-center">
+                                <div class="card-img card-img-hover">
+                                    <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-list-01.jpg" alt=""></a>
+                                    <div class="grid-overlay-item d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.8</span>
+                                        <a href="javascript:void(0)" class="fav-icon">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="d-flex align-items-center justify-content-between border-bottom p-3">
+                                        <a href="javascript:void(0);" class="text-teal fw-medium fs-14">Neurologist</a>
+                                        <span class="badge bg-success-light d-inline-flex align-items-center">
+                                            <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                            Available
+                                        </span>
+                                    </div>
+                                    <div class="p-3">
+                                        <div class="doctor-info-detail pb-3">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <h6 class="d-flex align-items-center mb-1">
+                                                            <a [routerLink]="routes.doctorProfile1">Dr. Charles Scott</a>
+                                                            <i class="isax isax-tick-circle5 text-success ms-2"></i>
+                                                        </h6>
+                                                        <p class="mb-2">MBBS, DNB - Neurology</p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Hamshire, TX 
+                                                            <a href="javascript:void(0);" class="text-primary text-decoration-underline ms-2">Get Direction</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-language-circle text-dark me-2"></i>English, French
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-like-1 text-dark me-2"></i>98% (252 / 287 Votes)
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14">
+                                                            <i class="isax isax-archive-14 text-dark me-2"></i>20 Years of Experience
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mt-3">
+                                            <div class="d-flex align-items-center flex-wrap row-gap-3">
+                                                <div class="me-3">
+                                                    <p class="mb-1">Consultation Fees</p>
+                                                    <h3 class="text-orange">$600</h3>
+                                                </div>
+                                                <p class="mb-0">Next available at <br>10:00 AM - 15 Oct, Tue</p>
+                                            </div>
+                                            <a [routerLink]="routes.booking" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
+                                                <i class="isax isax-calendar-1 me-2"></i>
+                                                Book Appointment
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card doctor-list-card">
+                            <div class="d-md-flex align-items-center">
+                                <div class="card-img card-img-hover">
+                                    <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-list-02.jpg" alt=""></a>
+                                    <div class="grid-overlay-item d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.3</span>
+                                        <a href="javascript:void(0)" class="fav-icon">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="d-flex align-items-center justify-content-between border-bottom p-3">
+                                        <a href="javascript:void(0);" class="text-info fw-medium fs-14">Cardiologist</a>
+                                        <span class="badge bg-danger-light d-inline-flex align-items-center">
+                                            <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                            Unavailable
+                                        </span>
+                                    </div>
+                                    <div class="p-3">
+                                        <div class="doctor-info-detail pb-3">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <h6 class="d-flex align-items-center mb-1">
+                                                            <a [routerLink]="routes.doctorProfile1">Dr. Robert Thomas</a>
+                                                            <i class="isax isax-tick-circle5 text-success ms-2"></i>
+                                                        </h6>
+                                                        <p class="mb-2">MBBS, MD - Cardialogy</p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Oakland, CA
+                                                            <a href="javascript:void(0);" class="text-primary text-decoration-underline ms-2">Get Direction</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-language-circle text-dark me-2"></i>English, Spanish
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-like-1 text-dark me-2"></i>92% (270 / 300 Votes)
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14">
+                                                            <i class="isax isax-archive-14 text-dark me-2"></i>30 Years of Experience
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mt-3">
+                                            <div class="d-flex align-items-center flex-wrap row-gap-3">
+                                                <div class="me-3">
+                                                    <p class="mb-1">Consultation Fees</p>
+                                                    <h3 class="text-orange">$450</h3>
+                                                </div>
+                                                <p class="mb-0">Next available at <br>11.00 AM - 19 Oct, Sat</p>
+                                            </div>
+                                            <a [routerLink]="routes.booking" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
+                                                <i class="isax isax-calendar-1 me-2"></i>
+                                                Book Appointment
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card doctor-list-card">
+                            <div class="d-md-flex align-items-center">
+                                <div class="card-img card-img-hover">
+                                    <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-list-03.jpg" alt=""></a>
+                                    <div class="grid-overlay-item d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.7</span>
+                                        <a href="javascript:void(0)" class="fav-icon">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="d-flex align-items-center justify-content-between border-bottom p-3">
+                                        <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">Psychologist</a>
+                                        <span class="badge bg-success-light d-inline-flex align-items-center">
+                                            <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                            Available
+                                        </span>
+                                    </div>
+                                    <div class="p-3">
+                                        <div class="doctor-info-detail pb-3">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <h6 class="d-flex align-items-center mb-1">
+                                                            <a [routerLink]="routes.doctorProfile1">Dr. Margaret Koller</a>
+                                                            <i class="isax isax-tick-circle5 text-success ms-2"></i>
+                                                        </h6>
+                                                        <p class="mb-2"> B.S, M.S - Psychology</p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Killeen, TX
+                                                            <a href="javascript:void(0);" class="text-primary text-decoration-underline ms-2">Get Direction</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-language-circle text-dark me-2"></i>English, Portuguese
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-like-1 text-dark me-2"></i>94% (268 / 312 Votes)
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14">
+                                                            <i class="isax isax-archive-14 text-dark me-2"></i>15 Years of Experience
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mt-3">
+                                            <div class="d-flex align-items-center flex-wrap row-gap-3">
+                                                <div class="me-3">
+                                                    <p class="mb-1">Consultation Fees</p>
+                                                    <h3 class="text-orange">$700</h3>
+                                                </div>
+                                                <p class="mb-0">Next available at <br>10.30 AM - 29 Oct, Tue</p>
+                                            </div>
+                                            <a [routerLink]="routes.booking" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
+                                                <i class="isax isax-calendar-1 me-2"></i>
+                                                Book Appointment
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card doctor-list-card">
+                            <div class="d-md-flex align-items-center">
+                                <div class="card-img card-img-hover">
+                                    <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-list-04.jpg" alt=""></a>
+                                    <div class="grid-overlay-item d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.5</span>
+                                        <a href="javascript:void(0)" class="fav-icon">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="d-flex align-items-center justify-content-between border-bottom p-3">
+                                        <a href="javascript:void(0);" class="text-pink fw-medium fs-14">Pediatrician</a>
+                                        <span class="badge bg-danger-light d-inline-flex align-items-center">
+                                            <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                            Unavailable
+                                        </span>
+                                    </div>
+                                    <div class="p-3">
+                                        <div class="doctor-info-detail pb-3">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <h6 class="d-flex align-items-center mb-1">
+                                                            <a [routerLink]="routes.doctorProfile1">Dr. Cath Busick</a>
+                                                            <i class="isax isax-tick-circle5 text-success ms-2"></i>
+                                                        </h6>
+                                                        <p class="mb-2">MBBS, MD - Pediatrics</p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Schenectady, NY
+                                                            <a href="javascript:void(0);" class="text-primary text-decoration-underline ms-2">Get Direction</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-language-circle text-dark me-2"></i>English, Arabic
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14 mb-2">
+                                                            <i class="isax isax-like-1 text-dark me-2"></i>87% (237 / 250 Votes)
+                                                        </p>
+                                                        <p class="d-flex align-items-center mb-0 fs-14">
+                                                            <i class="isax isax-archive-14 text-dark me-2"></i>12 Years of Experience
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mt-3">
+                                            <div class="d-flex align-items-center flex-wrap row-gap-3">
+                                                <div class="me-3">
+                                                    <p class="mb-1">Consultation Fees</p>
+                                                    <h3 class="text-orange">$750</h3>
+                                                </div>
+                                                <p class="mb-0">Next available at <br>02:00 PM - 04 Nov, Mon</p>
+                                            </div>
+                                            <a [routerLink]="routes.booking" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
+                                                <i class="isax isax-calendar-1 me-2"></i>
+                                                Book Appointment
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="pagination dashboard-pagination mt-md-3 mt-0 mb-4">
+                            <ul>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link prev">Prev</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link">1</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link active">2</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link">3</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link">4</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="page-link next">Next</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div id="map" class="map-listing h-100"></div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<!-- /Page Content -->

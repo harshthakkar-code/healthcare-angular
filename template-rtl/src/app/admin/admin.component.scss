@@ -1,0 +1,33 @@
+@import'../../assets/admin/scss/main.scss';
+app-admin {
+    .header .user-menu {
+      align-items: center;
+    }
+    .header .user-menu.nav li a {
+      color: #333333;
+      line-height: 40px;
+    }
+  .notifications ul.notification-list > li a {
+      padding: 10px 15px !important;
+      line-height: normal !important;
+      height: auto !important;
+  }
+  .notifications ul.notification-list > li a:hover {
+      background-color: #fafafa !important;
+  }
+  .topnav-dropdown-header .clear-noti {
+      color: #f83f37 !important;
+      float: right;
+      font-size: 12px !important;
+      text-transform: uppercase;
+  }
+  .topnav-dropdown-header .clear-noti:hover {
+      background-color: transparent !important;
+  }
+  .topnav-dropdown-footer a:hover {
+      background-color: transparent !important;
+  }
+  .header .user-menu.nav li a:hover i, .header .user-menu.nav li a:focus i {
+      color: #333333 !important;
+  }
+  }

@@ -1,0 +1,100 @@
+.footer {
+    &.footer-one {
+        &.footer-sixteen {
+            background: $dark;
+            border-top: 0;
+            position: relative;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: top center;
+            .footer-top {
+                background: $dark;
+                .footer-widget  {
+                    .footer-about-content {
+                        max-width: none;
+                        margin-bottom: 30px;
+                        p {
+                            color: $white;
+                        }
+                    }
+                    .footer-title {
+                        color: $white;
+                    }
+                    &.footer-menu {
+                        ul {
+                            li {
+                                a {
+                                    color: $white;
+                                }
+                            }
+                        }
+                    }
+                    .subscribe-form {
+                        margin-bottom: 0;
+                        .btn {
+                            border: 1px solid $primary;
+                            background: $primary;
+                            border-radius: 0 6px 6px 0;
+                            &:hover {
+                                border: 1px solid $primary;
+                            }
+                        }
+                        input {
+                            border-radius: 6px;
+                        }
+                    }
+                }
+            }
+            
+            .footer-bottom {
+                background: $dark;
+                .copyright {
+                    background: $dark;
+                    border-top: 1px solid $light;
+                    .copyright-text {
+                        p {
+                            margin-bottom: 0;
+                            color: $white;
+                        }
+                        @include respond-below (sm) {
+                           margin-bottom: 10px;
+                        }
+                    }
+                    .copyright-menu {
+                        ul {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: end;
+                            @include respond-below (md) {
+                                justify-content: center;
+                            }
+                            li {
+                                margin-right: 8px;
+                                &:last-child {
+                                    margin-right: 0;
+                                }
+                                a {
+                                    width: 32px;
+                                    height: 32px;
+                                    border-radius: 50%;
+                                    background: $white;
+                                    color: $primary;
+                                    @extend %flex-align-center;
+                                    font-size: $font-size-16;
+                                    &:hover {
+                                        background: $primary;
+                                        color: $white;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}

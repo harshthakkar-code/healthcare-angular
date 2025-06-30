@@ -1,0 +1,294 @@
+.doctors-search-box {
+	max-width: 855px;
+	margin: 20px auto -80px;
+	padding: 2px;
+	@include respond-below(md) {
+		border-radius: 10px !important;
+	}
+	.search-box-one {
+		padding: 8px;
+		@include respond-below(md) {
+			border-radius: 10px !important;
+			
+		}
+		.form-search-btn button{
+			@include respond-below(md) {
+				justify-content: center;
+			}
+			
+		}
+		form {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+	}
+}
+.head-icon {
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border: 1px solid $gray-transparent;
+	border-radius: 5px;
+	font-size: $font-size-16 !important;
+	&.active, &:hover {
+		background: $primary;
+		color: $white;
+		border-color: $white;
+	}
+}
+.sort-dropdown {
+	span {
+		color: $gray-900;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+.text-orange {
+	color: $orange;
+}
+.text-indigo {
+	color: $indigo;
+}
+.bg-orange {
+	background: $orange;
+}
+.active-bar {
+	position: relative;
+	&::after {
+		content: "";
+		width: 2px;
+		height: 30px;
+		background: $indigo;
+		position: absolute;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	&.active-bar-pink {
+		&::after {
+			background: $pink;
+		}
+	}
+	&.active-bar-success {
+		&::after {
+			background: $success;
+		}
+	}
+	&.active-bar-info {
+		&::after {
+			background: $info;
+		}
+	}
+	&.active-bar-teal {
+		&::after {
+			background: $teal;
+		}
+	}
+	&.active-bar-danger {
+		&::after {
+			background: $danger;
+		}
+	}
+	&.active-bar-indigo {
+		&::after {
+			background: $indigo;
+		}
+	}
+}
+.doctor-info-detail {
+	border-bottom: 1px dashed $gray-transparent;
+}
+.grid-overlay-item {
+	position: absolute;
+	top: 20px;
+	left: 0;
+	right: 0;
+	padding: 0 20px;
+	.fav-icon {
+		width: 32px;
+		height: 32px;
+		background: $white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		i {
+			color: $gray-100;
+		}
+	}
+}
+.card-img-hover {
+	transition: 0.5s all;
+	overflow: hidden;
+	border-radius: 10px 10px 0 0;
+	img {
+		transition: 0.5s all;
+		border-radius: 10px 10px 0 0;
+		width: 100%;
+	}
+	&:hover {
+		img {
+			transform: scale(1.14);
+			transition: 0.5s all;
+		}
+	}
+}
+#filter_inputs {
+	display: none;
+}
+#filter_search {
+	&:active {
+		background: $primary;
+	}
+	&:focus {
+		background: $primary;
+		color: $white;
+	}
+}
+.filter-lists {
+	.card-header {
+		border-radius: 10px 10px 0  0;
+		padding: 0;
+	}
+	.filter-head {
+		background: $light-200;
+		padding: 15px ;
+		border-radius: 10px 10px 0  0;
+	}
+	.filter-input {
+		padding: 15px ;
+		.input-icon {
+			span {
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			input {
+				padding-left: 30px;
+			}
+		}
+	}
+	.filter-badge {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: $gray-100;
+		font-size: $font-size-10;
+	}
+	.accordion-item {
+		padding: 20px;
+	}
+}
+
+.filter-range .irs--flat .irs-handle>i:first-child {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 50%;
+	width: 18px;
+	height: 18px;
+	margin-left: -1px;
+	background-color:$primary;
+	border-radius: 50px;
+	border: 0;
+  }
+  .filter-range .irs--flat .irs-line {
+	top: 28px;
+	height: 6px;
+	background-color: $light;
+	border-radius: 4px;
+  }
+  .filter-range .irs--flat .irs-bar {
+	top: 28px;
+	height: 6px;
+	background-color: $primary;
+  }
+  .filter-range .irs-with-grid .irs-grid {
+  display: none;
+  }
+  .filter-range .irs--flat .irs-from, 
+  .filter-range .irs--flat .irs-to, 
+  .filter-range .irs--flat .irs-single {
+	color: white;
+	font-size: 14px;
+	line-height: 1.333;
+	text-shadow: none;
+	padding: 4px 12px;
+	background-color:$primary;
+	border-radius: 4px;
+	top:-10px;
+  }
+  .filter-range .irs--flat .irs-from:before,
+  .filter-range .irs--flat .irs-to:before, 
+  .filter-range .irs--flat .irs-single:before {
+	border-top-color: $primary;
+	left: 60%;
+}
+.doctor-list-card {
+	.card-img {
+		width: 300px;
+		border-radius: 10px 0 0 10px;
+		position: relative;
+		@include respond-below(md) {
+			border-radius: 10px 10px 0 0;
+			width: 100%;
+		}
+		img {
+			border-radius: 10px 0 0 10px;
+			@include respond-below(md) {
+				border-radius: 10px 10px 0 0;
+				width: 100%;
+			}
+		}
+	}
+}
+.doctor-available-profile {
+	background: $light-500;
+	border-radius: 10px;
+	padding: 20px;
+	.avail-img {
+		width: 120px;
+		height: 120px;
+		flex-shrink: 0;
+		display: block;
+		margin-right: 8px;
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			border-radius: 5px;
+
+		}
+	}
+	.avail-check {
+		width: 24px;
+		height: 24px;
+		background: $white;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		left: 5px;
+		top: 5px;
+	}
+}
+.booking-date-slider.booking-wizard-slots {
+	.visits {
+		margin-right: 14px !important;
+		input:checked ~ .visit-rsn {
+			background: $primary;
+		}
+	}
+} 
+.gm-style .gm-style-iw-c {
+	max-width: 280px !important;
+}

@@ -1,0 +1,482 @@
+.account-card {
+	border-radius: 10px;
+    font-size: $font-size-16;
+    text-align: center;
+    @include margin-padding(0 0 30px, 10px);
+    span {
+        font-size: $font-size-24;
+        display: block;
+        margin-bottom: 5px;
+        font-weight: $font-weight-medium;
+    }
+}
+.info-list {
+	margin-bottom: 10px;
+    .title {
+        color: $__dark__blue;
+        font-weight: $font-weight-medium;
+    }
+    .text {
+        color: $__smokey-gray;
+        display: block;
+        overflow: hidden;
+    }
+}
+.account-details-box {
+    background: $dark;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    .account-payment-info {
+        h4 {
+            color: $white;
+            font-size: $font-size-20;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+        .payment-amount {
+            border: 1px solid $border-color;
+            @include rounded(10px);
+            padding: 15px;
+            margin-bottom: 16px;
+            h6 {
+                color: $white; 
+                display: inline-flex;
+                align-items: center;
+                font-size: $font-size-14;
+                font-weight: $font-weight-medium;
+                i {
+                    margin-right: 8px;
+                    &.text-orange {
+                        color: #F97316;
+                    }
+                    &.text-pink {
+                        color: #DB2777;
+                    }
+                }
+            }
+            span {
+                color: $white;
+                font-size: $font-size-24;
+                font-weight: $font-weight-medium;
+                display: block;
+            }
+        }
+        .payment-request {
+            span {
+                display: block;
+                font-size: $font-size-14;
+                font-weight: $font-weight-medium;
+                color: $light;
+                margin-bottom: 16px;
+            }
+        }
+    }
+}
+.bank-details-info {
+    @include respond-below(custom991) {
+        margin-top: 24px;
+    }
+    h3 {
+        font-size: $font-size-20;
+        margin-bottom: 16px;
+        color: $white;
+        @include respond-below(lg) {
+            font-size: $font-size-18;
+        }
+    }
+    ul {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        li {
+            margin-right: 15px;
+            margin-bottom: 8px;
+            &:last-child {
+                margin-right: 0;
+            }
+            h5 {
+                color: $white;
+                font-size: $font-size-16;
+                font-weight: $font-weight-medium;
+                margin-bottom: 0;
+            }
+            h6 {
+                color: $white;
+                font-size: $font-size-14;
+                margin-bottom: 5px;
+            }
+        }
+    }
+    .edit-detail-link {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+        a {
+            color: $primary;
+            font-size: $font-size-14;
+            margin-right: 8px;
+            padding-right: 8px;
+            display: inline-block;
+            border-right: 1px solid $border-color;
+            &:last-child {
+                border: 0;
+            }
+            &:hover {
+                color: $white;
+            }
+        }
+    }
+}
+.accounts-tab {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid $border-color;
+    .nav-tabs-bottom {
+        .nav-link {
+            background: $light-transparent;
+            border-radius: 10px;
+            padding: 5px 20px;
+            color: $gray-900;
+            margin-right: 15px;
+            &.active {
+                background: $primary;
+                color: $white;
+            }
+            &:hover {
+                background: $primary;
+                color: $white;
+            }
+        }
+    }
+}
+.custom-new-table {
+    border: 1px solid $gray-transparent;
+    border-radius: 10px;
+    .table-responsive {
+        border-radius: 10px;
+        .table {
+            thead {
+                tr {
+                    th {
+                        border: 0;
+                        background: $gray-transparent;                        
+                        color: $gray-900;
+                        font-size: $font-size-14;
+                        padding: 8px 12px;
+                        white-space: nowrap;
+                    }
+                }
+            }
+            tbody {
+                tr {
+                    border: 0;
+                    td {
+                        border-bottom: 1px solid $gray-transparent;
+                        padding: 12px;
+                        font-size: $font-size-14;
+                        padding: 12px;
+                        white-space: nowrap;
+                        color: $gray-600;
+                        span {
+                            &.text-blue {
+                                color: $primary;
+                                &:hover {
+                                    color: $gray-900;
+                                }
+                            }
+                            &.badge {
+                                padding: 8px 8px;
+                                border-radius: 4px;
+                                font-weight: $font-weight-medium;
+                                display: inline-flex;
+                                font-size: $font-size-10;
+                                line-height: 1;
+                                &.badge-warning-bg {
+                                    background: $warning;
+                                }
+                                &.badge-success-bg {
+                                    background: $teal;
+                                }
+                                &.badge-danger-bg {
+                                    background: $danger;
+                                }
+                            }
+                           
+                        }
+                        .table-avtatar {
+                            a {
+                                display: inline-flex;
+                                align-items: center;
+                                img {
+                                    width: 24px;
+                                    height: 24px;
+                                    border-radius: 5px;
+                                    margin-right: 12px;
+
+                                }
+                            }
+                        }
+                        .account-action {
+                            border: 1px solid $border-color;
+                            border-radius: 50%;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 30px;
+                            height: 30px;
+                            background: $white;
+                            &:hover {
+                                background: $primary;
+                                color: $white;
+                            }
+                        }
+                    }
+                    &:last-child {
+                        td {
+                            border: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+.input-block-new {
+    margin-bottom: 24px;
+}
+.modal-header {
+    h5 {
+        display: inline-flex;
+        align-items: center;
+        .request-id {
+            font-size: $font-size-16;
+            font-weight: $font-weight-medium;
+            margin-left: 10px;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-weight: $font-weight-medium;
+            display: inline-block;
+            margin-left: 10px;
+            font-size: $font-size-12;
+            &.badge-success-bg {
+                background: $__teal;
+            }
+            &.badge-danger-bg {
+                background: #EF444E;
+            }
+        }
+    }
+}
+.other-accounts-info {
+    >ul {
+        >li {
+            border: 1px solid $gray-transparent;
+            padding: 15px 15px 0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            ul {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                @include respond-below(custom991) {
+                    flex-direction: column;
+                    align-items: start;
+                }
+                li {
+                    margin-bottom: 15px;
+                    &:first-child  {
+                        flex-basis: 16%;
+                    }
+                    &:nth-child(2) {
+                        flex-basis: 27%;
+                    }
+                    &:nth-child(3) {
+                        flex-basis: 12%;
+                    }
+                    &:nth-child(4) {
+                        flex-basis: 25%;
+                    }
+                    &:last-child {
+                        flex-basis: 20%;
+                        text-align: right;
+                    }
+                    @include respond-below(custom991) {
+                        flex-basis: auto !important;
+                    }
+                    h6 {
+                        font-size: $font-size-14;
+                        font-weight: $font-weight-medium;
+                        margin-bottom: 5px;
+                        color: $gray-600;
+                    }
+                    span {
+                        color: $gray-900;
+                    }
+                    a {
+                        font-size: $font-size-16;
+                        color: $primary;
+                        text-decoration: underline;
+                        font-weight: $font-weight-medium;
+                    }
+                }
+            }
+        }
+    }
+}
+.completed-request {
+    ul {
+        border: 1px solid $gray-transparent;
+        padding: 15px 15px 0;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        li {
+            margin-bottom: 15px;
+            h6 {
+                margin-bottom: 5px;
+            }
+            span {
+                color: $__black__shade;
+                &.text-blue {
+                    color: $primary;
+                }
+            }
+        }
+    }
+    .bank-detail {
+        padding: 24px 24px 9px;
+        background: $__sky__04;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        h4 {
+            margin-bottom: 15px;
+        }
+        .accont-information {
+            margin-bottom: 15px;
+            h6 {
+                margin-bottom: 5px;
+            }
+            span {
+                color: $__black__shade;
+            }
+        }
+    }
+    .request-des {
+        margin-bottom: 24px;
+        h4 {
+            margin-bottom: 15px; 
+        }
+        p {
+            color: $__black__shade;
+            margin-bottom: 0;
+        }
+    }
+}
+.canceled-user-info {
+    justify-content: space-between;
+    margin-bottom: 24px;
+    @include respond-below(custom575) {
+        display: block !important;
+    }
+    .email-info {
+        ul {
+            @include respond-below(custom575) {
+                margin-top: 15px;
+            }
+            li {
+                color: $__black__05;
+                display: flex;
+                align-items: center;
+                i {
+                    margin-right: 5px;
+                }
+                & +li {
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+}
+.cancellation-fees {
+    padding: 24px 24px 9px;
+    background: $__sky__04;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    .cancellation-info {
+        display: flex;
+        align-items: center;
+        @include respond-below(custom575) {
+            display: block;
+        }
+        .appointment-type {
+            margin-right: 24px;
+            margin-bottom: 15px;
+        }
+    }
+}
+.cancel-reason {
+    border: 1px solid $gray-transparent;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    h5 {
+        font-size: $font-size-15;
+        margin-bottom: 10px;
+    }
+    p {
+        color: $__black__05;
+        margin-bottom: 10px;
+    }
+}
+span {
+    &.refund {
+        color: $primary;
+        font-weight: $font-weight-medium;
+    }
+}
+.card {
+    &.pass-card {
+        box-shadow: 0px 7.5px 17.5px 0px #0000000D;
+        border: 1px solid $__white;
+    }
+}
+.refund-status {
+
+    span {
+        display: block;
+        & +span {
+            margin-top: 10px;
+        }
+    }
+}
+.file-upload {
+    position: relative;
+    font-size: $font-size-14;
+    font-weight: $font-weight-medium;
+    padding: 7px 8px;
+    @include rounded(5px);
+    background: $primary;
+    color: $white;
+    display: inline-block;
+    p {
+        margin: 0;
+    }
+    input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+    }
+}

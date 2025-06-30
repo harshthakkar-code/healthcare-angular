@@ -1,0 +1,93 @@
+
+
+.header {
+    &.header-fourteen {
+        &.header-fifteen {
+            &.ent-header {
+                background: $__white !important;
+            }
+            .header-nav {
+                .logo {
+                    @include respond-below(custom1199) {
+                        margin-right: 0;
+                    }
+                }
+                @include respond-below(lg) {
+                    justify-content: space-between;
+                }
+                .main-menu-wrapper {
+                    .main-nav {
+                        >li {
+                            @include respond-below(custom1399) {
+                                margin-right: 15px;
+                            }
+                            @include respond-below(custom1199) {
+                                margin-right: 10px;
+                            }
+                            a {
+                                color: $__midnight_black;
+                                @include respond-below(lg) {
+                                    color: $__white
+                                }
+                            }
+                        }
+                    }
+                }
+                .header-navbar-rht {
+                    .login-in-fourteen {
+                        .reg-btn {
+                            @include margin-padding(null, 10px 15px);
+                            display: $__flex;
+                            align-items: $__center;
+                            @include respond-below(custom1199) {
+                                @include margin-padding(null, 10px 5px);
+                            }
+                            @include respond-below(lg) {
+                                @include margin-padding(null, 13px 10px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.header-fourteen.header-fifteen {
+    .header-dropdown {
+        &.country-flag {
+            margin-top: 20px;
+            img {
+                width: 18px;
+                height: 16px;
+                margin-right: 5px;
+            }
+            a {
+                color: $gray-900;
+                font-size: $font-size-14;
+                &.dropdown-toggle {
+                    background: $gray-transparent;
+                    border-color: $gray-transparent;
+                    display: inline-flex;
+                    align-items: center;
+                }
+            }
+        }
+        @include respond-below(custom1199) {
+            display: none;
+        }
+    }
+    .searchbar {
+        margin-right: 14px;
+        a {
+            width: 40px;
+            height: 40px;
+            background: $gray-transparent;
+            color: $gray-900;
+            @include rounded(10px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}

@@ -1,0 +1,228 @@
+body {
+	font-family: $font-family-primary;
+	font-size: $font-size-16;
+	color: $text-color;
+	line-height: 1.5;
+	background-color: $white;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+::selection {
+  background: $primary;
+  color: $white;
+  text-shadow: none;
+}
+img {
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+*{
+	outline: none;
+}
+button {
+	@include transition(all 0.5s ease);
+	&:focus {
+		box-shadow: none !important;
+	}
+}
+.green .intro_text a {
+	&:hover{
+		color:$__primarycolor;
+		@include transition(all 0.2s ease);
+	}
+}
+p {	
+	margin-top: 0;
+	margin-bottom: 16px;
+	font-size: $font-size-15;
+	color: $gray-600;
+}
+strong {
+	font-weight: $font-weight-bold;
+}
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+  	color: $title-color;
+  	font-family: $font-family-primary;
+	font-weight: $font-weight-bold;
+  	margin-bottom: 0;
+}
+ol, ul {
+  list-style: none;
+  margin-block-end: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+	&.list-disc {
+	  list-style: disc;
+	  padding-left: 15px;
+	  ul {
+	    list-style-type: circle;
+	  }
+	}
+	&.list-decimal {
+	  list-style: decimal;
+	  padding-left: 15px;
+	  ul{
+	    list-style-type: decimal;
+	  }
+	}
+	&.list-icon {
+	  list-style: none;
+	  padding-left: 0;
+	  > li {
+	    padding-left: 1.875rem;
+	    counter-increment: li;
+	    i,
+	    .feather-icon,
+	    .svg-icon {
+	      display: inline-block;
+	      height: 20px;
+	      width: 20px;
+	      text-align: center;
+	      margin-left: -1.25rem;
+	      position: relative;
+	      left: -10px;
+	      padding: 1px;
+	      top: -1px;
+	      
+	    }
+	    i {
+	      font-size: $font-size-20;
+	      top: 5px;
+	    }
+	  }
+	}
+	.btn {
+	  &-primary {
+	      &:not(:disabled):not(.disabled) {
+	          &:active,
+	          &.active {
+	              &:focus {
+	                  box-shadow: none;
+	              	}
+	          	}
+	      	}
+	  	}
+	}
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.text-muted {
+    color: $__smokey-gray !important;
+}
+.dropdown-menu {
+    background-color: $__white;
+    border: 1px solid rgba(0, 0, 0, 0.1);    
+    font-size: $font-size-14;
+    @include rounded(3px);
+    @include box-shadow(null, null, null, null, null,$__inherit);
+    @include transform-origin(left top 0);
+}
+.row {
+	&.row-grid {
+		@include respond-below(custom1399) {
+			margin-left: -8px;
+    		margin-right: -8px;
+    	}
+		& > div {
+			@include respond-below(custom1399) {
+				padding-right: 8px;
+			    padding-left: 8px;
+			    -ms-flex: 0 0 33.333333%;
+			    flex: 0 0 33.333333%;
+			    max-width: 33.333333%;
+			}
+			@include respond-below(custom1199) {
+				-ms-flex: 0 0 50%;
+    			flex: 0 0 50%;
+    			max-width: 50%;
+			}
+			@include respond-below(custom849) {
+				-ms-flex: 0 0 100%;
+    			flex: 0 0 100%;
+    			max-width: 100%;
+			}
+			@include respond-below(custom767) {
+				-ms-flex: 0 0 50%;
+				flex: 0 0 50%;
+				max-width: 50%;
+			}
+			@include respond-below(custom575) {
+				-ms-flex: 0 0 100%;
+    			flex: 0 0 100%;
+    			max-width: 100%;
+			}
+		}
+	}
+}
+.text-sm {
+    font-size: $__font__size__14 !important;
+}
+.material-icons {
+	font-family: 'Material Icons';
+	font-weight: $font-weight-normal;
+	font-style: $__normal;
+	font-size: $__font__size__24;
+	display: $__inline__block;
+	line-height: 1;
+	text-transform: $__none;
+	letter-spacing: $__normal;
+	word-wrap: $__normal;
+	white-space: $__nowrap;
+	direction: ltr;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	font-feature-settings: 'liga';
+}
+.small, small {
+    font-size: 80%;
+    font-weight: $__regular;
+}
+input {
+	&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus {
+		box-shadow: 0 0 0px 1000px white inset !important;
+		-webkit-box-shadow: 0 0 0px 1000px white inset !important;
+	}
+	&[type=text], &[type=password] {
+		@include appearance($__none);
+	}
+}
+input, button, a {
+	@include transition(all 0.4s ease);
+}
+button:focus {
+	outline: 0;
+}
+.btn {
+	&:focus, &.focus {
+		box-shadow: $__inherit;
+	}
+}
+.table {
+	.form-control {
+		font-size: $font-size-14;
+		min-height: 38px;
+	}
+}
+.list-group-item {
+	border: 1px solid $__light-silver; 
+}
+.container {
+	@include respond-below(custom991) {
+	    max-width: $__full__width;
+	}
+}
+.form-custom {
+    position: $__relative;
+	i {
+		color: $__ash__red;
+		@include position($__absolute, 35%, 15px, null, null);
+	}
+}
+p:last-child {
+    margin-bottom: 0;
+}

@@ -1,0 +1,181 @@
+
+
+.footer {
+    &.footer-fifteen {
+        position: $__relative;
+        @include margin-padding(null, 52px 0 0 0);
+        background-color: $__white;
+        background-image: url(../../img/footer-fift-bg.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        .footer-top-fifteen {
+            padding: 0 0 20px;
+            .join-news-row {
+                padding-bottom: 20px;
+                border-bottom: 1px solid $border-color;
+                margin-bottom: 40px;
+            }
+            .join-news-foot {
+                margin-bottom: 20px;
+                h4 {
+                    font-size: $__font__size__24;
+                    font-weight: $font-weight-bold;
+                    margin-bottom: 5px;
+                }
+                p {
+                    margin-bottom: 0;
+                }
+            }
+            .form-set {
+                margin-bottom: 20px;
+                form {
+                    display: flex;
+                    align-items: center;
+                    justify-content: end;
+                    input {
+                        border: 1px solid $border-color;
+                        border-radius: 10px;
+                        background: transparent;
+                        color: $gray-900;
+                        height: 42px;
+                        &::placeholder {
+                            color: $gray-900;
+                        }
+                    }
+                    button {
+                        padding: 10px 16px;
+                        margin-left: 10px;
+                        font-size: $font-size-16;
+                        flex: none;
+                    }
+                }
+            }
+            .footer-widget {
+                margin-bottom: 20px;
+                .footer-logo {
+                    margin-bottom: 16px;
+                }
+                p {
+                    color: $gray-900;
+                    font-size: $font-size-14;
+                    margin-bottom: 40px;
+                }
+                .social-links {
+                    ul {
+                        display: flex;
+                        align-items: center;
+                        li {
+                            margin-right: 8px;
+                            &:last-child {
+                                margin-right: 0;
+                            }
+                            a {
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: $light;
+                                color: $primary;
+                            }
+                        }
+                    }
+                }
+                .footer-title {
+                    margin-bottom: 20px;
+                    h4 {
+                        color: $__black;
+                        font-size: $__font__size__18; 
+                        font-weight: $font-weight-medium;
+                        margin-bottom: 0; 
+                    }
+                }
+                ul {
+                    &.link-foot {
+                        li {
+                            font-size: $font-size-16;
+                            @include respond-below(custom1199) {
+                                font-size: $font-size-14;
+                            }
+                            a {
+                                color: $gray-600;
+                                font-size: $font-size-16;
+                                @include respond-below(custom1199) {
+                                    font-size: $font-size-14;
+                                }
+                                &:hover {
+                                    color: $primary;
+                                }
+                            }
+                            & +li {
+                                margin-top: 8px;
+                            }
+                            span {
+                                margin-right: 16px;
+                                i {
+                                    color: $__black;
+                                }
+                            }
+                        }
+                        &.address {
+                            li {
+                                display: flex;
+                                align-items: baseline;
+                                & +li {
+                                    margin-top: 16px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .footer-bottom {
+            background: $__white;
+            .bottom-items {
+                border-top: 1px solid $border-color;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                .copy-right {
+                    p {
+                        font-size: $font-size-14;
+                        color: $gray-600;
+                        margin-bottom: 0;
+                        @include respond-below(custom767) {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                    }
+                }
+                .terms-con {
+                    ul {
+                        display: flex;
+                        align-items: center;
+                        justify-content: end;
+                        @include respond-below(custom767) {
+                            justify-content: center;
+                        }
+                        li {
+                            & +li {
+                                a {
+                                    border-left: 1px solid $gray-600;
+                                    margin-left: 10px;
+                                    padding-left: 10px;
+                                }
+                            }
+                            a {
+                                font-size: $font-size-14;
+                                color: $gray-600;  
+                                &:hover {
+                                    color: $primary;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

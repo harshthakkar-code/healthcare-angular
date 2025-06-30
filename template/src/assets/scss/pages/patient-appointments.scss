@@ -1,0 +1,151 @@
+.appoint-patient {
+	.appointment-wrap.appointment-grid-wrap {
+		& > ul {
+			.appointment-info {
+				padding-bottom: 10px;
+				display: flex;
+				display: -webkit-flex;
+				align-items:center;
+				-webkit-align-items:center;
+				justify-content: space-between;
+				-webkit-justify-content: space-between;
+				flex-wrap: wrap;
+				p:first-child {
+					margin-right: 10px;
+				}
+				
+			}
+			.appointment-grid-head {
+				.grid-user-msg {
+					.hospital-icon {
+						i {
+							color: $__violet;
+						}
+					}
+				}
+			}
+
+		}
+	}
+}
+.profile-widget {
+	&.patient-favour {
+		border: 1px solid $border-color;
+		padding: 0;
+		@include rounded(10px);
+		box-shadow: $box-shadow;
+		.fav-head {
+			position: relative;
+			padding: 20px;
+			border-bottom: 1px solid $border-color;
+			.doc-img {
+				width: 80px;
+				margin: 0 auto 5px;
+				@include rounded(10px);
+				img {
+					width: 80px;
+					height: 80px;
+					@include rounded(10px);
+					object-fit: cover;
+				}
+			}
+			.fav-btn {
+				opacity: 1;
+				visibility: visible;
+				background-color: $gray-transparent;
+				@include transform(unset);
+				width: 36px;
+				height: 36px;
+				@include rounded(50%);
+				top: 20px;
+				right: 20px;
+				.favourite-icon {
+					&.favourite {
+						color: $orange;
+					}
+				}
+			}
+			.pro-content {
+				.title {
+					text-align: center;
+					 font-size: $font-size-16;
+					 font-weight: $font-weight-semibold;
+					 margin-bottom: 8px;
+				}
+				p {
+            		&.speciality {
+            			text-align: center;
+            			font-size: $font-size-14;
+            			-webkit-line-clamp: 2; 
+    					-webkit-box-orient: vertical;
+					    overflow: hidden;
+					    text-overflow: ellipsis;
+					    display: -webkit-box;
+						margin-bottom: 4px;
+            		}
+            	}
+            	.rating { 
+            		text-align: center;
+            		color: $gray-900;
+            		font-size: $font-size-14;
+            		font-weight: $font-weight-medium;
+            		margin-bottom: 16px;
+            	}
+            	.available-info {
+					margin-bottom: 16px;
+            		li {
+						color: $gray-900;
+						font-size: $font-size-14;
+						span {
+							color: $gray-600;
+						}
+		                & + li {
+		                    margin-top: 8px;
+		                }
+		            }
+            	}
+            	.last-book {
+            		background: $primary-transparent;
+            		@include rounded(10px);
+            		padding: 16px;
+            		p {
+            			text-align: center;
+            			font-size: $font-size-14;
+            			margin: 0;
+            			color: $gray-900;
+            		}
+            	}
+			}
+		}
+		.fav-footer {
+			padding: 15px;
+			.btn {
+				@include rounded(44px);
+			}
+			.view-btn {
+			    color: $__slate-500;
+			    border: 2px solid $__home__12__section__even;
+			    background-color: $__home__12__section__even;
+			    text-align: $__center;
+			    display: $__block;
+			    &:hover, &:focus {
+			        background-color: darken($__home__12__section__even, 5%);
+			        border-color: darken($__home__12__section__even, 5%);
+			        color: $__slate-500;
+			    }
+			}
+			.book-btn {
+			    background-color: $__white;
+			    border: 2px solid $__blue__14;
+			    color: $primary;
+			    text-align: $__center;
+			    display: $__block;
+			    &:hover, &:focus {
+			        background-color: darken($__blue__14, 3%);
+			        border-color: darken($__blue__14, 3%);
+			        color: $__white;
+			    }
+			}
+		}
+	}
+}

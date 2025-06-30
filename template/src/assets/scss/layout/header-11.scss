@@ -1,0 +1,145 @@
+
+
+.header {
+    &.header-fourteen {
+        &.header-sixteen {
+            box-shadow: 0px 10px 40px 10px rgba(0, 0, 0, 0.08);
+            background-color: $__white !important;
+            .header-nav {
+                .logo {
+                    @include respond-below(xl) {
+                        margin-right: 30px;
+                    }
+                    @include respond-below(lg) {
+                        margin-right: 0;
+                    }
+                }
+                @include respond-below(custom1399) {
+                    justify-content: start;
+                }
+                @include respond-below(lg) {
+                    justify-content: space-between;
+                }
+                .bar-icon {
+                    span {
+                        background: $primary;
+                    }
+                }
+                .main-menu-wrapper {
+                    .main-nav {
+                        li {
+                            &:last-child {
+                                margin-right: 30px;
+                                @include respond-below(xl) {
+                                    margin-right: 10px;
+                                }
+                            }
+                            @include respond-below(xl) {
+                                margin-right: 10px;
+                            }
+                            a {
+                                color: $gray-900;
+                                font-size: $font-size-16;
+                                @include respond-below(lg) {
+                                    color: $white;
+                                }
+                            }
+                            .submenu {
+                                a {
+                                    color: $__midnight_black;
+                                    @include respond-below(lg) {
+                                        color: $white;
+                                    }
+                                }
+                            }
+                            &.active {
+                                a {
+                                    color: $primary;
+                                    font-weight: $font-weight-bold;
+                                }
+                                .submenu {
+                                    a {
+                                        color: $__midnight_black;
+                                        font-weight: $font-weight-medium;
+                                        &.active {
+                                            color: $__broken_blue;
+                                            font-weight: $font-weight-medium;
+                                            
+                                       }
+                                    }
+                                   
+                                    a {
+                                        color: $__midnight_black;  
+                                        @include respond-below(lg) {
+                                            color: $white;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .searchbar {
+                            @include respond-below(lg) {
+                                display: $__none;
+                            }
+                            a {
+                                i {
+                                    font-size: $__font__size__18;
+                                    color: $__bodycolor;
+                                    &:hover {
+                                        color: $__blue_color1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .header-navbar-rht {
+                    .login-in-sixteen {
+                        .reg-btn {
+                            @include margin-padding(null, 12px 14px);
+                            background: $primary-gradient;
+                            box-shadow: inset 0 0 0 0 $primary-gradient;
+                            color: $white;
+                            border-radius: 44px;
+                            padding: 8px 16px;
+                            font-size: $font-size-14;
+                            font-weight: $font-weight-semibold;
+                            display: flex;
+                            align-items: center;
+                            @include transition(all 0.7s);
+                            &:hover {        
+                                background: $dark;
+                                color: $white;  
+                                @include transition(all 0.7s);
+                                box-shadow: inset 0 60px 0 0 $dark;
+                            }
+                            @include respond-below(custom1399) {
+                                @include margin-padding(null, 13px 10px);
+                            }
+                            @include respond-below(xl) {
+                                @include margin-padding(null, 10px 5px);
+                            }
+                            @include respond-below(lg) {
+                                @include margin-padding(null, 13px 10px);
+                            }
+                            &.reg-btn-sixteen {
+                                background: $dark;
+                                color: $white;
+                                border: none;
+                                font-weight: $font-weight-semibold;
+                                box-shadow: inset 0 0 0 0 $__blue_color1;
+                                @include transition(all 0.7s);
+                                &:hover {        
+                                    background: $primary-gradient;
+                                    color: $white;
+                                    box-shadow: inset 0 60px 0 0 $primary-gradient;
+                                    @include transition(all 0.7s);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

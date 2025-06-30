@@ -1,0 +1,54 @@
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar overflow-visible">
+        <div class="container">
+            <div class="row align-items-center inner-banner">
+                <div class="col-md-12 col-12 text-center">
+                    <nav aria-label="breadcrumb" class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a [href]="routes.index"><i class="isax isax-home-15"></i></a></li>
+                            <li class="breadcrumb-item">{{page | titlecase}}</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{last | titlecase}}</li>
+                        </ol>
+                        <h2 class="breadcrumb-title">{{last | titlecase}}</h2>
+                    </nav>
+                </div>
+            </div>
+            <div  class="bg-primary-gradient rounded-pill doctors-search-box">
+                <div class="search-box-one rounded-pill">
+                    <form (ngSubmit)="onSubmit()"> 
+                        <div class="search-input search-line">
+                            <i class="isax isax-hospital5 bficon"></i>
+                            <div class=" mb-0">
+                                <input type="text" class="form-control" placeholder="Search for Doctors, Hospitals, Clinics">
+                            </div>
+                        </div>
+                        <div class="search-input search-map-line">
+                            <i class="isax isax-location5"></i>
+                            <div class=" mb-0">
+                                <input type="text" class="form-control" placeholder="Location"> 
+                            </div>
+                        </div>
+                        <div class="search-input search-calendar-line">
+                            <i class="isax isax-calendar-tick5"></i>
+                            <div class=" mb-0">
+                                <input type="text" class="form-control datetimepicker" placeholder="Date" bsDatepicker [bsConfig]="{adaptivePosition:true}">
+                            </div>
+                        </div>
+                        <div class="form-search-btn">
+                            <button class="btn btn-primary d-inline-flex align-items-center rounded-pill" type="submit"><i class="isax isax-search-normal-15 me-2"></i>Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="breadcrumb-bg">
+            <img src="assets/img/bg/breadcrumb-bg-01.png" alt="img" class="breadcrumb-bg-01">
+            <img src="assets/img/bg/breadcrumb-bg-02.png" alt="img" class="breadcrumb-bg-02">
+            <img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-03">
+            <img src="assets/img/bg/breadcrumb-icon.png" alt="img" class="breadcrumb-bg-04">
+        </div>
+    </div>
+    <!-- /Breadcrumb -->
+    
+

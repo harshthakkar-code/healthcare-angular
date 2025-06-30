@@ -1,0 +1,549 @@
+.breadcrumb-bar-two {
+	background: $gray-transparent;
+	background-repeat: no-repeat;
+	padding-top: 70px;
+	position: relative;
+	overflow: hidden;
+	z-index: 1;   
+    .inner-banner {
+        @include margin-padding(0, 60px 0);
+        .breadcrumb-title {
+            font-weight: $font-weight-semibold;
+            font-size: $font-size-40;
+            margin-bottom: 6px;
+            color: $gray-900;
+            @include respond-below(lg) { 
+                font-size: $font-size-36;
+            }
+            @include respond-below(md) {
+                font-size: $font-size-26;
+            }
+        }
+        @include respond-below(md) {
+            @include margin-padding(0, 50px 0);
+        }
+    }
+    @include respond-below(lg) { 
+        padding-top: 40px;
+        min-height: 260px;
+    }
+    @include respond-below(md) {
+        min-height: auto;
+    }
+    .page-breadcrumb {
+        ol {
+            background-color: transparent;
+            font-weight: $font-weight-medium;
+            @include margin-padding(0, 0);
+            @extend %display-inline-flex;
+            li {
+                a {
+                    font-size: $font-size-12;
+                    font-weight: $font-weight-medium;
+                    color: $gray-600;
+                }
+                &.active {
+                    color: $gray-900;
+                }
+            }
+            @include respond-below(md) {
+                font-size: $font-size-15;
+            }
+        }
+        .breadcrumb {
+            a {
+                &:hover {
+                    color: $primary;
+                }
+            }
+        }
+        .breadcrumb-item {
+            & + .breadcrumb-item {
+                font-size: $font-size-12;
+                font-weight: $font-weight-medium;
+                color: $gray-900;
+                padding-left: 10px;
+                display: flex;
+                align-items: baseline;
+            }
+        }
+    }
+    .breadcrumb-item {
+        & + .breadcrumb-item {
+            &::before {
+                content: "/";
+                font-family: $__feather__font__family;
+                float: $__left;
+                padding-right: 10px;
+                color: $__gulf_gray;
+                font-size: $font-size-14;
+                font-weight: $font-weight-semibold;
+            }
+        }
+    }
+}
+.about-section {
+    background-color: $white;
+    padding: 60px 0;
+    .about-img-info {
+        padding-right: 30px;
+        .about-img {
+            border-radius: 8px;
+            margin-bottom: 25px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            img {
+                border-radius: 8px;
+            }
+        }
+        .about-box {
+            background: $primary;
+            border-radius: 8px;
+            margin: 15px 0 25px;
+            padding: 45px 10px;
+            text-align: $__center;
+            h4 {
+                font-weight: $font-weight-semibold;
+                font-size: $font-size-20;
+                color: $white;
+                max-width: 208px;
+                @include margin-padding(0 $__auto 0, 0);
+            }
+        }        
+        @include respond-below(lg) { 
+            display: $__none;
+        }
+    }
+    @include respond-below(lg) { 
+        padding: 40px 0;
+    }
+}
+.section-inner-header {
+	margin-bottom: 40px;
+	h6 {
+		font-weight: $font-weight-semibold;
+		font-size: $font-size-16;
+		color: $primary;
+		margin-bottom: 0;
+	}
+	h2 {
+		font-size: $font-size-32;
+		margin-bottom: 0;    
+        @include respond-below(lg) { 
+            font-size: $font-size-26;
+            max-width: inherit;
+        }  
+        @include respond-below(md) { 
+            font-size: $font-size-24;  
+        }
+	}     
+    @include respond-below(lg) { 
+        margin-bottom: 40px;
+    }
+}
+.about-inner-header {
+	margin-bottom: 20px;
+}
+.about-content-details {
+	padding-bottom: 25px;
+	p {
+		font-size: $font-size-16;
+		margin-bottom: 16px;
+		&:last-child {
+			margin-bottom: 0;
+		}   
+        @include respond-below(md) { 
+            font-size: $font-size-15;
+        }
+	}
+}
+.about-contact {
+	@extend %flex__center;
+}
+.about-contact-icon {
+	margin-right: 16px;
+	span {
+		width: 47px;
+		height: 47px;
+		border-radius: 50px;
+		color: $white;
+		background: $primary;
+		@extend %flex-align-center;
+        font-size: $font-size-24;
+	}
+}
+.about-contact-text {
+	p {
+		font-weight: $font-weight-medium;
+		font-size: $font-size-16;
+		margin-bottom: 4px;
+        @include respond-below(md) { 
+            font-size: $font-size-14;
+        }
+	}
+	h4 {
+		font-weight: $font-weight-semibold;
+		font-size: $font-size-20;
+		margin-bottom: 0;
+        @include respond-below(md) { 
+            font-size: $font-size-18;
+        }
+	}
+}
+.why-choose-section {
+    background-color: $white;
+    padding-bottom: 36px;
+    @include respond-below(lg) { 
+        padding-bottom: 16px;
+    }  
+}
+.why-choose-card {
+	border-radius: 8px;
+    @include transition(0.7s);
+	&:hover {
+		box-shadow: $box-shadow;
+        @include transition(0.7s);
+		.why-choose-icon {
+			span {
+				img {
+                    @include transform(rotateY(360deg));
+                    @include transition(0.7s);
+				}
+			}
+		}
+	}
+	.card-body {
+        padding: 25px;
+        @include respond-below(lg) { 
+            padding: 20px;
+        }  
+        @include respond-below(md) { 
+            padding: 15px;
+        }
+	}
+}
+.why-choose-icon {
+	padding-bottom: 20px;
+	span {
+		width: 80px;
+		height: 80px;
+		border-radius: 50px;
+		color: $white;
+		background: $primary;
+		@extend %flex-align-center;
+		img {
+            @include transition(0.7s);
+		}
+	}
+    @include respond-below(md) { 
+        padding-bottom: 20px; 
+    }
+}
+.why-choose-content {
+	h4 {
+		font-weight: $font-weight-semibold;
+		font-size: $font-size-20;
+		margin-bottom: 12px;
+	}
+	p {
+		font-size: $font-size-16;
+		margin-bottom: 0;
+        @include respond-below(md) { 
+            font-size: $font-size-14;
+        }
+	}
+}
+.way-section {
+    background-color: $white;
+    padding-bottom: 60px;
+    .way-bg {
+        background: $primary;
+        border-radius: 25px;
+        position: $__relative;
+        overflow: $__hidden;
+        .way-shapes-img {
+            position: $__relative;
+            .way-shapes-left {
+                @include position($__absolute, 60px, 200px, null, null);
+            }
+            .way-shapes-right {
+                @include position($__absolute, null, 0, null, null);
+            }
+            @include respond-below(lg) { 
+                display: $__none;
+            }
+        }
+        @include respond-below(lg) { 
+            border-radius: 10px;
+        }
+
+    }
+    @include respond-below(lg) { 
+        @include margin-padding(0, 0 0 40px);
+    }
+}
+.way-inner-header {
+    @include margin-padding(0, 80px);
+	h2 {
+		color: $white;
+		margin-bottom: 20px;
+	}
+	p {
+		font-weight: $font-weight-medium;
+		font-size: $font-size-16;
+		color: $light;
+		margin-bottom: 40px;   
+        @include respond-below(md) { 
+            margin-bottom: 15px;
+        }
+	}
+	.btn {
+		font-size: $font-size-16;
+        @include margin-padding(null, 8px 16px);
+		color: $gray-900;
+		background: $white;
+		border: 1px solid $white;
+		border-radius: 44px;
+		@extend %display-inline-flex;
+		&:hover {
+			color: $white;
+			border: 1px solid $white;
+			background: $primary;
+			box-shadow: inset 0 0 0 50px $__blue__14;
+		} 
+        @include respond-below(md) { 
+            font-size: $font-size-14;
+            @include margin-padding(0, 10px 15px);
+        }
+	}
+    @include respond-below(lg) { 
+        @include margin-padding(0, 30px);
+    }
+    @include respond-below(md) { 
+        @include margin-padding(0, 20px);
+    }
+}
+.way-img {
+	position: relative;
+	top: 10px;
+    @include respond-below(lg) { 
+        display: none;
+    }
+}
+.professional-section {
+    padding-bottom: 36px;
+	background: $white;
+	.doctor-profile-widget {
+		margin-bottom: 24px; 
+	}
+    @include respond-below(lg) { 
+       padding-bottom: 16px;
+    }
+}
+.testimonial-section {
+	background: $light-300;
+    padding: 60px 0;
+	position: $__relative;
+	overflow: $__hidden;
+	z-index: 1;
+	&::after {
+		content: '';
+		background: url(../../img/bg/doctor-shape-img1.png);
+        @include background-properties($__cover, $__no_repeat, $__left);
+        @include position($__absolute, 0, null, null, 0);
+		width: 213px;
+		height: 335px;
+		opacity: 0.5;
+		z-index: -1;
+		@include respond-below(lg) {
+			display: $__none;
+		}
+	}
+	&::before {
+		content: '';
+		background: url(../../img/bg/doctor-shape-img2.png);
+        @include background-properties($__cover, $__no_repeat, $__right);
+        @include position($__absolute, null, 0, 0, null);
+        opacity: 0.5;
+		width: 213px;
+		height: 335px;
+		z-index: -1;
+		@include respond-below(lg) {
+			display: $__none;
+		}
+	}
+    .testimonial-shape-img {
+        position: $__relative;
+        .testimonial-shape-left {
+            @include position($__absolute, -30px, null, null, -40px);
+            -webkit-animation-name: blinker;
+            -webkit-animation-duration: 0.6s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease-in-out;
+            -webkit-animation-direction: alternate;
+            img {
+                width: 100px;
+            }
+        }
+        .testimonial-shape-right {
+            @include position($__absolute, 60px, 0, null, null);
+            -webkit-animation-name: blinker;
+            -webkit-animation-duration: 0.6s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease-in-out;
+            -webkit-animation-direction: alternate;
+            img {
+                width: 100px;
+            }
+        }
+        @include respond-below(lg) { 
+            display: $__none;
+        }
+    }
+    @include respond-below(lg) { 
+        padding: 40px 0;
+    }
+}
+.testimonial-info {
+	@extend %flex__center;    
+    @include respond-below(md) { 
+        flex-direction: $__column;
+    }
+}
+.testimonial-img {
+	border-radius: 50%;
+	margin-right: 24px;
+	width: 220px;
+	-ms-flex: 0 0 220px;
+	flex: 0 0 220px;
+    @include respond-below(md) { 
+        @include margin-padding(0 0 30px 0, 0);
+        width: 200px;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+    }
+	img {
+		border-radius: 50%;
+		width: $__full__width;
+	}
+}
+.testimonial-header {
+	margin-bottom: 16px;
+}
+.testimonial-details {
+	p {
+		font-size: $font-size-16;
+		margin-bottom: 16px;
+        @include respond-below(md) { 
+            font-size: $font-size-14;
+        }
+	}
+	h6 {
+		font-weight: $font-weight-normal;
+		font-size: $font-size-12;
+		margin-bottom: 0;
+		color: $gray-600;
+		span {
+			font-weight: $font-weight-medium;
+			font-size: $font-size-16;
+            color: $gray-900;
+            display: block;
+		}
+	}
+}
+.testimonial-grid {
+    @include margin-padding(0, 0 60px);
+    @include respond-below(md) { 
+        @include margin-padding(0, 0 25px);
+    }
+}
+.testimonial-slider {
+    .slick-prev, .slick-next {
+        width: 30px;
+        height: 30px;
+        font-size: 0;
+        color: $gray-900;
+        background: $gray-transparent;
+        box-shadow: $box-shadow;
+        @extend %inlineflex-align-center;
+        &:hover {
+            color: $white;
+            background: $primary;
+        }
+        &:focus {
+            color: $white;
+            background: $primary;
+            opacity: 1;
+        }
+    }
+	.slick-prev {
+		&:before {
+			font-family: $font-awesome;
+			content: "\f053";
+			font-size: $font-size-16;
+			font-weight: $font-weight-bold;
+		}
+	}
+	.slick-next {
+		&:before {
+			font-family: $font-awesome;
+			content: "\f054";
+			font-size: $font-size-16;
+			font-weight: $font-weight-bold;
+		}
+	}
+}
+.faq-section-inner {
+   padding: 60px 0;
+    @include respond-below(lg) {
+        padding: 40px 0;
+    }   
+}
+.faq-inner-page {
+    background-color: $white;
+    padding: 60px 0 36px;
+    @include respond-below(lg) {
+        padding: 40px 0 16px;
+    }
+}
+.faq-inner-info {
+	.accordion-item {
+		margin-bottom: 24px;
+        background: $light-transparent;
+        border: 1px solid $border-color;
+        @include rounded(10px);
+		&:last-child {
+			margin-bottom: 24px;
+		}
+        .accordion-button {
+            &::after {
+                background: $gray-transparent;
+                color: $gray-900;
+            }
+            &:not(.collapsed)::after {
+                color: $white;
+                background: $primary;
+            }
+        }
+        .accordion-body {
+            margin-top: 16px;
+            padding: 16px 0 0;
+            border-top: 1px solid $border-color;
+        }
+	}
+}
+@include respond-below(custom575) {
+    .testimonial-content {
+        text-align: center;
+    }
+}
+@include respond-below(custom479) {
+.testimonial-content {
+    .section-inner-header {
+        h2 {
+            font-size: 16px;
+        }
+    }
+}
+}

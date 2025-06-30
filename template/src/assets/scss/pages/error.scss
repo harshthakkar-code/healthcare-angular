@@ -1,0 +1,84 @@
+.error-img {
+	padding-bottom: 50px;
+    @include respond-below(custom767) {
+        padding-bottom: 25px;
+    }
+}
+.error-info {
+    padding: 40px;
+    @include respond-below(md) {
+        padding: 20px;
+    }
+}
+.error-404-img {
+	position: $__relative;
+    img {
+        margin-bottom: 24px;
+    }
+}
+.error-404-content {
+	width: $__full__width;
+    @include position($__absolute, null, null, 30px, null);
+    @include respond-below(custom1399) {
+        bottom: 0;
+    }
+    @include respond-below(custom767) {
+        position: $__static;
+        margin-top: 20px;
+    }
+}
+.error-content {
+	h2 {
+		font-weight: $font-weight-semibold;
+		font-size: $__font__size__38;
+		color: $__black_shade;
+		margin-bottom: 10px;
+        @include respond-below(custom991) {
+            font-size: $__font__size__32;
+        }
+        @include respond-below(custom767) {
+            font-size: $__font__size__22;
+        }
+	}
+	p {
+		font-size: $font-size-14;
+		margin-bottom: 20px;
+	}
+}
+.coming-soon-info {
+	@extend %flex-align-center;
+    margin-bottom: 40px;
+}
+.coming-soon-count {
+	width: 80px;
+	height: 72px;
+    margin-right: 24px;    
+	border-radius: 10px;
+	background: $gray-transparent;
+	flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+	&:last-child {
+		margin-right: 0;
+	}
+	h4 {
+		font-weight: $font-weight-semibold;
+		font-size: $font-size-20;
+		color: $gray-900;
+		margin-bottom: 0;
+        @include respond-below(custom767) {
+            font-size: $font-size-18;
+        }
+	}
+	p {
+		font-size: $font-size-14;
+		margin-bottom: 0;
+	}
+    @include respond-below(custom767) {
+        width: 66px;
+        height: 66px;
+        @include margin-padding(0 10px 0 0, 8px);
+    }
+}

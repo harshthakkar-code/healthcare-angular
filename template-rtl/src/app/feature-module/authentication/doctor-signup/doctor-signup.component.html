@@ -1,0 +1,154 @@
+<div class="login-content-info">
+    <div class="container">
+
+        <!-- Doctor Signup -->
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="account-content">
+                    <div class="login-shapes">
+                        <div class="shape-img-left">
+                            <img src="assets/img/shape-01.png" alt="shape-image">
+                        </div>
+                        <div class="shape-img-right">
+                            <img src="assets/img/shape-02.png" alt="shape-image">
+                        </div>
+                    </div>
+                    <div class="widget-set">
+                        <div class="account-info">
+                            <div class="widget-content multistep-form">
+                                <fieldset [class.d-block]="selectedFieldSet[0] === 0">
+                                    <div class="login-title">
+                                        <h3>Doctor Signup</h3>
+                                        <p class="mb-0">Welcome back! Please enter your details.</p>
+                                    </div>
+                                    <div class="widget-setcount">
+                                        <ul id="progressbar">
+                                            <li class="progress-active" [ngClass]="{ 'progress-active': selectedFieldSet[0] === 0, 'progress-activated': selectedFieldSet[0] > 0 }">
+                                                <div class="step-box">
+                                                    <div class="step-icon">
+                                                        <span>
+                                                            <img src="assets/img/icons/signup-users.svg" alt="icon">
+                                                        </span>
+                                                    </div>
+                                                    <div class="step-content">
+                                                        <h4>Create Account</h4>
+                                                        <p>Step 1</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li >
+                                                <div class="step-box">
+                                                    <div class="step-icon">
+                                                        <span>
+                                                            <img src="assets/img/icons/signup-unlock.svg" alt="icon">
+                                                        </span>
+                                                    </div>
+                                                    <div class="step-content">
+                                                        <h4>Verify Account</h4>
+                                                        <p>Step 2</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <form [formGroup]="phoneForm" >
+                                        <div class="mb-3">
+                                            <label for="name" class="mb-2 form-label">Name</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="mb-2 form-label">Email</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                        <div class="mb-3 custom-tel">
+                                            <label for="phone" class="mb-2 form-label">Phone Number</label>
+                                            <div>
+                                            </div>
+                                            <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="mb-2 form-label">Password
+                                            </label>
+                                            <div class="pass-group">
+                                                <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input">
+                                                <span class="toggle-password-sub" (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" [ngClass]=" togglePasswordClass ?  'feather-eye' : 'feather-eye-off'"></span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="widget-btn">
+                                        <a href="javascript:void(0);" class="btn btn-primary w-100 next_btn" (click)="selectedFieldSet[0] = 1" >Next</a>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="field-card" [class.d-block]="selectedFieldSet[0] === 1">
+                                    <div class="login-title">
+                                        <h3>Security Verification</h3>
+                                        <p class="mb-0">To Secure your Account create complete the following verify request.</p>
+                                    </div>
+                                    <div class="widget-setcount">
+                                        <ul id="progressbar1">
+                                            <li [ngClass]="{ 'progress-active': selectedFieldSet[0] > 0}">
+                                                <div class="step-box">
+                                                    <div class="step-icon">
+                                                        <span>
+                                                            <img src="assets/img/icons/signup-users.svg" alt="icon">
+                                                        </span>
+                                                    </div>
+                                                    <div class="step-content">
+                                                        <h4>Create Account</h4>
+                                                        <p>Step 1</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li [ngClass]="{ 'progress-active': selectedFieldSet[0] > 0}">
+                                                <div class="step-box">
+                                                    <div class="step-icon">
+                                                        <span>
+                                                            <img src="assets/img/icons/signup-unlock.svg" alt="icon">
+                                                        </span>
+                                                    </div>
+                                                    <div class="step-content">
+                                                        <h4>Verify Account</h4>
+                                                        <p>Step 2</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <form  class="signup-verfication-form">
+                                        <div class="mb-3 custom-tel">
+                                            <div class="form-group-flex">
+                                                <label for="phone" class="mb-2 form-label">Phone Number Verfication Code</label>
+                                                <a href="javascript:void(0);" class="forgot-link">Get Code</a>
+                                            </div>
+                                            <div class="pass-group">
+                                                <div>
+                                                </div>
+                                                <input id="phone2" type="tel" class="form-control pass-input" placeholder="(201) 555-0123"/>
+                                            </div>
+                                            <p class="signup-code">Enter the 6 digit code sent to 98****4578</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-group-flex">
+                                                <label for="email" class="mb-2 form-label">Email Verfication Code</label>
+                                                <a href="javascript:void(0);" class="forgot-link">Get Code</a>
+                                            </div>
+                                            <div class="pass-group">
+                                                <input type="text" class="form-control form-control-phone" placeholder="example@gmail.com">
+                                            </div>
+                                            <p class="signup-code">Enter the 6 digit code sent to ex****&#64;gmail.com</p>
+                                        </div>
+                                        <div class="mb-0">
+                                            <button [routerLink]="routes.signupSuccess" routerLinkActive="router-link-active"  class="btn btn-primary w-100" type="submit">Submit</button>
+                                        </div>
+                                    </form>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Doctor Signup -->
+
+    </div>
+</div>

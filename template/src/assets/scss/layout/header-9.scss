@@ -1,0 +1,161 @@
+
+
+.header {
+    &.header-fourteen {
+        &.header-fixed {
+            display: $__block;
+            width: $__full__width;
+            z-index: 9999;
+            background: $__white;
+            box-shadow: $__inherit;
+            position: relative;
+            &.pharmacy-header {
+                position: fixed;
+                background: $__white !important;
+            } 
+        }  
+        .header-nav {
+            background-color: transparent;
+            border-bottom: none;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 0;
+            height: 74px;
+            .logo {
+                @include respond-below(custom1199) {
+                    margin-right: 0;
+                }
+            }
+            .navbar-header .bar-icon span {
+                background: $primary;
+            }
+            @include respond-below(custom991) {
+                justify-content: space-between;
+            }
+            .main-menu-wrapper {
+                .main-nav {
+                    .has-submenu {
+                        @include respond-below(custom1199) {
+                            margin-right: 10px;
+                        }
+                        a {
+                            color: $__midnight_black;
+                             @include respond-below(custom991) {
+                                color: $__white;
+                            }
+                        }
+                        .submenu {
+                            a {
+                                color: $__midnight_black;
+                                @include respond-below(custom991) {
+                                    color: $__white;
+                                }
+                            }
+                        }
+                        &.active {
+                            a {
+                                color: $primary;
+                            }
+                            .submenu {
+                                a {
+                                    color: $__midnight_black;
+                                    font-weight: $font-weight-medium;
+                                    &.active {
+                                        color: $primary;
+                                        font-weight: $font-weight-medium;
+                                        
+                                   }
+                                }
+                               
+                                a {
+                                    color: $__midnight_black;  
+                                    @include respond-below(custom991) {
+                                        color: $__white;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    & > li {                        
+                        &.searchbar-fourteen {
+                            display: flex;
+                            align-items: center;
+                            a {
+                                @extend %flex-align-center;
+                                background: $gray-transparent;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 6px;
+                                @include margin-padding(null, 0);
+                                transition: 0.5s;
+                                color: $gray-900;
+                                font-size: $font-size-16;
+                                &:hover {
+                                    background: darken($gray-transparent, 5%);
+                                    color: $gray-900;
+                                    transition: 0.5s;
+                                }
+                                i {
+                                    margin: 0;
+                                    font-size: $font-size-16;
+                                }
+                            }
+                            @include respond-below(custom1199) {
+                                display: none;
+                            }
+                        }
+                        & > a {
+                            @include respond-above(custom992) {
+                                line-height: 74px;
+                            }
+                            @include respond-below(custom991) {
+                                color: $__white;
+                            }
+                        }
+                    }
+                }
+            }
+            .header-navbar-rht {
+                padding: 0;
+                margin: 0;
+                li {
+                    @include margin-padding(null, 0 10px 0 0);
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                    &.login-link { 
+                        display: none;
+                    }
+                    &.login-in-fourteen {
+                        .reg-btn {
+                            transition: 0.5s;
+                            display: $__flex;
+                            align-items: $__center;
+                            i {
+                                margin-right: 8px;
+                            }
+                            @include respond-below(custom1199) {
+                                padding: 8px 8px;
+                                font-size: $font-size-14;
+                            }
+                            &.reg-btn-fourteen {
+                                transition: 0.5s;
+                                i {
+                                    margin-right: 8px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &.header-fixed {
+        position: $__fixed;
+        display: $__block;
+        width: $__full__width;
+        z-index: 999;
+        box-shadow: $__inherit;
+        background: $gray-transparent;
+    } 
+}

@@ -1,0 +1,67 @@
+<!-- Page Content -->
+<div class="login-content-info">
+    <div class="container">
+
+        <!-- Patient Signup -->
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="account-content">
+                    <div class="account-info">
+                        <div class="login-title">
+                            <h3>Patient Signup</h3>
+                            <p class="mb-0">Enter your credentials & create your account</p>
+                        </div>
+                        <form [formGroup]="phoneForm">
+                            <div class="mb-3 custom-tel">
+                                <label for="phone" class="mb-2 form-label">Phone</label>
+                                <div></div>
+                                <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123"/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="first-name" class="mb-2 form-label">First Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="last-name" class="mb-2 form-label">Last Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="mb-3 form-check-box terms-check-box">
+                                <div class="form-group-flex">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" id="remember" checked="">
+                                        <label class="form-check-label" for="remember">
+                                            I have read and agree to Doccure’s <a [routerLink]="routes.termsCondition">Terms of Service</a> and <a [routerLink]="routes.privacyPolicy">Privacy Policy.</a> 
+                                        </label>
+                                    </div>		
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary-gradient btn-xl w-100" type="button" (click)="navigation()" (keydown)="navigation()" tabindex="1">Register Now</button>
+                            </div>
+                            <div class="mb-3 back-btn-light">
+                                <button class="btn btn-light btn-xl w-100" type="button"  (click)="navigation()" (keydown)="navigation()" tabindex="1">Create an Account</button>
+                            </div>
+                            <div class="login-or">
+                                <span class="or-line"></span>
+                                <span class="span-or">or</span>
+                            </div>
+                            <div class="social-login-btn">
+                                <a href="javascript:void(0);" class="btn w-100">
+                                    <img src="assets/img/icons/google-icon.svg" alt="google-icon">Sign in With Google
+                                </a>
+                                <a href="javascript:void(0);" class="btn w-100">
+                                    <img src="assets/img/icons/facebook-icon.svg" alt="fb-icon">Sign in With Facebook
+                                </a>
+                            </div>
+                            <div class="account-signup">
+                                <p>Already a Member? <a [routerLink] = "routes.loginEmail">Sign in</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Patient Signup -->
+
+    </div>
+</div>	

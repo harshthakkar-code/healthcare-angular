@@ -1,0 +1,637 @@
+.doctor-search-section {
+    padding-top: 95px;
+    position: $__relative;
+    background: url(../../img/banner/doctor-banner-01.jpg);
+    background-position: 50% 0;
+    background-size: $__cover;
+    background-repeat: $__no-repeat;
+    z-index: 1;
+    @include respond-below(custom991) {
+        padding: 85px 0 50px;
+    }
+    .doctor-search {
+        padding-bottom: 0;
+    }
+    .banner-header {
+        margin-bottom: 20px;
+        h2 {
+            font-size: $__font__size__36;
+            font-weight: $__bold;
+            margin-bottom: 20px;
+            span {
+                display: block;
+                color: $primary;
+            }
+            @include respond-below(custom991) {
+                font-size: $__font__size__30;
+            }
+            @include respond-below(custom767) {
+                font-size: $__font__size__26;
+            }
+        }
+        p {
+            font-size: $font-size-16;
+            margin-bottom: 0;
+        }
+    }
+    .doctor-search-form {
+        select, input {
+            border: 1px solid $border-color;
+            box-shadow: $box-shadow;
+            border-radius: 100px;
+            padding-right: 42px;
+        }
+    }
+    .doctor-search {
+        .input-box-twelve {
+            background: $__white;
+            border-radius: 90px;
+            @extend %flex__center;
+            @include margin-padding(0, 15px 15px 15px 35px);
+            @include respond-below(custom767) {
+                flex-direction: $__column;
+                border-radius: 20px;
+                 @include margin-padding(0, 15px);
+            }
+            .input-block {
+                position: $__relative;
+                .select2-container--default .select2-selection--single .select2-selection__arrow b {
+                    border-width: 0 2px 2px 0;
+                    padding: 3px;
+                    border-color: rgba(31, 41, 55, 1);
+                    transform: rotate(45deg) translateY(-50%);
+                    -webkit-transform: rotate(45deg) translateY(-50%);
+                    -ms-transform: rotate(45deg) translateY(-50%);
+                }
+                .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+                    border-width: 2px 0 0 2px;
+                }
+                .select2-container .select2-selection--single .select2-selection__rendered {
+                    padding-left: 0;
+                }
+                &.search-input {
+                    position: relative;
+                    .current-loc-icon {
+                        @include position($__absolute, 50%, 12px, null, null);
+                        @include transform(translateY(-50%));
+                        margin-top: 0px;
+                        color: $__gulf_gray;;
+                        font-size: $font-size-14;
+                        line-height: 0;
+                        i {
+                            position: $__unset;
+                            transform: $__unset;
+                            color: $__gulf_gray;;
+                            font-size: $font-size-14;
+                        }
+                    }
+                }
+                &:first-child {
+                    width: 40%;
+                    @include respond-below(custom767) {
+                        width: 100%;
+                    }
+                    @include respond-below(custom575) {
+                        border-right: 0;
+                    }
+                }
+                &:nth-child(2) {
+                    width: 50%;
+                    .select2-container .select2-selection--single .select2-selection__rendered {
+                        padding-left: 0;
+                    }
+                    @include respond-below(custom767) {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+                }
+                &:last-child {
+                    @include respond-below(custom767) {
+                        width: 100%;
+                        a {
+                            width: 100%;
+                        }
+                    }
+                }
+                .form-control {
+                    border: 0;
+                    height: 44px;
+                    padding: 10px 0 10px;
+                    color: $__gulf_gray;
+                    font-size: $font-size-16;
+                }
+            }
+            select {
+                border: 0;
+                background: $__transparent;
+                border-radius: 0;
+            }
+            .select2-container .select2-selection--single {
+                border: 0;
+                height: 44px;
+                .select2-selection__arrow {
+                    display: none;
+                }
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                color: $gray-300;
+                font-size: $font-size-14;
+                line-height: 45px;
+            }
+            .search-btn-info {
+                text-align: center;
+                @include respond-below(custom575) {
+                    text-align: $__center;
+                }
+                a {
+                    display: $__inline__block;
+                    padding: 9px 15px;
+                    font-size: $font-size-16;
+                    transition: 0.5s all;
+                    min-width: 115px;
+                    &:hover {
+                        background: $primary;
+                        transition: 0.5s all;
+                    }
+                    i {
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+    }
+    .dr-img {
+        @include respond-below(custom991) {
+            display: $__none;
+        }
+    }
+}
+.clinics-section {
+    padding: 60px 0 40px;
+    background: $__white;
+    @include respond-below(custom991) {
+        padding: 40px 0 20px;
+    }
+    .clinic-item {
+        &:hover {
+            .clinics-card {
+                .clinics-img {
+                    &:after {
+                        background: $primary;
+                        transition: all 0.5s;
+                    }
+                }
+                .clinic-img { 
+                    background: $primary;
+                    img {
+                        filter: brightness(0) invert(1);
+                    }
+                }
+            }
+            .clinics-icon {
+                opacity: 1;
+                @include transform(translate(0, -180%));
+                i {
+                    color: $primary;
+                    background: $__white;
+                }
+            }
+        }
+    }
+    .clinics-card {
+        position: $__relative;
+        border-radius: 10px;
+        overflow: $__hidden;
+        .clinics-img {
+            position: $__relative;
+            &:after {
+                content: '';
+                background: linear-gradient(180deg, rgba(0, 0, 0, 0.46) 0%, rgba(0, 0, 0, 0.51) 100%);
+                @include position($__absolute, 0, 0, 0, 0);
+            }
+        }
+        .clinics-info {
+            margin: 0 $__auto;
+            text-align: $__center;
+            @include position($__absolute, 50%, 0, null, 0);
+            @include transform(translateY(-50%));            
+            .clinic-img {
+                width: 70px;
+                height: 70px;
+                @include rounded(10px);
+                background: $__white;
+                margin: 0 auto 15px;
+                @extend %flex-align-center;
+            }
+            img {
+                width: auto !important;
+                margin: $__auto;
+            }
+            span {
+                font-weight: $font-weight-medium;
+                font-size: 18px;
+                color: $__white;
+            }
+        }
+    }
+    .clinics-icon {
+        opacity: 0;
+        @include transform(translate(0, -50%));
+        @include transition(all .3s ease 0s);
+        font-size: $font-size-24;
+        i {
+            border-radius: 50%;
+            height: 38px;
+            width: 38px;
+            text-align: $__center;
+            line-height: 38px;
+            background: $__white;
+            color: $primary;
+            margin: $__auto;
+            display: $__block;
+        }
+    }
+}
+.section-heading {
+    margin-bottom: 40px;
+    @include respond-below(custom767) {
+        margin-bottom: 15px;
+    }
+    h2 {
+        font-weight: $font-weight-bold;
+        font-size: $font-size-32;
+        margin-bottom: 4px;
+        @include respond-below(custom991) {
+            font-size: $__font__size__26;
+        }
+        @include respond-below(custom767) {
+            font-size: $__font__size__20;
+        }
+    }
+    p {
+        font-size: $font-size-16;
+        margin-bottom: 0;
+    }
+    &.bg-area {
+        h2 {
+            color: $__white;
+        }
+        p {
+            color: $__white;
+        }
+    }
+}
+.specialities-section {
+    padding: 60px 0 35px;
+    position: $__relative;
+    background: url(../../img/bg/speciality-bg-01.png);
+    background-position: 50% 0;
+    background-size: $__cover;
+    background-repeat: $__no-repeat;
+    @include respond-below(custom991) {
+        padding: 40px 0 15px;
+    }
+    &:after {
+        content: "";
+        background-image: $primary-gradient;
+        z-index: -1;
+        @include position($__absolute, 0, 0, 0, 0);
+    }
+    .specialist-card {
+        background: $__white;
+        box-shadow: 0px 4px 24px rgb(183 183 183 / 25%);
+        border-radius: 163px;
+        align-items: $__center;
+        @include margin-padding(0 0 25px, 15px);
+        &:hover {
+            .specialist-img {
+                img {
+                    transition: all 0.5s;
+                    @include transform(rotateY(360deg));
+                }
+            }
+            .specialist-info {
+                a, h4 {
+                    color: $primary;
+                }
+            }
+            .specialist-nav {
+                a {
+                    background: $primary;
+                    color: $__white;
+                }
+            }
+        }
+        .specialist-img {
+            background: $cyan;
+            height: 66px;
+            width: 66px;
+            border-radius: 50%;
+            @include transition(all .3s ease 0s);
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .specialist-info {
+            p {
+                font-weight: $font-weight-medium;
+                margin-bottom: 0;
+            }
+            a {
+                color: $gray-900;
+            }
+            h4 {
+                font-weight: $font-weight-semibold;
+                font-size: $font-size-20;
+                color: $gray-900;
+                margin-bottom: 5px;
+            }
+        }
+        .specialist-nav {
+            a 
+             {
+                background: $gray-transparent;
+                border-radius: 50%;
+                height: 38px;
+                width: 38px;
+                text-align: $__center;
+                line-height: 38px;
+                color: $gray-900;
+                margin: $__auto;
+                display: $__block;
+                @include transition(all .3s ease 0s);
+            }
+        }
+    }
+    
+}
+.shapes {
+    position: $__absolute;
+    width: $__full__width;
+    @include respond-below(custom991) {
+        display: $__none;
+    }
+    .shape-1 {
+        @include position($__absolute, 0, null, null, 0);
+    }
+    .shape-2 {
+        @include position($__absolute, 0, 0, null, null);
+    }
+    .shape-3 {
+        @include position($__absolute, -110px, null, null, 0);
+    }
+    .shape-4 {
+        @include position($__absolute, -110px, 0, null, null);
+    }
+}
+.our-doctors-section {
+    padding: 60px 0 36px;
+    background: $__white;
+    @include respond-below(custom991) {
+        padding: 40px 0 16px;
+    }
+    .our-doctors-card {
+        box-shadow: 0px 7.5px 17.5px 0px #0000000D;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        .doctors-header {
+            position: $__relative;            
+            overflow: hidden;
+            border-radius: 10px 10px 0 0;
+            img {
+                @include transform(translateZ(0));
+                @include transition(all 2000ms cubic-bezier(.19,1,.22,1) 0ms);
+                border-radius: 10px 10px 0 0;
+            }
+            &:hover img {
+                @include transform(scale(1.15));
+            }
+            .img-overlay {
+                background: $primary;
+                border-radius: 30px;
+                padding: 5px 14px;
+                color: $__white;
+                font-weight: $font-weight-medium;
+                font-size: $font-size-16;
+                @include position($__absolute, 10px, 10px, null, null);
+            }
+        }
+        .doctors-body {
+            background: $__white;
+            border-radius: 0px 0px 10px 10px;
+            padding: 24px;
+            .rating {
+                font-size: $font-size-16;
+                margin-bottom: 15px;
+                i {
+                    color: $gray-transparent;
+                    &.filled {
+                        color: $warning;
+                    }
+                }
+                .average-ratings {
+                    background: $secondary;
+                    border-radius: 30px;
+                    color: $__white;
+                    font-size: $font-size-12;
+                    padding: 1px 8px;
+                    margin-left: 10px;
+                    font-weight: $font-weight-medium;
+                }
+            }
+            h4 {
+                font-size: $font-size-18;
+                font-weight: $font-weight-semibold;
+                margin-bottom: 4px;
+                &:hover {
+                    color: $primary;
+                }
+            }
+            p {
+                font-weight: $font-weight-normal;
+                margin-bottom: 0;
+                font-size: $__font__size__12;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+            .location {
+                padding: 24px 0 24px;
+                border-bottom: 1px solid $border-color;
+                margin-bottom: 24px;
+                p {
+                    font-size: $__font__size__12;
+                    i {
+                        color: $primary;
+                        margin-right: 4px;
+                    }
+                }
+            }
+            .btn {
+                font-size: $font-size-14;
+                padding: 9px 5px;
+            }
+        }
+    }
+}
+.clinic-features-section {
+    position: $__relative;
+    background: url(../../img/featured-bg.jpg);
+    background-position: 50% 0;
+    background-size: $__cover;
+    background-repeat: $__no-repeat;
+    padding: 60px 0;
+    @include respond-below(custom991) {
+        padding: 40px 0;
+    }
+    .clinic-features {
+        position: $__relative;        
+        overflow: hidden;
+        border-radius: 10px;
+        img {
+            @include transform(translateZ(0));
+            @include transition(all 2000ms cubic-bezier(.19,1,.22,1) 0ms);
+            border-radius: 10px;
+        }
+        &:hover img {
+            @include transform(scale(1.15));
+        }
+    }
+    .clinic-feature-overlay {
+        text-align: $__center;
+        width: $__full__width;
+        @include position($__absolute, null, null, 15px, null);
+        .img-overlay {
+            background: $primary;
+            border-radius: 60px;
+            padding: 10px 15px;
+            color: $__white;
+            font-weight: $font-weight-medium;
+            min-width: 180px;
+            display: $__inline__block;
+            font-size: $font-size-16;
+            &:hover {
+                background-color: $primary-hover;
+            }
+        }
+    }
+} 
+.home-three {
+    .slide-nav-4, .slide-nav-3 {
+        button.owl-next, button.owl-prev {
+            background: $primary;
+            &:hover {
+                background: $primary-hover;
+            }
+        }
+    }
+    .slide-nav-2, .slide-nav-1 {
+    button.owl-next, button.owl-prev {
+        width: 34px;
+        height: 34px;
+        background: $primary;
+        text-shadow: $__none;
+        top: 4px;
+        cursor: $__pointer;
+        border: 0;
+        color: $__white;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        &:hover {
+            background: $primary-hover;
+        }
+        @include transform(rotate(-44deg));
+        @include respond-below(custom767) {
+            width: 28px;
+            height: 28px;
+        }
+    }
+}
+    .our-blog-section .our-blogs {
+        box-shadow: $box-shadow;
+        border: 1px solid $border-color;
+        margin: 0 2px;
+        &:hover {
+            .blogs-overlay {
+                @include transition(all 0.8s ease);
+                .blogs-writter {
+                    @include transition(all 0.8s ease);
+                }
+            }
+        }
+        border-radius: 10px;
+        .blogs-img {
+            overflow: hidden;
+            img {
+                @include transform(translateZ(0));
+                @include transition(all 2000ms cubic-bezier(.19,1,.22,1) 0ms);
+            }
+            &:hover img {
+                @include transform(scale(1.15));
+            }
+        }
+        .blogs-overlay {
+            padding: 7px;
+            @include transition(all 0.8s ease);
+            .blogs-writter {
+                color: $black;
+                font-size: $__font__size__18;
+                font-weight: $font-weight-medium;
+                @include transition(all 0.8s ease);
+            }
+        }
+        .blogs-info {
+            padding: 24px;
+            border: 0;
+            .blog-slug {
+                display: block;
+                color: $primary;
+                font-size: $font-size-16;
+                font-weight: $font-weight-medium;
+                 margin-bottom: 15px;
+            }
+            h4 {
+                font-size: $__font__size__20;
+                font-weight: $font-weight-medium;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                margin-bottom: 8px;
+                a {
+                    &:hover {
+                        color: $primary;
+                    }
+                }
+            }
+            p {
+                font-size: $font-size-16;
+                margin-bottom: 15px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            .blogs-nav {
+                padding: 15px 0 0;
+                border-width: 1px 0 0 0;
+                border-top: 1px solid $border-color;
+                .blogs-time {
+                    color: $gray-600 !important;
+                    i {
+                        margin-right: 5px;
+                        color: $gray-900;
+                    }
+                }
+                .blogs-btn {
+                    width: auto;
+                    padding: 10px 23px;
+                }
+            }
+        }
+    }
+}

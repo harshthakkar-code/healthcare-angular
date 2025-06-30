@@ -1,0 +1,141 @@
+.content {
+    min-height: 200px;
+	padding: 60px 0 36px;
+	@include respond-below(lg) {
+    	padding: 40px 0 16px;
+    }
+	h4 {
+		font-size: $font-size-18;
+		font-weight: $font-weight-medium;
+	}
+}
+.top-space {
+	padding-top: 140px;
+}
+.account-page .content {
+	&.top-space {
+		padding-top: 140px;
+	}
+}
+.card {
+    border: 1px solid $border-color;
+	box-shadow: $box-shadow;
+    margin-bottom: 24px;
+	color: inherit;
+	border-radius: 10px;
+    .card-header {
+    	background-color: $white;    
+		border-bottom: 1px solid $border-color;
+		@include respond-below(custom575) {
+			@include margin-padding(null, .75rem 1.25rem);
+		}
+		.card-title {
+			font-size: $font-size-24;
+			font-weight: $font-weight-medium;
+			color: $gray-900;
+		    margin-bottom: 0;
+		}
+	}
+}
+.card-body {
+	padding: 20px;
+}
+.card-title {
+    margin-bottom: 15px;
+}
+.card-header {
+	border-bottom: 1px solid $border-color;
+	@include margin-padding(null, 1rem 1.5rem);
+	@include respond-below(custom575) {
+		@include margin-padding(null, .75rem 1.25rem);
+	}
+}
+.card-footer {
+	background-color: $__white;
+	border-top: 1px solid $border-color;
+	@include margin-padding(null, 1rem 1.5rem);
+	@include respond-below(custom575) {
+		@include margin-padding(null, .75rem 1.25rem);
+	}
+}
+.custom-modal {
+	.modal-content {
+    	border: 0;
+    	@include rounded(10px);
+    	.modal-header {
+		    @include margin-padding(null, 1.25rem);
+		    .modal-title {
+			    font-size: $__font__size__20;
+				@include respond-below(custom575) {
+					font-size: $__font__size__18;
+				}
+			}
+		}
+    }
+    .close {
+	    background-color: $__ash__gray;
+	    color: $__white;
+	    font-size:  $__font__size__17;
+	    height: 20px;
+	    line-height: 20px;
+	    opacity: 1;
+	    width: 20px;
+	    z-index: 99;
+	    @include rounded(50%);
+	    @include margin-padding(0, 0);
+	    @include position($__absolute, 26px, 20px, null, null);
+	}
+	.modal-body {
+	    @include margin-padding(null, 1.25rem);
+	}
+	.modal-footer {
+		padding: 1.25rem;
+		.btn-outline {
+			margin: .25rem $__auto;
+		}
+	}
+}
+.custom-medicalrecord-modal {
+	.modal-content {
+		.modal-header {
+			border-color: $__light__cloud;
+			@include margin-padding(1.5rem 1.5rem 0 1.5rem, 0 0 1rem);
+		}
+		.form-control, .bootstrap-tagsinput {
+			background-color: $__white__08;
+			border-color: $__white__08;
+		}
+		.select2-container {
+			.select2-selection--single {
+				background-color: $__white__08;
+				border-color: $__white__08;
+			}
+		}
+		.upload-medical-records {
+			position: $__relative;
+			input[type="file"] {
+				width: $__full__width;
+				height: $__full__height;
+				opacity: 0;
+				cursor: $__pointer;
+				@include position($__absolute, 0, 0, 0, 0);
+			}
+			.dropzone {
+				min-height: 180px;
+				@extend %flex-align-center;
+				@extend %flex-wrap;
+				h5 {
+					color: $__granite__01;
+					margin-bottom: 3px;
+				}
+				h6 {
+					color: $__granite__01;
+					margin-bottom: 3px;
+					span {
+						text-decoration: $__underline;
+					}
+				}
+			}
+		}
+	}
+}

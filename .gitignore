@@ -1,0 +1,29 @@
+# Node modules
+backend/node_modules/
+template/node_modules/
+template-rtl/node_modules/
+
+# Build outputs
+template/dist/
+template-rtl/dist/
+backend/uploads/
+
+# Environment files
+backend/.env
+template/.env
+template-rtl/.env
+
+# Logs
+*.log
+
+# IDE and system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Angular specific
+/template/.angular/
+/template-rtl/.angular/
+
+# Misc
+backend/tests/ 
