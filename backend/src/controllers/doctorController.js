@@ -317,4 +317,16 @@ exports.getReviewsForDoctor = async (req, res, next) => {
     const avgRating = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) : null;
     res.json({ avgRating, reviews });
   } catch (err) { next(err); }
+};
+
+exports.getAppointmentById = async (req, res, next) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id)
+      .populate('doctor', 'name email')
+      .populate('patient', 'name email');
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    res.json(appointment);
+  } catch (err) {
+    next(err);
+  }
 }; 

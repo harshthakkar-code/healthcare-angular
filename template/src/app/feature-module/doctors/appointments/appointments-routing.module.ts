@@ -20,16 +20,16 @@ const routes: Routes = [
         component: AppointmentListComponent,
       },
       {
-        path: 'doctor-cancelled-appointment',
-        component:DoctorCancelledAppointmentComponent,
+        path: 'doctor-cancelled-appointment/:id',
+        component: DoctorCancelledAppointmentComponent,
       },
       {
         path: 'doctor-cancelled-appointment2',
         component:DoctorCancelledAppointment2Component,
       },
       {
-        path: 'doctor-completed-appointment',
-        component:DoctorCompletedAppointmentComponent,
+        path: 'doctor-completed-appointment/:id',
+        component: DoctorCompletedAppointmentComponent,
       },
       {
         path: 'doctor-appointments-grid',
