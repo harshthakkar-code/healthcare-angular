@@ -1,4 +1,4 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, Renderer2, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { patientDashboard } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
@@ -15,6 +15,8 @@ import {
   ApexStroke,
 } from 'ng-apexcharts';
 import { OwlOptions } from 'ngx-owl-carousel-o';
+import { PatientDashboardService } from './patient-dashboard.service';
+
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
   chart: ApexChart | any;
@@ -32,7 +34,7 @@ export type ChartOptions = {
     styleUrls: ['./patient-dashboard.component.scss'],
     standalone: false
 })
-export class PatientDashboardComponent {
+export class PatientDashboardComponent implements OnInit {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions1: Partial<ChartOptions>;
   public chartOptions2: Partial<ChartOptions>;
@@ -104,8 +106,11 @@ export class PatientDashboardComponent {
       },
     },
   };
+  patientInfo: any;
+  appointments: any[] = [];
+  errorMessage = '';
 
-  constructor(private router: Router, private renderer: Renderer2) {
+  constructor(private router: Router, private renderer: Renderer2, private dashboardService: PatientDashboardService) {
     if (this.page == 'patient-dashboard') {
       this.renderer.addClass(document.body, 'date-pickers');
     }
@@ -185,5 +190,21 @@ export class PatientDashboardComponent {
         colors: ['transparent'],
       },
     };
+  }
+
+  async ngOnInit() {
+    try {
+      // Get profile using Bearer token
+      this.patientInfo = await this.dashboardService.getProfile();
+      // Get patientId from localStorage for appointments
+      const patientId = localStorage.getItem('userId');
+      if (!patientId) {
+        this.errorMessage = 'No patient ID found in local storage.';
+        return;
+      }
+      this.appointments = await this.dashboardService.getAppointments(patientId);
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Failed to load data';
+    }
   }
 }

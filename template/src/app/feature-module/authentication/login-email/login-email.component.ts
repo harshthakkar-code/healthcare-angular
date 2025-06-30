@@ -32,6 +32,9 @@ export class LoginEmailComponent {
         password: this.password
       });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('userId', response.data.user.id);
+      localStorage.setItem('role', response.data.user.role);
       this.router.navigate([this.routes.index]);
     } catch (error: any) {
       this.errorMessage = error.response?.data?.message || 'Login failed';

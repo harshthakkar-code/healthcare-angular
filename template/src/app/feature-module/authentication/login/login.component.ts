@@ -3,22 +3,22 @@ import { Router } from '@angular/router';
 import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    standalone: false
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  standalone: false
 })
 export class LoginComponent {
   public routes = routes;
   public email = '';
   public password = '';
   public errorMessage = '';
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
   public togglePasswordClass = false;
   togglePassword() {
     this.togglePasswordClass = !this.togglePasswordClass;
   }
-  navigation() : void{
+  navigation(): void {
     this.router.navigate([routes.index]);
   }
 
@@ -30,6 +30,9 @@ export class LoginComponent {
         password: this.password
       });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('userId', response.data.user.id);
+      localStorage.setItem('role', response.data.user.role);
       this.router.navigate([this.routes.index]);
     } catch (error: any) {
       this.errorMessage = error.response?.data?.message || 'Login failed';

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const DoctorProfile = require('../models/DoctorProfile');
+const PatientProfile = require('../models/PatientProfile');
 const { generateToken } = require('../utils/jwt');
 
 exports.register = async (req, res, next) => {
@@ -68,6 +69,27 @@ exports.register = async (req, res, next) => {
         employmentProof
       });
       await doctorProfile.save();
+    }
+
+    // 6. Create patient profile if patient
+    if (role === 'patient') {
+      const patientProfile = new PatientProfile({
+        user: user._id,
+        name,
+        email,
+        phone,
+        gender,
+        address,
+        address2,
+        city,
+        state,
+        pincode,
+        weight,
+        height,
+        age,
+        blood
+      });
+      await patientProfile.save();
     }
 
     res.status(201).json({ message: 'Registration successful, please login.' });
