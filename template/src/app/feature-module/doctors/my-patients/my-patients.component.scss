@@ -1,0 +1,118 @@
+.patients-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.patient-card-modern {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  padding: 24px 20px 16px 20px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: box-shadow 0.2s;
+  margin-bottom: 16px;
+}
+
+.patient-card-modern:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.patient-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.patient-avatar-modern {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+  background: #ffe96a;
+  border: 2px solid #fff;
+}
+
+.patient-id-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.apt-id {
+  color: #1976d2;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.patient-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.patient-appointment-info {
+  background: #f1f7ff;
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.appointment-date-location {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: #222;
+}
+
+.patient-last-booking {
+  font-size: 14px;
+  color: #444;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tab-bar button {
+  background: #f5f7fa;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.2s;
+  outline: none;
+  position: relative;
+}
+
+.tab-bar button.active {
+  background: #1976d2;
+  color: #fff;
+}
+
+.tab-count {
+  background: #fff;
+  color: #1976d2;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 13px;
+  margin-left: 6px;
+  font-weight: 600;
+}

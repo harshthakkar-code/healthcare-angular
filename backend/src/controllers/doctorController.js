@@ -164,7 +164,7 @@ exports.getAppointmentsByDoctor = async (req, res, next) => {
   try {
     const appointments = await Appointment.find({ doctor: req.params.doctorId })
       .populate('doctor', 'name email')
-      .populate('patient', 'name email');
+      .populate('patient');
     res.json(appointments);
   } catch (err) { next(err); }
 };
