@@ -1,0 +1,51 @@
+.request-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .divider {
+    width: 1px;
+    height: 20px;
+    background: #e0e0e0;
+    margin: 0 0.5rem;
+  }
+
+  .accept-link,
+  .reject-link {
+    background: none;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .accept-link {
+    color: #22c55e; // green
+    i {
+      margin-right: 4px;
+    }
+  }
+
+  .reject-link {
+    color: #ef4444; // red
+    i {
+      margin-right: 4px;
+    }
+  }
+
+  .accept-link:disabled,
+  .reject-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
