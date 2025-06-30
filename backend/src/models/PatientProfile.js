@@ -4,6 +4,7 @@ const patientProfileSchema = new mongoose.Schema({
   medicalHistory: String,
   documents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }],
   appointments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }],
+  profileImgUrl: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('PatientProfile', patientProfileSchema); 

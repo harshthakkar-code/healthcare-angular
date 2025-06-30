@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe } = require('../controllers/authController');
+const { register, login, getMe, requestOtp, loginOtp, forgotPasswordRequest, forgotPasswordVerify, resetPassword, googleLogin } = require('../controllers/authController');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
@@ -12,6 +12,12 @@ router.post('/register', upload.fields([
 ]), register);
 router.post('/login', login);
 router.get('/me', auth, getMe);
+router.post('/request-otp', requestOtp);
+router.post('/login-otp', loginOtp);
+router.post('/forgot-password-request', forgotPasswordRequest);
+router.post('/forgot-password-verify', forgotPasswordVerify);
+router.post('/reset-password', resetPassword);
+router.post('/google', googleLogin);
 router.get('/test', (req, res) => {
   res.json({ message: 'Frontend and backend are connected!' });
 });

@@ -2,6 +2,10 @@ const User = require('../models/User');
 const DoctorProfile = require('../models/DoctorProfile');
 const PatientProfile = require('../models/PatientProfile');
 const { generateToken } = require('../utils/jwt');
+const sendMail = require('../utils/sendMail');
+const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.register = async (req, res, next) => {
   try {
@@ -117,4 +121,107 @@ exports.getMe = async (req, res, next) => {
   try {
     res.json(req.user);
   } catch (err) { next(err); }
+};
+
+exports.requestOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required.' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Email not registered.' });
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otpCode = otp;
+    user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
+    await user.save();
+    // Send OTP via email
+    await sendMail({
+      to: user.email,
+      subject: 'Your Login OTP',
+      text: `Your OTP is: ${otp}`,
+      html: `<p>Your OTP is: <b>${otp}</b></p>`
+    });
+    res.json({ message: 'OTP sent to your email.' });
+  } catch (err) { next(err); }
+};
+
+exports.loginOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ message: 'Email and OTP are required.' });
+    const user = await User.findOne({ email });
+    if (!user || !user.otpCode || !user.otpExpiry) return res.status(400).json({ message: 'OTP not requested or expired.' });
+    if (user.otpCode !== otp) return res.status(400).json({ message: 'Invalid OTP.' });
+    if (user.otpExpiry < new Date()) return res.status(400).json({ message: 'OTP expired.' });
+    // Clear OTP fields
+    user.otpCode = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+    if (user.role === 'doctor' && !user.isApproved) return res.status(403).json({ message: 'Doctor not approved yet' });
+    const token = generateToken(user);
+    res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
+  } catch (err) { next(err); }
+};
+
+exports.forgotPasswordRequest = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required.' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Email not registered.' });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otpCode = otp;
+    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 min expiry
+    await user.save();
+    await sendMail({
+      to: user.email,
+      subject: 'Your Password Reset OTP',
+      text: `Your OTP is: ${otp}`,
+      html: `<p>Your OTP is: <b>${otp}</b></p>`
+    });
+    res.json({ message: 'OTP sent to your email.' });
+  } catch (err) { next(err); }
+};
+
+exports.forgotPasswordVerify = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !user.otpCode || !user.otpExpiry) return res.status(400).json({ message: 'OTP not requested or expired.' });
+    if (user.otpCode !== otp) return res.status(400).json({ message: 'Invalid OTP.' });
+    if (user.otpExpiry < new Date()) return res.status(400).json({ message: 'OTP expired.' });
+    res.json({ message: 'OTP verified.' });
+  } catch (err) { next(err); }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+    user.password = newPassword;
+    user.otpCode = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+    res.json({ message: 'Password updated successfully.' });
+  } catch (err) { next(err); }
+};
+
+exports.googleLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: 'No Google token provided.' });
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Email not registered.' });
+    const jwt = generateToken(user);
+    res.json({ token: jwt, user: { id: user._id, name: user.name, role: user.role } });
+  } catch (err) {
+    res.status(401).json({ message: 'Google login failed.' });
+  }
 }; 

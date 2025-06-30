@@ -7,6 +7,7 @@ import {
   register,
 } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
     selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
@@ -27,6 +28,12 @@ export class ResetPasswordComponent {
   public passwordResponce: passwordResponce = {};
   public confirmPasswordResponce: passwordResponce = {};
   public newPassword: newPassword[] = [];
+  public newPasswordValue = '';
+  public confirmPasswordValue = '';
+  public errorMessage = '';
+  public successMessage = '';
+  public loading = false;
+  public email = '';
 
   public newPasswordOwlOptions: OwlOptions = {
     margin: 25,
@@ -45,8 +52,11 @@ export class ResetPasswordComponent {
     },
   };
 
-  constructor(private DataService: DataService) {
+  constructor(private DataService: DataService, private route: ActivatedRoute, private router: Router) {
     this.newPassword = this.DataService.newPassword;
+    this.route.queryParams.subscribe(params => {
+      this.email = params['email'] || '';
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,5 +170,31 @@ export class ResetPasswordComponent {
   }
   togglePassword2() {
     this.togglePasswordClass2 = !this.togglePasswordClass2;
+  }
+
+  public submitResetPassword() {
+    this.errorMessage = '';
+    this.successMessage = '';
+    if (!this.newPasswordValue || !this.confirmPasswordValue) {
+      this.errorMessage = 'Please enter and confirm your new password.';
+      return;
+    }
+    if (this.newPasswordValue !== this.confirmPasswordValue) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+    this.loading = true;
+    this.DataService.resetPassword(this.email, this.newPasswordValue).subscribe({
+      next: (res) => {
+        this.successMessage = 'Password updated successfully. Redirecting to login...';
+        setTimeout(() => {
+          this.router.navigate(['authentication/login']);
+        }, 1500);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Failed to reset password.';
+        this.loading = false;
+      }
+    });
   }
 }

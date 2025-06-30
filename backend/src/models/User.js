@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema({
   selectedMembers: { type: Object },
   childCount: { type: Number },
   memberDetails: { type: Object },
+  profileImgUrl: { type: String },
+  otpCode: { type: String },
+  otpExpiry: { type: Date },
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

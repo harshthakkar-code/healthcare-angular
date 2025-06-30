@@ -98,22 +98,38 @@ exports.getDoctors = async (req, res, next) => {
     if (specialization) {
       query.specialization = specialization;
     }
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const doctors = await DoctorProfile.find(query)
+    let doctors = await DoctorProfile.find(query)
       .populate('specialization', 'name')
-      .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } })
-      .sort(sort)
-      .skip(skip)
-      .limit(parseInt(limit));
+      .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } });
+
     // Calculate average rating for each doctor
-    const doctorsWithAvg = doctors.map(doc => {
+    let doctorsWithAvg = doctors.map(doc => {
       const ratings = doc.reviews.map(r => r.rating);
-      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
       return { ...doc.toObject(), avgRating };
     });
-    const total = await DoctorProfile.countDocuments(query);
+
+    // Sort by avgRating if requested
+    if (sort === '-avgRating') {
+      doctorsWithAvg.sort((a, b) => b.avgRating - a.avgRating);
+    } else if (sort === 'avgRating') {
+      doctorsWithAvg.sort((a, b) => a.avgRating - b.avgRating);
+    } else {
+      // Default MongoDB sort for other fields (ascending)
+      doctorsWithAvg.sort((a, b) => {
+        if (a[sort] < b[sort]) return -1;
+        if (a[sort] > b[sort]) return 1;
+        return 0;
+      });
+    }
+
+    // Pagination and limit
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const paginatedDoctors = doctorsWithAvg.slice(skip, skip + parseInt(limit));
+    const total = doctorsWithAvg.length;
+
     res.json({
-      data: doctorsWithAvg,
+      data: paginatedDoctors,
       page: parseInt(page),
       totalPages: Math.ceil(total / limit),
       total

@@ -1,0 +1,43 @@
+.g_id_signin {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.social-fb-btn {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  height: 48px;
+  font-size: 18px;
+  font-weight: 500;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  color: #3b5998;
+}
+
+.social-fb-btn img {
+  margin-right: 8px;
+  height: 24px;
+}
+
+// Style Google button to match Facebook button
+::ng-deep .g_id_signin > div {
+  width: 100% !important;
+}
+::ng-deep .g_id_signin .abcRioButton {
+  width: 100% !important;
+  border-radius: 30px !important;
+  height: 48px !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  background: #fff !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: none !important;
+}
+::ng-deep .g_id_signin .abcRioButtonContentWrapper {
+  justify-content: center !important;
+}

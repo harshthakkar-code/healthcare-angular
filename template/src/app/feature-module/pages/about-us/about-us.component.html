@@ -196,139 +196,43 @@
     </div>
 
     <div class="row">
-
-      <!-- Doctor Item -->
-      <div class="col-lg-3 col-md-6 d-flex">
-        <div class="doctor-profile-widget w-100">
-          <div class="doc-pro-img">
-            <a [routerLink] = "routes.doctorProfile2">
-              <div class="doctor-profile-img">
-                <img src="assets/img/doctors/doctor-03.jpg" class="img-fluid" alt="Ruby Perrin">
-              </div>
-            </a>
-            <div class="doctor-amount">
-              <span>$ 200</span>
-            </div>
-          </div>
-          <div class="doc-content">
-            <div class="doc-pro-info">
-              <div class="doc-pro-name">
-                <a [routerLink] = "routes.doctorProfile2">Dr. Ruby Perrin</a>
-                <p>Cardiology</p>
-              </div>
-              <div class="reviews-ratings">
-                <p>
-                  <span><i class="fas fa-star"></i> 4.5</span> (35)
-                </p>
+      <ng-container *ngIf="topDoctors && topDoctors.length; else noDoctors">
+        <div class="col-lg-3 col-md-6 d-flex" *ngFor="let doctor of topDoctors">
+          <div class="doctor-profile-widget w-100">
+            <div class="doc-pro-img">
+              <a [routerLink]="routes.doctorProfile2">
+                <div class="doctor-profile-img">
+                  <img [src]="doctor.profileImage || doctor.avatar || 'assets/img/doctors/doctor-02.jpg'" class="img-fluid" [alt]="doctor.name">
+                </div>
+              </a>
+              <div class="doctor-amount" *ngIf="doctor.fees">
+                <span>$ {{ doctor.fees }}</span>
               </div>
             </div>
-            <div class="doc-pro-location">
-              <p><i class="feather icon-map-pin"></i> Newyork, USA</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /Doctor Item -->
-
-      <!-- Doctor Item -->
-      <div class="col-lg-3 col-md-6 d-flex">
-        <div class="doctor-profile-widget w-100">
-          <div class="doc-pro-img">
-            <a [routerLink] = "routes.doctorProfile2">
-              <div class="doctor-profile-img">
-                <img src="assets/img/doctors/doctor-04.jpg" class="img-fluid" alt="Darren Elder">
+            <div class="doc-content">
+              <div class="doc-pro-info">
+                <div class="doc-pro-name">
+                  <a [routerLink]="routes.doctorProfile2">{{ doctor.name }}</a>
+                  <p>{{ doctor.specialization?.name }}</p>
+                </div>
+                <div class="reviews-ratings">
+                  <p>
+                    <span><i class="fas fa-star"></i> {{ doctor.avgRating | number:'1.1-2' }}</span> ({{ doctor.reviews?.length || 0 }})
+                  </p>
+                </div>
               </div>
-            </a>
-            <div class="doctor-amount">
-              <span>$ 360</span>
-            </div>
-          </div>
-          <div class="doc-content">
-            <div class="doc-pro-info">
-              <div class="doc-pro-name">
-                <a [routerLink] = "routes.doctorProfile2">Dr. Darren Elder</a>
-                <p>Neurology</p>
+              <div class="doc-pro-location">
+                <p *ngIf="doctor.city"><i class="feather icon-map-pin"></i> {{ doctor.city }}</p>
               </div>
-              <div class="reviews-ratings">
-                <p>
-                  <span><i class="fas fa-star"></i> 4.0</span> (20)
-                </p>
-              </div>
-            </div>
-            <div class="doc-pro-location">
-              <p><i class="feather icon-map-pin"></i> Florida, USA</p>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /Doctor Item -->
-
-      <!-- Doctor Item -->
-      <div class="col-lg-3 col-md-6 d-flex">
-        <div class="doctor-profile-widget w-100">
-          <div class="doc-pro-img">
-            <a [routerLink] = "routes.doctorProfile2">
-              <div class="doctor-profile-img">
-                <img src="assets/img/doctors/doctor-05.jpg" class="img-fluid" alt="Sofia Brient">
-              </div>
-            </a>
-            <div class="doctor-amount">
-              <span>$ 450</span>
-            </div>
-          </div>
-          <div class="doc-content">
-            <div class="doc-pro-info">
-              <div class="doc-pro-name">
-                <a [routerLink] = "routes.doctorProfile2">Dr. Sofia Brient</a>
-                <p>Urology</p>
-              </div>
-              <div class="reviews-ratings">
-                <p>
-                  <span><i class="fas fa-star"></i> 4.5</span> (30)
-                </p>
-              </div>
-            </div>
-            <div class="doc-pro-location">
-              <p><i class="feather icon-map-pin"></i> Georgia, USA</p>
-            </div>
-          </div>
+      </ng-container>
+      <ng-template #noDoctors>
+        <div class="col-12 text-center">
+          <p>No doctors found.</p>
         </div>
-      </div>
-      <!-- /Doctor Item -->
-
-      <!-- Doctor Item -->
-      <div class="col-lg-3 col-md-6 d-flex">
-        <div class="doctor-profile-widget w-100">
-          <div class="doc-pro-img">
-            <a [routerLink] = "routes.doctorProfile2">
-              <div class="doctor-profile-img">
-                <img src="assets/img/doctors/doctor-02.jpg" class="img-fluid" alt="Paul Richard">
-              </div>
-            </a>
-            <div class="doctor-amount">
-              <span>$ 570</span>
-            </div>
-          </div>
-          <div class="doc-content">
-            <div class="doc-pro-info">
-              <div class="doc-pro-name">
-                <a [routerLink] = "routes.doctorProfile2">Dr. Paul Richard</a>
-                <p>Orthopedic</p>
-              </div>
-              <div class="reviews-ratings">
-                <p>
-                  <span><i class="fas fa-star"></i> 4.3</span> (45)
-                </p>
-              </div>
-            </div>
-            <div class="doc-pro-location">
-              <p><i class="feather icon-map-pin"></i> Michigan, USA</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /Doctor Item -->
-
+      </ng-template>
     </div>
   </div>
 </section>

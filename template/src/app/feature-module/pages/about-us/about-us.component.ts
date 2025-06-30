@@ -12,6 +12,7 @@ import { routes } from 'src/app/shared/routes/routes';
 export class AboutUsComponent {
   public routes = routes;
   public aboutUs: aboutUs[];
+  public topDoctors: any[] = [];
   public slideConfig = {
     dots: false,
     autoplay: false,
@@ -54,5 +55,9 @@ export class AboutUsComponent {
   };
   constructor(private data: DataService) {
     this.aboutUs = this.data.aboutUs;
+    // Fetch top 4 doctors by rating
+    this.data.getTopRatedDoctors().subscribe(res => {
+      this.topDoctors = res.data;
+    });
   }
 }
