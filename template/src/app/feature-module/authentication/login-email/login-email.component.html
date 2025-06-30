@@ -10,12 +10,12 @@
                         <div class="login-title">
                             <h3>Sign in</h3>
                             <p>We'll send a confirmation code to your email.</p>
-                            <span>Sign in with <a [routerLink] = "routes.loginPhone">Phone Number</a></span>
+                            <!-- <span>Sign in with <a [routerLink] = "routes.loginPhone">Phone Number</a></span> -->
                         </div>
-                        <form>
+                        <form (ngSubmit)="login()" autocomplete="off">
                             <div class="mb-3">
                                 <label class="mb-2 form-label" for="email">E-mail</label>
-                                <input type="text" class="form-control">
+                                <input type="email" class="form-control" [(ngModel)]="email" name="email" required>
                             </div>
                             <div class="mb-3">
                                 <div class="form-group-flex">
@@ -23,8 +23,8 @@
                                     <a [routerLink] = "routes.forgotPassword" class="forgot-link">Forgot password?</a>
                                 </div>
                                 <div class="pass-group">
-                                    <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input">
-                                    <span (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" class="toggle-password" [ngClass]=" togglePasswordClass ?  'feather icon-eye' : 'feather icon-eye-off'"></span>
+                                    <input [type]="togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" [(ngModel)]="password" name="password" required>
+                                    <span (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" class="toggle-password" [ngClass]="togglePasswordClass ? 'feather icon-eye' : 'feather icon-eye-off'"></span>
                                 </div>
                             </div>
                             <div class="mb-3 form-check-box">
@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary w-100" type="button" (click)="navigation()" (keydown)="navigation()" tabindex="1">Sign in</button>
+                                <button class="btn btn-primary w-100" type="submit">Sign in</button>
                             </div>
                             <div class="login-or">
                                 <span class="or-line"></span>
@@ -61,6 +61,7 @@
                             <div class="account-signup">
                                 <p>Don't have an account ? <a [routerLink] = "routes.signup">Sign up</a></p>
                             </div>
+                            <div *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</div>
                         </form>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { LoginEmailRoutingModule } from './login-email-routing.module';
 import { LoginEmailComponent } from './login-email.component';
@@ -11,6 +12,7 @@ import { LoginEmailComponent } from './login-email.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     LoginEmailRoutingModule
   ]
 })
