@@ -1572,7 +1572,7 @@ export class DataService {
       location: 'California',
     },
     {
-      img: 'assets/img/clients/client-05.jpg',
+      img: 'assets/img/clients/client-04.jpg',
       heading1: 'Testimonials',
       heading2: 'What Our Client Says',
       content:
