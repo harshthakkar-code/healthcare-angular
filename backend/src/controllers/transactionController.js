@@ -11,25 +11,78 @@ exports.createTransaction = async (req, res, next) => {
 
 exports.getTransactions = async (req, res, next) => {
   try {
-    const { status, startDate, endDate } = req.query;
-    let filter = {};
-    if (status) filter.status = status;
+    const { status, startDate, endDate, page = 1, limit = 10, search } = req.query;
+    const match = {};
+
+    if (status) match.status = status;
     if (startDate || endDate) {
-      filter.createdAt = {};
-      if (startDate) filter.createdAt.$gte = new Date(startDate);
-      if (endDate) filter.createdAt.$lte = new Date(endDate);
+      match.createdAt = {};
+      if (startDate) match.createdAt.$gte = new Date(startDate);
+      if (endDate) match.createdAt.$lte = new Date(endDate);
     }
-    const transactions = await Transaction.find(filter)
-      .populate({
-        path: 'appointment',
-        populate: [
-          { path: 'patient', select: 'name email' },
-          { path: 'doctor', select: 'name _id' }
-        ],
-        select: 'patient doctor appointmentDate'
-      })
-      .sort({ createdAt: -1 });
-    res.json(transactions);
+
+    // Build search match
+    let searchMatch = {};
+    if (search) {
+      searchMatch = {
+        $or: [
+          { 'appointment.patient.name': { $regex: search, $options: 'i' } },
+          { '_id': { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const pipeline = [
+      { $match: match },
+      {
+        $lookup: {
+          from: 'appointments',
+          localField: 'appointment',
+          foreignField: '_id',
+          as: 'appointment'
+        }
+      },
+      { $unwind: '$appointment' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'appointment.patient',
+          foreignField: '_id',
+          as: 'appointment.patient'
+        }
+      },
+      { $unwind: '$appointment.patient' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'appointment.doctor',
+          foreignField: '_id',
+          as: 'appointment.doctor'
+        }
+      },
+      { $unwind: '$appointment.doctor' },
+      { $addFields: { idStr: { $toString: '$_id' } } },
+      // Add search match if needed
+      ...(search ? [{ $match: {
+        'appointment.patient.name': { $regex: search, $options: 'i' }
+      }}] : []),
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          data: [
+            { $skip: (parseInt(page) - 1) * parseInt(limit) },
+            { $limit: parseInt(limit) }
+          ],
+          total: [{ $count: 'count' }]
+        }
+      }
+    ];
+
+    const result = await Transaction.aggregate(pipeline);
+    const data = result[0].data;
+    const total = result[0].total[0]?.count || 0;
+
+    res.json({ total, page: parseInt(page), limit: parseInt(limit), data });
   } catch (err) { next(err); }
 };
 
@@ -42,7 +95,7 @@ exports.getTransaction = async (req, res, next) => {
           { path: 'patient', select: 'name email' },
           { path: 'doctor', select: 'name _id' }
         ],
-        select: 'patient doctor appointmentDate'
+        select: 'patient doctor date createdAt time service'
       });
     if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
     res.json(transaction);
