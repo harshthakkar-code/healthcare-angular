@@ -1,5 +1,6 @@
 const Review = require('../models/Review');
 const DoctorProfile = require('../models/DoctorProfile');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 // Create a review for a doctor
 exports.createReview = async (req, res, next) => {
@@ -36,14 +37,30 @@ exports.createReview = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// Get all reviews for a doctor (with patient info)
+// Get all reviews for a doctor (with patient info) with pagination
 exports.getReviewsForDoctor = async (req, res, next) => {
   try {
     const { doctorId } = req.params;
-    const reviews = await Review.find({ doctor: doctorId })
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 5;
+
+    const filter = { doctor: doctorId };
+
+    const totalReviews = await Review.countDocuments(filter);
+
+    const reviews = await Review.find(filter)
       .populate('patient', 'name email avatar')
-      .sort({ createdAt: -1 });
-    const avgRating = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) : null;
-    res.json({ avgRating, reviews });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    const avgRating = totalReviews
+      ? (await Review.aggregate([
+          { $match: { doctor: new ObjectId(doctorId) } },
+          { $group: { _id: null, avg: { $avg: '$rating' } } }
+        ])).at(0)?.avg || null
+      : null;
+
+    res.json({ avgRating, reviews, totalReviews });
   } catch (err) { next(err); }
 }; 
