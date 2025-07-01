@@ -17,6 +17,7 @@ import {
   
   
 } from "ng-apexcharts";
+import api from 'src/app/shared/api/axios';
 
 
 export type ChartOptions = {
@@ -51,6 +52,12 @@ export class DoctorDashboardComponent {
   dataSource!: MatTableDataSource<doctorDashboard>;
   public searchDataValue = '';
   // pagination variables end
+
+  public totalPatients: number = 0;
+  public patientsToday: number = 0;
+  public appointmentsToday: number = 0;
+  public appointments: any[] = [];
+  public invoices: any[] = [];
 
   constructor(
     private data: DataService,
@@ -133,6 +140,72 @@ export class DoctorDashboardComponent {
     };
   }
 
+  ngOnInit(): void {
+    this.fetchDoctorStats();
+    this.fetchDashboardInvoices();
+  }
+
+  getDoctorIdFromLocalStorage(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
+  }
+
+  updateAppointmentChart() {
+    // Get the last 7 days (including today)
+    const days: string[] = [];
+    const counts: number[] = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      days.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+      const dayStr = d.toISOString().slice(0, 10);
+      counts.push(this.appointments.filter(a => a.date && a.date.slice(0, 10) === dayStr).length);
+    }
+    if (this.chartOptions2 && this.chartOptions2.series && this.chartOptions2.series[0]) {
+      this.chartOptions2.series[0].data = counts;
+      this.chartOptions2.xaxis = { categories: days };
+    }
+  }
+
+  async fetchDoctorStats() {
+    const doctorId = this.getDoctorIdFromLocalStorage();
+    if (!doctorId) return;
+    try {
+      const res = await api.get(`/doctor/appointments/doctor/${doctorId}`);
+      const allAppointments = res.data;
+      // Sort by date descending
+      this.appointments = allAppointments
+        .filter((a: any) => a.date)
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
+      // Unique patients
+      const patientIds = new Set(allAppointments.map((a: any) => a.patient && a.patient._id ? a.patient._id : a.patient));
+      this.totalPatients = patientIds.size;
+      // Today's date (ignore time)
+      const today = new Date();
+      const todayStr = today.toISOString().slice(0, 10);
+      this.patientsToday = new Set(
+        allAppointments.filter((a: any) => a.date && a.date.slice(0, 10) === todayStr)
+          .map((a: any) => a.patient && a.patient._id ? a.patient._id : a.patient)
+      ).size;
+      this.appointmentsToday = allAppointments.filter((a: any) => a.date && a.date.slice(0, 10) === todayStr).length;
+      // Update appointment chart
+      this.appointments = allAppointments.filter((a: any) => a.date);
+      this.updateAppointmentChart();
+    } catch (error) {
+      this.appointments = [];
+      this.totalPatients = 0;
+      this.patientsToday = 0;
+      this.appointmentsToday = 0;
+      this.updateAppointmentChart();
+    }
+  }
+
   private getTableData(pageOption: pageSelection): void {
     this.data.getDoctorDashboard1().subscribe((apiRes: apiResultFormat) => {
       this.tableData = [];
@@ -210,5 +283,74 @@ export class DoctorDashboardComponent {
         return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
       });
     }
+  }
+
+  async updateAppointmentStatus(appointment: any, status: 'accepted' | 'rejected') {
+    try {
+      const res = await api.put(`/doctor/appointments/${appointment._id}/status`, { status });
+      appointment.status = res.data.status;
+    } catch (error) {
+      // Optionally show an error message
+    }
+  }
+
+  getStatusBadgeClass(status: string): string {
+    if (status === 'accepted') return 'badge bg-success';
+    if (status === 'rejected') return 'badge bg-danger';
+    return 'badge bg-secondary';
+  }
+
+  get upcomingAppointment() {
+    const now = new Date();
+    return this.appointments
+      .filter(a => a.date && new Date(a.date) >= now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+  }
+
+  async fetchDashboardInvoices() {
+    try {
+      const res = await api.get('/transactions', { params: { page: 1, limit: 5 } });
+      this.invoices = res.data.data || [];
+    } catch (error) {
+      this.invoices = [];
+    }
+  }
+
+  get recentPatients() {
+    // Sort appointments by date descending
+    const sorted = [...this.appointments]
+      .filter(a => a.patient)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const seen = new Set();
+    const uniquePatients = [];
+    for (const appt of sorted) {
+      const pid = appt.patient?._id || appt.patient;
+      if (!seen.has(pid)) {
+        uniquePatients.push(appt.patient);
+        seen.add(pid);
+      }
+      if (uniquePatients.length === 2) break;
+    }
+    return uniquePatients;
+  }
+
+  getLastAppointmentDate(patient: any): Date | null {
+    const appt = this.appointments
+      .filter(a => a.patient)
+      .find(a => (a.patient?._id || a.patient) === (patient?._id || patient));
+    return appt?.date ? new Date(appt.date) : null;
+  }
+
+  get weeklyOverviewRange(): string {
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - 6);
+    const options: Intl.DateTimeFormatOptions = { month: 'short', day: '2-digit' };
+    return `${start.toLocaleDateString('en-US', options)} - ${today.toLocaleDateString('en-US', options)}`;
+  }
+
+  formatPatientId(id: string | undefined): string {
+    if (!id) return '';
+    return id.slice(0, 6) + '..';
   }
 }

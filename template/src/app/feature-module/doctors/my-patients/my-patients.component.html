@@ -209,34 +209,40 @@
                 <div *ngIf="!loading && ((activeTab === 'active' && filteredActivePatients.length > 0) || (activeTab === 'inactive' && filteredInactivePatients.length > 0))">
                     <div class="patients-list">
                         <div *ngFor="let patient of activeTab === 'active' ? filteredActivePatients : filteredInactivePatients" class="patient-card-modern">
+                            <div style="display: flex;">
+                            
                             <div class="patient-card-header">
                                 <img [src]="patient.profileImage || 'assets/img/default-avatar.png'" alt="{{ patient.name }}" class="patient-avatar-modern" />
                             </div>
+                            <div>
                             <div class="patient-id-name" style="margin-bottom: 4px;">
                                 <span class="apt-id">#{{ patient.lastAppointment?._id?.slice(-6) }}</span>
                                 <h4>{{ patient.name }}</h4>
                             </div>
-                            <div class="patient-meta">
-                                <span>Age : {{ patient.age }}</span>
+                            <div class="patient-meta" style="display: block;">
+                                <span style="margin-right:8px ;">Age : {{ patient.age }}</span>
                                 <span>|</span>
-                                <span>{{ patient.gender }}</span>
+                                <span style="margin: 0px 8px 0px 8px;">{{ patient.gender | titlecase }}</span>
                                 <span>|</span>
-                                <span>{{ patient.blood }}</span>
+                                <span style="margin-left: 8px;">{{ patient.blood }}</span>
+                            </div>
+                            </div>
                             </div>
                             <div class="patient-appointment-info">
                                 <div class="appointment-date-location">
                                     <div>
-                                        <i class="fa fa-clock-o"></i>
+                                        <i class="isax isax-clock5"></i>
                                         {{ patient.lastAppointment?.date | date:'dd MMM yyyy hh.mm a' }}
                                     </div>
                                     <div>
-                                        <i class="fa fa-map-marker"></i>
+                                        <i class="isax isax-location5"></i>
                                         {{ patient.lastAppointment?.city || patient.city }}, {{ patient.lastAppointment?.state || patient.state }}
                                     </div>
                                 </div>
                             </div>
+                            <div style="width: 100%; border: 1px solid #E6E8EE; margin-bottom: 8px;"></div>
                             <div class="patient-last-booking">
-                                <i class="fa fa-calendar"></i>
+                                <i class="isax isax-calendar-1" style="margin-right: 5px ;"></i>
                                 Last Booking {{ patient.lastBooking | date:'dd MMM yyyy' }}
                             </div>
                         </div>

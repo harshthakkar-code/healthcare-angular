@@ -14,11 +14,11 @@
               <div class="dashboard-widget-box">
                 <div class="dashboard-content-info">
                   <h6>Total Patient</h6>
-                  <h4>978</h4>
-                  <span class="text-success"
+                  <h4>{{ totalPatients }}</h4>
+                  <!-- <span class="text-success"
                     ><i class="fa-solid fa-arrow-up"></i>15% From Last
                     Week</span
-                  >
+                  > -->
                 </div>
                 <div class="dashboard-widget-icon">
                   <span class="dash-icon-box"
@@ -29,11 +29,11 @@
               <div class="dashboard-widget-box">
                 <div class="dashboard-content-info">
                   <h6>Patients Today</h6>
-                  <h4>80</h4>
-                  <span class="text-danger"
+                  <h4>{{ patientsToday }}</h4>
+                  <!-- <span class="text-danger"
                     ><i class="fa-solid fa-arrow-up"></i>15% From
                     Yesterday</span
-                  >
+                  > -->
                 </div>
                 <div class="dashboard-widget-icon">
                   <span class="dash-icon-box"
@@ -44,11 +44,11 @@
               <div class="dashboard-widget-box">
                 <div class="dashboard-content-info">
                   <h6>Appointments Today</h6>
-                  <h4>50</h4>
-                  <span class="text-success"
+                  <h4>{{ appointmentsToday }}</h4>
+                  <!-- <span class="text-success"
                     ><i class="fa-solid fa-arrow-up"></i>20% From
                     Yesterday</span
-                  >
+                  > -->
                 </div>
                 <div class="dashboard-widget-icon">
                   <span class="dash-icon-box"
@@ -64,7 +64,7 @@
                 <div class="header-title">
                   <h5>Appointment</h5>
                 </div>
-                <div class="dropdown header-dropdown">
+                <!-- <div class="dropdown header-dropdown">
                   <a
                     class="dropdown-toggle nav-tog"
                     data-bs-toggle="dropdown"
@@ -83,228 +83,47 @@
                       Last 7 Days
                     </a>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="dashboard-card-body">
                 <div class="table-responsive">
                   <table class="table dashboard-table appoint-table">
                     <tbody>
-                      <tr>
+                      <tr *ngFor="let appt of appointments">
                         <td>
                           <div class="patient-info-profile">
-                            <a
-                              [routerLink]="routes.appointmentsListUser"
-                              class="table-avatar"
-                            >
-                              <img
-                                src="assets/img/doctors-dashboard/profile-01.jpg"
-                                alt="Img"
-                              />
+                            <a class="table-avatar">
+                              <img [src]="appt.patient?.avatar || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
                             </a>
                             <div class="patient-name-info">
-                              <span>#Apt0001</span>
+                              <span>#{{ appt._id?.slice(-6) }}</span>
                               <h5>
-                                <a [routerLink]="routes.appointmentsListUser"
-                                  >Adrian Marshall</a
-                                >
+                                <a>{{ appt.patient?.name || 'Unknown' }}</a>
                               </h5>
                             </div>
                           </div>
                         </td>
                         <td>
                           <div class="appointment-date-created">
-                            <h6>11 Nov 2024 10.45 AM</h6>
-                            <span class="badge table-badge">General</span>
+                            <h6>{{ appt.date | date:'dd MMM yyyy hh:mm a' }}</h6>
+                            <span class="badge bg-primary ms-1">{{ appt.appointmentType || 'General' }}</span>
                           </div>
                         </td>
                         <td>
-                          <div
-                            class="apponiment-actions d-flex align-items-center"
-                          >
-                            <a
-                              href="javascript:void(0);"
-                              class="text-success me-2"
-                              ><i class="fa-solid fa-check"></i
-                            ></a>
-                            <a href="javascript:void(0);" class="text-danger"
-                              ><i class="fa-solid fa-xmark"></i
-                            ></a>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="patient-info-profile">
-                            <a
-                              [routerLink]="routes.appointmentsListUser"
-                              class="table-avatar"
-                            >
-                              <img
-                                src="assets/img/doctors-dashboard/profile-02.jpg"
-                                alt="Img"
-                              />
-                            </a>
-                            <div class="patient-name-info">
-                              <span>#Apt0002</span>
-                              <h5>
-                                <a [routerLink]="routes.appointmentsListUser"
-                                  >Kelly Stevens</a
-                                >
-                              </h5>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="appointment-date-created">
-                            <h6>10 Nov 2024 11.00 AM</h6>
-                            <span class="badge table-badge"
-                              >Clinic Consulting</span
-                            >
-                          </div>
-                        </td>
-                        <td>
-                          <div
-                            class="apponiment-actions d-flex align-items-center"
-                          >
-                            <a
-                              href="javascript:void(0);"
-                              class="text-success me-2"
-                              ><i class="fa-solid fa-check"></i
-                            ></a>
-                            <a href="javascript:void(0);" class="text-danger"
-                              ><i class="fa-solid fa-xmark"></i
-                            ></a>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="patient-info-profile">
-                            <a
-                              [routerLink]="routes.appointmentsListUser"
-                              class="table-avatar"
-                            >
-                              <img
-                                src="assets/img/doctors-dashboard/profile-03.jpg"
-                                alt="Img"
-                              />
-                            </a>
-                            <div class="patient-name-info">
-                              <span>#Apt0003</span>
-                              <h5>
-                                <a [routerLink]="routes.appointmentsListUser"
-                                  >Samuel Anderson</a
-                                >
-                              </h5>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="appointment-date-created">
-                            <h6>03 Nov 2024 02.00 PM</h6>
-                            <span class="badge table-badge">General</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div
-                            class="apponiment-actions d-flex align-items-center"
-                          >
-                            <a
-                              href="javascript:void(0);"
-                              class="text-success me-2"
-                              ><i class="fa-solid fa-check"></i
-                            ></a>
-                            <a href="javascript:void(0);" class="text-danger"
-                              ><i class="fa-solid fa-xmark"></i
-                            ></a>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="patient-info-profile">
-                            <a
-                              [routerLink]="routes.appointmentsListUser"
-                              class="table-avatar"
-                            >
-                              <img
-                                src="assets/img/doctors-dashboard/profile-04.jpg"
-                                alt="Img"
-                              />
-                            </a>
-                            <div class="patient-name-info">
-                              <span>#Apt0004</span>
-                              <h5>
-                                <a [routerLink]="routes.appointmentsListUser"
-                                  >Catherine Griffin</a
-                                >
-                              </h5>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="appointment-date-created">
-                            <h6>01 Nov 2024 04.00 PM</h6>
-                            <span class="badge table-badge"
-                              >Clinic Consulting</span
-                            >
-                          </div>
-                        </td>
-                        <td>
-                          <div
-                            class="apponiment-actions d-flex align-items-center"
-                          >
-                            <a
-                              href="javascript:void(0);"
-                              class="text-success me-2"
-                              ><i class="fa-solid fa-check"></i
-                            ></a>
-                            <a href="javascript:void(0);" class="text-danger"
-                              ><i class="fa-solid fa-xmark"></i
-                            ></a>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="patient-info-profile">
-                            <a
-                              [routerLink]="routes.appointmentsListUser"
-                              class="table-avatar"
-                            >
-                              <img
-                                src="assets/img/doctors-dashboard/profile-05.jpg"
-                                alt="Img"
-                              />
-                            </a>
-                            <div class="patient-name-info">
-                              <span>#Apt0005</span>
-                              <h5>
-                                <a [routerLink]="routes.appointmentsListUser"
-                                  >Robert Hutchinson</a
-                                >
-                              </h5>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="appointment-date-created">
-                            <h6>28 Oct 2024 05.30 PM</h6>
-                            <span class="badge table-badge">General</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div
-                            class="apponiment-actions d-flex align-items-center"
-                          >
-                            <a
-                              href="javascript:void(0);"
-                              class="text-success me-2"
-                              ><i class="fa-solid fa-check"></i
-                            ></a>
-                            <a href="javascript:void(0);" class="text-danger"
-                              ><i class="fa-solid fa-xmark"></i
-                            ></a>
+                          <div class="apponiment-actions d-flex align-items-center">
+                            <ng-container *ngIf="appt.status === 'pending'; else statusBadge">
+                              <button type="button" class="text-success me-2 btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'accepted')">
+                                <i class="fa-solid fa-check"></i>
+                              </button>
+                              <button type="button" class="text-danger btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'rejected')">
+                                <i class="fa-solid fa-xmark"></i>
+                              </button>
+                            </ng-container>
+                            <ng-template #statusBadge>
+                              <span class="badge table-badge" [ngClass]="getStatusBadgeClass(appt.status)">
+                                {{ appt.status | titlecase }}
+                              </span>
+                            </ng-template>
                           </div>
                         </td>
                       </tr>
@@ -322,7 +141,7 @@
                     <h5>Weekly Overview</h5>
                   </div>
                   <div class="chart-create-date">
-                    <h6>Mar 14 - Mar 21</h6>
+                    <h6>{{ weeklyOverviewRange }}</h6>
                   </div>
                 </div>
                 <div class="dashboard-card-body">
@@ -409,34 +228,34 @@
                 </div>
                 <div class="dashboard-card-body">
                   <div class="d-flex recent-patient-grid-boxes">
-                    <div class="recent-patient-grid">
-                      <a [routerLink]="routes.patientDetails" class="patient-img">
-                        <img
-                          src="assets/img/doctors-dashboard/profile-01.jpg"
-                          alt="Img"
-                        />
-                      </a>
-                      <h5>
-                        <a [routerLink]="routes.patientDetails">Adrian Marshall</a>
-                      </h5>
-                      <span>Patient ID : P0001</span>
-                      <div class="date-info">
-                        <h6>Last Appointment 15 Mar 2024</h6>
+                    <ng-container *ngFor="let patient of recentPatients; let i = index">
+                      <div class="recent-patient-grid">
+                        <a [routerLink]="routes.patientDetails" class="patient-img">
+                          <img [src]="patient?.avatar || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'" alt="Img" />
+                        </a>
+                        <h5>
+                          <a [routerLink]="routes.patientDetails">{{ patient?.name || 'Unknown' }}</a>
+                        </h5>
+                        <span>Patient ID : {{ formatPatientId(patient?._id || 'P000' + (i+1)) }}</span>
+                        <div class="date-info">
+                          <p>Last Appointment {{ getLastAppointmentDate(patient) | date:'dd MMM yyyy' }}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div class="recent-patient-grid">
-                      <a [routerLink]="routes.patientDetails" class="patient-img">
-                        <img
-                          src="assets/img/doctors-dashboard/profile-02.jpg"
-                          alt="Img"
-                        />
-                      </a>
-                      <h5><a [routerLink]="routes.patientDetails">Kelly Stevens</a></h5>
-                      <span>Patient ID : P0002</span>
-                      <div class="date-info">
-                        <h6>Last Appointment 13 Mar 2024</h6>
+                    </ng-container>
+                    <ng-container *ngIf="recentPatients.length === 0">
+                      <div class="recent-patient-grid">
+                        <a [routerLink]="routes.patientDetails" class="patient-img">
+                          <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img" />
+                        </a>
+                        <h5>
+                          <a [routerLink]="routes.patientDetails">No Recent Patient</a>
+                        </h5>
+                        <span>Patient ID : --</span>
+                        <div class="date-info">
+                          <h6>Last Appointment --</h6>
+                        </div>
                       </div>
-                    </div>
+                    </ng-container>
                   </div>
                 </div>
               </div>
@@ -448,32 +267,49 @@
                 <div class="title-card">
                   <h5>Upcoming Appointment</h5>
                 </div>
-                <div class="upcoming-patient-info">
-                  <div class="info-details">
-                    <span class="img-avatar"><img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"></span>
-                    <div class="name-info">
-                      <span>#Apt0001</span>
-                      <h6>Adrian Marshall</h6>
+                <ng-container *ngIf="upcomingAppointment; else noUpcoming">
+                  <div class="upcoming-patient-info">
+                    <div class="info-details">
+                      <span class="img-avatar"><img [src]="upcomingAppointment.patient?.avatar || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img"></span>
+                      <div class="name-info">
+                        <span>#{{ upcomingAppointment._id?.slice(-6) }}</span>
+                        <h6>{{ upcomingAppointment.patient?.name || 'Unknown' }}</h6>
+                      </div>
                     </div>
-                    
+                    <div class="date-details">
+                      <span>{{ upcomingAppointment.appointmentType || 'General visit' }}</span>
+                      <h6>{{ upcomingAppointment.date | date:'dd MMM yyyy, hh:mm a' }}</h6>
+                    </div>
+                    <div class="circle-bg">
+                      <img src="assets/img/bg/dashboard-circle-bg.png" alt="">
+                    </div>
                   </div>
-                  <div class="date-details">
-                    <span>General visit</span>
-                    <h6>Today, 10:45 AM</h6>
+                  <div class="appointment-card-footer">
+                    <h5><i class="fa-solid fa-video"></i>Video Appointment</h5>
+                    <div class="btn-appointments">
+                      <a [routerLink]="routes.chatDoctor" class="btn">Chat Now</a>
+                      <a [routerLink]="routes.doctorAppointmentStart" class="btn">Start Appointment</a>
+                    </div>
                   </div>
-                  <div class="circle-bg">
-                    <img src="assets/img/bg/dashboard-circle-bg.png" alt="">
+                </ng-container>
+                <ng-template #noUpcoming>
+                  <div class="upcoming-patient-info">
+                    <div class="info-details">
+                      <span class="img-avatar"><img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img"></span>
+                      <div class="name-info">
+                        <span>#Apt0001</span>
+                        <h6>No Upcoming Appointment</h6>
+                      </div>
+                    </div>
+                    <div class="date-details">
+                      <span>--</span>
+                      <h6>--</h6>
+                    </div>
+                    <div class="circle-bg">
+                      <img src="assets/img/bg/dashboard-circle-bg.png" alt="">
+                    </div>
                   </div>
-                </div>
-                <div class="appointment-card-footer">
-                  <h5><i class="fa-solid fa-video"></i>Video Appointment</h5>
-                  <div class="btn-appointments">
-                    <a [routerLink]="routes.chatDoctor" class="btn">Chat Now</a>
-                    <a [routerLink] = "routes.doctorAppointmentStart" class="btn"
-                      >Start Appointment</a
-                    >
-                  </div>
-                </div>
+                </ng-template>
               </div>
               <div class="dashboard-card w-100">
                 <div class="dashboard-card-head">
@@ -488,211 +324,35 @@
                   <div class="table-responsive">
                     <table class="table dashboard-table">
                       <tbody>
-                        <tr>
+                        <tr *ngFor="let invoice of invoices | slice:0:5">
                           <td>
                             <div class="patient-info-profile">
-                              <a
-                                [routerLink]="routes.invoice"
-                                class="table-avatar"
-                              >
-                                <img
-                                  src="assets/img/doctors-dashboard/profile-01.jpg"
-                                  alt="Img"
-                                />
+                              <a [routerLink]="routes.invoice" class="table-avatar">
+                                <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img" />
                               </a>
                               <div class="patient-name-info">
                                 <h5>
-                                  <a [routerLink]="routes.invoice">Adrian</a>
+                                  <a [routerLink]="routes.invoice">{{ invoice.patient?.name || invoice.patientName || 'Unknown' }}</a>
                                 </h5>
-                                <span>#Apt0001</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Amount</span>
-                              <h6>$450</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Paid On</span>
-                              <h6>11 Nov 2024</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div
-                              class="apponiment-view d-flex align-items-center"
-                            >
-                              <a [routerLink]="routes.invoiceView"
-                                ><i class="isax isax-eye4"></i
-                              ></a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="patient-info-profile">
-                              <a
-                                href="javascript:void(0);"
-                                class="table-avatar"
-                              >
-                                <img
-                                  src="assets/img/doctors-dashboard/profile-02.jpg"
-                                  alt="Img"
-                                />
-                              </a>
-                              <div class="patient-name-info">
-                                <h5><a href="javascript:void(0);">Kelly</a></h5>
-                                <span>#Apt0002</span>
+                                <span>#{{ invoice.appointmentId || invoice._id?.slice(-6) }}</span>
                               </div>
                             </div>
                           </td>
                           <td>
                             <div class="appointment-date-created">
                               <span class="paid-text">Paid On</span>
-                              <h6>10 Nov 2024</h6>
+                              <h6>{{ invoice.paidOn ? (invoice.paidOn | date:'dd MMM yyyy') : (invoice.createdAt | date:'dd MMM yyyy') }}</h6>
                             </div>
                           </td>
                           <td>
                             <div class="appointment-date-created">
                               <span class="paid-text">Amount</span>
-                              <h6>$500</h6>
+                              <h6>${{ invoice.amount || invoice.total || 0 }}</h6>
                             </div>
                           </td>
                           <td>
-                            <div
-                              class="apponiment-view d-flex align-items-center"
-                            >
-                              <a href="javascript:void(0);"
-                                ><i class="isax isax-eye4"></i
-                              ></a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="patient-info-profile">
-                              <a
-                                href="javascript:void(0);"
-                                class="table-avatar"
-                              >
-                                <img
-                                  src="assets/img/doctors-dashboard/profile-03.jpg"
-                                  alt="Img"
-                                />
-                              </a>
-                              <div class="patient-name-info">
-                                <h5>
-                                  <a href="javascript:void(0);">Samuel</a>
-                                </h5>
-                                <span>#Apt0003</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Paid On</span>
-                              <h6>03 Nov 2024</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Amount</span>
-                              <h6>$320</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div
-                              class="apponiment-view d-flex align-items-center"
-                            >
-                              <a href="javascript:void(0);"
-                                ><i class="isax isax-eye4"></i
-                              ></a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="patient-info-profile">
-                              <a
-                                href="javascript:void(0);"
-                                class="table-avatar"
-                              >
-                                <img
-                                  src="assets/img/doctors-dashboard/profile-04.jpg"
-                                  alt="Img"
-                                />
-                              </a>
-                              <div class="patient-name-info">
-                                <h5>
-                                  <a href="javascript:void(0);">Catherine</a>
-                                </h5>
-                                <span>#Apt0004</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Paid On</span>
-                              <h6>01 Nov 2024</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Amount</span>
-                              <h6>$240</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div
-                              class="apponiment-view d-flex align-items-center"
-                            >
-                              <a href="javascript:void(0);"
-                                ><i class="isax isax-eye4"></i
-                              ></a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="patient-info-profile">
-                              <a
-                                href="javascript:void(0);"
-                                class="table-avatar"
-                              >
-                                <img
-                                  src="assets/img/doctors-dashboard/profile-05.jpg"
-                                  alt="Img"
-                                />
-                              </a>
-                              <div class="patient-name-info">
-                                <h5>
-                                  <a href="javascript:void(0);">Robert</a>
-                                </h5>
-                                <span>#Apt0005</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Paid On</span>
-                              <h6>28 Oct 2024</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="appointment-date-created">
-                              <span class="paid-text">Amount</span>
-                              <h6>$380</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div
-                              class="apponiment-view d-flex align-items-center"
-                            >
-                              <a href="javascript:void(0);"
-                                ><i class="isax isax-eye4"></i
-                              ></a>
+                            <div class="apponiment-view d-flex align-items-center">
+                              <a [routerLink]="routes.invoiceView"><i class="isax isax-eye4"></i></a>
                             </div>
                           </td>
                         </tr>
@@ -835,7 +495,7 @@
                           alt="Img"
                         />
                       </span>
-                      <h6>Sofi’s Clinic</h6>
+                      <h6>Sofi's Clinic</h6>
                     </div>
                     <div class="clinic-charge">
                       <span>$900</span>
