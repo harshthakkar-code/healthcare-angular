@@ -26,6 +26,7 @@ import { DoctorBreadcrumbModule } from '../feature-module/doctors/common/doctor-
 import { PatientBreadcrumbModule } from '../feature-module/patients/common/patient-breadcrumb/patient-breadcrumb.module';
 import { DoctorSidebarModule } from '../feature-module/doctors/common/doctor-sidebar/doctor-sidebar.module';
 import { BreadcrumbSearchComponent } from '../feature-module/patients/common/breadcrumb-search/breadcrumb-search.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [ BreadcrumbSearchComponent],
@@ -48,13 +49,13 @@ import { BreadcrumbSearchComponent } from '../feature-module/patients/common/bre
     LightgalleryModule,
     NgScrollbarModule,
     MatSliderModule,
-    NgScrollbarModule,
     PatientSidebarModule,
     DoctorBreadcrumbModule,
     PatientBreadcrumbModule,
     DoctorSidebarModule,
     BreadcrumbSearchComponent,
     ChipModule,
+    HttpClientModule,
   ],
   imports: [
     CommonModule,
@@ -95,13 +96,13 @@ import { BreadcrumbSearchComponent } from '../feature-module/patients/common/bre
     LightgalleryModule,
     NgScrollbarModule,
     MatSliderModule,
-    NgScrollbarModule,
     PatientSidebarModule,
     DoctorBreadcrumbModule,
     PatientBreadcrumbModule,
     DoctorSidebarModule,
     ChipModule,
+    HttpClientModule,
   ],
-  providers: [DatePipe, provideHttpClient(withInterceptorsFromDi())],
+  providers: [DatePipe],
 })
 export class SharedModule {}

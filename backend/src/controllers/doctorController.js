@@ -5,7 +5,18 @@ const Schedule = require('../models/Schedule');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 
-exports.getProfile = async (req, res, next) => { res.json({ message: 'Doctor profile' }); };
+exports.getProfile = async (req, res, next) => {
+  try {
+    // req.user._id should be set by your auth middleware
+    const doctor = await DoctorProfile.findOne({ user: req.user._id })
+      .populate('specialization', 'name description');
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    res.json(doctor);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.updateProfile = async (req, res, next) => { res.json({ message: 'Update doctor profile' }); };
 exports.createSchedule = async (req, res, next) => { res.json({ message: 'Create schedule' }); };
 exports.getAppointments = async (req, res, next) => { res.json({ message: 'Get doctor appointments' }); };
