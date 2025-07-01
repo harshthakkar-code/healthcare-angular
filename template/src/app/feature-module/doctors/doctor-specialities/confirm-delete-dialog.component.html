@@ -1,0 +1,16 @@
+<div mat-dialog-content class="py-4 px-4" style="min-width: 340px; text-align: center;">
+  <div class="fw-bold mb-3" style="font-size: 1.15rem; color: #222;">
+    {{ data.message }}
+  </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-center pb-3">
+  <button mat-button (click)="onCancel()"
+    class="me-3"
+    style="background: #f1f2f6; color: #6c757d; border-radius: 20px; font-weight: 600; min-width: 100px; height: 38px; font-size: 1rem;">
+    Cancel
+  </button>
+  <button mat-raised-button color="warn" (click)="onConfirm()"
+    style="background: #ff0000; color: #fff; border-radius: 20px; font-weight: 600; min-width: 120px; height: 38px; font-size: 1rem;">
+    Yes, Delete
+  </button>
+</div> 
