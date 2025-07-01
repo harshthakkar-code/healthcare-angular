@@ -30,6 +30,8 @@ export class DoctorBreadcrumbComponent {
         this.page = 'Change Password';
       } else if (res === 'doctor-payment') {
         this.page = 'Payout Settings';
+      } else if (res === 'doctor-specialities') {
+        this.page = 'Spaciality & Services';
       } else {
         this.page = res?.replaceAll('-', ' ');
       }
