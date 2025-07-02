@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { routes } from 'src/app/shared/routes/routes';
 import {
   ChartComponent,
@@ -18,6 +18,10 @@ import {
   ApexFill,
 } from 'ng-apexcharts';
 import { Router } from '@angular/router';
+import { SlotService } from '../feature-module/doctors/available-timings/slot.service';
+import { SlotModalService } from '../feature-module/doctors/available-timings/slot-modal.service';
+import { forkJoin } from 'rxjs';
+
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
   chart: ApexChart | any;
@@ -59,7 +63,18 @@ export class ModalComponent implements OnInit {
   public chartOptionsThree!: Partial<ChartOptions>;
   public chartOptionsFour!: Partial<ChartOptions>;
 
-  constructor(private router:Router) {
+  @Output() slotCreated = new EventEmitter<void>();
+  addSlotForm = {
+    startTime: '',
+    endTime: '',
+    duration: 30,
+    fees: 0,
+    spaces: 1,
+    // Add more fields as needed
+  };
+  savingSlot = false;
+
+  constructor(private router:Router, private slotService: SlotService, public slotModalService: SlotModalService) {
     this.chartOptionsOne = {
       series: [
         {
@@ -342,7 +357,73 @@ export class ModalComponent implements OnInit {
     this.bill.splice(index, 1);
   }
 
-onSubmit():void{
-  this.router.navigateByUrl('/authentication/login-email')
-}
+  saveSlot() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const doctorId = user.id || user._id;
+    if (!doctorId) return;
+    this.savingSlot = true;
+    // Compute the date for the selected day in the current week
+    const daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    monday.setDate(today.getDate() + diff);
+    const selectedDay = this.slotModalService.slotForm.day || 'Monday';
+    const targetIndex = daysOfWeek.indexOf(selectedDay);
+    const mondayIndex = 1; // Monday
+    const offset = targetIndex - mondayIndex;
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + offset);
+    const slotData = {
+      doctorId,
+      date: date.toISOString().slice(0, 10),
+      startTime: this.slotModalService.slotForm.startTime,
+      endTime: this.slotModalService.slotForm.endTime,
+      duration: this.slotModalService.slotForm.duration,
+      fees: this.slotModalService.slotForm.fees,
+      spaces: this.slotModalService.slotForm.spaces,
+    };
+    this.slotService.createSlots(slotData).subscribe({
+      next: () => {
+        this.savingSlot = false;
+        this.slotModalService.emitSlotCreated();
+        this.slotModalService.resetForm();
+        const modal = document.getElementById('add_slot');
+        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+      },
+      error: (err) => {
+        this.savingSlot = false;
+        alert('Failed to save slot');
+        console.error('Save slot error:', err);
+      }
+    });
+  }
+
+  onSubmit():void{
+    this.router.navigateByUrl('/authentication/login-email')
+  }
+
+  deleteAllSlotsForDay() {
+    console.log("deleteslote")
+    const slotIds = this.slotModalService.slotsToDelete || [];
+    if (!slotIds.length) return;
+    const deleteObservables = slotIds.map(id => this.slotService.deleteSlot(id));
+    forkJoin(deleteObservables).subscribe({
+      next: () => {
+        this.slotModalService.emitSlotsDeleted();
+      },
+      error: (err) => {
+        alert('Failed to delete slots');
+        console.error('Delete slots error:', err);
+      }
+    });
+  }
+
+  closeModal() {
+    const modal = document.getElementById('delete_slot');
+    if (modal) {
+      (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+    }
+  }
 }

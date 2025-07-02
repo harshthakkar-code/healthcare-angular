@@ -13,7 +13,7 @@ function minutesToTimeString(minutes) {
 // Create slots (generate from start/end/duration)
 exports.createSlots = async (req, res) => {
   try {
-    const { doctorId, date, startTime, endTime, duration, fees } = req.body;
+    const { doctorId, date, startTime, endTime, duration, fees, spaces = 1 } = req.body;
     if (!doctorId || !date || !startTime || !endTime || !duration) {
       return res.status(400).json({ error: 'doctorId, date, startTime, endTime, and duration are required' });
     }
@@ -23,6 +23,12 @@ exports.createSlots = async (req, res) => {
     let t = start;
     let slotDocs = [];
     while (t + durationMin <= end) {
+      // Create spaceAssignments array
+      const spaceAssignments = Array.from({ length: spaces }, (_, i) => ({
+        spaceNumber: i + 1,
+        userId: null,
+        status: 'available'
+      }));
       slotDocs.push({
         doctorId,
         date,
@@ -30,7 +36,9 @@ exports.createSlots = async (req, res) => {
         endTime: minutesToTimeString(t + durationMin),
         duration: durationMin,
         fees,
-        status: 'available'
+        status: 'available',
+        spaces,
+        spaceAssignments
       });
       t = t + durationMin;
     }

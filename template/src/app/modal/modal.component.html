@@ -1074,7 +1074,7 @@
               </div>
               <div class="appointment-type">
                 <p class="md-text">Clinic Location</p>
-                <p>Adrian’s Dentistry</p>
+                <p>Adrian's Dentistry</p>
               </div>
             </div>
           </div>
@@ -1200,43 +1200,43 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Appointment Details</h5>
+        <h5 class="modal-title">Add New Slot</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <form>
+      <form (ngSubmit)="saveSlot()">
         <div class="modal-body">
           <div class="timing-modal">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="start">Start Time</label>
-                  <input type="text" class="form-control timepicker1" value="04:00 PM">
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.startTime" name="startTime" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="end">End Time</label>
-                  <input type="text" class="form-control timepicker1">
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.endTime" name="endTime" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="appoinment">Appointment Intervals</label>
-                  <mat-select class="custom-mat-select" placeholder="10 Minutes">
-                    <mat-option value="10">10 Minutes</mat-option>
-                    <mat-option value="20">20 Minutes</mat-option>
-                    <mat-option value="30">30 Minutes</mat-option>
+                  <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.slotForm.duration" name="duration">
+                    <mat-option [value]="10">10 Minutes</mat-option>
+                    <mat-option [value]="20">20 Minutes</mat-option>
+                    <mat-option [value]="30">30 Minutes</mat-option>
                   </mat-select>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="Durations">Appointment Durations</label>
-                  <mat-select class="custom-mat-select" placeholder="30 Minutes">
-                    <mat-option value="30">30 Minutes</mat-option>
-                    <mat-option value="60">1 Hour</mat-option>
+                  <mat-select class="custom-mat-select" placeholder="30 Minutes" [(ngModel)]="slotModalService.slotForm.duration" name="duration">
+                    <mat-option [value]="30">30 Minutes</mat-option>
+                    <mat-option [value]="60">1 Hour</mat-option>
                   </mat-select>
                 </div>
               </div>
@@ -1244,23 +1244,19 @@
                 <div class="form-wrap mb-0">
                   <label class="col-form-label d-block" for="Assign">Assign Appointment Spaces</label>
                   <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="space1" name="rating_option" class="form-check-input" value="price_free"
-                      checked="">
+                    <input type="radio" id="space1" name="spaces" class="form-check-input" [value]="1" [(ngModel)]="slotModalService.slotForm.spaces">
                     <label class="form-check-label" for="space1">Space 1</label>
                   </div>
                   <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="space2" name="rating_option" class="form-check-input" value="price_free"
-                      checked="">
+                    <input type="radio" id="space2" name="spaces" class="form-check-input" [value]="2" [(ngModel)]="slotModalService.slotForm.spaces">
                     <label class="form-check-label" for="space2">Space 2</label>
                   </div>
                   <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="space3" name="rating_option" class="form-check-input" value="price_free"
-                      checked="">
+                    <input type="radio" id="space3" name="spaces" class="form-check-input" [value]="3" [(ngModel)]="slotModalService.slotForm.spaces">
                     <label class="form-check-label" for="space3">Space 3</label>
                   </div>
                   <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="space4" name="rating_option" class="form-check-input" value="price_free"
-                      checked="">
+                    <input type="radio" id="space4" name="spaces" class="form-check-input" [value]="4" [(ngModel)]="slotModalService.slotForm.spaces">
                     <label class="form-check-label" for="space4">Space 4</label>
                   </div>
                 </div>
@@ -1271,7 +1267,7 @@
         <div class="modal-footer">
           <div class="modal-btn text-end">
             <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</a>
-            <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
+            <button type="submit" class="btn btn-primary prime-btn" [disabled]="savingSlot">Save Changes</button>
           </div>
         </div>
       </form>
@@ -1296,9 +1292,9 @@
         </div>
 
         <div class="modal-btn text-center">
-          <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Yes,
+          <a href="javascript:void(0);" (click)="deleteAllSlotsForDay()" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Yes,
             Remove</a>
-          <button class="btn btn-primary prime-btn">No, i Changed my mind</button>
+          <button type="button" (click)="closeModal()" class="btn btn-primary prime-btn">No, i Changed my mind</button>
         </div>
       </div>
     </div>
@@ -3071,7 +3067,7 @@
 											<input class="form-check-input" type="radio" name="delete" id="del-acc1">
 											<label class="form-check-label fs-14 ms-2" for="del-acc1">
 												<span class="text-gray-9 fw-medium">No longer using the service</span> 
-												<span class="d-block">I no longer need this service and won’t be using it in the future.</span>
+												<span class="d-block">I no longer need this service and won't be using it in the future.</span>
 											</label>
 										</div>
 										<div class="form-check d-flex mb-3">
@@ -3085,14 +3081,14 @@
 											<input class="form-check-input" type="radio" name="delete" id="del-acc3">
 											<label class="form-check-label fs-14 ms-2" for="del-acc3">
 												<span class="text-gray-9 fw-medium">Too many notifications/emails</span> 
-												<span class="d-block">I’m overwhelmed by the volume of notifications or emails and would like to reduce them.</span>
+												<span class="d-block">I'm overwhelmed by the volume of notifications or emails and would like to reduce them.</span>
 											</label>
 										</div>
 										<div class="form-check d-flex mb-3">
 											<input class="form-check-input" type="radio" name="delete" id="del-acc4">
 											<label class="form-check-label fs-14 ms-2" for="del-acc4">
 												<span class="text-gray-9 fw-medium">Poor user experience</span> 
-												<span class="d-block">I’ve had difficulty using the platform, and it didn’t meet my expectations.</span>
+												<span class="d-block">I've had difficulty using the platform, and it didn't meet my expectations.</span>
 											</label>
 										</div>
 										<div class="form-check d-flex mb-3">

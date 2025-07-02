@@ -108,7 +108,7 @@
 				transition: 0.5s;
     			&:hover {
     				&::before {
-    					content: "Space : 2";
+    					// content: "Space : 2";
     					background: $dark;
 						color: $white;
 						width: 100%;
