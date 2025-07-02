@@ -22,5 +22,6 @@ router.get('/appointments/all', doctorController.getAllAppointments);
 router.get('/appointments/patient/:patientId', doctorController.getAppointmentsByPatient);
 router.put('/appointments/:id/status', doctorController.updateAppointmentStatus);
 router.get('/patients-with-appointments', doctorController.getPatientsWithAppointments);
+router.put('/change-password', doctorController.changePassword);
 
 module.exports = router; 

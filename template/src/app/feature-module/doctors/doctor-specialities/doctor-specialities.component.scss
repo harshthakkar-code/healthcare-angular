@@ -1,0 +1,48 @@
+::ng-deep .mat-form-field {
+  height: 35px !important;
+}
+::ng-deep .mat-select-trigger, ::ng-deep .mat-mdc-text-field, ::ng-deep .mat-mdc-text-field-wrapper, 
+::ng-deep .mat-mdc-form-field-infix {
+  height: 35px !important;
+  min-height: 35px !important;
+  line-height: 35px !important;
+  display: flex;
+  align-items: center;
+}
+
+.custom-mat-select .mat-select-trigger {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 0 12px !important;
+  display: flex;
+  align-items: center;
+}
+
+.mat-select.custom-mat-select {
+  min-height: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  padding: 0 !important;
+  font-size: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.custom-mat-select .mat-select-value {
+  line-height: 38px !important;
+  height: 38px !important;
+  display: flex;
+  align-items: center;
+}
+
+.custom-mat-select .mat-select-arrow {
+  margin-top: 0 !important;
+}
+
+.form-wrap .mat-form-field {
+  width: 100%;
+}
+
+.form-wrap .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}

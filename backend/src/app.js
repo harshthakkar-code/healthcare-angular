@@ -21,6 +21,8 @@ app.use('/api/reports', require('./routes/report'));
 app.use('/api/slots', require('./routes/slot'));
 app.use('/api/reviews', require('./routes/review'));
 app.use('/api/transactions', require('./routes/transaction'));
+app.use('/api/social-media', require('./routes/socialMedia'));
+app.use('/api/doctor-settings', require('./routes/doctorSettings'));
 // Add more as needed
 
 app.use(require('./middlewares/errorHandler'));
