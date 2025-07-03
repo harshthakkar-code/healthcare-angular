@@ -5,7 +5,7 @@ import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog.component'
 
 interface Service {
   _id?: string;
-  name: string;
+  name: any;
   price: number;
   about?: string;
 }
@@ -31,6 +31,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
   loading = false;
   error = '';
   newSpecialization: Partial<Specialization> | null = null;
+  attemptedSave = false;
 
   // Static options for dropdowns
   specialityOptions = ['Cardiology', 'Neurology', 'Urology'];
@@ -81,7 +82,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
 
   addNewServiceRow() {
     if (this.newSpecialization && Array.isArray(this.newSpecialization.services)) {
-      this.newSpecialization.services.push({ name: '', price: 0, about: '' });
+      this.newSpecialization.services.push({ name: "" , price: 0, about: '' });
     }
   }
 
@@ -92,6 +93,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
   }
 
   saveNewSpecialization() {
+    this.attemptedSave = true;
     if (!this.newSpecialization || !this.isSpecializationValid(this.newSpecialization)) {
       this.error = 'Please fill all required fields';
       setTimeout(() => this.error = '', 3000);
@@ -101,6 +103,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
     this.specService.createSpecializations(this.doctorId, [this.newSpecialization]).subscribe({
       next: () => {
         this.newSpecialization = null;
+        this.attemptedSave = false;
         this.loadSpecializations();
       },
       error: () => {

@@ -15,7 +15,6 @@
           </ul>
         </div>
 
-        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
         <div *ngIf="loading">Loading...</div>
 
         <!-- New Specialization -->
@@ -28,9 +27,10 @@
                   <div class="col-md-4">
                     <div class="form-wrap">
                       <label class="col-form-label" for="speciality">Speciality <span class="text-danger">*</span></label>
-                      <mat-select class="custom-mat-select" [(ngModel)]="newSpecialization.name" placeholder="Select">
+                      <mat-select class="custom-mat-select" [(ngModel)]="newSpecialization.name" #specialityName="ngModel" name="specialityName" required>
                         <mat-option *ngFor="let option of specialityOptions" [value]="option">{{ option }}</mat-option>
                       </mat-select>
+                      <div *ngIf="specialityName.invalid && (specialityName.touched || attemptedSave)" class="text-danger small">Speciality is required.</div>
                     </div>
                   </div>
                 </div>
@@ -38,15 +38,17 @@
                   <div class="col-md-3">
                     <div class="form-wrap">
                       <label class="col-form-label" for="service">Service <span class="text-danger">*</span></label>
-                      <mat-select class="custom-mat-select" [(ngModel)]="service.name" placeholder="Select Service">
+                      <mat-select class="custom-mat-select" [(ngModel)]="service.name" #serviceName="ngModel" name="serviceName{{i}}" required>
                         <mat-option *ngFor="let option of serviceOptions" [value]="option">{{ option }}</mat-option>
                       </mat-select>
+                      <div *ngIf="serviceName.invalid && (serviceName.touched || attemptedSave)" class="text-danger small">Service is required.</div>
                     </div>
                   </div>
                   <div class="col-md-2">
                     <div class="form-wrap">
                       <label class="col-form-label" for="price">Price ($) <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" [(ngModel)]="service.price" placeholder="454">
+                      <input type="number" class="form-control" [(ngModel)]="service.price" #servicePrice="ngModel" name="servicePrice{{i}}" required min="1">
+                      <div *ngIf="servicePrice.invalid && (servicePrice.touched || attemptedSave)" class="text-danger small">Price is required.</div>
                     </div>
                   </div>
                   <div class="col-md-7">
@@ -63,6 +65,7 @@
                   </div>
                 </div>
               </div>
+              <div *ngIf="error" class="text-danger small">{{ error }} Add atleast One service.</div>
               <div class="text-end">
                 <a href="javascript:void(0);" class="add-serv more-item mb-0" (click)="addNewServiceRow()">Add New Service</a>
               </div>
@@ -71,7 +74,7 @@
         </div>
 
         <!-- Move buttons outside accordion -->
-        <div *ngIf="newSpecialization" class="modal-btn text-end mt-4">
+        <div *ngIf="newSpecialization" class="modal-btn text-end mt-4 mb-4">
           <a href="javascript:void(0);" class="btn btn-gray" (click)="cancelNewSpecialization()">Cancel</a>
           <button class="btn btn-primary prime-btn" (click)="saveNewSpecialization()">Save Changes</button>
         </div>
@@ -90,9 +93,10 @@
                       <div class="col-md-4">
                         <div class="form-wrap">
                           <label class="col-form-label" for="speciality">Speciality <span class="text-danger">*</span></label>
-                          <mat-select class="custom-mat-select" [(ngModel)]="spec.name" placeholder="Select" (ngModelChange)="onEditField(spec)">
+                          <mat-select class="custom-mat-select" [(ngModel)]="spec.name" #editSpecialityName="ngModel" name="editSpecialityName{{i}}" placeholder="Select" (ngModelChange)="onEditField(spec)" required>
                             <mat-option *ngFor="let option of specialityOptions" [value]="option">{{ option }}</mat-option>
                           </mat-select>
+                          <div *ngIf="spec.editMode && editSpecialityName.invalid && (editSpecialityName.touched || editSpecialityName.dirty)" class="text-danger small">Speciality is required.</div>
                         </div>
                       </div>
                     </div>
@@ -100,15 +104,17 @@
                       <div class="col-md-3">
                         <div class="form-wrap">
                           <label class="col-form-label" for="service">Service <span class="text-danger">*</span></label>
-                          <mat-select class="custom-mat-select" [(ngModel)]="service.name" placeholder="Select Service" (ngModelChange)="onEditField(spec)">
+                          <mat-select class="custom-mat-select" [(ngModel)]="service.name" #editServiceName="ngModel" name="editServiceName{{i}}_{{j}}" placeholder="Select Service" (ngModelChange)="onEditField(spec)" required>
                             <mat-option *ngFor="let option of serviceOptions" [value]="option">{{ option }}</mat-option>
                           </mat-select>
+                          <div *ngIf="spec.editMode && editServiceName.invalid && (editServiceName.touched || editServiceName.dirty)" class="text-danger small">Service is required.</div>
                         </div>
                       </div>
                       <div class="col-md-2">
                         <div class="form-wrap">
                           <label class="col-form-label" for="price">Price ($) <span class="text-danger">*</span></label>
-                          <input type="text" class="form-control" [(ngModel)]="service.price" placeholder="454" (ngModelChange)="onEditField(spec)">
+                          <input type="number" class="form-control" [(ngModel)]="service.price" #editServicePrice="ngModel" name="editServicePrice{{i}}_{{j}}" placeholder="454" (ngModelChange)="onEditField(spec)" required min="1">
+                          <div *ngIf="spec.editMode && editServicePrice.invalid && (editServicePrice.touched || editServicePrice.dirty)" class="text-danger small">Price is required.</div>
                         </div>
                       </div>
                       <div class="col-md-7">
