@@ -15,71 +15,73 @@
 								<h3>Invoices</h3>
 							</div>
 
-							<div class="container-fluid">
-								<div class="row">
-									<div class="col-12">
-										<h2 class="fw-bold mt-3 mb-2" style="font-size: 1.6rem;">Invoices</h2>
-										<hr />
-										<div class="d-flex align-items-center mb-3">
-											<div class="input-group" style="max-width: 300px;">
-												<input type="text" class="form-control" placeholder="Search" [(ngModel)]="search" (keyup.enter)="onSearch(search)" />
-												<span class="input-group-text bg-white border-0"><i class="fa fa-search"></i></span>
-											</div>
-										</div>
-										<div class="table-responsive">
-											<table class="table table-hover align-middle" style="border-radius: 12px; overflow: hidden;">
-												<thead style="background: #f5f7fa;">
-													<tr>
-														<th style="min-width: 90px;">ID</th>
-														<th style="min-width: 180px;">Patient</th>
-														<th>Appointment Date</th>
-														<th>Booked on</th>
-														<th>Amount</th>
-														<th>Action</th>
-													</tr>
-												</thead>
-												<tbody *ngIf="!loading && transactions.length">
-													<tr *ngFor="let t of transactions">
-														<td>
-															<a href="#" class="text-primary fw-bold">#{{ t._id?.slice(0, 8) || 'Inv-2021' }}</a>
-														</td>
-														<td class="d-flex align-items-center gap-2">
-															<span class="rounded bg-light d-inline-block text-center me-2" style="width: 38px; height: 38px; line-height: 38px; font-size: 0.9rem; color: #888;">
-																{{ getPatientInitials(t.appointment?.patient?.name) }}
-															</span>
-															<span>{{ t.appointment?.patient?.name || '-' }}</span>
-														</td>
-														<td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') : (t.appointment?.date || '-') }}</td>
-														<td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') : '-' }}</td>
-														<td>${{ t.amount }}</td>
-														<td>
-															<button class="btn btn-link p-0 me-2" title="View"><i class="fa fa-link"></i></button>
-															<button class="btn btn-link p-0" title="Print"><i class="fa fa-print"></i></button>
-														</td>
-													</tr>
-												</tbody>
-												<tbody *ngIf="!loading && !transactions.length">
-													<tr><td colspan="6" class="text-center py-4">No invoices found.</td></tr>
-												</tbody>
-											</table>
-											<div *ngIf="loading" class="text-center py-4">Loading...</div>
-										</div>
-										<nav *ngIf="total > limit" class="d-flex justify-content-center mt-3">
-											<ul class="pagination mb-0">
-												<li class="page-item" [class.disabled]="page === 1">
-													<a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(page - 1)">&laquo;</a>
-												</li>
-												<li class="page-item" *ngFor="let p of totalPages" [class.active]="page === p">
-													<a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(p)">{{ p }}</a>
-												</li>
-												<li class="page-item" [class.disabled]="page === totalPages.length">
-													<a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(page + 1)">&raquo;</a>
-												</li>
-											</ul>
-										</nav>
+							<div class="search-header">
+									<div class="search-field">
+										<input type="text" class="form-control" placeholder="Search" [(ngModel)]="search" (keyup.enter)="onSearch(search)">
+										<span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
 									</div>
 								</div>
-							</div>
+
+								<div class="custom-table">
+									<div class="table-responsive">
+										<table class="table table-center mb-0">
+											<thead>
+												<tr>
+													<th>ID</th>
+													<th>Patient</th>
+													<th>Appointment Date</th>
+													<th>Booked on</th>
+													<th>Amount</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr *ngFor="let t of transactions">
+													<td>
+														<a href="javascript:void(0);" class="text-blue-600" data-bs-toggle="modal" data-bs-target="#invoice_view">#{{ t._id?.slice(0, 8) || 'Inv-2021' }}</a>
+													</td>
+													<td>
+														<h2 class="table-avatar">
+															<a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
+																<img class="avatar-img rounded-3" [src]="t.appointment?.patient?.image || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
+															</a>
+															<a [routerLink]="routes.doctorProfile1">{{ t.appointment?.patient?.name || '-' }}</a>
+														</h2>
+													</td>
+													<td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') : (t.appointment?.date || '-') }}</td>
+													<td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') : '-' }}</td>
+													<td>${{ t.amount }}</td>
+													<td>
+														<div class="action-item">
+															<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
+																<i class="isax isax-link-2"></i>
+															</a>
+															<a href="javascript:void(0);">
+																<i class="isax isax-printer5"></i>
+															</a>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+								<!-- Pagination -->
+								<div class="pagination dashboard-pagination">
+									<ul>
+										<li>
+											<a href="javascript:void(0);" class="page-link" [class.disabled]="page === 1" (click)="page > 1 && onPageChange(page - 1)"><i class="fa-solid fa-chevron-left"></i></a>
+										</li>
+										<li *ngFor="let p of totalPages" >
+											<a href="javascript:void(0);" class="page-link" [class.active]="page === p" (click)="onPageChange(p)">{{ p }}</a>
+										</li>
+										<li>
+											<a href="javascript:void(0);" class="page-link" [class.disabled]="page === totalPages.length" (click)="page < totalPages.length && onPageChange(page + 1)"><i class="fa-solid fa-chevron-right"></i></a>
+										</li>
+									</ul>
+								</div>
+								<!-- /Pagination -->
 						</div>
 						<!-- /Invoices -->
 
