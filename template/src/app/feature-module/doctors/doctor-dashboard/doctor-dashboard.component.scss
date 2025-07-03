@@ -1,1 +1,30 @@
 
+.text-success-icon{
+    border: 1px solid #04BD6C;
+    border-radius: 50%;
+    padding: 5px;
+    color: #04BD6C;
+    height: 24px;
+    width: 24px;
+    text-align: center;
+}
+
+.text-success-icon:hover{
+    background-color: #04BD6C;
+    color: #fff;
+}
+
+.text-danger-icon{
+    border: 1px solid #FF0000;
+    border-radius: 50%;
+    padding: 5px;
+    color: #FF0000;
+    height: 24px;
+    width: 24px;
+    text-align: center;
+}
+
+.text-danger-icon:hover{
+    background-color: #FF0000;
+    color: #fff;
+}

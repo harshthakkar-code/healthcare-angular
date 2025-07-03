@@ -112,10 +112,10 @@
                         <td>
                           <div class="apponiment-actions d-flex align-items-center">
                             <ng-container *ngIf="appt.status === 'pending'; else statusBadge">
-                              <button type="button" class="text-success me-2 btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'accepted')">
+                              <button type="button" class="text-success-icon me-2 btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'accepted')">
                                 <i class="fa-solid fa-check"></i>
                               </button>
-                              <button type="button" class="text-danger btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'rejected')">
+                              <button type="button" class="text-danger-icon btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'rejected')">
                                 <i class="fa-solid fa-xmark"></i>
                               </button>
                             </ng-container>
@@ -332,7 +332,7 @@
                               </a>
                               <div class="patient-name-info">
                                 <h5>
-                                  <a [routerLink]="routes.invoice">{{ invoice.patient?.name || invoice.patientName || 'Unknown' }}</a>
+                                  <a [routerLink]="routes.invoice">{{ invoice.appointment.patient?.name || invoice.patientName || 'Unknown' }}</a>
                                 </h5>
                                 <span>#{{ invoice.appointmentId || invoice._id?.slice(-6) }}</span>
                               </div>
