@@ -11,7 +11,7 @@
                     <ul class="header-list-btns">
                         <li>
                             <div class="input-block dash-search-input">
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchTerm">
                                 <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                             </div>
                         </li>
@@ -40,18 +40,18 @@
                                 <button class="nav-link active" id="pills-upcoming-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-upcoming" type="button" role="tab"
                                     aria-controls="pills-upcoming"
-                                    aria-selected="false">Upcoming<span>21</span></button>
+                                    aria-selected="false">Upcoming<span>{{ upcomingCount }}</span></button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel"
-                                    aria-selected="true">Cancelled<span>16</span></button>
+                                    aria-selected="true">Cancelled<span>{{ cancelledCount }}</span></button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-complete-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-complete" type="button" role="tab"
                                     aria-controls="pills-complete"
-                                    aria-selected="true">Completed<span>214</span></button>
+                                    aria-selected="true">Completed<span>{{ completedCount }}</span></button>
                             </li>
                         </ul>
                     </div>
@@ -224,33 +224,27 @@
                     <div class="tab-pane fade show active" id="pills-upcoming" role="tabpanel"
                         aria-labelledby="pills-upcoming-tab">
                         <div class="row">
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
+                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex" *ngFor="let appointment of upcomingAppointments | slice:0:appointmentsToShow.upcoming">
                                 <div class="appointment-wrap appointment-grid-wrap">
                                     <ul>
                                         <li>
                                             <div class="appointment-grid-head">
                                                 <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-01.jpg"
-                                                            alt="User Image">
+                                                    <a [routerLink]="routes.doctorUpcomingAppointment">
+                                                        <img [src]="appointment.patient?.image || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                                     </a>
                                                     <div class="patient-info">
-                                                        <p>#Apt0001</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Adrian</a></h6>
+                                                        <p>#{{ appointment.appointmentId || appointment._id }}</p>
+                                                        <h6><a [routerLink]="routes.doctorUpcomingAppointment">{{ appointment.patient?.name }}</a></h6>
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>11 Nov 2024 10.45 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
+                                            <p><i class="fa-solid fa-clock"></i>{{ appointment.date | date:'dd MMM yyyy hh.mm a' }}</p>
                                         </li>
                                         <li class="appointment-action">
                                             <ul>
@@ -272,454 +266,34 @@
                                     </ul>
                                 </div>
                             </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-02.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0002</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Kelly
-                                                                Stevens</a><span class="badge new-tag">New</span></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="hospital-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-hospital"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>05 Nov 2024 11.50 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="text-center w-100" *ngIf="upcomingAppointments.length > appointmentsToShow.upcoming">
+                                <button class="btn btn-primary" (click)="loadMore('upcoming')">Load More</button>
                             </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-03.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0003</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Samuel James</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="telephone-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-phone"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>27 Oct 2024 09.30 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-04.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0004</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Catherine
-                                                                Gracey</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="hospital-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-hospital"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>18 Oct 2024 12.20 PM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-05.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0005</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Robert Miller</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>10 Oct 2024 11.30 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-06.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0006</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Anderea
-                                                                Kearns</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>26 Sep 2024 10.20 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-07.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0007</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Peter
-                                                                Anderson</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>14 Sep 2024 08.10 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-08.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0008</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Emily Musick</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>03 Sep 2024 06.00 PM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-01.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0009</p>
-                                                        <h6><a [routerLink] = "routes.doctorUpcomingAppointment">Darrell Tan</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>25 Aug 2024 10.45 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-action">
-                                            <ul>
-                                                <li>
-                                                    <a [routerLink] = "routes.doctorUpcomingAppointment"><i
-                                                            class="fa-solid fa-eye"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                                </li>
-                                            </ul>
-                                            <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <div class="col-md-12">
-                                <div class="loader-item text-center">
-                                    <a href="javascript:void(0);" class="btn btn-load">Load More</a>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab">
                         <div class="row">
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
+                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex" *ngFor="let appointment of cancelledAppointments | slice:0:appointmentsToShow.cancelled">
                                 <div class="appointment-wrap appointment-grid-wrap">
                                     <ul>
                                         <li>
                                             <div class="appointment-grid-head">
                                                 <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCancelledAppointment2">
-                                                        <img src="assets/img/doctors-dashboard/profile-01.jpg"
-                                                            alt="User Image">
+                                                    <a [routerLink]="routes.doctorUpcomingAppointment">
+                                                        <img [src]="appointment.patient?.image || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                                     </a>
                                                     <div class="patient-info">
-                                                        <p>#Apt0001</p>
-                                                        <h6><a [routerLink] = "routes.doctorCancelledAppointment2">Adrian</a>
-                                                        </h6>
+                                                        <p>#{{ appointment.appointmentId || appointment._id }}</p>
+                                                        <h6><a [routerLink]="routes.doctorUpcomingAppointment">{{ appointment.patient?.name }}</a></h6>
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>11 Nov 2024 10.45 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
+                                            <p><i class="fa-solid fa-clock"></i>{{ appointment.date | date:'dd MMM yyyy hh.mm a' }}</p>
                                         </li>
                                         <li class="appointment-detail-btn">
                                             <a [routerLink] = "routes.doctorCancelledAppointment2" class="start-link w-100">View
@@ -728,119 +302,34 @@
                                     </ul>
                                 </div>
                             </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCancelledAppointment2">
-                                                        <img src="assets/img/doctors-dashboard/profile-02.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0002</p>
-                                                        <h6><a [routerLink] = "routes.doctorCancelledAppointment2">Kelly
-                                                                Stevens</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>05 Nov 2024 11.50 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCancelledAppointment2" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCancelledAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-03.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0003</p>
-                                                        <h6><a [routerLink] = "routes.doctorCancelledAppointment">Samuel James</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>27 Oct 2024 09.30 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCancelledAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-                            <div class="col-md-12">
-                                <div class="loader-item text-center">
-                                    <a href="javascript:void(0);" class="btn btn-load">Load More</a>
-                                </div>
+                            <div class="text-center w-100" *ngIf="cancelledAppointments.length > appointmentsToShow.cancelled">
+                                <button class="btn btn-primary" (click)="loadMore('cancelled')">Load More</button>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pills-complete" role="tabpanel" aria-labelledby="pills-complete-tab">
                         <div class="row">
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
+                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex" *ngFor="let appointment of completedAppointments | slice:0:appointmentsToShow.completed">
                                 <div class="appointment-wrap appointment-grid-wrap">
                                     <ul>
                                         <li>
                                             <div class="appointment-grid-head">
                                                 <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-01.jpg"
-                                                            alt="User Image">
+                                                    <a [routerLink]="routes.doctorUpcomingAppointment">
+                                                        <img [src]="appointment.patient?.image || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                                     </a>
                                                     <div class="patient-info">
-                                                        <p>#Apt0001</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Adrian</a></h6>
+                                                        <p>#{{ appointment.appointmentId || appointment._id }}</p>
+                                                        <h6><a [routerLink]="routes.doctorUpcomingAppointment">{{ appointment.patient?.name }}</a></h6>
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>11 Nov 2024 10.45 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
+                                            <p><i class="fa-solid fa-clock"></i>{{ appointment.date | date:'dd MMM yyyy hh.mm a' }}</p>
                                         </li>
                                         <li class="appointment-detail-btn">
                                             <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
@@ -849,315 +338,9 @@
                                     </ul>
                                 </div>
                             </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-02.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0002</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Kelly
-                                                                Stevens</a><span class="badge new-tag">New</span></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="hospital-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-hospital"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>05 Nov 2024 11.50 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="text-center w-100" *ngIf="completedAppointments.length > appointmentsToShow.completed">
+                                <button class="btn btn-primary" (click)="loadMore('completed')">Load More</button>
                             </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-03.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0003</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Samuel James</a>
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="telephone-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-phone"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>27 Oct 2024 09.30 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-04.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0004</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Catherine
-                                                                Gracey</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="hospital-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-hospital"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>18 Oct 2024 12.20 PM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-05.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0005</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Robert
-                                                                Miller</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>10 Oct 2024 11.30 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.doctorCompletedAppointment">
-                                                        <img src="assets/img/doctors-dashboard/profile-06.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0006</p>
-                                                        <h6><a [routerLink] = "routes.doctorCompletedAppointment">Anderea
-                                                                Kearns</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>26 Sep 2024 10.20 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorCompletedAppointment" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.patientProfile">
-                                                        <img src="assets/img/doctors-dashboard/profile-07.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0007</p>
-                                                        <h6><a [routerLink] = "routes.patientProfile">Peter Anderson</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>14 Sep 2024 08.10 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorAppointmentDetails" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.patientProfile">
-                                                        <img src="assets/img/doctors-dashboard/profile-08.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0008</p>
-                                                        <h6><a [routerLink] = "routes.patientProfile">Emily Musick</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>03 Sep 2024 06.00 PM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorAppointmentDetails" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <!-- Appointment Grid -->
-                            <div class="col-xl-4 col-lg-6 col-md-12 d-flex">
-                                <div class="appointment-wrap appointment-grid-wrap">
-                                    <ul>
-                                        <li>
-                                            <div class="appointment-grid-head">
-                                                <div class="patinet-information">
-                                                    <a [routerLink] = "routes.patientProfile">
-                                                        <img src="assets/img/doctors-dashboard/profile-01.jpg"
-                                                            alt="User Image">
-                                                    </a>
-                                                    <div class="patient-info">
-                                                        <p>#Apt0009</p>
-                                                        <h6><a [routerLink] = "routes.patientProfile">Darrell Tan</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i
-                                                                class="fa-solid fa-video"></i></a></span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="appointment-info">
-                                            <p><i class="fa-solid fa-clock"></i>25 Aug 2024 10.45 AM</p>
-                                            <ul class="d-flex apponitment-types">
-                                                <li>General Visit</li>
-                                            </ul>
-                                        </li>
-                                        <li class="appointment-detail-btn">
-                                            <a [routerLink] = "routes.doctorAppointmentDetails" class="start-link w-100">View
-                                                Details</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Appointment Grid -->
-
-                            <div class="col-md-12">
-                                <div class="loader-item text-center">
-                                    <a href="javascript:void(0);" class="btn btn-load">Load More</a>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
