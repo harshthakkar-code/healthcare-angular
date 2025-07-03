@@ -1212,19 +1212,20 @@
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="start">Start Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.startTime" name="startTime" required>
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.startTime" name="startTime" required (ngModelChange)="onStartTimeChange()">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="end">End Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.endTime" name="endTime" required>
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.endTime" name="endTime" required (ngModelChange)="validateSlotTimes()">
+                  <div *ngIf="slotError" class="text-danger mt-1">{{ slotError }}</div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="appoinment">Appointment Intervals</label>
-                  <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.slotForm.duration" name="duration">
+                  <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.slotForm.interval" name="duration">
                     <mat-option [value]="10">10 Minutes</mat-option>
                     <mat-option [value]="20">20 Minutes</mat-option>
                     <mat-option [value]="30">30 Minutes</mat-option>
@@ -1234,8 +1235,10 @@
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="Durations">Appointment Durations</label>
-                  <mat-select class="custom-mat-select" placeholder="30 Minutes" [(ngModel)]="slotModalService.slotForm.duration" name="duration">
+                  <mat-select class="custom-mat-select" placeholder="30 Minutes" [(ngModel)]="slotModalService.slotForm.duration" name="duration" (selectionChange)="onDurationChange()">
+                    <mat-option [value]="15">15 Minutes</mat-option>
                     <mat-option [value]="30">30 Minutes</mat-option>
+                    <mat-option [value]="45">45 Minutes</mat-option>
                     <mat-option [value]="60">1 Hour</mat-option>
                   </mat-select>
                 </div>

@@ -68,11 +68,18 @@ export class ModalComponent implements OnInit {
     startTime: '',
     endTime: '',
     duration: 30,
+    interval: 0,
     fees: 0,
     spaces: 1,
     // Add more fields as needed
   };
   savingSlot = false;
+
+  durationOptions = [15, 30, 45, 60];
+  selectedDuration = 30;
+  slotStartTime = '';
+  slotEndTime = '';
+  slotError = '';
 
   constructor(private router:Router, private slotService: SlotService, public slotModalService: SlotModalService) {
     this.chartOptionsOne = {
@@ -334,7 +341,8 @@ export class ModalComponent implements OnInit {
   }
   ngOnInit() {
     this.myDateValue = new Date();
-
+    this.durationOptions = [15, 30, 45, 60];
+    this.setupSlotFormWatchers();
   }
   onDateChange(newDate: Date) {
     console.log(newDate);
@@ -381,6 +389,7 @@ export class ModalComponent implements OnInit {
       startTime: this.slotModalService.slotForm.startTime,
       endTime: this.slotModalService.slotForm.endTime,
       duration: this.slotModalService.slotForm.duration,
+      interval: this.slotModalService.slotForm.interval,
       fees: this.slotModalService.slotForm.fees,
       spaces: this.slotModalService.slotForm.spaces,
     };
@@ -425,5 +434,46 @@ export class ModalComponent implements OnInit {
     if (modal) {
       (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
     }
+  }
+
+  onStartTimeChange() {
+    this.updateEndTime();
+  }
+
+  onDurationChange() {
+    this.updateEndTime();
+  }
+
+  updateEndTime() {
+    const startTime = this.slotModalService.slotForm.startTime;
+    const duration = this.slotModalService.slotForm.duration;
+    if (!startTime || !duration) {
+      this.slotModalService.slotForm.endTime = '';
+      return;
+    }
+    const [h, m] = startTime.split(':').map(Number);
+    const start = new Date();
+    start.setHours(h, m, 0, 0);
+    const end = new Date(start.getTime() + duration * 60000);
+    const endH = end.getHours().toString().padStart(2, '0');
+    const endM = end.getMinutes().toString().padStart(2, '0');
+    this.slotModalService.slotForm.endTime = `${endH}:${endM}`;
+    this.validateSlotTimes();
+  }
+
+  validateSlotTimes() {
+    const startTime = this.slotModalService.slotForm.startTime;
+    const endTime = this.slotModalService.slotForm.endTime;
+    if (startTime && endTime && startTime >= endTime) {
+      this.slotError = 'Start time must be before end time.';
+    } else {
+      this.slotError = '';
+    }
+  }
+
+  setupSlotFormWatchers() {
+    // If using Angular forms, use valueChanges. If not, use a polling or event-based approach.
+    // For template-driven forms, use setters or call updateEndTime in (ngModelChange) in the template.
+    // Here, we patch the logic to be called from the template:
   }
 }
