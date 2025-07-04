@@ -239,7 +239,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon" *ngIf="appointment.appointmentType === 'Video Call'"><a href="javascript:void(0);"><i class="isax isax-video5"></i></a></span>
+                                                    <span class="hospital-icon" *ngIf="appointment.appointmentType === 'Clinic'"><a href="javascript:void(0);"><i class="isax isax-hospital5"></i></a></span>
+                                                    <span class="telephone-icon" *ngIf="appointment.appointmentType === 'Audio Call'"><a href="javascript:void(0);"><i class="isax isax-call5"></i></a></span>
+                                                    <span class="chat-icon" *ngIf="appointment.appointmentType === 'Chat'"><a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
@@ -295,7 +298,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon" *ngIf="appointment.appointmentType === 'Video Call'"><a href="javascript:void(0);"><i class="isax isax-video5"></i></a></span>
+                                                    <span class="hospital-icon" *ngIf="appointment.appointmentType === 'Clinic'"><a href="javascript:void(0);"><i class="isax isax-hospital5"></i></a></span>
+                                                    <span class="telephone-icon" *ngIf="appointment.appointmentType === 'Audio Call'"><a href="javascript:void(0);"><i class="isax isax-call5"></i></a></span>
+                                                    <span class="chat-icon" *ngIf="appointment.appointmentType === 'Chat'"><a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
@@ -337,7 +343,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="grid-user-msg">
-                                                    <span class="video-icon"><a href="javascript:void(0);"><i class="fa-solid fa-video"></i></a></span>
+                                                    <span class="video-icon" *ngIf="appointment.appointmentType === 'Video Call'"><a href="javascript:void(0);"><i class="isax isax-video5"></i></a></span>
+                                                    <span class="hospital-icon" *ngIf="appointment.appointmentType === 'Clinic'"><a href="javascript:void(0);"><i class="isax isax-hospital5"></i></a></span>
+                                                    <span class="telephone-icon" *ngIf="appointment.appointmentType === 'Audio Call'"><a href="javascript:void(0);"><i class="isax isax-call5"></i></a></span>
+                                                    <span class="chat-icon" *ngIf="appointment.appointmentType === 'Chat'"><a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a></span>
                                                 </div>
                                             </div>
                                         </li>
