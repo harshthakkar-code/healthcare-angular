@@ -37,6 +37,13 @@
                                 </div>
                             </div>
                         </li>
+                        <div class="no-reviews-container" *ngIf="filteredReviews.length === 0">
+                            <div class="no-reviews-icon">
+                              <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <h2>No Reviews</h2>
+                            <p>There are no reviews to show</p>
+                          </div>
                         <!-- Dynamic reviews rendering -->
                         <ng-container *ngIf="reviews && reviews.length > 0">
                             <li *ngFor="let review of reviews">

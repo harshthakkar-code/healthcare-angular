@@ -82,6 +82,14 @@
 									</ul>
 								</div>
 								<!-- /Pagination -->
+
+								<div class="no-invoices-container" *ngIf="transactions.length === 0 && !loading">
+									<div class="no-invoices-icon">
+										<i class="fa-solid fa-calendar-check"></i>
+									</div>
+									<h2>No Invoices</h2>
+									<p>There are no invoices to show</p>
+								</div>
 						</div>
 						<!-- /Invoices -->
 

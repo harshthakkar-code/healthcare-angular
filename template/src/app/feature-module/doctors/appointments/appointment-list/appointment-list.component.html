@@ -257,7 +257,15 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div *ngIf="upcomingAppointments.length === 0">No upcoming appointments.</div>
+                            <div *ngIf="upcomingAppointments.length === 0">
+                                <div class="no-appointments-container">
+                                    <div class="no-appointments-icon">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </div>
+                                    <h2>No Appointments</h2>
+                                    <p>There are no upcoming appointments to show</p>
+                                </div>
+                            </div>
                         </div>
                         <div *ngIf="selectedTab === 'cancelled'">
                             <div *ngFor="let apt of cancelledAppointments" class="appointment-wrap">
@@ -294,7 +302,15 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div *ngIf="cancelledAppointments.length === 0">No cancelled appointments.</div>
+                            <div *ngIf="cancelledAppointments.length === 0">
+                                <div class="no-appointments-container">
+                                    <div class="no-appointments-icon">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </div>
+                                    <h2>No Appointments</h2>
+                                    <p>There are no cancelled appointments to show</p>
+                                </div>
+                            </div>
                         </div>
                         <div *ngIf="selectedTab === 'completed'">
                             <div *ngFor="let apt of completedAppointments" class="appointment-wrap">
@@ -331,7 +347,15 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div *ngIf="completedAppointments.length === 0">No completed appointments.</div>
+                            <div *ngIf="completedAppointments.length === 0">
+                                <div class="no-appointments-container">
+                                    <div class="no-appointments-icon">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </div>
+                                    <h2>No Appointments</h2>
+                                    <p>There are no completed appointments to show</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

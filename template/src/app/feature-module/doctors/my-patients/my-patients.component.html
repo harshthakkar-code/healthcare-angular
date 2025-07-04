@@ -204,8 +204,8 @@
 
                 <div *ngIf="loading" class="text-center py-4">Loading...</div>
                 <div *ngIf="!loading && error" class="text-danger text-center py-4">{{ error }}</div>
-                <div *ngIf="!loading && activeTab === 'active' && filteredActivePatients.length === 0 && !error" class="text-center py-4">No active patients found.</div>
-                <div *ngIf="!loading && activeTab === 'inactive' && filteredInactivePatients.length === 0 && !error" class="text-center py-4">No inactive patients found.</div>
+                <!-- <div *ngIf="!loading && activeTab === 'active' && filteredActivePatients.length === 0 && !error" class="text-center py-4">No active patients found.</div>
+                <div *ngIf="!loading && activeTab === 'inactive' && filteredInactivePatients.length === 0 && !error" class="text-center py-4">No inactive patients found.</div> -->
                 <div *ngIf="!loading && ((activeTab === 'active' && filteredActivePatients.length > 0) || (activeTab === 'inactive' && filteredInactivePatients.length > 0))">
                     <div class="patients-list">
                         <div *ngFor="let patient of activeTab === 'active' ? filteredActivePatients : filteredInactivePatients" class="patient-card-modern">
@@ -247,6 +247,23 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Active Patients Tab Empty State -->
+                <div class="no-patients-container" *ngIf="activeTab === 'active' && filteredActivePatients.length === 0 && !loading && !error">
+                    <div class="no-patients-icon">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <h2>No Patients</h2>
+                    <p>There are no active patients to show</p>
+                </div>
+                <!-- Inactive Patients Tab Empty State -->
+                <div class="no-patients-container" *ngIf="activeTab === 'inactive' && filteredInactivePatients.length === 0 && !loading && !error">
+                    <div class="no-patients-icon">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <h2>No Patients</h2>
+                    <p>There are no inactive patients to show</p>
                 </div>
 
             </div>
