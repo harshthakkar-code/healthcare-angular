@@ -34,14 +34,14 @@
                     <h3>Payouts</h3>
                 </div>
 
-                <div class="search-header">
+                <div class="search-header" *ngIf="paginatedPayouts.length > 0 || loading">
                     <div class="search-field">
-                        <input type="text" class="form-control" placeholder="Search">
+                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchText" (ngModelChange)="onSearchChange()">
                         <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                     </div>
                 </div>
 
-                <div class="custom-table">
+                <div class="custom-table" *ngIf="paginatedPayouts.length > 0 || loading">
                     <div class="table-responsive">
                         <table class="table table-center mb-0">
                             <thead>
@@ -53,84 +53,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$300</td>
+                                <tr *ngFor="let payout of paginatedPayouts">
+                                    <td>{{ payout.paymentDate | date: 'dd MMM yyyy' }}</td>
+                                    <td>{{ payout.paymentMethod | titlecase }}</td>
+                                    <td>${{ payout.amount }}</td>
                                     <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$200</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>25 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$300</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$300</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$300</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$300</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>27 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$200</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>29 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$350</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24 Mar 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$100</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>04 Apr 2024</td>
-                                    <td>Paypal</td>
-                                    <td>$180</td>
-                                    <td>
-                                        <span class="badge badge-green status-badge">Completed</span>
+                                        <span class="badge" style="border-radius: 10px;" [ngClass]="{
+                                            'badge-green status-badge': payout.status === 'completed',
+                                            'badge-warning status-badge': payout.status === 'pending',
+                                            'badge-danger status-badge': payout.status === 'failed',
+                                            'badge-info status-badge': payout.status === 'processing'
+                                        }">{{ payout.status | titlecase }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -138,29 +71,27 @@
                     </div>
                 </div>
 
+                <app-empty-state *ngIf="!loading && paginatedPayouts.length === 0"
+                [title]="'No Payouts'"
+                [message]="'There are no payouts to show.'"
+                ></app-empty-state>
+
                 <!-- Pagination -->
-                <div class="pagination dashboard-pagination">
+                <div class="pagination dashboard-pagination" *ngIf="paginatedPayouts.length > 0">
                     <ul>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
+                        <li [class.disabled]="currentPage === 1">
+                            <a href="javascript:void(0);" class="page-link" (click)="prevPage()"><i class="fa-solid fa-chevron-left"></i></a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link">1</a>
+                        <li *ngFor="let page of paginationPages">
+                            <a href="javascript:void(0);" class="page-link"
+                               [class.active]="page === currentPage"
+                               [class.disabled]="page === '...'"
+                               (click)="onPageClick(page)">
+                                {{ page }}
+                            </a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link active">2</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link">3</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link">4</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link">...</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
+                        <li [class.disabled]="currentPage === totalPages">
+                            <a href="javascript:void(0);" class="page-link" (click)="nextPage()"><i class="fa-solid fa-chevron-right"></i></a>
                         </li>
                     </ul>
                 </div>
