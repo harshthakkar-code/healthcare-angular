@@ -41,8 +41,8 @@ exports.createReview = async (req, res, next) => {
 exports.getReviewsForDoctor = async (req, res, next) => {
   try {
     const { doctorId } = req.params;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 5;
+    // const page = parseInt(req.query.page) || 1;
+    // const pageSize = parseInt(req.query.pageSize) || ;
 
     const filter = { doctor: doctorId };
 
@@ -51,8 +51,8 @@ exports.getReviewsForDoctor = async (req, res, next) => {
     const reviews = await Review.find(filter)
       .populate('patient', 'name email avatar')
       .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
+      // .skip((page - 1) * pageSize)
+      // .limit(pageSize);
 
     const avgRating = totalReviews
       ? (await Review.aggregate([
