@@ -58,148 +58,66 @@
           </ul>
         </div>
 
-        <form>
-
-          <div class="accordions awrad-infos" id="list-accord">
-
-            <!-- Awards Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0);" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#award1">Awards<span>Delete</span></a>
-              <div class="accordion-collapse collapse show" id="award1" data-bs-parent="#list-accord">
+        <form [formGroup]="awardsForm" (ngSubmit)="saveAwards()">
+          <div class="accordions awrad-infos" id="list-accord" formArrayName="awards">
+            <div class="user-accordion-item" *ngFor="let award of awardsArray.controls; let i = index" [formGroupName]="i">
+              <a href="javascript:void(0);" class="accordion-wrap" data-bs-toggle="collapse" [attr.data-bs-target]="'#award' + i">
+                Awards <span (click)="$event.preventDefault(); deleteAward(i)">Delete</span>
+              </a>
+              <div class="accordion-collapse collapse show" [id]="'award' + i" data-bs-parent="#list-accord">
                 <div class="content-collapse">
                   <div class="add-service-info">
                     <div class="add-info">
                       <div class="row align-items-center">
+                        <div class="row">
                         <div class="col-md-6">
                           <div class="form-wrap">
-                            <label class="col-form-label"for=award>Award Name</label>
-                            <input type="text" class="form-control">
+                            <label class="col-form-label" for="award">Award Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="awardName">
+                            <div *ngIf="award.get('awardName')?.invalid && (award.get('awardName')?.touched || award.get('awardName')?.dirty)">
+                              <small class="text-danger">Award Name is required.</small>
+                            </div>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-wrap">
                             <label class="col-form-label" for="year">Year <span class="text-danger">*</span></label>
                             <div class="form-icon">
-                              <input type="text" class="form-control datetimepicker" bsDatepicker [bsConfig]="{ adaptivePosition: true }">
+                              <input type="text" class="form-control datetimepicker" bsDatepicker formControlName="year">
                               <span class="icon"><i class="fa-regular fa-calendar-days"></i></span>
+                            </div>
+                            <div *ngIf="award.get('year')?.invalid && (award.get('year')?.touched || award.get('year')?.dirty)">
+                              <small class="text-danger">Year is required.</small>
                             </div>
                           </div>
                         </div>
-                        <div class="col-lg-12">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="describtion">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" rows="3"></textarea>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <a href="javascript:void(0);" class="reset more-item">Reset</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /Awards Item -->
-
-            <!-- Awards Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0);" class="collapsed accordion-wrap" data-bs-toggle="collapse" data-bs-target="#award2">Best Surgeon<span>Delete</span></a>
-              <div class="accordion-collapse collapse" id="award2" data-bs-parent="#list-accord">
-                <div class="content-collapse">
-                  <div class="add-service-info">
-                    <div class="add-info">
-                      <div class="row align-items-center">
-                        <div class="col-md-6">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="awardname">Award Name</label>
-                            <input type="text" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="year">Year <span class="text-danger">*</span></label>
-                            <div class="form-icon">
-                              <input type="text" class="form-control datetimepicker" bsDatepicker [bsConfig]="{ adaptivePosition: true }">
-                              <span class="icon"><i class="fa-regular fa-calendar-days"></i></span>
-                            </div>
-                          </div>
                         </div>
                         <div class="col-lg-12">
                           <div class="form-wrap">
                             <label class="col-form-label" for="description">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" rows="3"></textarea>
+                            <textarea class="form-control" rows="3" formControlName="description"></textarea>
+                            <div *ngIf="award.get('description')?.invalid && (award.get('description')?.touched || award.get('description')?.dirty)">
+                              <small class="text-danger">Description is required.</small>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="text-end">
-                      <a href="javascript:void(0);" class="reset more-item">Reset</a>
+                      <a href="javascript:void(0);" class="reset more-item" (click)="$event.preventDefault(); deleteAward(i)">Reset</a>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- /Awards Item -->
+          </div>
+          <div class="modal-btn text-end">
+            <a href="javascript:void(0);" class="btn btn-gray">Cancel</a>
+            <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
+          </div>
+        </form>
+        <!-- /Profile Settings -->
 
-            <!-- New Awards Item -->
-            @for (item of award; track item) {
-              <div class="awrad-content">
-                <div class="user-accordion-item">
-                  <a href="javascript:void(0);" class="accordion-wrap" data-bs-toggle="collapse"
-                    data-bs-target="#award">Award<span class="trash">Delete</span></a>
-                    <div class="accordion-collapse collapse show" id="award" data-bs-parent="#list-accord">
-                      <div class="content-collapse">
-                        <div class="add-service-info">
-                          <div class="add-info">
-                            <div class="row align-items-center">
-                              <div class="col-md-6">
-                                <div class="form-wrap">
-                                  <label class="col-form-label" for="awardname">Award Name</label>
-                                  <input type="text" class="form-control">
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-wrap">
-                                  <label class="col-form-label" for="year">Year <span
-                                  class="text-danger">*</span></label>
-                                  <div class="form-icon">
-                                    <input type="text" class="form-control datetimepicker" bsDatepicker [bsConfig]="{ adaptivePosition: true }">
-                                    <span class="icon"><i
-                                    class="fa-regular fa-calendar-days"></i></span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-lg-12">
-                                <div class="form-wrap">
-                                  <label class="col-form-label" for="jobdescription">Job Description <span
-                                  class="text-danger">*</span></label>
-                                  <textarea class="form-control" rows="3"></textarea>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="text-end">
-                            <a href="javascript:void(0);" class="reset more-item">Reset</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }
-              <!-- /New Awards Item -->
-            </div>
-
-            <div class="modal-btn text-end">
-              <a href="javascript:void(0);" class="btn btn-gray">Cancel</a>
-              <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
-            </div>
-
-          </form>
-          <!-- /Profile Settings -->
-
-        </div>
       </div>
     </div>
   </div>

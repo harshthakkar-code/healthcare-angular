@@ -51,14 +51,13 @@
           </ul>
         </div>
 
-        <form >
-
-          <div class="accordions insurance-infos" id="list-accord">
-
-            <!-- Insurance Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#insurance1">Insurance<span>Delete</span></a>
-              <div class="accordion-collapse collapse show" id="insurance1" data-bs-parent="#list-accord">
+        <form [formGroup]="insuranceForm" (ngSubmit)="saveInsurances()">
+          <div class="accordions insurance-infos" id="list-accord" formArrayName="insurances">
+            <div class="user-accordion-item" *ngFor="let ins of insurancesArray.controls; let i = index" [formGroupName]="i">
+              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" [attr.data-bs-target]="'#insurance' + i">
+                Insurance <span (click)="$event.preventDefault(); deleteEducationFunc(i)">Delete</span>
+              </a>
+              <div class="accordion-collapse collapse show" [id]="'insurance' + i" data-bs-parent="#list-accord">
                 <div class="content-collapse">
                   <div class="add-service-info">
                     <div class="add-info">
@@ -83,116 +82,27 @@
                             </div>
                           </div>
                           <div class="form-wrap">
-                            <label class="col-form-label" for="insurence">Insurance Name</label>
-                            <input type="text" class="form-control">
+                            <label class="col-form-label" for="insurence">Insurance Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="insuranceName">
+                            <div *ngIf="ins.get('insuranceName')?.invalid && (ins.get('insuranceName')?.touched || ins.get('insuranceName')?.dirty)">
+                              <small class="text-danger">Insurance Name is required.</small>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="text-end">
-                      <a href="javascript:void(0)" class="reset more-item">Reset</a>
+                      <a href="javascript:void(0)" class="reset more-item" (click)="$event.preventDefault(); deleteEducationFunc(i)">Reset</a>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- /Insurance Item -->
-
-            <!-- Insurance Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0)" class="collapsed accordion-wrap" data-bs-toggle="collapse" data-bs-target="#insurance2">Star health<span>Delete</span></a>
-              <div class="accordion-collapse collapse" id="insurance2" data-bs-parent="#list-accord">
-                <div class="content-collapse">
-                  <div class="add-service-info">
-                    <div class="add-info">
-                      <div class="row align-items-center">
-                        <div class="col-md-12">
-                          <div class="form-wrap mb-2">
-                            <div class="change-avatar img-upload">
-                              <div class="profile-img">
-                                <i class="fa-solid fa-file-image"></i>
-                              </div>
-                              <div class="upload-img">
-                                <h5>Logo</h5>
-                                <div class="imgs-load d-flex align-items-center">
-                                  <div class="change-photo">
-                                    Upload New
-                                    <input type="file" class="upload">
-                                  </div>
-                                  <a href="javascript:void(0)" class="upload-remove">Remove</a>
-                                </div>
-                                <p class="form-text">Your Image should Below 4 MB, Accepted format Jpg,Png,Svg</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="insurence">Insurance Name</label>
-                            <input type="text" class="form-control" value="Star health">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <a href="javascript:void(0)" class="reset more-item">Reset</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /Insurance Item -->
-            <!-- New Awards Item -->
-            @for (item of education; track item) {
-              <div class="awrad-content">
-                <div class="user-accordion-item">
-                  <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#insurance">Insurance<span (click)="deleteEducationFunc(0)" (keydown.enter)="deleteEducationFunc(0)" tabindex="0">Delete</span></a>
-                  <div class="accordion-collapse collapse show" id="insurance" data-bs-parent="#list-accord">
-                    <div class="content-collapse">
-                      <div class="add-service-info">
-                        <div class="add-info">
-                          <div class="row align-items-center">
-                            <div class="col-md-12">
-                              <div class="form-wrap mb-2">
-                                <div class="change-avatar img-upload">
-                                  <div class="profile-img">
-                                    <i class="fa-solid fa-file-image"></i>
-                                  </div>
-                                  <div class="upload-img">
-                                    <h5>Logo</h5>
-                                    <div class="imgs-load d-flex align-items-center">
-                                      <div class="change-photo">
-                                        Upload New
-                                        <input type="file" class="upload">
-                                      </div>
-                                      <a href="javascript:void(0)" class="upload-remove">Remove</a>
-                                    </div>
-                                    <p class="form-text">Your Image should Below 4 MB, Accepted format Jpg,Png,Svg</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="form-wrap">
-                                <label class="col-form-label" for="insurence">Insurance Name</label>
-                                <input type="text" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="text-end">
-                          <a href="javascript:void(0)" class="reset more-item">Reset</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-
           </div>
-
           <div class="modal-btn text-end">
             <a href="javascript:void(0)" class="btn btn-gray">Cancel</a>
-            <button class="btn btn-primary prime-btn">Save Changes</button>
+            <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
           </div>
-
         </form>
         <!-- /Profile Settings -->
 

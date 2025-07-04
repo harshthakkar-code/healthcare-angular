@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { routes } from 'src/app/shared/routes/routes';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import api from 'src/app/shared/api/axios';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDeleteDialogComponent } from '../../doctor-specialities/confirm-delete-dialog.component';
 
 @Component({
     selector: 'app-doctor-experience-settings',
@@ -7,16 +11,111 @@ import { routes } from 'src/app/shared/routes/routes';
     styleUrl: './doctor-experience-settings.component.scss',
     standalone: false
 })
-export class DoctorExperienceSettingsComponent {
-  public routes = routes
-  education: Array<number> = []
+export class DoctorExperienceSettingsComponent implements OnInit {
+  public routes = routes;
+  experiencesForm!: FormGroup;
+  doctorId!: string | null;
+  loading = false;
 
-  addEducationFunc(){
-    this.education.push(1);
+  constructor(private fb: FormBuilder, private dialog: MatDialog) {}
+
+  ngOnInit() {
+    this.doctorId = this.getDoctorId();
+    this.experiencesForm = this.fb.group({
+      experiences: this.fb.array([])
+    });
+    if (this.doctorId) {
+      this.fetchExperiences();
+    }
+    if (this.experiences.length > 0) {
+      (this.experiences.at(0) as FormGroup).markAllAsTouched();
+    }
   }
-  deleteEducationFunc(index: number) {
-    this.education.splice(index, 1); 
-}
 
-  
+  private getDoctorId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
+  }
+
+  get experiences() {
+    return this.experiencesForm.get('experiences') as FormArray;
+  }
+
+  fetchExperiences() {
+    if (!this.doctorId) return;
+    this.loading = true;
+    api.get(`/doctor-settings/${this.doctorId}`)
+      .then((response) => {
+        const data = response.data;
+        const experiencesArr = Array.isArray(data.experienceSettings)
+          ? data.experienceSettings
+          : Array.isArray(data)
+            ? data
+            : [];
+        this.experiences.clear();
+        experiencesArr.forEach((exp: any) => {
+          this.experiences.push(this.fb.group({
+            title: [exp.title || '', Validators.required],
+            hospital: [exp.hospital || '', Validators.required],
+            year: [exp.year || '', Validators.required],
+            location: [exp.location || '', Validators.required],
+            employment: [exp.employment || ''],
+            description: [exp.description || '', Validators.required],
+            startDate: [exp.startDate || '', Validators.required],
+            endDate: [exp.endDate || '', Validators.required],
+            currentlyWorking: [exp.currentlyWorking || false]
+          }));
+        });
+        this.loading = false;
+      })
+      .catch(() => { this.loading = false; });
+  }
+
+  addEducationFunc() {
+    this.experiences.push(this.fb.group({
+      title: ['', Validators.required],
+      hospital: ['', Validators.required],
+      year: ['', Validators.required],
+      location: ['', Validators.required],
+      employment: [''],
+      description: ['', Validators.required],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+      currentlyWorking: [false]
+    }));
+    (this.experiences.at(this.experiences.length - 1) as FormGroup).markAllAsTouched();
+  }
+
+  async deleteEducationFunc(index: number) {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      data: { message: 'Are you sure you want to delete this experience?' }
+    });
+    const result = await dialogRef.afterClosed().toPromise();
+    if (result) {
+      this.experiences.removeAt(index);
+    }
+  }
+
+  saveExperiences() {
+    if (this.experiencesForm.invalid || !this.doctorId) {
+      this.experiencesForm.markAllAsTouched();
+      this.experiences.controls.forEach(c => (c as FormGroup).markAllAsTouched());
+      return;
+    }
+    this.loading = true;
+    const payload = {
+      doctorId: this.doctorId,
+      experienceSettings: this.experiencesForm.value.experiences
+    };
+    api.post(`/doctor-settings`, payload)
+      .then(() => {
+        this.loading = false;
+        this.fetchExperiences();
+      })
+      .catch(() => { this.loading = false; });
+  }
 }

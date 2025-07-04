@@ -48,7 +48,7 @@
           <h5>Profile</h5>
         </div>
 
-        <form >
+        <form [formGroup]="settingsForm">
           <div class="setting-card">
             <div class="change-avatar img-upload">
               <div class="profile-img">
@@ -71,50 +71,70 @@
             <h5>Information</h5>
           </div>
           <div class="setting-card">
-            <div class="row">
+            <div class="row" formGroupName="profileSettings">
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="firstname">First Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="fullName">
+                  <div *ngIf="settingsForm.get('profileSettings.fullName')?.invalid && (settingsForm.get('profileSettings.fullName')?.touched || settingsForm.get('profileSettings.fullName')?.dirty)">
+                    <small class="text-danger">First Name is required.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="lastname">Last Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="lastName">
+                  <div *ngIf="settingsForm.get('profileSettings.lastName')?.invalid && (settingsForm.get('profileSettings.lastName')?.touched || settingsForm.get('profileSettings.lastName')?.dirty)">
+                    <small class="text-danger">Last Name is required.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="display">Display Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="displayName">
+                  <div *ngIf="settingsForm.get('profileSettings.displayName')?.invalid && (settingsForm.get('profileSettings.displayName')?.touched || settingsForm.get('profileSettings.displayName')?.dirty)">
+                    <small class="text-danger">Display Name is required.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="designation">Designation <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="designation">
+                  <div *ngIf="settingsForm.get('profileSettings.designation')?.invalid && (settingsForm.get('profileSettings.designation')?.touched || settingsForm.get('profileSettings.designation')?.dirty)">
+                    <small class="text-danger">Designation is required.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="phone">Phone Numbers <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="phone">
+                  <div *ngIf="settingsForm.get('profileSettings.phone')?.invalid && (settingsForm.get('profileSettings.phone')?.touched || settingsForm.get('profileSettings.phone')?.dirty)">
+                    <small class="text-danger" *ngIf="settingsForm.get('profileSettings.phone')?.errors?.['required']">Phone is required.</small>
+                    <small class="text-danger" *ngIf="settingsForm.get('profileSettings.phone')?.errors?.['pattern']">Enter a valid 10-digit mobile number.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="email">Email Address <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" formControlName="email">
+                  <div *ngIf="settingsForm.get('profileSettings.email')?.invalid && (settingsForm.get('profileSettings.email')?.touched || settingsForm.get('profileSettings.email')?.dirty)">
+                    <small class="text-danger" *ngIf="settingsForm.get('profileSettings.email')?.errors?.['required']">Email is required.</small>
+                    <small class="text-danger" *ngIf="settingsForm.get('profileSettings.email')?.errors?.['email']">Enter a valid email address.</small>
+                  </div>
                 </div>
               </div>
               <div class="col-lg-12">
                 <div class="form-wrap">
                   <label class="col-form-label" for="known">Known Languages <span class="text-danger">*</span></label>
-                  
-                  <p-chips class="input-tags form-control"
-                  [ngModelOptions]="{standalone: true}"
-                  [(ngModel)]="values1"></p-chips>
+                  <input type="text" class="form-control" formControlName="knownLanguages">
+                  <div *ngIf="settingsForm.get('profileSettings.knownLanguages')?.invalid && (settingsForm.get('profileSettings.knownLanguages')?.touched || settingsForm.get('profileSettings.knownLanguages')?.dirty)">
+                    <small class="text-danger">Known Languages is required.</small>
+                  </div>
                 </div>
               </div>
             </div>
@@ -124,39 +144,43 @@
           </div>
           <div class="setting-card">
             <div class="add-info membership-infos">
-              <div class="row membership-content">
-                @for (data of education; track data; let i = $index) {
-                <div class="col-lg-3 col-md-6">
-                  <div class="form-wrap">
-                    <label class="col-form-label" for="title">Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" placeholder="Add Title">
+              <div formGroupName="profileSettings">
+                <div class="row membership-content" formArrayName="memberships">
+                  <div class="w-100 d-flex flex-wrap" *ngFor="let membership of membershipsFormArray.controls; let i = index" [formGroupName]="i">
+                    <div class="col-lg-2 col-md-6 me-3">
+                      <div class="form-wrap">
+                        <label class="col-form-label" for="title">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Add Title" formControlName="title">
+                        <div *ngIf="membership.get('title')?.invalid && (membership.get('title')?.touched || membership.get('title')?.dirty)">
+                          <small class="text-danger">Title is required.</small>
+                        </div>
+                        
+                      </div>
+                    </div>
+                    <div class="col-lg-9 col-md-6">
+                      <div class="d-flex align-items-center">
+                        <div class="form-wrap w-100">
+                          <label class="col-form-label" for="about">About Membership</label>
+                          <input type="text" class="form-control" formControlName="aboutMembership">
+                        </div>
+                        <div class="form-wrap ms-2" style="margin-right: -45px;">
+                          <label class="col-form-label d-block" for="education">&nbsp;</label>
+                          <a (click)="$event.preventDefault(); dltMembershipsFunc(i)" href="javascript:void(0);" class="trash-icon trash" >Delete</a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col-lg-9 col-md-6">
-                  <div class="d-flex align-items-center">
-                    <div class="form-wrap w-100">
-                      <label class="col-form-label" for="about">About Membership</label>
-                      <input type="text" class="form-control">
-                    </div>										
-                    <div class="form-wrap ms-2">
-                      <label class="col-form-label d-block" for="education">&nbsp;</label>
-                      @if (i) {
-                      <a (click)="dltEducationFunc(i)"  href="javascript:void(0);" class="trash-icon trash">Delete</a>
-                      }
-                    </div>												
-                  </div>			
-                </div>
-              }
               </div>
             </div>
             <div class="text-end">
-              <a href="javascript:void(0);" (click)="addEducationFunc()" class="add-membership-info more-item">Add New</a>
+              <a href="javascript:void(0);" (click)="addMembershipsFunc()" class="add-membership-info more-item">Add New</a>
             </div>
           </div>
         
           <div class="modal-btn text-end">
             <a href="javascript:void(0);" class="btn btn-gray">Cancel</a>
-            <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
+            <button type="submit" class="btn btn-primary prime-btn" (click)="saveChanges()">Save Changes</button>
           </div>
 
         </form>

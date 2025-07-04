@@ -51,14 +51,13 @@
           </ul>
         </div>
 
-        <form >
-
-          <div class="accordions clinic-infos" id="list-accord">
-
-            <!-- Clinic Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#clinic1">Clinic<span>Delete</span></a>
-              <div class="accordion-collapse collapse show" id="clinic1" data-bs-parent="#list-accord">
+        <form [formGroup]="clinicsForm" (ngSubmit)="saveClinics()">
+          <div class="accordions clinic-infos" id="list-accord" formArrayName="clinics">
+            <div class="user-accordion-item" *ngFor="let clinic of clinicsArray.controls; let i = index" [formGroupName]="i">
+              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" [attr.data-bs-target]="'#clinic' + i">
+                Clinic <span (click)="$event.preventDefault(); deleteEducationFunc(i)">Delete</span>
+              </a>
+              <div class="accordion-collapse collapse show" [id]="'clinic' + i" data-bs-parent="#list-accord">
                 <div class="content-collapse">
                   <div class="add-service-info">
                     <div class="add-info">
@@ -85,37 +84,44 @@
                         </div>
                         <div class="col-md-12">
                           <div class="form-wrap">
-                            <label class="col-form-label" for="clinic">Clinic Name</label>
-                            <input type="text" class="form-control">
+                            <label class="col-form-label" for="clinic">Clinic Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="clinicName">
+                            <div *ngIf="clinic.get('clinicName')?.invalid && (clinic.get('clinicName')?.touched || clinic.get('clinicName')?.dirty)">
+                              <small class="text-danger">Clinic Name is required.</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row ">
+                        <div class="col-md-6">
+                          <div class="form-wrap">
+                            <label class="col-form-label" for="location">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="location">
+                            <div *ngIf="clinic.get('location')?.invalid && (clinic.get('location')?.touched || clinic.get('location')?.dirty)">
+                              <small class="text-danger">Location is required.</small>
+                            </div>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-wrap">
-                            <label class="col-form-label" for="location">Location</label>
-                            <input type="text" class="form-control">
+                            <label class="col-form-label" for="address">Address <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="address">
+                            <div *ngIf="clinic.get('address')?.invalid && (clinic.get('address')?.touched || clinic.get('address')?.dirty)">
+                              <small class="text-danger">Address is required.</small>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-md-6">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="address">Address</label>
-                            <input type="text" class="form-control">
-                          </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-wrap">
                             <label class="col-form-label" for="gallery">Gallery</label>
                             <div class="drop-file">
                               <p>Drop files or Click to upload</p>
-                              <input type="file">
+                              <input type="file" (change)="onGalleryFileChange($event, i)">
                             </div>
                             <div class="view-imgs">
-                              <div class="view-img">
-                                <img src="assets/img/doctors-dashboard/clinic-02.jpg" alt="img">
-                                <a href="javascript:void(0);">Remove</a>
-                              </div>
-                              <div class="view-img">
-                                <img src="assets/img/doctors-dashboard/clinic-01.jpg" alt="img">
-                                <a href="javascript:void(0);">Remove</a>
+                              <div class="view-img" *ngFor="let img of getGalleryArray(i).controls; let imgIndex = index">
+                                <img [src]="img.value" alt="img">
+                                <a href="javascript:void(0);" (click)="$event.preventDefault(); removeGalleryImage(i, imgIndex)">Remove</a>
                               </div>
                             </div>
                           </div>
@@ -123,177 +129,17 @@
                       </div>
                     </div>
                     <div class="text-end">
-                      <a href="javascript:void(0)" class="reset more-item">Reset</a>
+                      <a href="javascript:void(0)" class="reset more-item" (click)="$event.preventDefault(); deleteEducationFunc(i)">Reset</a>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- /Clinic Item -->
-
-
-            <!-- Clinic Item -->
-            <div class="user-accordion-item">
-              <a href="javascript:void(0)" class="collapsed accordion-wrap" data-bs-toggle="collapse" data-bs-target="#clinic2">Adrian’s Dentistry<span>Delete</span></a>
-              <div class="accordion-collapse collapse" id="clinic2" data-bs-parent="#list-accord">
-                <div class="content-collapse">
-                  <div class="add-service-info">
-                    <div class="add-info">
-                      <div class="row align-items-center">
-                        <div class="col-md-12">
-                          <div class="form-wrap mb-2">
-                            <div class="change-avatar img-upload">
-                              <div class="profile-img">
-                                <i class="fa-solid fa-file-image"></i>
-                              </div>
-                              <div class="upload-img">
-                                <h5>Logo</h5>
-                                <div class="imgs-load d-flex align-items-center">
-                                  <div class="change-photo">
-                                    Upload New
-                                    <input type="file" class="upload">
-                                  </div>
-                                  <a href="javascript:void(0)" class="upload-remove">Remove</a>
-                                </div>
-                                <p class="form-text">Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="clinicname">Clinic Name</label>
-                            <input type="text" class="form-control" value="Adrian’s Dentistry">
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="location">Location</label>
-                            <input type="text" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="address">Address</label>
-                            <input type="text" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-wrap">
-                            <label class="col-form-label" for="gallery">Gallery</label>
-                            <div class="drop-file">
-                              <p>Drop files or Click to upload</p>
-                              <input type="file">
-                            </div>
-                            <div class="view-imgs">
-                              <div class="view-img">
-                                <img src="assets/img/doctors-dashboard/clinic-02.jpg" alt="img">
-                                <a href="javascript:void(0);">Remove</a>
-                              </div>
-                              <div class="view-img">
-                                <img src="assets/img/doctors-dashboard/clinic-01.jpg" alt="img">
-                                <a href="javascript:void(0);">Remove</a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <a href="javascript:void(0)" class="reset more-item">Reset</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /Clinic Item -->
-
-            <!-- New Awards Item -->
-            @for (item of education; track item) {
-              <div class="awrad-content">
-                <div class="user-accordion-item">
-                  <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#clinic">Clinic<span (click)="deleteEducationFunc(0)" (keydown.enter)="deleteEducationFunc(0)"  tabindex="0">Delete</span></a>
-                  <div class="accordion-collapse collapse show" id="clinic" data-bs-parent="#list-accord">
-                    <div class="content-collapse">
-                      <div class="add-service-info">
-                        <div class="add-info">
-                          <div class="row align-items-center">
-                            <div class="col-md-12">
-                              <div class="form-wrap mb-2">
-                                <div class="change-avatar img-upload">
-                                  <div class="profile-img">
-                                    <i class="fa-solid fa-file-image"></i>
-                                  </div>
-                                  <div class="upload-img">
-                                    <h5>Logo</h5>
-                                    <div class="imgs-load d-flex align-items-center">
-                                      <div class="change-photo">
-                                        Upload New
-                                        <input type="file" class="upload">
-                                      </div>
-                                      <a href="javascript:void(0)" class="upload-remove">Remove</a>
-                                    </div>
-                                    <p class="form-text">Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-12">
-                              <div class="form-wrap">
-                                <label class="col-form-label" for="clinic">Clinic Name</label>
-                                <input type="text" class="form-control">
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-wrap">
-                                <label class="col-form-label" for="location">Location</label>
-                                <input type="text" class="form-control">
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-wrap">
-                                <label class="col-form-label" for="address">Address</label>
-                                <input type="text" class="form-control">
-                              </div>
-                            </div>
-                            <div class="col-md-12">
-                              <div class="form-wrap">
-                                <label class="col-form-label" for="gallery">Gallery</label>
-                                <div class="drop-file">
-                                  <p>Drop files or Click to upload</p>
-                                  <input type="file">
-                                </div>
-                                <div class="view-imgs">
-                                  <div class="view-img">
-                                    <img src="assets/img/doctors-dashboard/clinic-02.jpg" alt="img">
-                                    <a href="javascript:void(0);">Remove</a>
-                                  </div>
-                                  <div class="view-img">
-                                    <img src="assets/img/doctors-dashboard/clinic-01.jpg" alt="img">
-                                    <a href="javascript:void(0);">Remove</a>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="text-end">
-                          <a href="javascript:void(0)" class="reset more-item">Reset</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-
           </div>
-
           <div class="modal-btn text-end">
             <a href="javascript:void(0)" class="btn btn-gray">Cancel</a>
             <button type="submit" class="btn btn-primary prime-btn">Save Changes</button>
           </div>
-
         </form>
         <!-- /Profile Settings -->
 
