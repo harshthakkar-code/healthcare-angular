@@ -83,13 +83,12 @@
 								</div>
 								<!-- /Pagination -->
 
-								<div class="no-invoices-container" *ngIf="transactions.length === 0 && !loading">
-									<div class="no-invoices-icon">
-										<i class="fa-solid fa-calendar-check"></i>
-									</div>
-									<h2>No Invoices</h2>
-									<p>There are no invoices to show</p>
-								</div>
+								<app-empty-state
+								  *ngIf="transactions.length === 0 && !loading"
+								  [icon]="'fa-solid fa-calendar-check'"
+								  [title]="'No Invoices'"
+								  [message]="'There are no invoices to show.'">
+								</app-empty-state>
 						</div>
 						<!-- /Invoices -->
 

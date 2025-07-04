@@ -271,13 +271,12 @@
                                 <button class="btn btn-primary" (click)="loadMore('upcoming')">Load More</button>
                             </div>
                         </div>
-                        <div class="no-appointments-container" *ngIf="upcomingAppointments.length === 0">
-                            <div class="no-appointments-icon">
-                                <i class="fa-solid fa-calendar-check"></i>
-                            </div>
-                            <h2>No Appointments</h2>
-                            <p>There are no appointments to show</p>
-                        </div>
+                        <app-empty-state
+                          *ngIf="upcomingAppointments.length === 0"
+                          [icon]="'fa-solid fa-calendar-check'"
+                          [title]="'No Appointments'"
+                          [message]="'There are no upcoming appointments to show.'">
+                        </app-empty-state>
                     </div>
                     <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab">
                         <div class="row">
@@ -314,13 +313,12 @@
                                 <button class="btn btn-primary" (click)="loadMore('cancelled')">Load More</button>
                             </div>
                         </div>
-                        <div class="no-appointments-container" *ngIf="cancelledAppointments.length === 0">
-                            <div class="no-appointments-icon">
-                                <i class="fa-solid fa-calendar-check"></i>
-                            </div>
-                            <h2>No Appointments</h2>
-                            <p>There are no appointments to show</p>
-                        </div>
+                        <app-empty-state
+                          *ngIf="cancelledAppointments.length === 0"
+                          [icon]="'fa-solid fa-calendar-check'"
+                          [title]="'No Appointments'"
+                          [message]="'There are no cancelled appointments to show.'">
+                        </app-empty-state>
                     </div>
                     <div class="tab-pane fade" id="pills-complete" role="tabpanel" aria-labelledby="pills-complete-tab">
                         <div class="row">
@@ -357,13 +355,12 @@
                                 <button class="btn btn-primary" (click)="loadMore('completed')">Load More</button>
                             </div>
                         </div>
-                        <div class="no-appointments-container" *ngIf="completedAppointments.length === 0">
-                            <div class="no-appointments-icon">
-                                <i class="fa-solid fa-calendar-check"></i>
-                            </div>
-                            <h2>No Appointments</h2>
-                            <p>There are no appointments to show</p>
-                        </div>
+                        <app-empty-state
+                          *ngIf="completedAppointments.length === 0"
+                          [icon]="'fa-solid fa-calendar-check'"
+                          [title]="'No Appointments'"
+                          [message]="'There are no completed appointments to show.'">
+                        </app-empty-state>
                     </div>
                 </div>
             </div>

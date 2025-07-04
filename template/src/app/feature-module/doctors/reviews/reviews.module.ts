@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ReviewsRoutingModule } from './reviews-routing.module';
 import { ReviewsComponent } from './reviews.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../feature-module.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ReviewsRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class ReviewsModule { }

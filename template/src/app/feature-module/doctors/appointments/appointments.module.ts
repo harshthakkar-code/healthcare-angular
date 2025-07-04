@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 import { AppointmentsComponent } from './appointments.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../feature-module.module';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
 import { DoctorCancelledAppointmentComponent } from './doctor-cancelled-appointment/doctor-cancelled-appointment.component';
 import { DoctorCancelledAppointment2Component } from './doctor-cancelled-appointment2/doctor-cancelled-appointment2.component';
@@ -27,6 +28,6 @@ import { DoctorAppointmentDetailsComponent } from './doctor-appointment-details/
     DoctorUpcomingAppointmentDetailsComponent,
     DoctorAppointmentDetailsComponent
   ],
-  imports: [CommonModule, AppointmentsRoutingModule, SharedModule],
+  imports: [CommonModule, AppointmentsRoutingModule, SharedModule, FeatureModuleModule],
 })
 export class AppointmentsModule {}

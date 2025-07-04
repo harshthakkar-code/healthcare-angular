@@ -11,13 +11,12 @@
                 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
                 <div *ngIf="loading">Loading...</div>
                 <!-- <div *ngIf="!loading && appointments.length === 0 && !error">No pending requests.</div> -->
-                <div class="no-requests-container" *ngIf="appointments.length === 0 && !loading && !error">
-                    <div class="no-requests-icon">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <h2>No Requests</h2>
-                    <p>There are no requests to show</p>
-                </div>
+                <app-empty-state
+                  *ngIf="appointments.length === 0 && !loading && !error"
+                  [icon]="'fa-solid fa-calendar-check'"
+                  [title]="'No Requests'"
+                  [message]="'There are no requests to show.'">
+                </app-empty-state>
                 <!-- Dynamic Request List -->
                 <div *ngFor="let apt of appointments" class="appointment-wrap">
                     <ul>

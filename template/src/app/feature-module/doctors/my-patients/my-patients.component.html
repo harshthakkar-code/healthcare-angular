@@ -250,21 +250,19 @@
                 </div>
 
                 <!-- Active Patients Tab Empty State -->
-                <div class="no-patients-container" *ngIf="activeTab === 'active' && filteredActivePatients.length === 0 && !loading && !error">
-                    <div class="no-patients-icon">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <h2>No Patients</h2>
-                    <p>There are no active patients to show</p>
-                </div>
+                <app-empty-state
+                  *ngIf="activeTab === 'active' && filteredActivePatients.length === 0 && !loading && !error"
+                  [icon]="'fa-solid fa-calendar-check'"
+                  [title]="'No Patients'"
+                  [message]="'There are no active patients to show.'">
+                </app-empty-state>
                 <!-- Inactive Patients Tab Empty State -->
-                <div class="no-patients-container" *ngIf="activeTab === 'inactive' && filteredInactivePatients.length === 0 && !loading && !error">
-                    <div class="no-patients-icon">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <h2>No Patients</h2>
-                    <p>There are no inactive patients to show</p>
-                </div>
+                <app-empty-state
+                  *ngIf="activeTab === 'inactive' && filteredInactivePatients.length === 0 && !loading && !error"
+                  [icon]="'fa-solid fa-calendar-check'"
+                  [title]="'No Patients'"
+                  [message]="'There are no inactive patients to show.'">
+                </app-empty-state>
 
             </div>
         </div>
