@@ -16,8 +16,8 @@
                     <ul class="header-list-btns">
                         <li>
                             <div class="input-block dash-search-input">
-                                <input type="text" class="form-control" placeholder="Search">
-                                <span class="search-icon"><i class="isax isax-search-normal"></i></span>
+                                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchTerm">
+                                <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                             </div>
                         </li>
                         <li>
@@ -36,25 +36,31 @@
                     <div class="appointment-tabs">
                         <ul class="nav nav-pills inner-tab " id="pills-tab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pills-upcoming-tab" data-bs-toggle="pill" data-bs-target="#pills-upcoming" type="button" role="tab" aria-controls="pills-upcoming" aria-selected="false">Upcoming<span>21</span></button>
+                                <button class="nav-link active" id="pills-upcoming-tab" data-bs-toggle="pill" data-bs-target="#pills-upcoming" type="button" role="tab" aria-controls="pills-upcoming" aria-selected="false">
+                                    Upcoming<span>{{ upcomingAppointments.length }}</span>
+                                </button>
                             </li>	
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="true">Cancelled<span>16</span></button>
+                                <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="true">
+                                    Cancelled<span>{{ cancelledAppointments.length }}</span>
+                                </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-complete-tab" data-bs-toggle="pill" data-bs-target="#pills-complete" type="button" role="tab" aria-controls="pills-complete" aria-selected="true">Completed<span>214</span></button>
+                                <button class="nav-link" id="pills-complete-tab" data-bs-toggle="pill" data-bs-target="#pills-complete" type="button" role="tab" aria-controls="pills-complete" aria-selected="true">
+                                    Completed<span>{{ completedAppointments.length }}</span>
+                                </button>
                             </li>
                         </ul>
                     </div>
                     <div class="filter-head">
                         <div class="position-relative daterange-wraper me-2">
                             <div class="input-groupicon calender-input">
-                                <input type="text" class="form-control  date-range bookingrange" placeholder="From Date - To Date " bsDaterangepicker [(ngModel)]="bsRangeValue">
+                                <input type="text" class="form-control  date-range bookingrange" placeholder="From Date - To Date " bsDaterangepicker [(ngModel)]="bsRangeValue" [bsConfig]="{ adaptivePosition: true }">
                             </div>
-                            <i class="isax isax-calendar-1"></i>
+                            <i class="fa-solid fa-calendar-days"></i>
                         </div>
                         <div class="form-sorts dropdown" [ngClass]="{'table-filter-show': filter === true}">
-                            <a (click)="showFilter()" href="javascript:void(0);" class="dropdown-toggle" id="table-filter"><i class="isax isax-filter me-2"></i>Filter By</a>
+                            <a (click)="showFilter()" href="javascript:void(0);" class="dropdown-toggle" id="table-filter"><i class="fa-solid fa-filter me-2"></i>Filter By</a>
                             <div class="filter-dropdown-menu">
                                 <div class="filter-set-view">
                                     <div class="accordion" id="accordionExample">
@@ -66,8 +72,8 @@
                                                 <ul>
                                                     <li>
                                                         <div class="input-block dash-search-input w-100">
-                                                            <input type="text" class="form-control" placeholder="Search">
-                                                            <span class="search-icon"><i class="isax isax-search-normal"></i></span>
+                                                            <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchTerm">
+                                                            <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                                                         </div>
                                                     </li>
                                                 </ul>
@@ -198,10 +204,10 @@
                     </div>
                 </div>
 
-                <div class="tab-content appointment-tab-content">
+                <div class="tab-content appointment-tab-content appoint-patient">
                     <div class="tab-pane fade show active" id="pills-upcoming" role="tabpanel" aria-labelledby="pills-upcoming-tab">
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- Appointment List (Dynamic) -->
+                        <div class="appointment-wrap" *ngFor="let apt of paginatedUpcomingAppointments">
                             <ul>
                                 <li>
                                     <div class="patinet-information">
@@ -209,22 +215,22 @@
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
-                                            <p>#Apt0001</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr Edalin</a></h6>
+                                            <p>#{{ apt._id?.slice(-6) }}</p>
+                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">{{ apt.doctorName || 'Doctor' }}</a></h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>11 Nov 2024 10.45 AM</p>
+                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>												
+                                        <li>{{ apt.specialty || 'General Visit' }}</li>
+                                        <li>{{ apt.appointmentType }}</li>
+                                    </ul>                                                
                                 </li>
                                 <li class="mail-info-patient">
                                     <ul>
-                                        <li><i class="isax isax-sms5"></i>edalin&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 504 368 6874</li>
+                                        <li><i class="isax isax-sms5"></i>{{ apt.email }}</li>
+                                        <li><i class="isax isax-call5"></i>{{ apt.phone }}</li>
                                     </ul>
                                 </li>
                                 <li class="appointment-action">
@@ -245,376 +251,35 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- /Appointment List (Dynamic) -->
+                        <div class="pagination dashboard-pagination" *ngIf="upcomingAppointments.length > 0">
                             <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-13.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0002</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Shanta</a><span class="badge new-tag">New</span></h6>
-                                        </div>
-                                    </div>
+                                <li [class.disabled]="upcomingCurrentPage === 1">
+                                    <a href="javascript:void(0);" class="page-link" (click)="prevPageUpcoming()"><i class="fa-solid fa-chevron-left"></i></a>
                                 </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>05 Nov 2024 11.50 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Audio Call</li>
-                                    </ul>
-                                    
+                                <li *ngFor="let page of paginationPagesUpcoming">
+                                    <a href="javascript:void(0);" class="page-link"
+                                       [class.active]="page === upcomingCurrentPage"
+                                       [class.disabled]="page === '...'"
+                                       (click)="onPageClickUpcoming(page)">
+                                        {{ page }}
+                                    </a>
                                 </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>shanta&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 832 891 8403</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
+                                <li [class.disabled]="upcomingCurrentPage === upcomingTotalPages">
+                                    <a href="javascript:void(0);" class="page-link" (click)="nextPageUpcoming()"><i class="fa-solid fa-chevron-right"></i></a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-14.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0003</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.John</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>27 Oct 2024 09.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>john&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 749 104 6291</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-15.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0004</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Susan</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>18 Oct 2024 12.20 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Direct Visit</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>susan&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 584 920 7183</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-16.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0005</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Juliet</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>10 Oct 2024 11.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>juliet&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 059 327 6729</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-17.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0006</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Joseph</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>26 Sep 2024 10.20 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>joseph&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 278 402 7103</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-18.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0007</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Victoria</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>14 Sep 2024 08.10 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>victoria&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 638 278 0249</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-19.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0008</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">Dr.Benjamin</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>03 Sep 2024 06.00 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="isax isax-sms5"></i>benjamin&#64;example.com</li>
-                                        <li><i class="isax isax-call5"></i>+1 261 039 1873</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Pagination -->
-                        <div class="pagination dashboard-pagination">
-                            <ul>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">1</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link active">2</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">3</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">4</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">...</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Pagination -->
-
+                        <app-empty-state
+                            *ngIf="upcomingAppointments.length === 0 && !loading"
+                            [icon]="'fa-solid fa-calendar-check'"
+                            [title]="'No Appointments'"
+                            [message]="'There is no upcoming appointment available.'">
+                        </app-empty-state>
                     </div>
                     <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab">
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- Appointment List (Dynamic) -->
+                        <div class="appointment-wrap" *ngFor="let apt of paginatedCancelledAppointments">
                             <ul>
                                 <li>
                                     <div class="patinet-information">
@@ -622,260 +287,71 @@
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
-                                            <p>#Apt00011</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr Edalin</a></h6>
+                                            <p>#{{ apt._id?.slice(-6) }}</p>
+                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">{{ apt.doctorName || 'Doctor' }}</a></h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>11 Nov 2024 10.45 AM</p>
+                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
+                                        <li>{{ apt.specialty || 'General Visit' }}</li>
+                                        <li>{{ apt.appointmentType }}</li>
+                                    </ul>                                                
+                                </li>
+                                <li class="mail-info-patient">
+                                    <ul>
+                                        <li><i class="isax isax-sms5"></i>{{ apt.email }}</li>
+                                        <li><i class="isax isax-call5"></i>{{ apt.phone }}</li>
                                     </ul>
-                                    
+                                </li>
+                                <li class="appointment-action">
+                                    <ul>
+                                        <li>
+                                            <a [routerLink] = "routes.patientCancelledAppointment"><i class="isax isax-eye4"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- /Appointment List (Dynamic) -->
+                        <div class="pagination dashboard-pagination" *ngIf="cancelledAppointments.length > 0">
                             <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-13.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0002</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Shanta</a><span class="badge new-tag">New</span></h6>
-                                        </div>
-                                    </div>
+                                <li [class.disabled]="cancelledCurrentPage === 1">
+                                    <a href="javascript:void(0);" class="page-link" (click)="prevPageCancelled()"><i class="fa-solid fa-chevron-left"></i></a>
                                 </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>05 Nov 2024 11.50 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Audio Call</li>
-                                    </ul>
-                                    
+                                <li *ngFor="let page of paginationPagesCancelled">
+                                    <a href="javascript:void(0);" class="page-link"
+                                       [class.active]="page === cancelledCurrentPage"
+                                       [class.disabled]="page === '...'"
+                                       (click)="onPageClickCancelled(page)">
+                                        {{ page }}
+                                    </a>
                                 </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
+                                <li [class.disabled]="cancelledCurrentPage === cancelledTotalPages">
+                                    <a href="javascript:void(0);" class="page-link" (click)="nextPageCancelled()"><i class="fa-solid fa-chevron-right"></i></a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-14.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0003</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.John</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>27 Oct 2024 09.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-15.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0004</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Susan</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>18 Oct 2024 12.20 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Direct Visit</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-16.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0005</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Juliet</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>10 Oct 2024 11.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-17.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0006</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Joseph</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>26 Sep 2024 10.20 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-18.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0007</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Victoria</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>14 Sep 2024 08.10 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-19.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0008</p>
-                                            <h6><a [routerLink] = "routes.patientCancelledAppointment">Dr.Benjamin</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>03 Sep 2024 06.00 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCancelledAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Pagination -->
-                        <div class="pagination dashboard-pagination">
-                            <ul>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">1</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link active">2</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">3</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">4</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">...</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Pagination -->
+                        <app-empty-state
+                            *ngIf="cancelledAppointments.length === 0 && !loading"
+                            [icon]="'fa-solid fa-calendar-check'"
+                            [title]="'No Appointments'"
+                            [message]="'There is no cancelled appointment available.'">
+                        </app-empty-state>
                     </div>
                     <div class="tab-pane fade" id="pills-complete" role="tabpanel" aria-labelledby="pills-complete-tab">
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- Appointment List (Dynamic) -->
+                        <div class="appointment-wrap" *ngFor="let apt of paginatedCompletedAppointments">
                             <ul>
                                 <li>
                                     <div class="patinet-information">
@@ -883,256 +359,67 @@
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
-                                            <p>#Apt0001</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr Edalin</a></h6>
+                                            <p>#{{ apt._id?.slice(-6) }}</p>
+                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">{{ apt.doctorName || 'Doctor' }}</a></h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>11 Nov 2024 10.45 AM</p>
+                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
+                                        <li>{{ apt.specialty || 'General Visit' }}</li>
+                                        <li>{{ apt.appointmentType }}</li>
+                                    </ul>                                                
+                                </li>
+                                <li class="mail-info-patient">
+                                    <ul>
+                                        <li><i class="isax isax-sms5"></i>{{ apt.email }}</li>
+                                        <li><i class="isax isax-call5"></i>{{ apt.phone }}</li>
                                     </ul>
-                                    
+                                </li>
+                                <li class="appointment-action">
+                                    <ul>
+                                        <li>
+                                            <a [routerLink] = "routes.patientCompletedAppointment"><i class="isax isax-eye4"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"><i class="isax isax-close-circle5"></i></a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-md btn-primary-gradient"><i class="fa-solid fa-calendar-check me-1"></i>Attend</a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <!-- /Appointment List (Dynamic) -->
+                        <div class="pagination dashboard-pagination" *ngIf="completedAppointments.length > 0">
                             <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-13.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0002</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Shanta</a><span class="badge new-tag">New</span></h6>
-                                        </div>
-                                    </div>
+                                <li [class.disabled]="completedCurrentPage === 1">
+                                    <a href="javascript:void(0);" class="page-link" (click)="prevPageCompleted()"><i class="fa-solid fa-chevron-left"></i></a>
                                 </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>05 Nov 2024 11.50 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Audio Call</li>
-                                    </ul>
-                                    
+                                <li *ngFor="let page of paginationPagesCompleted">
+                                    <a href="javascript:void(0);" class="page-link"
+                                       [class.active]="page === completedCurrentPage"
+                                       [class.disabled]="page === '...'"
+                                       (click)="onPageClickCompleted(page)">
+                                        {{ page }}
+                                    </a>
                                 </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
+                                <li [class.disabled]="completedCurrentPage === completedTotalPages">
+                                    <a href="javascript:void(0);" class="page-link" (click)="nextPageCompleted()"><i class="fa-solid fa-chevron-right"></i></a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-14.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0003</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.John</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>27 Oct 2024 09.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-15.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0004</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Susan</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>18 Oct 2024 12.20 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Direct Visit</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-16.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0005</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Juliet</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>10 Oct 2024 11.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-17.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0006</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Joseph</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>26 Sep 2024 10.20 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-18.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0007</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Victoria</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>14 Sep 2024 08.10 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
-                                            <img src="assets/img/doctors/doctor-thumb-19.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0008</p>
-                                            <h6><a [routerLink] = "routes.patientCompletedAppointment">Dr.Benjamin</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>03 Sep 2024 06.00 PM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="appointment-detail-btn">
-                                    <a [routerLink] = "routes.patientCompletedAppointment" class="start-link">View Details<i class="fa-regular fa-circle-right ms-1"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-
-                        <!-- Pagination -->
-                        <div class="pagination dashboard-pagination">
-                            <ul>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">1</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link active">2</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">3</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">4</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link">...</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Pagination -->
+                        <app-empty-state
+                            *ngIf="completedAppointments.length === 0 && !loading"
+                            [icon]="'fa-solid fa-calendar-check'"
+                            [title]="'No Appointments'"
+                            [message]="'There is no completed appointment available.'">
+                        </app-empty-state>
                     </div>
                 </div>
                 

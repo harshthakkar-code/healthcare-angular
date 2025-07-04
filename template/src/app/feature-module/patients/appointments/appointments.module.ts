@@ -10,6 +10,7 @@ import { PatientAppointmentsComponent } from './patient-appointments/patient-app
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PatientAppoinmentDetailsComponent } from './patient-appoinment-details/patient-appoinment-details.component';
 import { PatientAppointmentGridComponent } from './patient-appointment-grid/patient-appointment-grid.component';
+import { FeatureModuleModule } from '../../feature-module.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,6 @@ import { PatientAppointmentGridComponent } from './patient-appointment-grid/pati
     PatientAppoinmentDetailsComponent,
     PatientAppointmentGridComponent
   ],
-  imports: [CommonModule, AppointmentsRoutingModule, SharedModule],
+  imports: [CommonModule, AppointmentsRoutingModule, SharedModule, FeatureModuleModule],
 })
 export class AppointmentsModule {}
