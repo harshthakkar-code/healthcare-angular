@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { SlotService } from '../feature-module/doctors/available-timings/slot.service';
 import { SlotModalService } from '../feature-module/doctors/available-timings/slot-modal.service';
 import { forkJoin } from 'rxjs';
+import { DependantService } from '../feature-module/patients/dependent/dependant.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -81,7 +82,21 @@ export class ModalComponent implements OnInit {
   slotEndTime = '';
   slotError = '';
 
-  constructor(private router:Router, private slotService: SlotService, public slotModalService: SlotModalService) {
+  // Add Dependant Modal fields
+  addDepName = '';
+  addDepRelation = '';
+  addDepGender = '';
+  addDepDob = '';
+  addDepProfileImage = '';
+  addDepStatus = 'active';
+  addDepLoading = false;
+
+  constructor(
+    private router:Router,
+    private slotService: SlotService,
+    public slotModalService: SlotModalService,
+    private dependantService: DependantService
+  ) {
     this.chartOptionsOne = {
       series: [
         {
@@ -475,5 +490,47 @@ export class ModalComponent implements OnInit {
     // If using Angular forms, use valueChanges. If not, use a polling or event-based approach.
     // For template-driven forms, use setters or call updateEndTime in (ngModelChange) in the template.
     // Here, we patch the logic to be called from the template:
+  }
+
+  getPatientId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
+  }
+
+  addDependantFromModal(event: Event) {
+    event.preventDefault();
+    const userId = this.getPatientId();
+    if (!userId) return;
+    this.addDepLoading = true;
+    const data = {
+      userId,
+      name: this.addDepName,
+      relation: this.addDepRelation,
+      gender: this.addDepGender,
+      dob: this.addDepDob,
+      profileImage: this.addDepProfileImage,
+      status: this.addDepStatus
+    };
+    this.dependantService.addDependant(data).subscribe({
+      next: () => {
+        this.addDepLoading = false;
+        this.dependantService.notifyDependantsChanged();
+        const modal = document.getElementById('add_dependent');
+        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+        this.addDepName = '';
+        this.addDepRelation = '';
+        this.addDepGender = '';
+        this.addDepDob = '';
+        this.addDepProfileImage = '';
+        this.addDepStatus = 'active';
+      },
+      error: () => {
+        this.addDepLoading = false;
+      }
+    });
   }
 }

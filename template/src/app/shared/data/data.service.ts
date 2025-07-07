@@ -3,6 +3,7 @@ import { routes } from '../routes/routes';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { apiResultFormat } from '../models/models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -2111,35 +2112,35 @@ export class DataService {
   ];
   // Fetch top 4 doctors by highest rating from backend
   public getTopRatedDoctors(): Observable<any> {
-    return this.http.get<any>('http://localhost:5000/api/doctor/public?limit=4&sort=-avgRating');
+    return this.http.get<any>(`${environment.API_URL}/doctor/public?limit=4&sort=-avgRating`);
   }
   // Request OTP for login
   public requestOtp(email: string): Observable<any> {
-    return this.http.post<any>('http://localhost:5000/api/auth/request-otp', { email });
+    return this.http.post<any>(`${environment.API_URL}/auth/request-otp`, { email });
   }
 
   // Login with OTP
   public loginWithOtp(email: string, otp: string): Observable<any> {
-    return this.http.post<any>('http://localhost:5000/api/auth/login-otp', { email, otp });
+    return this.http.post<any>(`${environment.API_URL}/auth/login-otp`, { email, otp });
   }
 
   // Forgot password: request OTP
   public forgotPasswordRequest(email: string) {
-    return this.http.post<any>('http://localhost:5000/api/auth/forgot-password-request', { email });
+    return this.http.post<any>(`${environment.API_URL}/auth/forgot-password-request`, { email });
   }
 
   // Forgot password: verify OTP
   public forgotPasswordVerify(email: string, otp: string) {
-    return this.http.post<any>('http://localhost:5000/api/auth/forgot-password-verify', { email, otp });
+    return this.http.post<any>(`${environment.API_URL}/auth/forgot-password-verify`, { email, otp });
   }
 
   // Forgot password: reset password
   public resetPassword(email: string, newPassword: string) {
-    return this.http.post<any>('http://localhost:5000/api/auth/reset-password', { email, newPassword });
+    return this.http.post<any>(`${environment.API_URL}/auth/reset-password`, { email, newPassword });
   }
 
   // Login with Google
   public loginWithGoogle(token: string) {
-    return this.http.post<any>('http://localhost:5000/api/auth/google', { token });
+    return this.http.post<any>(`${environment.API_URL}/auth/google`, { token });
   }
 }

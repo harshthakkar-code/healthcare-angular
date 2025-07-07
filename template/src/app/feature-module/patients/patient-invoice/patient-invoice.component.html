@@ -14,176 +14,83 @@
                     <ul class="header-list-btns">
                         <li>
                             <div class="input-block dash-search-input">
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="search" (keyup.enter)="onSearch(search)">
                                 <span class="search-icon"><i class="isax isax-search-normal"></i></span>
                             </div>
                         </li>
                     </ul>
                 </div>
 
-                    <div class="custom-table">
-                        <div class="table-responsive">
-                            <table class="table table-center mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Doctor</th>
-                                        <th>Appointment Date</th>
-                                        <th>Booked on</th>
-                                        <th>Amount</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#INV1236</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
-                                                </a>
-                                                <a [routerLink] = "routes.doctorProfile2">Edalin Hendry</a>
-                                            </h2>
-                                        </td>
-                                        <td>24 Mar 2024</td>
-                                        <td>21 Mar 2024</td>
-                                        <td>$300</td>
-                                        <td>
-                                            <div class="action-item">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                                    <i class="isax isax-link-2"></i>
-                                                </a>
-                                                <a href="javascript:void(0);">
-                                                    <i class="isax isax-import"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#NV3656</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-13.jpg" alt="User Image">
-                                                </a>
-                                                <a [routerLink] = "routes.doctorProfile2">John Homes</a>
-                                            </h2>
-                                        </td>
-                                        <td>17 Mar 2024</td>
-                                        <td>14 Mar 2024</td>
-                                        <td>$450</td>
-                                        <td>
-                                            <div class="action-item">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                                    <i class="isax isax-link-2"></i>
-                                                </a>
-                                                <a href="javascript:void(0);">
-                                                    <i class="isax isax-import"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#INV1246</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
-                                                </a>
-                                                <a [routerLink] = "routes.doctorProfile2">Shanta Neill</a>
-                                            </h2>
-                                        </td>
-                                        <td>11 Mar 2024</td>
-                                        <td>07 Mar 2024</td>
-                                        <td>$250</td>
-                                        <td>
-                                            <div class="action-item">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                                    <i class="isax isax-link-2"></i>
-                                                </a>
-                                                <a href="javascript:void(0);">
-                                                    <i class="isax isax-import"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#INV6985</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
-                                                </a>
-                                                <a [routerLink] = "routes.doctorProfile2">Anthony Tran</a>
-                                            </h2>
-                                        </td>
-                                        <td>26 Feb 2024</td>
-                                        <td>23 Feb 2024</td>
-                                        <td>$320</td>
-                                        <td>
-                                            <div class="action-item">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                                    <i class="isax isax-link-2"></i>
-                                                </a>
-                                                <a href="javascript:void(0);">
-                                                    <i class="isax isax-import"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#INV3659</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
-                                                </a>
-                                                <a [routerLink] = "routes.doctorProfile2">Susan Lingo</a>
-                                            </h2>
-                                        </td>
-                                        <td>18 Feb 2024</td>
-                                        <td>15 Feb 2024</td>
-                                        <td>$480</td>
-                                        <td>
-                                            <div class="action-item">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                                    <i class="isax isax-link-2"></i>
-                                                </a>
-                                                <a href="javascript:void(0);">
-                                                    <i class="isax isax-import"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div *ngIf="transactions.length > 0; else emptyState">
+                  <div class="custom-table">
+                      <div class="table-responsive">
+                          <table class="table table-center mb-0">
+                              <thead>
+                                  <tr>
+                                      <th>ID</th>
+                                      <th>Doctor</th>
+                                      <th>Appointment Date</th>
+                                      <th>Booked on</th>
+                                      <th>Amount</th>
+                                      <th>Action</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let t of transactions">
+                                      <td>
+                                          <a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#{{ t._id?.slice(0, 8) || 'Inv-2021' }}</a>
+                                      </td>
+                                      <td>
+                                          <h2 class="table-avatar">
+                                              <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                                                  <img class="avatar-img rounded-3" [src]="t.appointment?.doctor?.image || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
+                                              </a>
+                                              <a [routerLink]="routes.doctorProfile2">{{ t.appointment?.doctor?.name || '-' }}</a>
+                                          </h2>
+                                      </td>
+                                      <td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') : (t.appointment?.date || '-') }}</td>
+                                      <td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') : '-' }}</td>
+                                      <td>${{ t.amount }}</td>
+                                      <td>
+                                          <div class="action-item">
+                                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
+                                                  <i class="isax isax-link-2"></i>
+                                              </a>
+                                              <a href="javascript:void(0);">
+                                                  <i class="isax isax-import"></i>
+                                              </a>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination dashboard-pagination">
-                        <ul>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link prev">Prev</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link">1</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link active">2</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link">3</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link">4</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="page-link next">Next</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /Pagination -->
+                  <!-- Pagination -->
+                  <div class="pagination dashboard-pagination">
+                      <ul>
+                          <li>
+                              <a href="javascript:void(0);" class="page-link" [class.disabled]="page === 1" (click)="page > 1 && onPageChange(page - 1)"><i class="fa-solid fa-chevron-left"></i></a>
+                          </li>
+                          <li *ngFor="let p of totalPages" >
+                              <a href="javascript:void(0);" class="page-link" [class.active]="page === p" (click)="onPageChange(p)">{{ p }}</a>
+                          </li>
+                          <li>
+                              <a href="javascript:void(0);" class="page-link" [class.disabled]="page === totalPages.length" (click)="page < totalPages.length && onPageChange(page + 1)"><i class="fa-solid fa-chevron-right"></i></a>
+                          </li>
+                      </ul>
+                  </div>
+                  <!-- /Pagination -->
+                </div>
+
+                <ng-template #emptyState>
+                  <app-empty-state
+                    [icon]="'fa-solid fa-calendar-check'"
+                    [title]="'No Invoices'"
+                    [message]="'There are no invoices to show.'">
+                  </app-empty-state>
+                </ng-template>
             </div>
             <!-- /Invoices -->
 

@@ -2521,7 +2521,7 @@
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
-          <form action="#">					
+          <form (submit)="addDependantFromModal($event)">          
             <div class="add-dependent">
               <div class="modal-body pb-0">
                 <div class="row">
@@ -2536,32 +2536,32 @@
                           <div class="imgs-load d-flex align-items-center">
                             <div class="change-photo">
                               Upload New 
-                              <input type="file" class="upload">
+                              <input type="text" class="form-control" placeholder="Profile Image URL or filename" [(ngModel)]="addDepProfileImage" name="addDepProfileImage">
                             </div>
                             <a href="javascript:void(0);" class="upload-remove">Remove</a>
                           </div>
                           <p>Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
-                        </div>			
+                        </div>      
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-wrap">
                       <label class="form-label">Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control">
+                      <input type="text" class="form-control" [(ngModel)]="addDepName" name="addDepName">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-wrap">
                       <label class="form-label">Relationship <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control">
+                      <input type="text" class="form-control" [(ngModel)]="addDepRelation" name="addDepRelation">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-wrap">
                       <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
                       <div class="form-icon">
-                        <input type="text" class="form-control datetimepicker" bsDatepicker [bsConfig]="{ adaptivePosition: true }">
+                        <input type="text" class="form-control datetimepicker" [(ngModel)]="addDepDob" name="addDepDob" bsDatepicker [bsConfig]="{ adaptivePosition: true }">
                         <span class="icon"><i class="isax isax-calendar-1"></i></span>
                       </div>
                     </div>
@@ -2571,16 +2571,16 @@
                       <label class="form-label">Select Gender <span class="text-danger">*</span></label>
                       <div class="radio-selection d-flex border">
                         <div class="flex-grow-1">
-                          <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
-                          <label class="btn btn-white" for="option1">Male</label>	
+                          <input type="radio" class="btn-check" [(ngModel)]="addDepGender" name="addDepGender" id="addDepGenderMale" value="Male" autocomplete="off">
+                          <label class="btn btn-white" for="addDepGenderMale">Male</label>
                         </div>
                         <div class="flex-grow-1">
-                          <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
-                          <label class="btn btn-white" for="option2">Female</label>												
+                          <input type="radio" class="btn-check" [(ngModel)]="addDepGender" name="addDepGender" id="addDepGenderFemale" value="Female" autocomplete="off">
+                          <label class="btn btn-white" for="addDepGenderFemale">Female</label>
                         </div>
                         <div class="flex-grow-1">
-                          <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off">
-                          <label class="btn btn-white" for="option3">Others</label>												
+                          <input type="radio" class="btn-check" [(ngModel)]="addDepGender" name="addDepGender" id="addDepGenderOthers" value="Others" autocomplete="off">
+                          <label class="btn btn-white" for="addDepGenderOthers">Others</label>
                         </div>
                       </div>
                     </div>
@@ -2588,10 +2588,10 @@
                 </div>
               </div>
             </div>
-            <div class="modal-footer">					
+            <div class="modal-footer">          
               <div class="modal-btn text-end">
                 <a href="javascript:void(0);" class="btn btn-md btn-dark rounded-pill" data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</a>
-                <button type="submit" class="btn btn-md btn-primary-gradient rounded-pill">Add Dependant</button>
+                <button type="submit" class="btn btn-md btn-primary-gradient rounded-pill" [disabled]="addDepLoading">Add Dependant</button>
               </div>
             </div>
           </form>

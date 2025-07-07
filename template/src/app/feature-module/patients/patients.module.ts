@@ -5,6 +5,7 @@ import { PatientsRoutingModule } from './patients-routing.module';
 import { PatientsComponent } from './patients.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PatientInvoiceComponent } from './patient-invoice/patient-invoice.component';
+import { FeatureModuleModule } from '../feature-module.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { PatientInvoiceComponent } from './patient-invoice/patient-invoice.compo
   imports: [
     CommonModule,
     PatientsRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class PatientsModule { }
