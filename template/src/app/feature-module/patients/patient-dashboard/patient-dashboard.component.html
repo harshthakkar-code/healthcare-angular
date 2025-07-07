@@ -130,50 +130,14 @@
                   </div>
                 </div>
                 <div class="dashboard-card-body">
-                  <div class="doctor-fav-list">
+                  <div *ngFor="let fav of dashboardFavourites" class="doctor-fav-list">
                     <div class="doctor-info-profile">
                       <a href="javascript:void(0);" class="table-avatar">
-                        <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="Img">
+                        <img [src]="fav.doctorId.profileImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
                       </a>
                       <div class="doctor-name-info">
-                        <h5><a href="javascript:void(0);">Dr. Edalin</a></h5>
-                        <span>Endodontists</span>
-                      </div>
-                    </div>
-                    <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-calendar5"></i></a>
-                  </div>
-                  <div class="doctor-fav-list">
-                    <div class="doctor-info-profile">
-                      <a href="javascript:void(0);" class="table-avatar">
-                        <img src="assets/img/doctors/doctor-thumb-11.jpg" alt="Img">
-                      </a>
-                      <div class="doctor-name-info">
-                        <h5><a href="javascript:void(0);">Dr. Maloney</a></h5>
-                        <span>Cardiologist</span>
-                      </div>
-                    </div>
-                    <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-calendar5"></i></a>
-                  </div>
-                  <div class="doctor-fav-list">
-                    <div class="doctor-info-profile">
-                      <a href="javascript:void(0);" class="table-avatar">
-                        <img src="assets/img/doctors/doctor-14.jpg" alt="Img">
-                      </a>
-                      <div class="doctor-name-info">
-                        <h5><a href="javascript:void(0);">Dr. Wayne </a></h5>
-                        <span>Dental Specialist</span>
-                      </div>
-                    </div>
-                    <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-calendar5"></i></a>
-                  </div>
-                  <div class="doctor-fav-list">
-                    <div class="doctor-info-profile">
-                      <a href="javascript:void(0);" class="table-avatar">
-                        <img src="assets/img/doctors/doctor-15.jpg" alt="Img">
-                      </a>
-                      <div class="doctor-name-info">
-                        <h5><a href="javascript:void(0);">Dr. Marla</a></h5>
-                        <span>Endodontists</span>
+                        <h5><a href="javascript:void(0);">{{ fav.doctorId.doctorName || fav.doctorId.name }}</a></h5>
+                        <span>{{ fav.doctorId.speciality || fav.doctorId.specialty }}</span>
                       </div>
                     </div>
                     <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-calendar5"></i></a>
@@ -198,99 +162,37 @@
                 <div class="apponiment-dates">
                   <ul class="appointment-calender-slider">
                     <owl-carousel-o [options]="patientSliderOptions">
-                      <ng-template carouselSlide>
+                      <ng-template carouselSlide *ngFor="let date of currentWeekDates; trackBy: trackByDate">
                         <li>
-                          <a href="javascript:void(0);">
-                            <h5>19 <span>Mon</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);">
-                            <h5>20 <span>Mon</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);" class="available-date">
-                            <h5>21 <span>Tue</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);" class="available-date">
-                            <h5>22 <span>Wed</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);">
-                            <h5>23 <span>Thu</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);">
-                            <h5>24 <span>Fri</span></h5>
-                          </a>
-                        </li>
-                      </ng-template>
-                      <ng-template carouselSlide>
-                        <li>
-                          <a href="javascript:void(0);">
-                            <h5>25 <span>Sat</span></h5>
+                          <a href="javascript:void(0);" [ngClass]="{'available-date': isDateWithAppointment(date)}">
+                            <h5>
+                              {{ date.getDate() }}
+                              <span>{{ date | date:'EEE' }}</span>
+                            </h5>
                           </a>
                         </li>
                       </ng-template>
                     </owl-carousel-o>
                   </ul>
-                  <div class="appointment-dash-card">
+                  <div *ngFor="let apt of getThisWeekAppointments()" class="appointment-dash-card">
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="Img">
+                          <img [src]="apt.doctorImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
                         </a>
                         <div class="doctor-name-info">
-                          <h5><a href="javascript:void(0);">Dr.Edalin Hendry</a></h5>
-                          <span>Dentist</span>
+                          <h5><a href="javascript:void(0);">{{ apt.doctorName || 'Doctor' }}</a></h5>
+                          <span>{{ apt.specialty || 'Specialty' }}</span>
                         </div>
                       </div>
                       <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-hospital5"></i></a>
                     </div>
                     <div class="date-time">
-                      <p><i class="isax isax-clock5"></i>21 Mar 2024 - 10:30 PM </p>
+                      <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
                     </div>
                     <div class="card-btns gap-3">
                       <a [routerLink]="routes.chat" class="btn btn-gray btn-md"><i class="isax isax-messages-25"></i>Chat Now</a>
-                      <a [routerLink]="routes.patientAppointment" class="btn  btn-md btn-primary-gradient rounded-pill"><i
-                          class="isax isax-calendar-tick5"></i>Attend</a>
-                    </div>
-                  </div>
-                  <div class="appointment-dash-card">
-                    <div class="doctor-fav-list">
-                      <div class="doctor-info-profile">
-                        <a href="javascript:void(0);" class="table-avatar">
-                          <img src="assets/img/doctors/doctor-17.jpg" alt="Img">
-                        </a>
-                        <div class="doctor-name-info">
-                          <h5><a href="javascript:void(0);">Dr.Juliet Gabriel</a></h5>
-                          <span>Cardiologist</span>
-                        </div>
-                      </div>
-                      <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-video5"></i></a>
-                    </div>
-                    <div class="date-time">
-                      <p><i class="isax isax-clock5"></i>22 Mar 2024 - 10:30 PM </p>
-                    </div>
-                    <div class="card-btns gap-3">
-                      <a [routerLink]="routes.chat" class="btn btn-gray btn-md"><i class="isax isax-messages-25"></i>Chat Now</a>
-                      <a [routerLink]="routes.patientAppointment" class="btn  btn-md btn-primary-gradient rounded-pill"><i
-                          class="isax isax-calendar-tick5"></i>Attend</a>
+                      <a [routerLink]="routes.patientAppointment" class="btn btn-md btn-primary-gradient rounded-pill"><i class="isax isax-calendar-tick5"></i>Attend</a>
                     </div>
                   </div>
                 </div>
@@ -469,77 +371,42 @@
                 </div>
               </div>
               <div class="dashboard-card-body">
-
-                <div class="past-appointments-slider">
-                  <owl-carousel-o [options]="doctorSliderOptions">
-                    <ng-template carouselSlide>
-                      <div class="appointment-dash-card past-appointment">
-                        <div class="doctor-fav-list">
-                          <div class="doctor-info-profile">
-                            <a href="javascript:void(0);" class="table-avatar">
-                              <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="Img">
-                            </a>
-                            <div class="doctor-name-info">
-                              <h5><a href="javascript:void(0);">Dr.Edalin Hendry</a></h5>
-                              <span>Dental Specialist</span>
-                            </div>
-                          </div>
-                          <span class="bg-orange badge"><i class="isax isax-video5 me-1"></i>30 Min</span>
-                        </div>
-                        <div class="appointment-date-info">
-                          <h6>Thursday, Mar 2024</h6>
-                          <ul>
-                            <li>
-                              <span><i class="isax isax-clock5"></i></span>Time : 04:00 PM - 04:30 PM (30 Min)
-                            </li>
-                            <li>
-                              <span><i class="fa-solid fa-location-dot"></i></span>Newyork, United States
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="card-btns">
-                          <a [routerLink]="routes.patientAppointment"
-                            class="btn btn-outline-primary ms-0 me-3">Reschedule</a>
-                          <a [routerLink]="routes.patientAppointmentDetails" class="btn btn-primary prime-btn">View
-                            Details</a>
-                        </div>
-                      </div>
-                    </ng-template>
-                    <ng-template carouselSlide>
-                      <div class="appointment-dash-card past-appointment">
-                        <div class="appointment-date-info">
-                          <h4>Friday, Mar 2024</h4>
-                          <ul>
-                            <li>
-                              <span><i class="fa-solid fa-clock"></i></span>Time : 03:00 PM - 03:30 PM (30 Min)
-                            </li>
-                            <li>
-                              <span><i class="fa-solid fa-location-dot"></i></span>Newyork, United States
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="doctor-fav-list">
-                          <div class="doctor-info-profile">
-                            <a href="javascript:void(0);" class="table-avatar">
-                              <img src="assets/img/doctors/doctor-17.jpg" alt="Img">
-                            </a>
-                            <div class="doctor-name-info">
-                              <h5><a href="javascript:void(0);">Dr.Juliet Gabriel</a></h5>
-                              <span>Cardiologist</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-btns">
-                          <a [routerLink]="routes.patientAppointment"
-                            class="btn btn-outline-primary ms-0 me-3">Reschedule</a>
-                          <a [routerLink]="routes.medicaldetails" class="btn btn-primary prime-btn">View Details</a>
-                        </div>
-                      </div>
-                    </ng-template>
-                  </owl-carousel-o>
+                <div *ngIf="dashboardPastAppointments.length === 0" class="text-center py-4">
+                  No past appointments found.
                 </div>
-
+                <div *ngIf="dashboardPastAppointments.length > 0">
+                  <div class="appointment-dash-card past-appointment">
+                    <div class="doctor-fav-list">
+                      <div class="doctor-info-profile">
+                        <a href="javascript:void(0);" class="table-avatar">
+                          <img [src]="dashboardPastAppointments[0]?.doctorImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                        </a>
+                        <div class="doctor-name-info">
+                          <h5><a href="javascript:void(0);">{{ dashboardPastAppointments[0]?.doctorName || 'Doctor' }}</a></h5>
+                          <span>{{ dashboardPastAppointments[0]?.specialty || 'Specialty' }}</span>
+                        </div>
+                      </div>
+                      <span class="bg-orange badge"><i class="isax isax-video5 me-1"></i>{{ dashboardPastAppointments[0]?.duration || '30 Min' }}</span>
+                    </div>
+                    <div class="appointment-date-info">
+                      <h6>{{ dashboardPastAppointments[0]?.date | date:'fullDate' }}</h6>
+                      <ul>
+                        <li>
+                          <span><i class="isax isax-clock5"></i></span>Time : {{ dashboardPastAppointments[0]?.time || 'N/A' }}
+                        </li>
+                        <li>
+                          <span><i class="fa-solid fa-location-dot"></i></span>{{ dashboardPastAppointments[0]?.location || 'Location' }}
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="card-btns">
+                      <a [routerLink]="routes.patientAppointment" class="btn btn-outline-primary ms-0 me-3">Reschedule</a>
+                      <a [routerLink]="routes.patientAppointment" class="btn btn-primary prime-btn">View Details</a>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
             <div class="dashboard-card w-100">
               <div class="dashboard-card-head">
@@ -553,30 +420,14 @@
                 </div>
               </div>
               <div class="dashboard-card-body">
-                <div class="doctor-fav-list">
+                <div *ngFor="let d of dashboardDependants" class="doctor-fav-list">
                   <div class="doctor-info-profile">
                     <a href="javascript:void(0);" class="table-avatar">
-                      <img src="assets/img/patients/patient-20.jpg" alt="Img">
+                      <img [src]="d.profileImage || 'assets/img/patients/patient-20.jpg'" alt="Img">
                     </a>
                     <div class="doctor-name-info">
-                      <h5><a href="javascript:void(0);">Laura</a></h5>
-                      <span>Mother - 58 years 20 days</span>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="cal-plus-icon me-2"><i
-                        class="isax isax-calendar5"></i></a>
-                    <a [routerLink]="routes.dependentList" class="cal-plus-icon"><i class="isax isax-eye4"></i></a>
-                  </div>
-                </div>
-                <div class="doctor-fav-list">
-                  <div class="doctor-info-profile">
-                    <a href="javascript:void(0);" class="table-avatar">
-                      <img src="assets/img/patients/patient-21.jpg" alt="Img">
-                    </a>
-                    <div class="doctor-name-info">
-                      <h5><a href="javascript:void(0);">Mathew</a></h5>
-                      <span>Father - 59 years 15 days</span>
+                      <h5><a href="javascript:void(0);">{{ d.name }}</a></h5>
+                      <span>{{ d.relation }} - {{ getAgeFromDob(d.dob) }}</span>
                     </div>
                   </div>
                   <div class="d-flex align-items-center">
@@ -639,96 +490,24 @@
                              </tr>
                            </thead>
                            <tbody>
-                             <tr>
+                             <tr *ngFor="let apt of dashboardReportAppointments">
                                <td>
-                                 <a href="javascript:void(0);"><span class="link-primary">#AP1236</span></a>
+                                 <a href="javascript:void(0);"><span class="link-primary">#{{ apt._id?.slice(-6) }}</span></a>
                                </td>
                                <td>
                                  <h2 class="table-avatar">
                                    <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                     <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-24.jpg" alt="User Image">
+                                     <img class="avatar-img rounded-3" [src]="apt.doctorImage || 'assets/img/doctors/doctor-thumb-24.jpg'" alt="User Image">
                                    </a>
-                                   <a [routerLink]="routes.doctorProfile1">Dr. Robert Womack</a>
+                                   <a [routerLink]="routes.doctorProfile1">{{ apt.doctorName || "Doctor Name" }}</a>
                                  </h2>
                                </td>
-                               <td>21 Mar 2024, 10:30 AM</td>
-                               <td>Video call</td>
+                               <td>{{ apt.date | date:'mediumDate' }}{{ apt.time ? ', ' + apt.time : '' }}</td>
+                               <td>{{ apt.appointmentType }}</td>
                                <td>
-                                 <span class="badge badge-xs p-2 badge-soft-purple inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>Upcoming</span>
+                                 <span class="badge badge-xs p-2 badge-soft-purple inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>{{ apt.status }}</span>
                                </td>
                              </tr>
-                             <tr>
-                               <td>
-                                 <a href="javascript:void(0);"><span class="link-primary">#AP3656</span></a>
-                               </td>	
-                               <td>
-                                 <h2 class="table-avatar">
-                                   <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                     <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-23.jpg" alt="User Image">
-                                   </a>
-                                   <a [routerLink]="routes.doctorProfile1">Dr. Patricia Cassidy</a>
-                                 </h2>
-                               </td>
-                               <td>28 Mar 2024, 11:40 AM</td>	
-                              <td>Clinic Visit</td>
-                              <td>
-                               <span class="badge badge-xs p-2 badge-soft-purple inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>Completed</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                               <a href="javascript:void(0);"><span class="link-primary">#AP1246</span></a>
-                              </td>	
-                              <td>
-                                <h2 class="table-avatar">
-                                  <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-22.jpg" alt="User Image">
-                                  </a>
-                                  <a [routerLink]="routes.doctorProfile1">Dr. Kevin Evans</a>
-                                </h2>
-                              </td>
-                              <td>02 Apr 2024, 09:20 AM</td>	
-                              <td>Audio Call</td>
-                              <td>
-                               <span class="badge badge-xs p-2 badge-soft-success inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>Completed</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                               <a href="javascript:void(0);"><span class="link-primary">#AP6985</span></a> 
-                              </td>
-                              <td>
-                                <h2 class="table-avatar">
-                                  <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-25.jpg" alt="User Image">
-                                  </a>
-                                  <a [routerLink]="routes.doctorProfile1">Dr. Lisa Keating</a>
-                                </h2>
-                              </td>
-                              <td>15 Apr 2024, 04:10 PM</td>		
-                              <td>Clinic Visit</td>
-                              <td>
-                               <span class="badge badge-xs p-2 badge-soft-danger inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>Cancelled</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                               <a href="javascript:void(0);"><span class="link-primary">#AP3659</span></a>
-                              </td>	
-                              <td>
-                                <h2 class="table-avatar">
-                                  <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                    <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-26.jpg" alt="User Image">
-                                  </a>
-                                  <a [routerLink]="routes.doctorProfile1">Dr. John Hammer</a>
-                                </h2>
-                              </td>
-                              <td>10 May 2024, 06:00 PM</td>	
-                              <td>Video Call</td>
-                              <td>
-                               <span class="badge badge-xs p-2 badge-soft-purple inline-flex align-items-center"><i class="fa-solid fa-circle me-1 fs-5"></i>Upcoming</span>
-                              </td>
-                            </tr>
                            </tbody>
                          </table>
                        </div>
@@ -1082,115 +861,19 @@
                                </tr>
                              </thead>
                              <tbody>
-                               <tr>
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#INV1236</a></td>
+                               <tr *ngFor="let inv of dashboardReportInvoices">
+                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#{{ inv._id?.slice(-6) }}</a></td>
                                  <td>
                                    <h2 class="table-avatar">
                                      <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
+                                       <img class="avatar-img rounded-3" [src]="inv.doctorImage || 'assets/img/doctors/doctor-thumb-21.jpg'" alt="User Image">
                                      </a>
-                                     <a [routerLink]="routes.doctorProfile1">Edalin Hendry</a>
+                                     <a [routerLink]="routes.doctorProfile1">{{ inv.appointment.doctor.doctorName || "Doctor Name" }}</a>
                                    </h2>
                                  </td>
-                                 <td>24 Mar 2024</td>
-                                 <td>21 Mar 2024</td>
-                                 <td>$300</td>
-                                 <td>
-                                   <div class="action-item">
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                       <i class="isax isax-link-2"></i>
-                                     </a>
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete_modal">
-                                       <i class="isax isax-trash"></i>
-                                     </a>
-                                   </div>
-                                 </td>
-                               </tr>
-                               <tr>
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#NV3656</a></td>
-                                 <td>
-                                   <h2 class="table-avatar">
-                                     <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-13.jpg" alt="User Image">
-                                     </a>
-                                     <a [routerLink]="routes.doctorProfile1">John Homes</a>
-                                   </h2>
-                                 </td>
-                                 <td>17 Mar 2024</td>
-                                 <td>14 Mar 2024</td>
-                                 <td>$450</td>
-                                 <td>
-                                   <div class="action-item">
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                       <i class="isax isax-link-2"></i>
-                                     </a>
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete_modal">
-                                       <i class="isax isax-trash"></i>
-                                     </a>
-                                   </div>
-                                 </td>
-                               </tr>
-                               <tr>
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#INV1246</a></td>
-                                 <td>
-                                   <h2 class="table-avatar">
-                                     <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
-                                     </a>
-                                     <a [routerLink]="routes.doctorProfile1">Shanta Neill</a>
-                                   </h2>
-                                 </td>
-                                 <td>11 Mar 2024</td>
-                                 <td>07 Mar 2024</td>
-                                 <td>$250</td>
-                                 <td>
-                                   <div class="action-item">
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                       <i class="isax isax-link-2"></i>
-                                     </a>
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete_modal">
-                                       <i class="isax isax-trash"></i>
-                                     </a>
-                                   </div>
-                                 </td>
-                               </tr>
-                               <tr>
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#INV6985</a></td>
-                                 <td>
-                                   <h2 class="table-avatar">
-                                     <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
-                                     </a>
-                                     <a [routerLink]="routes.doctorProfile1">Anthony Tran</a>
-                                   </h2>
-                                 </td>
-                                 <td>26 Feb 2024</td>
-                                 <td>23 Feb 2024</td>
-                                 <td>$320</td>
-                                 <td>
-                                   <div class="action-item">
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
-                                       <i class="isax isax-link-2"></i>
-                                     </a>
-                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete_modal">
-                                       <i class="isax isax-trash"></i>
-                                     </a>
-                                   </div>
-                                 </td>
-                               </tr>
-                               <tr>
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view"  class="link-primary">#INV3659</a></td>
-                                 <td>
-                                   <h2 class="table-avatar">
-                                     <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
-                                     </a>
-                                     <a [routerLink]="routes.doctorProfile1">Susan Lingo</a>
-                                   </h2>
-                                 </td>
-                                 <td>18 Feb 2024</td>
-                                 <td>15 Feb 2024</td>
-                                 <td>$480</td>
+                                 <td>{{ inv.appointment.date | date: 'mediumDate'  }}</td>
+                                 <td>{{ inv.createdAt | date:'mediumDate' }}</td>
+                                 <td>{{ inv.amount | currency }}</td>
                                  <td>
                                    <div class="action-item">
                                      <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
