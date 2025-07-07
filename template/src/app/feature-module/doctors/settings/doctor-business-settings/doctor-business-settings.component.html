@@ -44,7 +44,8 @@
           <h3>Business Hours</h3>
         </div>
 
-        <form>
+        <form (ngSubmit)="saveBusinessSettings()" #businessSettingsForm="ngForm" name="businessSettingsForm">
+          <div *ngIf="error" class="text-danger small">{{ error }}</div>
           <div class="business-wrap">
             <h4>Select Business days</h4>
             <ul class="business-nav">
@@ -57,26 +58,20 @@
           </div>
 
           <div class="accordions business-info" id="list-accord">
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items active" id="day-monday">
-              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse"
-                data-bs-target="#monday">Monday<span class="edit">Edit</span></a>
+            <!-- Monday -->
+            <div class="user-accordion-item tab-items active" id="day-monday" *ngIf="isSelected('Monday')">
+              <a href="javascript:void(0)" class="accordion-wrap" data-bs-toggle="collapse" data-bs-target="#monday">Monday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse show" id="monday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Monday')" class="text-danger small">
+                    End time must be after start time for Monday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="from">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                            <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime1" name="startTime1" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -85,15 +80,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="to">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime1" name="endTime1" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -102,28 +89,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items active" id="day-tuesday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#tuesday">Tuesday<span class="edit">Edit</span></a>
+            <!-- Tuesday -->
+            <div class="user-accordion-item tab-items active" id="day-tuesday" *ngIf="isSelected('Tuesday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#tuesday">Tuesday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="tuesday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Tuesday')" class="text-danger small">
+                    End time must be after start time for Tuesday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="form">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime2" name="startTime2" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -132,10 +111,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="to">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <input type="text" class="form-control timepicker1" (click)="toggleTimePicker('endTime2')"
-                            [value]="formatTime(endTime2)" />
-                          <timepicker [class.d-block]="showTimePicker[0] === 'endTime2'" class="custom-timepicker"
-                            [ngModelOptions]="{ standalone: true }" [(ngModel)]="endTime2"></timepicker>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime2" name="endTime2" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -144,28 +120,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items active" id="day-wednesday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#wednesday">Wednesday<span class="edit">Edit</span></a>
+            <!-- Wednesday -->
+            <div class="user-accordion-item tab-items active" id="day-wednesday" *ngIf="isSelected('Wednesday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#wednesday">Wednesday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="wednesday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Wednesday')" class="text-danger small">
+                    End time must be after start time for Wednesday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="show">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime3" name="startTime3" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -174,15 +142,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="icon">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime3" name="endTime3" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -191,28 +151,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items active" id="day-thursday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#thursday">Thursday<span class="edit">Edit</span></a>
+            <!-- Thursday -->
+            <div class="user-accordion-item tab-items active" id="day-thursday" *ngIf="isSelected('Thursday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#thursday">Thursday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="thursday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Thursday')" class="text-danger small">
+                    End time must be after start time for Thursday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="danger">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime4" name="startTime4" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -221,15 +173,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="timer">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime4" name="endTime4" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -238,28 +182,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items active" id="day-friday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#friday">Friday<span class="edit">Edit</span></a>
+            <!-- Friday -->
+            <div class="user-accordion-item tab-items active" id="day-friday" *ngIf="isSelected('Friday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#friday">Friday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="friday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Friday')" class="text-danger small">
+                    End time must be after start time for Friday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="text">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime5" name="startTime5" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -268,15 +204,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="picker">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime5" name="endTime5" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -285,28 +213,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items" id="day-saturday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#saturday">Saturday<span class="edit">Edit</span></a>
+            <!-- Saturday -->
+            <div class="user-accordion-item tab-items" id="day-saturday" *ngIf="isSelected('Saturday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#saturday">Saturday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="saturday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Saturday')" class="text-danger small">
+                    End time must be after start time for Saturday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="timepicker">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime6" name="startTime6" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -315,15 +235,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="text">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime6" name="endTime6" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -332,28 +244,20 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
-
-            <!-- Business Hours -->
-            <div class="user-accordion-item tab-items" id="day-sunday">
-              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse"
-                data-bs-target="#sunday">Sunday<span class="edit">Edit</span></a>
+            <!-- Sunday -->
+            <div class="user-accordion-item tab-items" id="day-sunday" *ngIf="isSelected('Sunday')">
+              <a href="javascript:void(0)" class="accordion-wrap collapsed" data-bs-toggle="collapse" data-bs-target="#sunday">Sunday<span class="edit">Edit</span></a>
               <div class="accordion-collapse collapse" id="sunday" data-bs-parent="#list-accord">
                 <div class="content-collapse pb-0">
+                  <div *ngIf="invalidDays.includes('Sunday')" class="text-danger small">
+                    End time must be after start time for Sunday.
+                  </div>
                   <div class="row align-items-center">
                     <div class="col-md-6">
                       <div class="form-wrap">
                         <label class="col-form-label" for="label">From <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="startTime7" name="startTime7" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -362,15 +266,7 @@
                       <div class="form-wrap">
                         <label class="col-form-label" for="end">To <span class="text-danger">*</span></label>
                         <div class="form-icon">
-                          <p-calendar
-                            inputId="calendar-timeonly"
-                            [(ngModel)]="time"
-                            name="time"
-                            class="form-control"
-                            [timeOnly]="true"
-                            [hourFormat]="'12'"
-                            placeholder="5:50 PM">
-                          </p-calendar>
+                          <p-calendar inputId="calendar-timeonly" [(ngModel)]="endTime7" name="endTime7" class="form-control" [timeOnly]="true" [hourFormat]="'12'" placeholder="5:50 PM"></p-calendar>
                           <span class="icon"><i class="fa-solid fa-clock"></i></span>
                         </div>
                       </div>
@@ -379,7 +275,6 @@
                 </div>
               </div>
             </div>
-            <!-- /Business Hours -->
           </div>
 
           <div class="modal-btn text-end">
