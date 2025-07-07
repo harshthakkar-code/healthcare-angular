@@ -7,6 +7,7 @@ import { DataService } from 'src/app/shared/data/data.service';
 import { dependentList, apiResultFormat, pageSelection } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
 import { DependantService } from '../dependant.service';
+import { DependantEditService } from 'src/app/shared/data/dependant-edit.service';
 
 @Component({
     selector: 'app-dependent-list',
@@ -33,7 +34,8 @@ export class DependentListComponent implements OnInit {
     private data: DataService,
     private pagination: PaginationService,
     private router: Router,
-    private dependantService: DependantService
+    private dependantService: DependantService,
+    private dependantEditService: DependantEditService
   ) {
     this.pagination.tablePageSize.subscribe((res: tablePageSize) => {
       if (this.router.url == this.routes.dependentList) {
@@ -118,7 +120,8 @@ export class DependentListComponent implements OnInit {
   }
 
   onEditDependant(dep: any) {
-    this.editDependant = { ...dep };
+    console.log({ ...dep })
+    this.dependantEditService.setDependant({ ...dep });
     const modal = document.getElementById('edit_dependent');
     if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).show();
   }
@@ -143,5 +146,11 @@ export class DependentListComponent implements OnInit {
         // Optionally show an error/toast
       }
     });
+  }
+
+  onDeleteDependant(dep: any) {
+    this.dependantEditService.setDependant({ ...dep });
+    const modal = document.getElementById('delete_modal');
+    if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).show();
   }
 }

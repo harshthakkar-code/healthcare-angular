@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  firstName: { type: String },
+  lastName: { type: String },
   email: { type: String, required: true, unique: true },
   phone: { type: String },
   password: { type: String, required: true },
@@ -14,6 +16,7 @@ const userSchema = new mongoose.Schema({
   address2: { type: String },
   city: { type: String },
   state: { type: String },
+  country: { type: String },
   pincode: { type: String },
   age: { type: Number },
   blood: { type: String },

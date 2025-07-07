@@ -1,11 +1,11 @@
-<app-breadcrumb-search></app-breadcrumb-search>
+<app-breadcrumb-search (search)="onSearch($event)"></app-breadcrumb-search>
 <!-- Page Content -->
 <div class="content mt-5">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-4">
-                    <h3>Showing <span class="text-secondary">450</span> Doctors For You</h3>
+                    <h3>Showing <span class="text-secondary">{{ total }}</span> Doctors For You</h3>
                 </div>
             </div>
             <div class="col-md-6">
@@ -99,20 +99,23 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xxl-3 col-lg-4 col-md-6">
+            <ng-container *ngIf="!loading && doctors.length; else noDoctors">
+                <div class="col-xxl-3 col-lg-4 col-md-6" *ngFor="let doctor of doctors">
                 <div class="card">
                     <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-01.jpg" alt=""></a>
+                            <a [routerLink]="routes.doctorProfile1"><img [src]="doctor.avatar || 'assets/img/doctor-grid/doctor-grid-01.jpg'" alt=""></a>
                         <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>5.0</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
+                                <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.avgRating || 'N/A' }}</span>
+                            <a href="javascript:void(0)" class="fav-icon" (click)="toggleFavourite(doctor)">
+                                <i class="fa" [ngClass]="[
+                                    doctor.favourite && doctor.favourite.favourites ? 'fa-heart text-danger' : 'fa-heart '
+                                ]"></i>
                             </a>
                         </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="d-flex active-bar align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">Psychologist</a>
+                                <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialization?.name || 'Specialist' }}</a>
                             <span class="badge bg-success-light d-inline-flex align-items-center">
                                 <i class="fa-solid fa-circle fs-5 me-1"></i>
                                 Available
@@ -120,17 +123,17 @@
                         </div>
                         <div class="p-3 pt-0">
                             <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Michael Brown</a></h3>
+                                    <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">{{ doctor.name || 'Doctor Name' }}</a></h3>
                                 <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
                                     <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
+                                        <span class="fs-14 fw-medium">{{ doctor.consultationTime || '30 Min' }}</span>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$650</h3>
+                                        <h3 class="text-orange">{{ doctor.consultationFees ? ('$' + doctor.consultationFees) : '$0' }}</h3>
                                 </div>
                                 <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>
@@ -141,475 +144,30 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-02.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.6</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-pink align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-pink fw-medium fs-14">Pediatrician</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Nicholas Tello</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Ogden, IA</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">60 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$400</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+            </ng-container>
+            <ng-template #noDoctors>
+                <div class="col-12" *ngIf="!loading && !doctors.length">
+                    <div class="alert alert-info">No doctors found.</div>
                 </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-03.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.8</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-teal align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-teal fw-medium fs-14">Neurologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Harold Bryant</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Winona, MS</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$500</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-12" *ngIf="loading">
+                    <div class="alert alert-info">Loading doctors...</div>
                 </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-04.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.8</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-info align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-info fw-medium fs-14">Cardiologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Sandra Jones</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Beckley, WV</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$550</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-05.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.2</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-teal align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-teal fw-medium fs-14">Neurologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Charles Scott</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Hamshire, TX</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$600</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-06.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.2</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-info align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-info fw-medium fs-14">Cardiologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Robert Thomas</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Oakland, CA</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$450</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-07.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.7</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-indigo align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">Psychologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Margaret Koller</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Killeen, TX</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$450</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-08.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.7</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-pink align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-pink fw-medium fs-14">Pediatrician</a>
-                            <span class="badge bg-danger-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Unavailable
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Cath Busick</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Schenectady, NY</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$750</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-09.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.9</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-indigo align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">Psychologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Travis Barton</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Metairie, LA</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">60 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$480</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-10.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>5.0</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-danger align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-danger fw-medium fs-14">Gastroenterology</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Daisy Malcolm</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Lexington, KY</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">60 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$520</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-11.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.4</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-info align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-info fw-medium fs-14">Cardiologist</a>
-                            <span class="badge bg-danger-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Unavailable
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Tyrone Patrick</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Clark Fork, ID</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$360</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-12.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.2</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-pink align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-pink fw-medium fs-14">Pediatrician</a>
-                            <span class="badge bg-danger-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Unavailable
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Ann Bell</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$630</h3>
-                                </div>
-                                <a [routerLink]="routes.booking" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12">
+            </ng-template>
+            <!-- <div class="col-md-12">
                 <div class="text-center mb-4">
                     <a [routerLink]="routes.loginEmail" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
                         <i class="isax isax-d-cube-scan5 me-2"></i>
                         Load More 425 Doctors
                     </a>
                 </div>
+            </div> -->
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 d-flex justify-content-center">
+                <button *ngIf="doctors.length < total && !loading" class="btn btn-primary" (click)="loadMore()">
+                    Load More Doctors ({{ doctors.length }}/{{ total }})
+                </button>
+                <div *ngIf="loading" class="alert alert-info">Loading doctors...</div>
             </div>
         </div>
     </div>

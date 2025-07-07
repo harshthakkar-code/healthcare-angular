@@ -22,6 +22,7 @@ import { SlotService } from '../feature-module/doctors/available-timings/slot.se
 import { SlotModalService } from '../feature-module/doctors/available-timings/slot-modal.service';
 import { forkJoin } from 'rxjs';
 import { DependantService } from '../feature-module/patients/dependent/dependant.service';
+import { DependantEditService } from 'src/app/shared/data/dependant-edit.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -89,13 +90,17 @@ export class ModalComponent implements OnInit {
   addDepDob = '';
   addDepProfileImage = '';
   addDepStatus = 'active';
+  addDepBloodGroup = '';
   addDepLoading = false;
+
+  editDependant: any = {};
 
   constructor(
     private router:Router,
     private slotService: SlotService,
     public slotModalService: SlotModalService,
-    private dependantService: DependantService
+    private dependantService: DependantService,
+    private dependantEditService: DependantEditService
   ) {
     this.chartOptionsOne = {
       series: [
@@ -358,6 +363,12 @@ export class ModalComponent implements OnInit {
     this.myDateValue = new Date();
     this.durationOptions = [15, 30, 45, 60];
     this.setupSlotFormWatchers();
+    this.dependantEditService.dependant$.subscribe(dep => {
+      if (dep && dep.dob && typeof dep.dob === 'string') {
+        dep = { ...dep, dob: new Date(dep.dob) };
+      }
+      this.editDependant = dep || {};
+    });
   }
   onDateChange(newDate: Date) {
     console.log(newDate);
@@ -513,7 +524,8 @@ export class ModalComponent implements OnInit {
       gender: this.addDepGender,
       dob: this.addDepDob,
       profileImage: this.addDepProfileImage,
-      status: this.addDepStatus
+      status: this.addDepStatus,
+      bloodGroup: this.addDepBloodGroup
     };
     this.dependantService.addDependant(data).subscribe({
       next: () => {
@@ -527,9 +539,59 @@ export class ModalComponent implements OnInit {
         this.addDepDob = '';
         this.addDepProfileImage = '';
         this.addDepStatus = 'active';
+        this.addDepBloodGroup = '';
       },
       error: () => {
         this.addDepLoading = false;
+      }
+    });
+  }
+
+  saveEditDependant() {
+    if (!this.editDependant || !this.editDependant._id) return;
+    let data: any = { ...this.editDependant };
+    if (data.dob instanceof Date) {
+      data.dob = data.dob.toISOString();
+    }
+    // Handle file upload if profileImage is a File
+    if (data.profileImage instanceof File) {
+      const formData = new FormData();
+      for (const key in data) {
+        if (data.hasOwnProperty(key) && data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      }
+      this.dependantService.updateDependant(data._id, formData).subscribe({
+        next: () => {
+          this.dependantService.notifyDependantsChanged();
+          const modal = document.getElementById('edit_dependent');
+          if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+        }
+      });
+    } else {
+      this.dependantService.updateDependant(data._id, data).subscribe({
+        next: () => {
+          this.dependantService.notifyDependantsChanged();
+          const modal = document.getElementById('edit_dependent');
+          if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+        }
+      });
+    }
+  }
+
+  onFileChange(input: HTMLInputElement) {
+    if (this.editDependant && input.files && input.files.length > 0) {
+      this.editDependant.profileImage = input.files[0];
+    }
+  }
+
+  deleteDependant() {
+    if (!this.editDependant || !this.editDependant._id) return;
+    this.dependantService.deleteDependant(this.editDependant._id).subscribe({
+      next: () => {
+        this.dependantService.notifyDependantsChanged();
+        const modal = document.getElementById('delete_modal');
+        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
       }
     });
   }

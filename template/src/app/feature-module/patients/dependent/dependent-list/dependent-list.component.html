@@ -59,8 +59,8 @@
               <input type="checkbox" [id]="'status_' + d._id" class="check" [checked]="d.status === 'active'" (change)="onStatusToggle(d)">                  
               <label [for]="'status_' + d._id" class="checktoggle">checkbox</label>
             </div>
-            <a href="javascript:void(0);" class="edit-icon me-2" data-bs-toggle="modal" data-bs-target="#edit_dependent"><i class="isax isax-edit-2"></i></a>
-            <a href="javascript:void(0);" class="edit-icon" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="isax isax-trash"></i></a>
+            <a href="javascript:void(0);" class="edit-icon me-2" (click)="onEditDependant(d)"><i class="isax isax-edit-2"></i></a>
+            <a href="javascript:void(0);" class="edit-icon" (click)="onDeleteDependant(d)"><i class="isax isax-trash"></i></a>
           </div>
         </div>
         <!-- /Depeendent Item -->

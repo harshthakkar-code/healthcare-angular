@@ -97,7 +97,7 @@ exports.getDoctorListWithReviews = async (req, res, next) => {
 // Public: Get doctor list with search, pagination, specialities, and average reviews
 exports.getDoctors = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '', specialization, sort = 'name' } = req.query;
+    const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date } = req.query;
     const query = {};
     if (search) {
       query.$or = [
@@ -109,36 +109,94 @@ exports.getDoctors = async (req, res, next) => {
     if (specialization) {
       query.specialization = specialization;
     }
+    if (city) {
+      query.city = { $regex: city, $options: 'i' };
+    }
+
+    // If date filter is provided, use aggregation to filter doctors with a schedule on that date
+    if (date) {
+      // Convert date string to Date object for comparison
+      const dateObj = new Date(date);
+      const pipeline = [
+        { $match: query },
+        { $lookup: {
+            from: 'schedules',
+            localField: 'schedule',
+            foreignField: '_id',
+            as: 'schedules',
+        }},
+        { $addFields: {
+            hasDate: {
+              $in: [
+                dateObj,
+                { $map: { input: '$schedules', as: 's', in: '$$s.date' } }
+              ]
+            }
+        }},
+        { $match: { hasDate: true } },
+      ];
+      let doctors = await DoctorProfile.aggregate(pipeline);
+      // Populate specialization and reviews manually if needed
+      doctors = await DoctorProfile.populate(doctors, [
+        { path: 'specialization', select: 'name' },
+        { path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } }
+      ]);
+      // Calculate avgRating
+      let doctorsWithAvg = doctors.map(doc => {
+        const ratings = (doc.reviews || []).map(r => r.rating);
+        const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
+        return { ...doc, avgRating };
+      });
+      // Sorting
+      if (sort === '-avgRating') {
+        doctorsWithAvg.sort((a, b) => b.avgRating - a.avgRating);
+      } else if (sort === 'avgRating') {
+        doctorsWithAvg.sort((a, b) => a.avgRating - b.avgRating);
+      } else {
+        doctorsWithAvg.sort((a, b) => {
+          if (a[sort] < b[sort]) return -1;
+          if (a[sort] > b[sort]) return 1;
+          return 0;
+        });
+      }
+      // Pagination
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const paginatedDoctors = doctorsWithAvg.slice(skip, skip + parseInt(limit));
+      const total = doctorsWithAvg.length;
+      return res.json({
+        data: paginatedDoctors,
+        page: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        total
+      });
+    }
+
+    // If no date filter, use normal query
     let doctors = await DoctorProfile.find(query)
       .populate('specialization', 'name')
       .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } });
-
     // Calculate average rating for each doctor
     let doctorsWithAvg = doctors.map(doc => {
       const ratings = doc.reviews.map(r => r.rating);
       const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
       return { ...doc.toObject(), avgRating };
     });
-
     // Sort by avgRating if requested
     if (sort === '-avgRating') {
       doctorsWithAvg.sort((a, b) => b.avgRating - a.avgRating);
     } else if (sort === 'avgRating') {
       doctorsWithAvg.sort((a, b) => a.avgRating - b.avgRating);
     } else {
-      // Default MongoDB sort for other fields (ascending)
       doctorsWithAvg.sort((a, b) => {
         if (a[sort] < b[sort]) return -1;
         if (a[sort] > b[sort]) return 1;
         return 0;
       });
     }
-
     // Pagination and limit
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const paginatedDoctors = doctorsWithAvg.slice(skip, skip + parseInt(limit));
     const total = doctorsWithAvg.length;
-
     res.json({
       data: paginatedDoctors,
       page: parseInt(page),

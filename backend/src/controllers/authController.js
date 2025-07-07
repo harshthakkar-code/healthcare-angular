@@ -224,4 +224,63 @@ exports.googleLogin = async (req, res, next) => {
   } catch (err) {
     res.status(401).json({ message: 'Google login failed.' });
   }
+};
+
+// Cascade delete user, profile, and all related data
+exports.deleteUserCascade = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const User = require('../models/User');
+    const PatientProfile = require('../models/PatientProfile');
+    const DoctorProfile = require('../models/DoctorProfile');
+    const Appointment = require('../models/Appointment');
+    const Favourite = require('../models/Favourite');
+    const Dependant = require('../models/Dependant');
+    const Review = require('../models/Review');
+    const Notification = require('../models/Notification');
+    const Report = require('../models/Report');
+    const Document = require('../models/Document');
+    const Schedule = require('../models/Schedule');
+    const Chat = require('../models/Chat');
+    const Payout = require('../models/Payout');
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Delete related profiles and data
+    if (user.role === 'patient') {
+      await PatientProfile.deleteOne({ user: userId });
+      await Dependant.deleteMany({ userId });
+      await Appointment.deleteMany({ patient: userId });
+      await Favourite.deleteMany({ patientId: userId });
+      await Review.deleteMany({ patient: userId });
+      await Notification.deleteMany({ user: userId });
+      await Report.deleteMany({ patient: userId });
+      await Document.deleteMany({ patient: userId });
+      await Chat.deleteMany({ participants: userId });
+      await Payout.deleteMany({ patient: userId });
+    } else if (user.role === 'doctor') {
+      const doctorProfile = await DoctorProfile.findOne({ user: userId });
+      if (doctorProfile) {
+        await Appointment.deleteMany({ doctor: userId });
+        await Favourite.deleteMany({ doctorId: doctorProfile._id });
+        await Review.deleteMany({ doctor: userId });
+        await Notification.deleteMany({ user: userId });
+        await Report.deleteMany({ doctor: userId });
+        await Schedule.deleteMany({ doctor: userId });
+        await Chat.deleteMany({ participants: userId });
+        await Payout.deleteMany({ doctor: doctorProfile._id });
+        await DoctorProfile.deleteOne({ user: userId });
+      }
+    }
+
+    // Delete user
+    await User.deleteOne({ _id: userId });
+
+    res.json({ message: 'User and all related data deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 }; 
