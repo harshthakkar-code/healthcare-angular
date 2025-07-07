@@ -20,19 +20,13 @@
                         <div class="search-input search-line">
                             <i class="isax isax-hospital5 bficon"></i>
                             <div class=" mb-0">
-                                <input type="text" class="form-control" placeholder="Search for Doctors, Hospitals, Clinics">
+                                <input type="text" class="form-control" placeholder="Search for Doctors, Hospitals, Clinics" [(ngModel)]="searchValue" name="searchValue">
                             </div>
                         </div>
                         <div class="search-input search-map-line">
                             <i class="isax isax-location5"></i>
                             <div class=" mb-0">
-                                <input type="text" class="form-control" placeholder="Location"> 
-                            </div>
-                        </div>
-                        <div class="search-input search-calendar-line">
-                            <i class="isax isax-calendar-tick5"></i>
-                            <div class=" mb-0">
-                                <input type="text" class="form-control datetimepicker" placeholder="Date" bsDatepicker [bsConfig]="{adaptivePosition:true}">
+                                <input type="text" class="form-control" placeholder="Location" [(ngModel)]="location" name="location">
                             </div>
                         </div>
                         <div class="form-search-btn">

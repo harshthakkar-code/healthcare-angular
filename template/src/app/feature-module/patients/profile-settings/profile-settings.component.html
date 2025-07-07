@@ -28,12 +28,12 @@
                         <div class="border-bottom pb-3 mb-3">
                             <h5>Profile Settings</h5>
                         </div>
-                        <form>
+                        <form *ngIf="profile" [formGroup]="profileForm" (ngSubmit)="updateProfile()">
                             <div class="setting-card">
                                 <label class="form-label mb-2">Profile Photo</label>
                                 <div class="change-avatar img-upload">
                                     <div class="profile-img">
-                                        <i class="fa-solid fa-file-image"></i>
+                                        <img [src]="profile?.profileImgUrl || 'assets/img/default-profile.png'" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
                                     </div>
                                     <div class="upload-img">
                                         <div class="imgs-load d-flex align-items-center">
@@ -55,47 +55,61 @@
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">First Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="firstName" name="firstName">
+                                            <div *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched" class="text-danger small">First Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="lastName" name="lastName">
+                                            <div *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched" class="text-danger small">Last Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
                                             <div class="form-icon">
-                                                <input type="text" class="form-control datetimepicker" placeholder="dd/mm/yyyy">
+                                                <input type="text" class="form-control datetimepicker" placeholder="dd/mm/yyyy" formControlName="dob" name="dob">
                                                 <span class="icon"><i class="isax isax-calendar-1"></i></span>
                                             </div>
+                                            <div *ngIf="profileForm.get('dob')?.invalid && profileForm.get('dob')?.touched" class="text-danger small">Date of Birth is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="phone" name="phone">
+                                            <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="text-danger small">
+                                                <div *ngIf="profileForm.get('phone')?.errors?.['required']">Phone Number is required.</div>
+                                                <div *ngIf="profileForm.get('phone')?.errors?.['pattern']">Phone Number must be 10 digits.</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                                            <input type="email" class="form-control">
+                                            <input type="email" class="form-control" formControlName="email" name="email">
+                                            <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-danger small">
+                                                <div *ngIf="profileForm.get('email')?.errors?.['required']">Email is required.</div>
+                                                <div *ngIf="profileForm.get('email')?.errors?.['email']">Invalid email address.</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Blood Group <span class="text-danger">*</span></label>
-                                            <mat-select class="custom-mat-select select" placeholder="Select">
-                                                <mat-option value="1">Select</mat-option>
-                                                <mat-option value="1">B+ve</mat-option>
-                                                <mat-option value="1">AB+ve</mat-option>
-                                                <mat-option value="1">B-ve</mat-option>
-                                                <mat-option value="1">O+ve</mat-option>
-                                                <mat-option value="1">O-ve</mat-option>
+                                            <mat-select class="custom-mat-select select" placeholder="Select" formControlName="blood" name="blood">
+                                                <mat-option value="A+">A+</mat-option>
+                                                <mat-option value="A-">A-</mat-option>
+                                                <mat-option value="B+">B+</mat-option>
+                                                <mat-option value="B-">B-</mat-option>
+                                                <mat-option value="AB+">AB+</mat-option>
+                                                <mat-option value="AB-">AB-</mat-option>
+                                                <mat-option value="O+">O+</mat-option>
+                                                <mat-option value="O-">O-</mat-option>
                                             </mat-select>
+                                            <div *ngIf="profileForm.get('blood')?.invalid && profileForm.get('blood')?.touched" class="text-danger small">Blood Group is required.</div>
                                         </div>
                                     </div>
                                 </div>
@@ -108,31 +122,36 @@
                                     <div class="col-lg-12">
                                         <div class="mb-3">
                                             <label class="form-label">Address <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="address" name="address">
+                                            <div *ngIf="profileForm.get('address')?.invalid && profileForm.get('address')?.touched" class="text-danger small">Address is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">City <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="city" name="city">
+                                            <div *ngIf="profileForm.get('city')?.invalid && profileForm.get('city')?.touched" class="text-danger small">City is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">State <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="state" name="state">
+                                            <div *ngIf="profileForm.get('state')?.invalid && profileForm.get('state')?.touched" class="text-danger small">State is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Country <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="country" name="country">
+                                            <div *ngIf="profileForm.get('country')?.invalid && profileForm.get('country')?.touched" class="text-danger small">Country is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Pincode <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" formControlName="pincode" name="pincode">
+                                            <div *ngIf="profileForm.get('pincode')?.invalid && profileForm.get('pincode')?.touched" class="text-danger small">Pincode is required.</div>
                                         </div>
                                     </div>
                                 </div>

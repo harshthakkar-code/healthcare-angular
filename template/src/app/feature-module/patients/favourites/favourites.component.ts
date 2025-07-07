@@ -49,11 +49,12 @@ export class FavouritesComponent implements OnInit {
     }
     api.get(`/favourites?patientId=${patientId}&favourites=true&page=${this.page}&limit=${this.limit}&search=${encodeURIComponent(this.search)}`)
       .then(res => {
-        this.favourites = res.data.data || res.data || [];
+        this.favourites = (res.data.data || res.data || []).filter((fav: any) => fav.doctorId);
         this.total = res.data.total || this.favourites.length;
-        // Fetch doctor profiles for each favourite
+        console.log(res.data.data)
+        // Fetch doctor profiles for each favourite using doctorId._id (DoctorProfile)
         return Promise.all(this.favourites.map(fav =>
-          api.get(`/doctor/by-user/${fav.doctorId._id}`).then(docRes => ({
+          api.get(`/doctor/by-user/${fav.doctorId.user}`).then(docRes => ({
             doctor: docRes.data,
             favourite: fav
           })).catch(() => null)
@@ -61,17 +62,20 @@ export class FavouritesComponent implements OnInit {
       })
       .then(results => {
         const newProfiles = (results || []).filter(d => d && d.doctor);
-        // Fetch appointments for each doctor
-        return Promise.all(newProfiles.map(async (profile) => {
-          if (!profile) return profile;
-          try {
-            const appointments = await api.get(`/doctor/appointments/doctor/${profile.doctor.user}`);
-            (profile as any).appointments = appointments.data || [];
-          } catch {
-            (profile as any).appointments = [];
-          }
-          return profile;
-        }));
+        // Fetch all appointments once
+        return api.get(`/patient/appointments`).then(appointmentsRes => {
+          const allAppointments = appointmentsRes.data.appointments || [];
+          // Assign only relevant appointments to each doctor
+          return newProfiles.map(profile => {
+            if (!profile) return profile;
+            console.log(profile.doctor.user , allAppointments)
+            const doctorAppointments = allAppointments.filter(
+              (appt: any) => String(appt.doctor) === String(profile.doctor.user)
+            );
+            (profile as any).appointments = doctorAppointments;
+            return profile;
+          });
+        });
       })
       .then(finalProfiles => {
         if (loadMore) {
@@ -114,12 +118,27 @@ export class FavouritesComponent implements OnInit {
     return this.doctorProfiles.length < this.total;
   }
 
-  // Helper to get the latest appointment date for a doctor
-  getLatestAppointmentDate(appointments: any[]): string {
+  // Helper to get the latest appointment date and time for a doctor
+  getLatestAppointmentForDoctor(doctorId: string, appointments: any[]): string {
     if (!appointments || appointments.length === 0) return 'N/A';
-    // Sort by date descending
-    const sorted = appointments.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    return sorted[0].date;
+
+    // Filter appointments for this doctor
+    const doctorAppointments = appointments.filter(
+      appt => appt.doctor === doctorId
+    );
+
+    if (doctorAppointments.length === 0) return 'N/A';
+
+    // Sort by combined date and time descending
+    doctorAppointments.sort((a, b) => {
+      const aDateTime = new Date(`${a.date} ${a.time}`);
+      const bDateTime = new Date(`${b.date} ${b.time}`);
+      return bDateTime.getTime() - aDateTime.getTime();
+    });
+
+    const latest = doctorAppointments[0];
+    // Format as needed, e.g., "2025-06-25 02:00 PM"
+    return `${latest.date} ${latest.time}`;
   }
 
   onSearchChange(): void {

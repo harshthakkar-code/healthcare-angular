@@ -24,6 +24,8 @@ app.use('/api/transactions', require('./routes/transaction'));
 app.use('/api/social-media', require('./routes/socialMedia'));
 app.use('/api/doctor-settings', require('./routes/doctorSettings'));
 app.use('/api/payouts', require('./routes/payout'));
+app.use('/api/favourites', require('./routes/favourite'));
+app.use('/api/dependants', require('./routes/dependant'));
 // Add more as needed
 
 app.use(require('./middlewares/errorHandler'));
