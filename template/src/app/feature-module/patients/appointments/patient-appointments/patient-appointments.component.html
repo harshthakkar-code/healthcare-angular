@@ -195,8 +195,8 @@
                                     </div>
                                     
                                     <div class="filter-reset-btns">
-                                        <a [routerLink] = "routes.appointmentsListUser" class="btn btn-light">Reset</a>
-                                        <a [routerLink] = "routes.appointmentsListUser" class="btn btn-primary">Filter Now</a>
+                                        <a [routerLink] = "routes.patientAppointment" class="btn btn-light">Reset</a>
+                                        <a [routerLink] = "routes.patientAppointment" class="btn btn-primary">Filter Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -211,17 +211,19 @@
                             <ul>
                                 <li>
                                     <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientUpcomingAppointment">
+                                        <a [routerLink]="['../patient-appointment-details', apt._id]">
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
                                             <p>#{{ apt._id?.slice(-6) }}</p>
-                                            <h6><a [routerLink] = "routes.patientUpcomingAppointment">{{ apt.doctorName || 'Doctor' }}</a></h6>
+                                            <h6><a [routerLink]="['../patient-appointment-details', apt._id]">{{ apt.doctorName || 'Doctor' }}</a></h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
+                                    <a [routerLink]="['../patient-appointment-details', apt._id]">
+                                        <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                    </a>
                                     <ul class="d-flex apponitment-types">
                                         <li>{{ apt.specialty || 'General Visit' }}</li>
                                         <li>{{ apt.appointmentType }}</li>
@@ -236,7 +238,7 @@
                                 <li class="appointment-action">
                                     <ul>
                                         <li>
-                                            <a [routerLink] = "routes.patientUpcomingAppointment"><i class="isax isax-eye4"></i></a>
+                                            <a [routerLink]="['../patient-appointment-details', apt._id]"><i class="isax isax-eye4"></i></a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
@@ -283,7 +285,7 @@
                             <ul>
                                 <li>
                                     <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCancelledAppointment">
+                                        <a [routerLink]="['../patient-appointment-details', apt._id]">
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
@@ -293,7 +295,9 @@
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
+                                    <a [routerLink]="['../patient-appointment-details', apt._id]">
+                                        <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                    </a>
                                     <ul class="d-flex apponitment-types">
                                         <li>{{ apt.specialty || 'General Visit' }}</li>
                                         <li>{{ apt.appointmentType }}</li>
@@ -308,7 +312,7 @@
                                 <li class="appointment-action">
                                     <ul>
                                         <li>
-                                            <a [routerLink] = "routes.patientCancelledAppointment"><i class="isax isax-eye4"></i></a>
+                                            <a [routerLink]="['../patient-appointment-details', apt._id]"><i class="isax isax-eye4"></i></a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
@@ -355,7 +359,7 @@
                             <ul>
                                 <li>
                                     <div class="patinet-information">
-                                        <a [routerLink] = "routes.patientCompletedAppointment">
+                                        <a [routerLink]="['../patient-appointment-details', apt._id]">
                                             <img src="assets/img/doctors/doctor-thumb-21.jpg" alt="User Image">
                                         </a>
                                         <div class="patient-info">
@@ -365,7 +369,9 @@
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
+                                    <a [routerLink]="['../patient-appointment-details', apt._id]">
+                                        <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                    </a>
                                     <ul class="d-flex apponitment-types">
                                         <li>{{ apt.specialty || 'General Visit' }}</li>
                                         <li>{{ apt.appointmentType }}</li>
@@ -380,7 +386,7 @@
                                 <li class="appointment-action">
                                     <ul>
                                         <li>
-                                            <a [routerLink] = "routes.patientCompletedAppointment"><i class="isax isax-eye4"></i></a>
+                                            <a [routerLink]="['../patient-appointment-details', apt._id]"><i class="isax isax-eye4"></i></a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
