@@ -86,11 +86,20 @@
 												<div class="card mb-0">
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
-															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-15.jpg" alt=""></span>
+															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
+																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+															</span>
 															<div>
-																<h4 class="mb-1">Dr. Michael Brown <span class="badge bg-orange fs-12"><i class="fa-solid fa-star me-1"></i>5.0</span></h4>
-																<p class="text-indigo mb-3 fw-medium">Psychologist</p>
-																<p class="mb-0"><i class="isax isax-location me-2"></i>5th Street - 1011 W 5th St, Suite 120, Austin, TX 78703</p>
+																<h4 class="mb-1">
+																	{{ doctor?.name || 'Doctor Name' }}
+																	<span class="badge bg-orange fs-12">
+																		<i class="fa-solid fa-star me-1"></i>{{ doctor?.avgRating != null ? (doctor?.avgRating | number:'1.1-1') : 'N/A' }}
+																	</span>
+																</h4>
+																<p class="text-indigo mb-3 fw-medium">
+																  {{ specializationsDisplay }}
+																</p>
+																<p class="mb-0"><i class="isax isax-location me-2"></i>{{ doctor?.address || doctor?.city || 'Location' }}</p>
 															</div>
 														</div>
 													</div>
@@ -102,68 +111,25 @@
 												<div class="card-body pb-1">
 													<div class="mb-4 pb-4 border-bottom">
 														<label class="form-label">Select Speciality</label>
-														<mat-select class="custom-mat-select select" placeholder="Cardiology">
-															<mat-option value="1">Cardiology</mat-option>
-															<mat-option value="1">Neurology</mat-option>
-															<mat-option value="1">Urology</mat-option>
+														<mat-select class="custom-mat-select select" placeholder="Select Speciality" [(ngModel)]="selectedSpecialization">
+															<mat-option *ngFor="let spec of doctor?.specializations" [value]="spec">
+																{{ spec.name }}
+															</mat-option>
 														</mat-select>
 													</div>
 													<h6 class="mb-3">Services</h6>
 													<div class="row">
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item active">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service1" checked>
-																<label class="form-check-label ms-2" for="service1">
-																	<span class="service-title d-block mb-1">Echocardiograms</span>
-																	<span class="fs-14 d-block">$310</span>
-																</label>
+														<ng-container *ngIf="selectedSpecialization">
+															<div class="col-lg-4 col-md-6" *ngFor="let service of selectedSpecialization.services">
+																<div class="service-item" [ngClass]="{ 'active': selectedServices.includes(service._id) }">
+																	<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" [id]="service._id" [checked]="selectedServices.includes(service._id)" (change)="toggleService(service._id)">
+																	<label class="form-check-label ms-2" [for]="service._id">
+																		<span class="service-title d-block mb-1">{{ service.name }}</span>
+																		<span class="fs-14 d-block">${{ service.price }}</span>
+																	</label>
+																</div>
 															</div>
-														</div>
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service2">
-																<label class="form-check-label ms-2" for="service2">
-																	<span class="service-title d-block mb-1">Stress tests</span>
-																	<span class="fs-14 d-block">$754</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service3">
-																<label class="form-check-label ms-2" for="service3">
-																	<span class="service-title d-block mb-1">Stress tests</span>
-																	<span class="fs-14 d-block">$754</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service4">
-																<label class="form-check-label ms-2" for="service4">
-																	<span class="service-title d-block mb-1">Heart Catheterization</span>
-																	<span class="fs-14 d-block">$150</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service5">
-																<label class="form-check-label ms-2" for="service5">
-																	<span class="service-title d-block mb-1">Echocardiograms</span>
-																	<span class="fs-14 d-block">$200</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-lg-4 col-md-6">
-															<div class="service-item">
-																<input class="form-check-input ms-0 mt-0" name="service1" type="checkbox" id="service6">
-																<label class="form-check-label ms-2" for="service6">
-																	<span class="service-title d-block mb-1">Echocardiograms</span>
-																	<span class="fs-14 d-block">$200</span>
-																</label>
-															</div>
-														</div>
+														</ng-container>
 													</div>
 												</div>
 											</div>
@@ -189,11 +155,20 @@
 												<div class="card mb-0">
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
-															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-15.jpg" alt=""></span>
+															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
+																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+															</span>
 															<div>
-																<h4 class="mb-1">Dr. Michael Brown <span class="badge bg-orange fs-12"><i class="fa-solid fa-star me-1"></i>5.0</span></h4>
-																<p class="text-indigo mb-3 fw-medium">Psychologist</p>
-																<p class="mb-0"><i class="isax isax-location me-2"></i>5th Street - 1011 W 5th St, Suite 120, Austin, TX 78703</p>
+																<h4 class="mb-1">
+																	{{ doctor?.name || 'Doctor Name' }}
+																	<span class="badge bg-orange fs-12">
+																		<i class="fa-solid fa-star me-1"></i>{{ doctor?.avgRating != null ? (doctor?.avgRating | number:'1.1-1') : 'N/A' }}
+																	</span>
+																</h4>
+																<p class="text-indigo mb-3 fw-medium">
+																  {{ specializationsDisplay }}
+																</p>
+																<p class="mb-0"><i class="isax isax-location me-2"></i>{{ doctor?.address || doctor?.city || 'Location' }}</p>
 															</div>
 														</div>
 													</div>
@@ -205,95 +180,14 @@
 												<div class="card-body pb-1">
 													<h6 class="mb-3">Select Appointment Type</h6>
 													<div class="row">
-														<div class="col-xl col-md-3 col-sm-4">
-															<div class="radio-select text-center" (click)="showClinic()">
-																<input class="form-check-input ms-0 mt-0" name="service2" type="radio" id="service7" checked>
-																<label class="form-check-label" for="service7">
-																	<i class="isax isax-hospital5"></i>
-																	<span class="service-title d-block">Clinic</span>
+														<div class="col-xl col-md-3 col-sm-4" *ngFor="let type of appointmentTypes">
+															<div class="radio-select text-center" (click)="selectAppointmentType(type.value)">
+																<input class="form-check-input ms-0 mt-0" name="appointmentType" type="radio" [id]="type.value" [checked]="selectedAppointmentType === type.value">
+																<label class="form-check-label" [for]="type.value">
+																	<i [ngClass]="type.icon"></i>
+																	<span class="service-title d-block">{{ type.label }}</span>
 																</label>
 															</div>
-														</div>
-														<div class="col-xl col-md-3 col-sm-4">
-															<div class="radio-select text-center" (click)="offClinic()">
-																<input class="form-check-input ms-0 mt-0" name="service2" type="radio" id="service8">
-																<label class="form-check-label" for="service8">
-																	<i class="isax isax-video5"></i>
-																	<span class="service-title d-block">Video Call</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-xl col-md-3 col-sm-4">
-															<div class="radio-select text-center" (click)="offClinic()">
-																<input class="form-check-input ms-0 mt-0" name="service2" type="radio" id="service9">
-																<label class="form-check-label" for="service9">
-																	<i class="isax isax-call5"></i>
-																	<span class="service-title d-block">Audio Call</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-xl col-md-3 col-sm-4" (click)="offClinic()">
-															<div class="radio-select text-center">
-																<input class="form-check-input ms-0 mt-0" name="service2" type="radio" id="service10">
-																<label class="form-check-label" for="service10">
-																	<i class="isax isax-messages-15"></i>
-																	<span class="service-title d-block">Chat</span>
-																</label>
-															</div>
-														</div>
-														<div class="col-xl col-md-3 col-sm-4">
-															<div class="radio-select text-center">
-																<input class="form-check-input ms-0 mt-0" name="service2" type="radio" id="service11">
-																<label class="form-check-label" for="service11">
-																	<i class="isax isax-messages-15"></i>
-																	<span class="service-title d-block">Home Visit</span>
-																</label>
-															</div>
-														</div>
-													</div>
-													<h6 class="mb-3">Select Clinics</h6>
-													<div [ngStyle]="{'display':isClinic?'block':'none'}">
-														<div class="service-item">
-															<input class="form-check-input ms-0 mt-0" name="service2" type="checkbox" id="service12">
-															<label class="form-check-label ms-2" for="service12">
-																<span class="d-flex align-items-center flex-wrap rpw-gap-2">
-																	<span class="d-inline-block me-2"><img src="assets/img/icons/clinic-icon-01.svg" class="rounded-circle" alt=""></span>
-																	<span>
-																		<span class="service-title d-block mb-1">AllCare Family Medicine</span>
-																		<span class="fs-14">3343 Private Lane, Valdosta</span>
-																		<i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-																		<span class="fs-14">500 Meters</span>
-																	</span>
-																</span>
-															</label>
-														</div>
-														<div class="service-item">
-															<input class="form-check-input ms-0 mt-0" name="service2" type="checkbox" id="service13">
-															<label class="form-check-label ms-2" for="service13">
-																<span class="d-flex align-items-center flex-wrap rpw-gap-2">
-																	<span class="d-inline-block me-2"><img src="assets/img/icons/clinic-icon-02.svg" class="rounded-circle" alt=""></span>
-																	<span>
-																		<span class="service-title d-block mb-1">Vitalplus Clinic</span>
-																		<span class="fs-14">4223 Pleasant Hill Road, Miami, FL 33169</span>
-																		<i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-																		<span class="fs-14">12 KM </span>
-																	</span>
-																</span>
-															</label>
-														</div>
-														<div class="service-item">
-															<input class="form-check-input ms-0 mt-0" name="service2" type="checkbox" id="service13">
-															<label class="form-check-label ms-2" for="service13">
-																<span class="d-flex align-items-center flex-wrap rpw-gap-2">
-																	<span class="d-inline-block me-2"><img src="assets/img/icons/clinic-icon-03.svg" class="rounded-circle" alt=""></span>
-																	<span>
-																		<span class="service-title d-block mb-1">Wellness Path Chiropractic</span>
-																		<span class="fs-14">418 Patton Lane, Garner, NC 27529, FL 33169</span>
-																		<i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-																		<span class="fs-14">16 KM </span>
-																	</span>
-																</span>
-															</label>
 														</div>
 													</div>
 												</div>
@@ -320,37 +214,54 @@
 												<div class="card mb-0">
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 mb-4 flex-wrap row-gap-2">
-															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-15.jpg" alt=""></span>
+															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
+																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+															</span>
 															<div>
-																<h4 class="mb-1">Dr. Michael Brown <span class="badge bg-orange fs-12"><i class="fa-solid fa-star me-1"></i>5.0</span></h4>
-																<p class="text-indigo mb-3 fw-medium">Psychologist</p>
-																<p class="mb-0"><i class="isax isax-location me-2"></i>5th Street - 1011 W 5th St, Suite 120, Austin, TX 78703</p>
+																<h4 class="mb-1">
+																	{{ doctor?.name || 'Doctor Name' }}
+																	<span class="badge bg-orange fs-12">
+																		<i class="fa-solid fa-star me-1"></i>{{ doctor?.avgRating != null ? (doctor?.avgRating | number:'1.1-1') : 'N/A' }}
+																	</span>
+																</h4>
+																<p class="text-indigo mb-3 fw-medium">
+																  {{ specializationsDisplay }}
+																</p>
+																<p class="mb-0"><i class="isax isax-location me-2"></i>{{ doctor?.address || doctor?.city || 'Location' }}</p>
 															</div>
 														</div>
 														<h6 class="mb-2">Booking Info</h6>
 														<div class="row gx-2 gy-3">
 															<div class="col-lg-3 col-sm-6">
 																<div>
-																	<h6 class="fs-14 fw-medium mb-1">Service</h6>
-																	<p class="mb-0">Cardiology (30 Mins)</p>
+																	<h6 class="fs-14 fw-medium mb-1">Speciality</h6>
+																	<p class="mb-0">{{ selectedSpecialization?.name || '-' }}</p>
 																</div>
 															</div>
 															<div class="col-lg-3 col-sm-6">
 																<div>
 																	<h6 class="fs-14 fw-medium mb-1">Service</h6>
-																	<p class="mb-0">Echocardiograms</p>
+																	<p class="mb-0"><ng-container *ngIf="selectedSpecialization">
+																	<ng-container *ngFor="let service of selectedSpecialization.services">
+																	  <ng-container *ngIf="selectedServices.includes(service._id)">
+																		{{ service.name }}<span *ngIf="!isLastSelectedService(service._id, selectedSpecialization.services)">, </span>
+																	  </ng-container>
+																	</ng-container>
+																  </ng-container></p>
 																</div>
 															</div>
 															<div class="col-lg-3 col-sm-6">
 																<div>
 																	<h6 class="fs-14 fw-medium mb-1">Date & Time</h6>
-																	<p class="mb-0">10:00 - 11:00 AM, 15, Oct</p>
+																	<p class="mb-0">
+																		{{ selectedSlot ? (selectedSlot.startTime + ' - ' + selectedSlot.endTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
+																	</p>
 																</div>
 															</div>
 															<div class="col-lg-3 col-sm-6">
 																<div>
 																	<h6 class="fs-14 fw-medium mb-1">Appointment type</h6>
-																	<p class="mb-0">Clinic (Wellness Path)</p>
+																	<p class="mb-0">{{ getAppointmentTypeLabel(selectedAppointmentType) || '-' }}</p>
 																</div>
 															</div>
 														</div>
@@ -365,7 +276,7 @@
 														<div class="col-lg-5">
 															<div class="card">
 																<div class="card-body p-2 pt-3">
-																	<bs-datepicker-inline [bsValue]="bsInlineValue"></bs-datepicker-inline>
+																	<bs-datepicker-inline [bsValue]="bsInlineValue" [bsConfig]="{ datesEnabled: availableDatesAsDateObjects }" (bsValueChange)="onDateSelected($event)"></bs-datepicker-inline>
 																</div>
 															</div>
 														</div>
@@ -376,184 +287,82 @@
 																		<h6 class="fs-14 mb-2">Morning</h6>
 																	</div>
 																	<div class="token-slot mt-2 mb-2">
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment" checked>
-																			   <span class="visit-rsn">09:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">09:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
+																		<ng-container *ngIf="morningSlots.length; else noMorning">
+																			<div class="form-check-inline visits me-0" *ngFor="let slot of morningSlots">
+																				<label class="visit-btns">
+																				<input
+																					type="checkbox"
+																					class="form-check-input"
+																					[disabled]="slot.status !== 'available'"
+																					[checked]="selectedSlot?._id === slot._id"
+																					(click)="onSlotSelected(slot)"
+																					[value]="slot._id"
+																					name="appointmentSlot"
+																				>
+																				<span class="visit-rsn" style="min-width: 100px;">
+																					{{ slot.startTime }} - {{ slot.endTime }}
+																					<span *ngIf="slot.status === 'booked'">(Booked)</span>
+																				</span>
+																				</label>
+																			</div>
+																		</ng-container>
+																		<ng-template #noMorning>
+																			<div class="text-muted">No morning slot available</div>
+																		</ng-template>
 																	</div>	
 																	<div class="book-title">	
 																		<h6 class="fs-14 mb-2">Afternoon</h6>
 																	</div>
 																	<div class="token-slot mt-2 mb-2">
-																		<div class="form-check-inline visits me-0">
-																			<label class="visit-btns">
-																			<input type="checkbox" class="form-check-input" name="appintment" checked>
-																			<span class="visit-rsn">09:45</span>
-																			</label>
-																		</div>
-																		<div class="form-check-inline visits me-0">
-																			<label class="visit-btns">
-																			<input type="checkbox" class="form-check-input" name="appintment">
-																			<span class="visit-rsn">-</span>
-																			</label>
-																		</div>
-																		<div class="form-check-inline visits me-0">
-																			<label class="visit-btns">
-																			<input type="checkbox" class="form-check-input" name="appintment">
-																			<span class="visit-rsn">10:45</span>
-																			</label>
-																		</div>
-																		<div class="form-check-inline visits me-0">
-																			<label class="visit-btns">
-																			<input type="checkbox" class="form-check-input" name="appintment">
-																			<span class="visit-rsn">10:45</span>
-																			</label>
-																		</div>
-																		<div class="form-check-inline visits me-0">
-																			<label class="visit-btns">
-																			<input type="checkbox" class="form-check-input" name="appintment">
-																			<span class="visit-rsn">10:45</span>
-																			</label>
-																		</div>
-																 	</div>	
-																	 <div class="book-title">	
+																		<ng-container *ngIf="afternoonSlots.length; else noAfternoon">
+																			<div class="form-check-inline visits me-0" *ngFor="let slot of afternoonSlots">
+																				<label class="visit-btns">
+																				<input
+																					type="checkbox"
+																					class="form-check-input"
+																					[disabled]="slot.status !== 'available'"
+																					[checked]="selectedSlot?._id === slot._id"
+																					(click)="onSlotSelected(slot)"
+																					[value]="slot._id"
+																					name="appointmentSlot"
+																				>
+																				<span class="visit-rsn">
+																					{{ slot.startTime }} - {{ slot.endTime }}
+																					<span *ngIf="slot.status === 'booked'">(Booked)</span>
+																				</span>
+																				</label>
+																			</div>
+																		</ng-container>
+																		<ng-template #noAfternoon>
+																			<div class="text-muted">No afternoon slot available</div>
+																		</ng-template>
+																	</div>	
+																	<div class="book-title">	
 																		<h6 class="fs-14 mb-2">Evening</h6>
 																	</div>
 																	<div class="token-slot mt-2 mb-2">
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment" checked>
-																			   <span class="visit-rsn">09:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">09:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">10:45</span>
-																		   	</label>
-																	   	</div>
-																	   	<div class="form-check-inline visits me-0">
-																		   	<label class="visit-btns">
-																			   <input type="checkbox" class="form-check-input" name="appintment">
-																			   <span class="visit-rsn">-</span>
-																		   	</label>
-																	   	</div>
+																	   	<ng-container *ngIf="eveningSlots.length; else noEvening">
+																		   	<div class="form-check-inline visits me-0" *ngFor="let slot of eveningSlots">
+																			   <label class="visit-btns">
+																					<input
+																						type="checkbox"
+																						class="form-check-input"
+																						[disabled]="slot.status !== 'available'"
+																						[checked]="selectedSlot?._id === slot._id"
+																						(click)="onSlotSelected(slot)"
+																						[value]="slot._id"
+																						name="appointmentSlot"
+																					>
+																					<span class="visit-rsn">
+																						{{ slot.startTime }} - {{ slot.endTime }}
+																						<span *ngIf="slot.status === 'booked'">(Booked)</span>
+																					</span>
+																			   </label>
+																		   	</div>
+																		</ng-container>
+																		<ng-template #noEvening>
+																			<div class="text-muted">No evening slot available</div>
+																		</ng-template>
 																	</div>	
 																</div>
 															</div>
@@ -584,40 +393,53 @@
 												<div class="card mb-0">
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 mb-4 flex-wrap row-gap-2">
-															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-15.jpg" alt=""></span>
+															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
+																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+															</span>
 															<div>
-																<h4 class="mb-1">Dr. Michael Brown <span class="badge bg-orange fs-12"><i class="fa-solid fa-star me-1"></i>5.0</span></h4>
-																<p class="text-indigo mb-3 fw-medium">Psychologist</p>
-																<p class="mb-0"><i class="isax isax-location me-2"></i>5th Street - 1011 W 5th St, Suite 120, Austin, TX 78703</p>
+																<h4 class="mb-1">
+																	{{ doctor?.name || 'Doctor Name' }}
+																	<span class="badge bg-orange fs-12">
+																		<i class="fa-solid fa-star me-1"></i>{{ doctor?.avgRating != null ? (doctor?.avgRating | number:'1.1-1') : 'N/A' }}
+																	</span>
+																</h4>
+																<p class="text-indigo mb-3 fw-medium">
+																  {{ specializationsDisplay }}
+																</p>
+																<p class="mb-0"><i class="isax isax-location me-2"></i>{{ doctor?.address || doctor?.city || 'Location' }}</p>
+																
 															</div>
 														</div>
-														<h6 class="mb-2">Booking Info</h6>
-														<div class="row gx-2 gy-3">
-															<div class="col-lg-3 col-sm-6">
+														<!-- Booking Info Summary -->
+														<div class="row gx-2 gy-3 mb-3">
+															<div class="col-lg-4 col-md-6">
 																<div>
-																	<h6 class="fs-14 fw-medium mb-1">Service</h6>
-																	<p class="mb-0">Cardiology (30 Mins)</p>
+																	<h6 class="fs-14 fw-medium mb-1">Speciality</h6>
+																	<p class="mb-0">{{ selectedSpecialization?.name || '-' }}</p>
 																</div>
 															</div>
-															<div class="col-lg-3 col-sm-6">
+															<div class="col-lg-4 col-md-6">
 																<div>
-																	<h6 class="fs-14 fw-medium mb-1">Service</h6>
-																	<p class="mb-0">Echocardiograms</p>
+																	<h6 class="fs-14 fw-medium mb-1">Services</h6>
+																	<p class="mb-0">
+																		<ng-container *ngIf="selectedSpecialization">
+																			<ng-container *ngFor="let service of selectedSpecialization.services">
+																				<ng-container *ngIf="selectedServices.includes(service._id)">
+																					{{ service.name }}<span *ngIf="!isLastSelectedService(service._id, selectedSpecialization.services)">, </span>
+																				</ng-container>
+																			</ng-container>
+																		</ng-container>
+																	</p>
 																</div>
 															</div>
-															<div class="col-lg-3 col-sm-6">
-																<div>
-																	<h6 class="fs-14 fw-medium mb-1">Date & Time</h6>
-																	<p class="mb-0">10:00 - 11:00 AM, 15, Oct</p>
-																</div>
-															</div>
-															<div class="col-lg-3 col-sm-6">
+															<div class="col-lg-4 col-md-6">
 																<div>
 																	<h6 class="fs-14 fw-medium mb-1">Appointment type</h6>
-																	<p class="mb-0">Clinic (Wellness Path)</p>
+																	<p class="mb-0">{{ getAppointmentTypeLabel(selectedAppointmentType) || '-' }}</p>
 																</div>
 															</div>
 														</div>
+														<!-- End Booking Info Summary -->
 													</div>
 												</div>
 											</div>
@@ -629,39 +451,59 @@
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">First Name</label>
-																<input type="text" class="form-control">
+																<input type="text" class="form-control" [(ngModel)]="firstName" name="firstName" required #firstNameRef="ngModel">
+																<div *ngIf="firstNameRef.invalid && firstNameRef.touched" class="text-danger">
+																  First Name is required.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">Last Name</label>
-																<input type="text" class="form-control">
+																<input type="text" class="form-control" [(ngModel)]="lastName" name="lastName" required #lastNameRef="ngModel">
+																<div *ngIf="lastNameRef.invalid && lastNameRef.touched" class="text-danger">
+																  Last Name is required.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">Phone Number</label>
-																<input type="text" class="form-control">
+																<input type="text" class="form-control" [(ngModel)]="phone" name="phone" required #phoneRef="ngModel">
+																<div *ngIf="phoneRef.invalid && phoneRef.touched" class="text-danger">
+																  Phone Number is required.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">Email Address</label>
-																<input type="text" class="form-control">
+																<input type="text" class="form-control" [(ngModel)]="email" name="email" required #emailRef="ngModel">
+																<div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">
+																  Email Address is required.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">Select Patient</label>
-																<mat-select class="custom-mat-select select" placeholder="Andrew Fletcher">
-																	<mat-option value="1">Andrew Fletcher</mat-option>
+																<mat-select class="custom-mat-select select" placeholder="Select Patient" [(ngModel)]="selectedDependant" name="selectedDependant" required #selectedDependantRef="ngModel">
+																	<mat-option *ngFor="let dep of dependants" [value]="dep._id">
+																		{{ dep.name }} ({{ dep.relation }})
+																	</mat-option>
 																</mat-select>
+																<div *ngIf="selectedDependantRef.invalid && selectedDependantRef.touched" class="text-danger">
+																  Please select a patient.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-6">
 															<div class="mb-3">
 																<label class="form-label">Symptoms</label>
-																<input type="text" class="form-control">
+																<input type="text" class="form-control" [(ngModel)]="symptoms" name="symptoms" required #symptomsRef="ngModel">
+																<div *ngIf="symptomsRef.invalid && symptomsRef.touched" class="text-danger">
+																  Symptoms are required.
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-12">
@@ -673,7 +515,10 @@
 														<div class="col-lg-12">
 															<div class="mb-3">
 																<label class="form-label">Reason for Visit</label>
-																<textarea class="form-control" rows="3"></textarea>
+																<textarea class="form-control" rows="3" [(ngModel)]="reason" name="reason" required #reasonRef="ngModel"></textarea>
+																<div *ngIf="reasonRef.invalid && reasonRef.touched" class="text-danger">
+																  Reason for Visit is required.
+																</div>
 															</div>
 														</div>
 													</div>
@@ -701,11 +546,20 @@
 												<div class="card mb-0">
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
-															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-15.jpg" alt=""></span>
+															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
+																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+															</span>
 															<div>
-																<h4 class="mb-1">Dr. Michael Brown <span class="badge bg-orange fs-12"><i class="fa-solid fa-star me-1"></i>5.0</span></h4>
-																<p class="text-indigo mb-3 fw-medium">Psychologist</p>
-																<p class="mb-0"><i class="isax isax-location me-2"></i>5th Street - 1011 W 5th St, Suite 120, Austin, TX 78703</p>
+																<h4 class="mb-1">
+																	{{ doctor?.name || 'Doctor Name' }}
+																	<span class="badge bg-orange fs-12">
+																		<i class="fa-solid fa-star me-1"></i>{{ doctor?.avgRating != null ? (doctor?.avgRating | number:'1.1-1') : 'N/A' }}
+																	</span>
+																</h4>
+																<p class="text-indigo mb-3 fw-medium">
+																  {{ specializationsDisplay }}
+																</p>
+																<p class="mb-0"><i class="isax isax-location me-2"></i>{{ doctor?.address || doctor?.city || 'Location' }}</p>
 															</div>
 														</div>
 													</div>
@@ -720,73 +574,16 @@
 															<h6 class="mb-3">Payment Gateway</h6>
 															<div class="payment-tabs">
 																<ul class="nav nav-pills mb-3 row" id="pills-tab" role="tablist">
+																	<!-- Only Stripe tab is visible -->
 																	<li class="nav-item col-sm-4" role="presentation">
-																	  <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab">
-																		<img src="assets/img/icons/payment-icon-05.svg" class="me-2" alt="">
-																		Credit Card
-																	  </button>
+																		<button class="nav-link active" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab">
+																			<img src="assets/img/icons/payment-icon-07.svg" class="me-2" alt="">
+																			Stripe
+																		</button>
 																	</li>
-																	<li class="nav-item col-sm-4" role="presentation">
-																	  <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab">
-																		<img src="assets/img/icons/payment-icon-06.svg" class="me-2" alt="">
-																		Paypal
-																	  </button>
-																	</li>
-																	<li class="nav-item col-sm-4" role="presentation">
-																	  <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab">
-																		<img src="assets/img/icons/payment-icon-07.svg" class="me-2" alt="">
-																		Stripe
-																	  </button>
-																	</li>
-																  </ul>
-																  <div class="tab-content" id="pills-tabContent">
-																	<div class="tab-pane fade show active" id="pills-home" role="tabpanel">
-																		<div class="mb-3">
-																			<label class="form-label">Card Holder Name</label>
-																			<div class="position-relative input-icon">
-																				<input type="text" class="form-control">
-																				<span><i class="isax isax-user"></i></span>
-																			</div>
-																		</div>
-																		<div class="mb-3">
-																			<label class="form-label">Card Number</label>
-																			<div class="position-relative input-icon">
-																				<input type="text" class="form-control">
-																				<span><i class="isax isax-card-tick"></i></span>
-																			</div>
-																		</div>
-																		<div class="mb-3">
-																			<label class="form-label">Expire Date</label>
-																			<div class="position-relative input-icon">
-																				<input type="text" class="form-control">
-																				<span><i class="isax isax-calendar-2"></i></span>
-																			</div>
-																		</div>
-																		<div class="mb-0">
-																			<label class="form-label">CVV</label>
-																			<div class="position-relative input-icon">
-																				<input type="text" class="form-control">
-																				<span><i class="isax isax-check"></i></span>
-																			</div>
-																		</div>
-																	</div>
-																	<div class="tab-pane fade" id="pills-profile" role="tabpanel">
-																		<div class="mb-3">
-																			<label class="form-label">Email Address</label>
-																			<div class="position-relative input-icon">
-																				<input type="text" class="form-control">
-																				<span><i class="isax isax-sms"></i></span>
-																			</div>
-																		</div>
-																		<div>
-																			<label class="form-label">Password</label>
-																			<div class="pass-group">
-																				<input type="password" class="form-control pass-input">
-																				<span class="feather-eye-off toggle-password"></span>
-																			</div>
-																		</div>
-																	</div>
-																	<div class="tab-pane fade" id="pills-contact" role="tabpanel">
+																</ul>
+																<div class="tab-content" id="pills-tabContent">
+																	<div class="tab-pane fade show active" id="pills-contact" role="tabpanel">
 																		<div class="mb-3">
 																			<label class="form-label">Email Address</label>
 																			<div class="position-relative input-icon">
@@ -802,7 +599,7 @@
 																			</div>
 																		</div>
 																	</div>
-																  </div>
+																</div>
 															</div>
 														</div>
 													</div>
@@ -813,17 +610,21 @@
 															<h6 class="mb-3">Booking Info</h6>
 															<div class="mb-3">
 																<label class="form-label">Date & Time</label>
-																<div class="form-plain-text">10:00 - 11:00 AM, 15, Oct 2025 </div>
+																<div class="form-plain-text">
+																	{{ selectedSlot ? (selectedSlot.startTime + ' - ' + selectedSlot.endTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
+																</div>
 															</div>
 															<div class="mb-3">
 																<label class="form-label">Appointment type</label>
-																<div class="form-plain-text">Clinic (Wellness Path) </div>
+																<div class="form-plain-text">{{ getAppointmentTypeLabel(selectedAppointmentType) || '-' }}</div>
 															</div>
 															<div class="pt-3 border-top booking-more-info">
 																<h6 class="mb-3">Payment Info</h6>
-																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-2">
-																	<p class="mb-0">Echocardiograms</p>
-																	<span class="fw-medium d-block">$200</span>
+																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-2" *ngFor="let service of selectedSpecialization?.services">
+																	<ng-container *ngIf="selectedServices.includes(service._id)">
+																		<p class="mb-0">{{ service.name }}</p>
+																		<span class="fw-medium d-block">${{ service.price }}</span>
+																	</ng-container>
 																</div>
 																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-2">
 																	<p class="mb-0">Booking Fees</p>
@@ -840,7 +641,7 @@
 															</div>
 															<div class="bg-primary d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between p-3 rounded">
 																<h6 class="text-white">Total</h6>
-																<h6 class="text-white">$320</h6>
+																<h6 class="text-white">${{ totalWithTaxAndDiscount }}</h6>
 															</div>
 														</div>
 													</div>
@@ -853,7 +654,7 @@
 													<i class="isax isax-arrow-left-2 me-1"></i>
 													Back
 												</a>
-												<a href="javascript:void(0);" (click)="selectedFieldSet[0] = 5" class="btn btn-md btn-primary-gradient next_btns inline-flex align-items-center rounded-pill">
+												<a href="javascript:void(0);" (click)="confirmAndPay()" class="btn btn-md btn-primary-gradient next_btns inline-flex align-items-center rounded-pill">
 													Confirm & Pay
 													<i class="isax isax-arrow-right-3 ms-1"></i>
 												</a>
@@ -875,8 +676,10 @@
 																</h5>
 															</div>
 															<div class="card-header d-flex align-items-center flex-wrap rpw-gap-2">
-																<span class="avatar avatar-lg avatar-rounded me-2 flex-shrink-0"><img src="assets/img/clients/client-16.jpg" alt=""></span>
-																<p class="mb-0">Your Booking has been Confirmed with <span class="text-dark">Dr. Michael Brown </span>  be on time before <span class="text-dark">15 Mins </span> From the appointment Time</p>
+																<span class="avatar avatar-lg avatar-rounded me-2 flex-shrink-0">
+																	<img [src]="doctor?.avatar || 'assets/img/clients/client-16.jpg'" alt="">
+																</span>
+																<p class="mb-0">Your Booking has been Confirmed with <span class="text-dark">Dr. {{ doctor?.name || 'Doctor Name' }} </span>  be on time before <span class="text-dark">15 Mins </span> From the appointment Time</p>
 															</div>
 															<div class="card-body pb-1">
 																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-3">
@@ -887,31 +690,49 @@
 																	<div class="col-md-6">
 																		<div class="mb-3">
 																			<label class="form-label">Service</label>
-																			<div class="form-plain-text">Cardiology (30 Mins)</div>
+																			<div class="form-plain-text">{{ createdAppointment?.specialty || '-' }}</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="mb-3">
 																			<label class="form-label">Additional Service</label>
-																			<div class="form-plain-text">Echocardiograms</div>
+																			<div class="form-plain-text">{{ createdAppointment?.service || '-' }}</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="mb-3">
 																			<label class="form-label">Date & Time</label>
-																			<div class="form-plain-text">10:00 - 11:00 AM, 15, Oct 2025 </div>
+																			<div class="form-plain-text">{{ createdAppointment?.time }}, {{ createdAppointment?.date | date:'dd, MMM yyyy' }}</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="mb-3">
 																			<label class="form-label">Appointment type</label>
-																			<div class="form-plain-text">Clinic </div>
+																			<div class="form-plain-text">{{ getAppointmentTypeLabel(createdAppointment?.appointmentType) || '-' }}</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="mb-3">
-																			<label class="form-label">Clinic Name & Location</label>
-																			<div class="form-plain-text">Wellness Path <a href="javascript:void(0);" class="text-primary">View Location</a></div>
+																			<label class="form-label">Doctor</label>
+																			<div class="form-plain-text">{{ createdAppointment?.doctorName || doctor?.name || '-' }}</div>
+																		</div>
+																	</div>
+																	<div class="col-md-6">
+																		<div class="mb-3">
+																			<label class="form-label">Patient Name</label>
+																			<div class="form-plain-text">{{ createdAppointment?.name || '-' }}</div>
+																		</div>
+																	</div>
+																	<div class="col-md-6">
+																		<div class="mb-3">
+																			<label class="form-label">Email</label>
+																			<div class="form-plain-text">{{ createdAppointment?.email || '-' }}</div>
+																		</div>
+																	</div>
+																	<div class="col-md-6">
+																		<div class="mb-3">
+																			<label class="form-label">Phone</label>
+																			<div class="form-plain-text">{{ createdAppointment?.phone || '-' }}</div>
 																		</div>
 																	</div>
 																</div>
@@ -933,7 +754,7 @@
 														<div class="card-body d-flex flex-column justify-content-between">
 															<div class="text-center">
 																<h6 class="fs-14 mb-2">Booking Number</h6>
-																<span class="booking-id-badge mb-3">DCRA12565</span>
+																<span class="booking-id-badge mb-3">{{ createdAppointment?._id || 'DCRA12565' }}</span>
 																<span class="d-block mb-3"><img src="assets/img/icons/payment-qr.svg" alt=""></span>
 																<p>Scan this QR Code to Download the details of Appointment</p>
 															</div>
@@ -969,3 +790,13 @@
 				</div>
 			</div>
 			<!-- /Terms -->		
+
+<!-- Doctor Info Dynamic Binding -->
+<div *ngIf="loadingDoctor" class="text-center my-3">
+  <span class="spinner-border"></span> Loading doctor details...
+</div>
+<div *ngIf="errorDoctor" class="alert alert-danger text-center my-3">
+  {{ errorDoctor }}
+</div>
+<!-- The rest of the booking wizard only shows if doctor is loaded -->
+<div *ngIf="!loadingDoctor && !errorDoctor">

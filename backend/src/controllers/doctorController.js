@@ -17,29 +17,7 @@ exports.getProfile = async (req, res, next) => {
   }
 };
 
-exports.updateProfile = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
-    // Update User availability if present
-    if (req.body.availability) {
-      await User.findByIdAndUpdate(userId, { availability: req.body.availability });
-    }
-    // Update DoctorProfile availability if present
-    const doctor = await DoctorProfile.findOneAndUpdate(
-      { user: userId },
-      req.body.availability ? { availability: req.body.availability } : {},
-      { new: true }
-    ).populate('specialization', 'name description');
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-    // Merge user fields for response
-    const user = await User.findById(userId).select('-password');
-    const mergedProfile = { ...user.toObject(), ...doctor.toObject() };
-    res.json(mergedProfile);
-  } catch (err) {
-    next(err);
-  }
-};
-
+exports.updateProfile = async (req, res, next) => { res.json({ message: 'Update doctor profile' }); };
 exports.createSchedule = async (req, res, next) => { res.json({ message: 'Create schedule' }); };
 exports.getAppointments = async (req, res, next) => { res.json({ message: 'Get doctor appointments' }); };
 exports.updateAppointment = async (req, res, next) => { res.json({ message: 'Update appointment' }); };
@@ -59,7 +37,9 @@ exports.createAppointment = async (req, res, next) => {
       name,
       email,
       phone,
-      symptoms
+      symptoms,
+      price,
+      totalPrice
     } = req.body;
 
     if (!doctorId || !date || !time) {
@@ -84,7 +64,9 @@ exports.createAppointment = async (req, res, next) => {
       phone,
       symptoms,
       doctorName,
-      status: 'pending'
+      status: 'pending',
+      price,
+      totalPrice
     });
     await appointment.save();
     res.status(201).json(appointment);
@@ -437,6 +419,29 @@ exports.changePassword = async (req, res, next) => {
     user.password = newPassword;
     await user.save();
     res.json({ message: 'Password changed successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
+  try {
+    const doctor = await DoctorProfile.findById(req.params.doctorId);
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+
+    // Fetch all specializations for this doctor, including services
+    const specializations = await Specialization.find({ doctorId: doctor.user })
+      .select('-__v -createdAt -updatedAt');
+
+    res.json({
+      _id: doctor._id,
+      name: doctor.name,
+      avatar: doctor.avatar,
+      city: doctor.city,
+      address: doctor.address,
+      specializations, // Array with services
+      // Add more doctor fields as needed
+    });
   } catch (err) {
     next(err);
   }
