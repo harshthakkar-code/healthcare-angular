@@ -452,7 +452,7 @@
 															<div class="mb-3">
 																<label class="form-label">First Name</label>
 																<input type="text" class="form-control" [(ngModel)]="firstName" name="firstName" required #firstNameRef="ngModel">
-																<div *ngIf="firstNameRef.invalid && firstNameRef.touched" class="text-danger">
+																<div *ngIf="firstNameRef.invalid && firstNameRef.touched" class="text-danger small">
 																  First Name is required.
 																</div>
 															</div>
@@ -461,7 +461,7 @@
 															<div class="mb-3">
 																<label class="form-label">Last Name</label>
 																<input type="text" class="form-control" [(ngModel)]="lastName" name="lastName" required #lastNameRef="ngModel">
-																<div *ngIf="lastNameRef.invalid && lastNameRef.touched" class="text-danger">
+																<div *ngIf="lastNameRef.invalid && lastNameRef.touched" class="text-danger small">
 																  Last Name is required.
 																</div>
 															</div>
@@ -470,7 +470,7 @@
 															<div class="mb-3">
 																<label class="form-label">Phone Number</label>
 																<input type="text" class="form-control" [(ngModel)]="phone" name="phone" required #phoneRef="ngModel">
-																<div *ngIf="phoneRef.invalid && phoneRef.touched" class="text-danger">
+																<div *ngIf="phoneRef.invalid && phoneRef.touched" class="text-danger small">
 																  Phone Number is required.
 																</div>
 															</div>
@@ -479,7 +479,7 @@
 															<div class="mb-3">
 																<label class="form-label">Email Address</label>
 																<input type="text" class="form-control" [(ngModel)]="email" name="email" required #emailRef="ngModel">
-																<div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">
+																<div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger small">
 																  Email Address is required.
 																</div>
 															</div>
@@ -492,7 +492,7 @@
 																		{{ dep.name }} ({{ dep.relation }})
 																	</mat-option>
 																</mat-select>
-																<div *ngIf="selectedDependantRef.invalid && selectedDependantRef.touched" class="text-danger">
+																<div *ngIf="selectedDependantRef.invalid && selectedDependantRef.touched" class="text-danger small">
 																  Please select a patient.
 																</div>
 															</div>
@@ -501,7 +501,7 @@
 															<div class="mb-3">
 																<label class="form-label">Symptoms</label>
 																<input type="text" class="form-control" [(ngModel)]="symptoms" name="symptoms" required #symptomsRef="ngModel">
-																<div *ngIf="symptomsRef.invalid && symptomsRef.touched" class="text-danger">
+																<div *ngIf="symptomsRef.invalid && symptomsRef.touched" class="text-danger small">
 																  Symptoms are required.
 																</div>
 															</div>
@@ -516,7 +516,7 @@
 															<div class="mb-3">
 																<label class="form-label">Reason for Visit</label>
 																<textarea class="form-control" rows="3" [(ngModel)]="reason" name="reason" required #reasonRef="ngModel"></textarea>
-																<div *ngIf="reasonRef.invalid && reasonRef.touched" class="text-danger">
+																<div *ngIf="reasonRef.invalid && reasonRef.touched" class="text-danger small">
 																  Reason for Visit is required.
 																</div>
 															</div>
