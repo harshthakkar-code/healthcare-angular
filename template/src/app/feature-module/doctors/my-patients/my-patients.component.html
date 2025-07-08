@@ -217,7 +217,9 @@
                             <div>
                             <div class="patient-id-name" style="margin-bottom: 4px;">
                                 <span class="apt-id">#{{ patient.lastAppointment?._id?.slice(-6) }}</span>
-                                <h4>{{ patient.name }}</h4>
+                              <h4>
+                                    <a [routerLink]="[routes.patientProfile, patient._id]">{{ patient.name }}</a>
+                                </h4>
                             </div>
                             <div class="patient-meta" style="display: block;">
                                 <span style="margin-right:8px ;">Age : {{ patient.age }}</span>

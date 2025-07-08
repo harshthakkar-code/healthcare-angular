@@ -9,11 +9,11 @@
                     <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image">
                 </a>
                 <div class="profile-det-info">
-                    <h3><a [routerLink]="routes.profileSettings">Hendrita Hayes</a></h3>
+                    <h3><a [routerLink]="routes.profileSettings">{{ patientProfile?.name || 'Patient Name' }}</a></h3>
                     <div class="patient-details">
-                        <h5 class="mb-0">Patient ID : PT254654</h5>
+                        <h5 class="mb-0">Patient ID : {{ patientProfile?._id || 'N/A' }}</h5>
                     </div>
-                    <span>Female <i class="fa-solid fa-circle"></i> 32 years 03 Months</span>
+                    <span>{{ patientProfile?.gender || 'Gender' }} <i class="fa-solid fa-circle"></i> {{ patientProfile?.age ? (patientProfile.age + ' years') : '' }}</span>
                 </div>
             </div>
         </div>
