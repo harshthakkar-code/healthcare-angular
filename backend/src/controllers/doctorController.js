@@ -4,6 +4,14 @@ const Specialization = require('../models/Specialization');
 const Schedule = require('../models/Schedule');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
+const DoctorSettings = require('../models/DoctorSettings');
+const Favourite = require('../models/Favourite');
+const Payout = require('../models/Payout');
+const Report = require('../models/Report');
+const Service = require('../models/Service');
+const Slot = require('../models/Slot');
+const SocialMedia = require('../models/SocialMedia');
+
 
 exports.getProfile = async (req, res, next) => {
   try {
@@ -446,3 +454,59 @@ exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
     next(err);
   }
 }; 
+exports.getFullDoctorData = async (req, res, next) => {
+  try {
+    const doctorId = req.params.id;
+
+    // Doctor Profile
+    const profile = await DoctorProfile.findById(doctorId)
+      .populate('specialization')
+      .populate('reviews');
+
+    // Doctor Settings
+    const settings = await DoctorSettings.findOne({ doctorId: doctorId });
+
+    // Reviews
+    const reviews = await Review.find({ doctor: doctorId }).populate('patient');
+
+    // Favourite
+    const favourites = await Favourite.find({ doctor: doctorId });
+
+    // Payout
+    const payouts = await Payout.find({ doctor: doctorId });
+
+    // Report
+    const reports = await Report.find({ doctor: doctorId });
+
+    // Service
+    const services = await Service.find({ doctor: doctorId });
+
+    // Specialization (already populated in profile, but can fetch all if needed)
+    const specializations = await Specialization.find({});
+
+    // Slot
+    const slots = await Slot.find({ doctorId: doctorId });
+
+    // Social Media
+    const socialMedia = await SocialMedia.findOne({ userId: doctorId });
+
+    // Appointments
+    const appointments = await Appointment.find({ doctor: doctorId });
+
+    res.json({
+      profile,
+      settings,
+      reviews,
+      favourites,
+      payouts,
+      reports,
+      services,
+      specializations,
+      slots,
+      socialMedia,
+      appointments
+    });
+  } catch (err) {
+    next(err);
+  }
+};

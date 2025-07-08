@@ -14,28 +14,51 @@
                 </a>
                 <div class="profile-det-info">
                     <h3>
-                        <a [routerLink]="">
-                            {{ doctorProfile?.name || 'Doctor Name' }}
+                        <a [routerLink]="[routes.doctorProfile1, doctorProfile?._id || doctorSettings?.doctorId]">
+                            {{ doctorProfile?.name || doctorSettings?.doctorName || 'Doctor Name' }}
                         </a>
                     </h3>
                     <div class="patient-details">
-                        <h5 class="mb-0">
-                            {{ doctorProfile?.degree || 'BDS, MDS - Oral & Maxillofacial Surgery' }}
-                        </h5>
+                        <ng-container *ngIf="educationDetails.length > 0; else staticDegree">
+                            <div *ngFor="let edu of educationDetails">
+                                <span>
+                                    {{ edu.course }}<span *ngIf="edu.institution">, {{ edu.institution }}</span>
+                                    <span *ngIf="edu.description"> - {{ edu.description }}</span>
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-template #staticDegree>
+                            <h5 class="mb-0">
+                                {{ doctorProfile?.degree || 'BDS, MDS - Oral & Maxillofacial Surgery' }}
+                            </h5>
+                        </ng-template>
                     </div>
-                    <span class="badge doctor-role-badge">
-                        <i class="fa-solid fa-circle"></i>
-                        {{ doctorProfile?.specialization?.name || 'Dentist' }}
-                    </span>
+                    <!-- Specializations (dynamic, 2 in one centered row) -->
+                    <div *ngIf="specializations.length === 2" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 4px;">
+                        <span *ngFor="let spec of specializations" class="badge doctor-role-badge">
+                            <i class="fa-solid fa-circle"></i>
+                            {{ spec.name }}
+                        </span>
+                    </div>
+                    <div *ngIf="specializations.length !== 2" style="display: flex; flex-direction: column; align-items: center;">
+                        <span *ngFor="let spec of specializations" class="badge doctor-role-badge" style="margin-bottom: 4px;">
+                            <i class="fa-solid fa-circle"></i>
+                            {{ spec.name }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="doctor-available-head">
             <div class="input-block input-block-new">
                 <label class="form-label" for="availability">Availability <span class="text-danger">*</span></label>
-                <mat-select class="custom-mat-select" placeholder="I am Available Now">
+                <mat-select
+                    class="custom-mat-select"
+                    placeholder="I am Available Now"
+                    [(ngModel)]="availability"
+                    (selectionChange)="onAvailabilityChange($event.value)">
                     <mat-option value="available">I am Available Now</mat-option>
-                    <mat-option value="not-available">Not Available</mat-option>
+                    <mat-option value="unavailable">Not Available</mat-option>
                 </mat-select>
             </div>
         </div>

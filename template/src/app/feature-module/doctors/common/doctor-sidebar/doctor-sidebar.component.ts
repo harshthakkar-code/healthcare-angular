@@ -16,6 +16,10 @@ export class DoctorSidebarComponent implements OnInit {
   public last = '';
   doctorProfile: any = null;
   pendingRequestCount: number = 0;
+  doctorSettings: any = null;
+  educationDetails: any[] = [];
+  availability: string = 'unavailable';
+  specializations: any[] = [];
 
   constructor(private common: CommonService, private router: Router) {
     this.common.base.subscribe((res: string) => {
@@ -35,11 +39,16 @@ export class DoctorSidebarComponent implements OnInit {
   }
 ngOnInit(): void {
   console.log('DoctorSidebarComponent ngOnInit called');
+  this.getDoctorProfile();
+  this.getPendingRequestCount();
+  this.getDoctorSettings();
+  this.getSpecializations();
 }
 getDoctorProfile() {
   api.get('/doctor/profile').then((res: any) => {
     console.log('Doctor profile received:', res);
     this.doctorProfile = res.data;
+    this.availability = res.data.availability || 'unavailable';
   });
 }
 
@@ -60,6 +69,60 @@ getPendingRequestCount() {
       const pending = (res.data || []).filter((a: any) => a.status === 'pending');
       this.pendingRequestCount = pending.length;
     });
+}
+
+getDoctorSettings() {
+  const doctorId = this.getDoctorId();
+  if (!doctorId) return;
+  api.get(`/doctor-Settings/${doctorId}`).then((res: any) => {
+    this.doctorSettings = res.data;
+    this.educationDetails = res.data.educationSettings || [];
+  }).catch(() => {
+    this.doctorSettings = null;
+    this.educationDetails = [];
+  });
+}
+
+onAvailabilityChange(newValue: string) {
+  this.availability = newValue;
+  api.put('/doctor/profile', { availability: newValue })
+    .then((res: any) => {
+      this.doctorProfile = res.data;
+    });
+}
+
+getSpecializations() {
+  const doctorId = this.getDoctorId();
+  if (!doctorId) return;
+  api.get(`/specialization?doctorId=${doctorId}`).then((res: any) => {
+    this.specializations = res.data || [];
+  });
+}
+
+// getSpecializationImage(name: string): string {
+//   const images: { [key: string]: string } = {
+//     'Cardiology': 'assets/img/specializations/cardiology.png',
+//     // Add more mappings as needed
+//   };
+//   return images[name] || 'assets/img/specializations/default.png';
+// }
+
+getSpecializationRows(): any[][] {
+  const rows: any[][] = [];
+  const count = this.specializations.length;
+  if (count === 1) {
+    rows.push([this.specializations[0]]);
+  } else if (count === 2) {
+    rows.push([this.specializations[0], this.specializations[1]]);
+  } else if (count === 3) {
+    rows.push([this.specializations[0]]);
+    rows.push([this.specializations[1], this.specializations[2]]);
+  } else if (count > 3) {
+    rows.push([this.specializations[0]]);
+    rows.push([this.specializations[1], this.specializations[2]]);
+    rows.push(this.specializations.slice(3));
+  }
+  return rows;
 }
 }
 
