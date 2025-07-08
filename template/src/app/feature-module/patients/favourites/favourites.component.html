@@ -31,13 +31,13 @@
                                     <span class="favourite-icon" [ngClass]="{ 'favourite': doc.favourite.favourites }"><i class="fa-solid fa-heart"></i></span>
                                 </a>
                                 <div class="doc-img">
-                                    <a [routerLink]="routes.doctorProfile2">
+                                    <a [routerLink]="[routes.doctorProfile2, doc.doctor._id]">
                                         <img class="img-fluid" alt="User Image" [src]="doc.doctor.profileImgUrl || 'assets/img/doctors/doctor-thumb-21.jpg'">
                                     </a>
                                 </div>
                                 <div class="pro-content">
                                     <h3 class="title">
-                                        <a [routerLink]="routes.doctorProfile2">{{ doc.doctor.name }}</a> 
+                                        <a [routerLink]="[routes.doctorProfile2, doc.doctor._id]">{{ doc.doctor.name }}</a> 
                                         <i class="fas fa-check-circle verified"></i>
                                     </h3>
                                     <p class="speciality">{{ doc.doctor.specialization?.name }}</p>
@@ -65,7 +65,7 @@
                             <div class="fav-footer">
                                 <div class="row row-sm">
                                     <div class="col-6">
-                                        <a [routerLink]="routes.doctorProfile2" class="btn btn-md btn-light w-100">View Details</a>
+                                        <a [routerLink]="[routes.doctorProfile2, doc.doctor._id]" class="btn btn-md btn-light w-100">View Details</a>
                                     </div>
                                     <div class="col-6">
                                         <a [routerLink]="routes.booking1" class="btn btn-md btn-outline-primary w-100">Book Now</a>

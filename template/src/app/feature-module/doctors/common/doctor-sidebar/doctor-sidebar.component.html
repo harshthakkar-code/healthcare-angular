@@ -2,7 +2,7 @@
     <div class="profile-sidebar doctor-sidebar profile-sidebar-new">
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
-                <a [routerLink] = "routes.doctorProfile2" class="booking-doc-img">
+                <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img">
                     <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image">
                     <!-- <a [routerLink]="routes.doctorProfile2" class="booking-doc-img">
                         <img *ngIf="doctorProfile?.profileImage; else defaultImg"

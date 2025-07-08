@@ -20,6 +20,7 @@ export class DoctorSidebarComponent implements OnInit {
   educationDetails: any[] = [];
   availability: string = 'unavailable';
   specializations: any[] = [];
+  doctorid: string | null | undefined;
 
   constructor(private common: CommonService, private router: Router) {
     this.common.base.subscribe((res: string) => {
@@ -73,6 +74,7 @@ getPendingRequestCount() {
 
 getDoctorSettings() {
   const doctorId = this.getDoctorId();
+  this.doctorid = doctorId ;
   if (!doctorId) return;
   api.get(`/doctor-Settings/${doctorId}`).then((res: any) => {
     this.doctorSettings = res.data;
