@@ -214,24 +214,26 @@
                                 <ul>
                                     <li>
                                         <div class="patinet-information">
-                                            <a [routerLink]="routes.doctorUpcomingAppointment">
+                                            <a [routerLink]="['../doctor-appointment-details', apt._id]">
                                                 <img [src]="apt.patient?.profileImage || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                             </a>
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>
-                                                    <a [routerLink]="routes.doctorUpcomingAppointment">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
+                                                    <a [routerLink]="['../doctor-appointment-details', apt._id]">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
                                                     <span *ngIf="apt.status === 'pending'" class="badge new-tag">New</span>
                                                 </h6>
                                             </div>
                                         </div>
                                     </li>
                                     <li class="appointment-info">
-                                        <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
-                                        <ul class="d-flex apponitment-types">
-                                            <li>{{ apt.specialty || 'General Visit' }}</li>
-                                            <li>{{ apt.appointmentType }}</li>
-                                        </ul>
+                                        <a [routerLink]="['../doctor-appointment-details', apt._id]">
+                                            <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                            <ul class="d-flex apponitment-types">
+                                                <li>{{ apt.specialty || 'General Visit' }}</li>
+                                                <li>{{ apt.appointmentType }}</li>
+                                            </ul>
+                                        </a>
                                     </li>
                                     <li class="mail-info-patient">
                                         <ul>
@@ -242,7 +244,7 @@
                                     <li class="appointment-action">
                                         <ul>
                                             <li>
-                                                <a [routerLink]="routes.doctorUpcomingAppointment"><i class="isax isax-eye4"></i></a>
+                                                <a [routerLink]="['../doctor-appointment-details', apt._id]"><i class="isax isax-eye4"></i></a>
                                             </li>
                                             <li>
                                                 <a href="javascript:void(0);"><i class="isax isax-messages-25"></i></a>
@@ -269,24 +271,26 @@
                                 <ul>
                                     <li>
                                         <div class="patinet-information">
-                                            <a [routerLink]="routes.doctorCancelledAppointment">
+                                            <a [routerLink]="['../doctor-appointment-details', apt._id]">
                                                 <img [src]="apt.patient?.profileImage || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                             </a>
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>
-                                                    <a [routerLink]="routes.doctorCancelledAppointment">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
+                                                    <a [routerLink]="['../doctor-appointment-details', apt._id]">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
                                                     <span *ngIf="apt.status === 'cancelled' || apt.status === 'rejected'" class="badge new-tag">Cancelled</span>
                                                 </h6>
                                             </div>
                                         </div>
                                     </li>
                                     <li class="appointment-info">
-                                        <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
-                                        <ul class="d-flex apponitment-types">
-                                            <li>{{ apt.specialty || 'General Visit' }}</li>
-                                            <li>{{ apt.appointmentType }}</li>
-                                        </ul>
+                                        <a [routerLink]="['../doctor-appointment-details', apt._id]">
+                                            <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                            <ul class="d-flex apponitment-types">
+                                                <li>{{ apt.specialty || 'General Visit' }}</li>
+                                                <li>{{ apt.appointmentType }}</li>
+                                            </ul>
+                                        </a>
                                     </li>
                                     <li class="mail-info-patient">
                                         <ul>
@@ -311,24 +315,26 @@
                                 <ul>
                                     <li>
                                         <div class="patinet-information">
-                                            <a [routerLink]="routes.doctorCompletedAppointment">
+                                            <a [routerLink]="['../doctor-appointment-details', apt._id]">
                                                 <img [src]="apt.patient?.profileImage || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                             </a>
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>
-                                                    <a [routerLink]="routes.doctorCompletedAppointment">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
+                                                    <a [routerLink]="['../doctor-appointment-details', apt._id]">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
                                                     <span *ngIf="apt.status === 'completed'" class="badge new-tag">Completed</span>
                                                 </h6>
                                             </div>
                                         </div>
                                     </li>
                                     <li class="appointment-info">
-                                        <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
-                                        <ul class="d-flex apponitment-types">
-                                            <li>{{ apt.specialty || 'General Visit' }}</li>
-                                            <li>{{ apt.appointmentType }}</li>
-                                        </ul>
+                                        <a [routerLink]="['../doctor-appointment-details', apt._id]">
+                                            <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                            <ul class="d-flex apponitment-types">
+                                                <li>{{ apt.specialty || 'General Visit' }}</li>
+                                                <li>{{ apt.appointmentType }}</li>
+                                            </ul>
+                                        </a>
                                     </li>
                                     <li class="mail-info-patient">
                                         <ul>

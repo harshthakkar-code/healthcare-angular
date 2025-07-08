@@ -17,20 +17,20 @@
                 <div class="appointment-details-wrap">
 
                     <!-- Appointment Detail Card -->
-                    <div class="appointment-wrap appointment-detail-card">
+                    <div class="appointment-wrap appointment-detail-card" *ngIf="appointment">
                         <ul>
                             <li>
                                 <div class="patinet-information">
                                     <a href="javascript:void(0);">
-                                        <img src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image">
+                                        <img [src]="appointment.patient?.profileImage || 'assets/img/doctors-dashboard/profile-02.jpg'" alt="User Image">
                                     </a>
                                     <div class="patient-info">
-                                        <p>#Apt0001</p>
-                                        <h6><a href="javascript:void(0);">Kelly Joseph </a></h6>
+                                        <p>#{{ appointment._id?.slice(-6) }}</p>
+                                        <h6><a href="javascript:void(0);">{{ appointment.patient?.name || appointment.name || '-' }}</a></h6>
                                         <div class="mail-info-patient">
                                             <ul>
-                                                <li><i class="fa-solid fa-envelope"></i>kelly&#64;example.com</li>
-                                                <li><i class="fa-solid fa-phone"></i>+1 504 368 6874</li>
+                                                <li><i class="fa-solid fa-envelope"></i>{{ appointment.patient?.email || appointment.email || '-' }}</li>
+                                                <li><i class="fa-solid fa-phone"></i>{{ appointment.patient?.phone || appointment.phone || '-' }}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -40,17 +40,17 @@
                                 <div class="person-info">
                                     <p>Type of Appointment</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li><i class="fa-solid fa-hospital text-green"></i>Direct Visit</li>
+                                        <li><i class="fa-solid text-green"></i>{{ appointment.appointmentType || '-' }}</li>
                                     </ul>
                                 </div>
                             </li>
                             <li class="appointment-action">
                                 <div class="detail-badge-info">
-                                    <span class="badge bg-grey me-2">New Patient</span>
-                                    <span class="badge bg-yellow">Upcoming</span>
+                                    <span class="badge bg-grey me-2">{{ appointment.patientType || 'New Patient' }}</span>
+                                    <span class="badge bg-yellow">{{ appointment.status || 'Upcoming' }}</span>
                                 </div>
                                 <div class="consult-fees">
-                                    <h6>Consultation Fees : $200</h6>
+                                    <h6>Consultation Fees : ${{ appointment.price || '-' }}</h6>
                                 </div>
                                 <ul>
                                     <li>
@@ -65,19 +65,19 @@
                         <ul class="detail-card-bottom-info">
                             <li>
                                 <h6>Appointment Date & Time</h6>
-                                <span>22 Jul 2023 - 12:00 pm</span>
+                                <span>{{ appointment.date | date:'mediumDate' }} - {{ appointment.time }}</span>
                             </li>
                             <li>
                                 <h6>Clinic Location</h6>
-                                <span>Adrian’s Dentistry</span>
+                                <span>{{ appointment.clinicName || '-' }}</span>
                             </li>
                             <li>
                                 <h6>Location</h6>
-                                <span>Newyork, United States</span>
+                                <span>{{ appointment.location || '-' }}</span>
                             </li>
                             <li>
                                 <h6>Visit Type</h6>
-                                <span>General</span>
+                                <span>{{ appointment.specialty || '-' }}</span>
                             </li>
                             <li>
                                 <div class="start-btn">
@@ -88,218 +88,41 @@
                     </div>
                     <!-- /Appointment Detail Card -->
 
-                    <!-- Appointment Detail Card -->
-                    <div class="appointment-wrap appointment-detail-card">
-                        <ul>
-                            <li>
-                                <div class="patinet-information">
-                                    <a href="javascript:void(0);">
-                                        <img src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image">
-                                    </a>
-                                    <div class="patient-info">
-                                        <p>#Apt0001</p>
-                                        <h6><a href="javascript:void(0);">Kelly Joseph </a></h6>
-                                        <div class="mail-info-patient">
-                                            <ul>
-                                                <li><i class="fa-solid fa-envelope"></i>kelly&#64;example.com</li>
-                                                <li><i class="fa-solid fa-phone"></i>+1 504 368 6874</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="appointment-info">
-                                <div class="person-info">
-                                    <p>Person with patient</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>Andrew</li>
-                                    </ul>
-                                </div>
-                                <div class="person-info">
-                                    <p>Type of Appointment</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li><i class="fa-solid fa-video text-indigo"></i>Video Call</li>
-                                    </ul>
-                                </div>
-                                
-                            </li>
-                            <li class="appointment-action">
-                                <div class="detail-badge-info">
-                                    <span class="badge bg-red me-2">Cancelled</span>
-                                    <a href="#reject_reason" class="reject-popup" data-bs-toggle="modal">Reason</a>
-                                </div>
-                                <div class="consult-fees">
-                                    <h6>Consultation Fees : $200</h6>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="detail-card-bottom-info">
-                            <li>
-                                <h6>Appointment Date & Time</h6>
-                                <span>22 Jul 2023 - 12:00 pm</span>
-                            </li>
-                            <li>
-                                <h6>Visit Type</h6>
-                                <span>General</span>
-                            </li>
-                            <li>
-                                <div class="detail-badge-info">
-                                    <span class="badge bg-soft-red me-2">Status : Reschedule</span>
-                                    <a [routerLink] = "routes.booking2" class="reschedule-btn btn-primary-border">Reschedule Appointment</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /Appointment Detail Card -->
+                
 
-                    <!-- Appointment Detail Card -->
-                    <div class="appointment-wrap appointment-detail-card">
-                        <ul>
-                            <li>
-                                <div class="patinet-information">
-                                    <a href="javascript:void(0);">
-                                        <img src="assets/img/doctors-dashboard/profile-02.jpg" alt="User Image">
-                                    </a>
-                                    <div class="patient-info">
-                                        <p>#Apt0001</p>
-                                        <h6><a href="javascript:void(0);">Kelly Joseph </a><span class="badge new-tag">New</span></h6>
-                                        <div class="mail-info-patient">
-                                            <ul>
-                                                <li><i class="fa-solid fa-envelope"></i>kelly&#64;example.com</li>
-                                                <li><i class="fa-solid fa-phone"></i>+1 504 368 6874</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="appointment-info">
-                                <div class="person-info">
-                                    <p>Person with patient</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>Andrew</li>
-                                    </ul>
-                                </div>
-                                <div class="person-info">
-                                    <p>Type of Appointment</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li><i class="fa-solid fa-video text-indigo"></i>Video Call</li>
-                                    </ul>
-                                </div>
-                                
-                            </li>
-                            <li class="appointment-action">
-                                <div class="detail-badge-info">
-                                    <span class="badge bg-green">Completed</span>
-                                </div>
-                                <div class="consult-fees">
-                                    <h6>Consultation Fees : $200</h6>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="detail-card-bottom-info">
-                            <li>
-                                <h6>Appointment Date & Time</h6>
-                                <span>22 Jul 2023 - 12:00 pm</span>
-                            </li>
-                            <li>
-                                <h6>Visit Type</h6>
-                                <span>General</span>
-                            </li>
-                            <li class="appointment-detail-btn">
-                                <a href="#view_prescription" data-bs-toggle="modal">View Details</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /Appointment Detail Card -->
-
-                    <div class="recent-appointments">
+                    <div class="recent-appointments" *ngIf="recentAppointments.length">
                         <h5 class="head-text">Recent Appointments</h5>
                         <!-- Appointment List -->
-                        <div class="appointment-wrap">
+                        <div class="appointment-wrap" *ngFor="let apt of recentAppointments">
                             <ul>
                                 <li>
                                     <div class="patinet-information">
                                         <a href="javascript:void(0);">
-                                            <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="User Image">
+                                            <img [src]="apt.patient?.profileImage || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                         </a>
                                         <div class="patient-info">
-                                            <p>#Apt0001</p>
-                                            <h6><a href="javascript:void(0);">Adrian</a></h6>
+                                            <p>#{{ apt._id?.slice(-6) }}</p>
+                                            <h6>{{ apt.patient?.name || apt.name || '-' }}</h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="fa-solid fa-clock"></i>11 Nov 2024 10.45 AM</p>
+                                    <p><i class="fa-solid fa-clock"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Chat</li>
+                                        <li>{{ apt.specialty || 'General Visit' }}</li>
+                                        <li>{{ apt.appointmentType || '-' }}</li>
                                     </ul>
-                                    
                                 </li>
                                 <li class="mail-info-patient">
                                     <ul>
-                                        <li><i class="fa-solid fa-envelope"></i>adran&#64;example.com</li>
-                                        <li><i class="fa-solid fa-phone"></i>+1 504 368 6874</li>
+                                        <li><i class="fa-solid fa-envelope"></i>{{ apt.patient?.email || apt.email || '-' }}</li>
+                                        <li><i class="fa-solid fa-phone"></i>{{ apt.patient?.phone || apt.phone || '-' }}</li>
                                     </ul>
                                 </li>
                                 <li class="appointment-action">
                                     <ul>
                                         <li>
-                                            <a href="javascript:void(0);"><i class="fa-solid fa-eye"></i></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /Appointment List -->
-                        <!-- Appointment List -->
-                        <div class="appointment-wrap">
-                            <ul>
-                                <li>
-                                    <div class="patinet-information">
-                                        <a href="javascript:void(0);">
-                                            <img src="assets/img/doctors-dashboard/profile-03.jpg" alt="User Image">
-                                        </a>
-                                        <div class="patient-info">
-                                            <p>#Apt0003</p>
-                                            <h6><a href="javascript:void(0);">Samuel</a></h6>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="appointment-info">
-                                    <p><i class="fa-solid fa-clock"></i>27 Oct 2024 09.30 AM</p>
-                                    <ul class="d-flex apponitment-types">
-                                        <li>General Visit</li>
-                                        <li>Video Call</li>
-                                    </ul>
-                                    
-                                </li>
-                                <li class="mail-info-patient">
-                                    <ul>
-                                        <li><i class="fa-solid fa-envelope"></i>samuel&#64;example.com</li>
-                                        <li><i class="fa-solid fa-phone"></i> +1 749 104 6291</li>
-                                    </ul>
-                                </li>
-                                <li class="appointment-action">
-                                    <ul>
-                                        <li>
-                                            <a href="javascript:void(0);"><i class="fa-solid fa-eye"></i></a>
+                                            <a [routerLink]="['../doctor-appointment-details', apt._id]"><i class="fa-solid fa-eye"></i></a>
                                         </li>
                                     </ul>
                                 </li>
