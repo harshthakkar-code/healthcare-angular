@@ -17,7 +17,29 @@ exports.getProfile = async (req, res, next) => {
   }
 };
 
-exports.updateProfile = async (req, res, next) => { res.json({ message: 'Update doctor profile' }); };
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    // Update User availability if present
+    if (req.body.availability) {
+      await User.findByIdAndUpdate(userId, { availability: req.body.availability });
+    }
+    // Update DoctorProfile availability if present
+    const doctor = await DoctorProfile.findOneAndUpdate(
+      { user: userId },
+      req.body.availability ? { availability: req.body.availability } : {},
+      { new: true }
+    ).populate('specialization', 'name description');
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    // Merge user fields for response
+    const user = await User.findById(userId).select('-password');
+    const mergedProfile = { ...user.toObject(), ...doctor.toObject() };
+    res.json(mergedProfile);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createSchedule = async (req, res, next) => { res.json({ message: 'Create schedule' }); };
 exports.getAppointments = async (req, res, next) => { res.json({ message: 'Get doctor appointments' }); };
 exports.updateAppointment = async (req, res, next) => { res.json({ message: 'Update appointment' }); };

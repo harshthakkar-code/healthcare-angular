@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   profileImgUrl: { type: String },
   otpCode: { type: String },
   otpExpiry: { type: Date },
+  availability: { type: String, enum: ['available', 'unavailable'], default: 'unavailable' },
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

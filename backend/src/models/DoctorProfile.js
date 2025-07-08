@@ -32,6 +32,7 @@ const doctorProfileSchema = new mongoose.Schema({
   avgRating: { type: Number, default: null },
   isApproved: { type: String, enum: ['pending', 'true', 'false'], default: 'pending' },
   profileImgUrl: { type: String },
+  availability: { type: String, enum: ['available', 'unavailable'], default: 'unavailable' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('DoctorProfile', doctorProfileSchema); 

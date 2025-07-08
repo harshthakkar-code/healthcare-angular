@@ -16,7 +16,7 @@ async function updateDoctorAvgRating(doctorProfileId) {
 exports.getProfile = async (req, res, next) => {
   try {
     let userId = req.user._id;
-    if (req.user.role === 'admin' && req.query.id) {
+    if ((req.user.role === 'admin' || req.user.role === 'doctor') && req.query.id) {
       userId = req.query.id;
     }
     const user = await User.findById(userId).select('-password');
@@ -78,10 +78,10 @@ exports.updateProfile = async (req, res, next) => {
 exports.getAppointments = async (req, res, next) => {
   try {
     let userId = req.user._id;
-    if (req.user.role === 'admin' && req.query.id) {
+    if ((req.user.role === 'admin' || req.user.role === 'doctor') && req.query.id) {
       userId = req.query.id;
     }
-    const appointments = await Appointment.find({ patient: userId });
+    const appointments = await Appointment.find({ patient: userId }).populate('doctor', 'name');
     res.json({ appointments });
   } catch (err) {
     next(err);
