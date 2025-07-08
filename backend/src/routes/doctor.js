@@ -7,6 +7,7 @@ const role = require('../middlewares/role');
 router.get('/public/docterlist', doctorController.getDoctorListWithReviews);
 router.get('/public', doctorController.getDoctors);
 router.get('/public/:id', doctorController.getDoctorDetails);
+router.get('/public/full/:id', doctorController.getFullDoctorData);
 router.get('/by-user/:userId', doctorController.getDoctorByUserId);
 router.get('/public/profile/:doctorId', doctorController.getDoctorProfileAndSpecialization);
 router.post('/appointments', doctorController.createAppointment);
