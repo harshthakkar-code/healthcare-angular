@@ -510,3 +510,18 @@ exports.getFullDoctorData = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getDoctorContactInfo = async (req, res, next) => {
+  try {
+    // Try to find by DoctorProfile _id first
+    let doctor = await DoctorProfile.findById(req.params.doctorId).select('email phone');
+    // If not found, try to find by user field
+    if (!doctor) {
+      doctor = await DoctorProfile.findOne({ user: req.params.doctorId }).select('email phone');
+    }
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    res.json({ email: doctor.email, phone: doctor.phone });
+  } catch (err) {
+    next(err);
+  }
+};

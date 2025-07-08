@@ -11,6 +11,7 @@ router.get('/public/full/:id', doctorController.getFullDoctorData);
 router.get('/by-user/:userId', doctorController.getDoctorByUserId);
 router.get('/public/profile/:doctorId', doctorController.getDoctorProfileAndSpecialization);
 router.post('/appointments', doctorController.createAppointment);
+router.get('/public/contact/:doctorId', doctorController.getDoctorContactInfo);
 router.use(auth, role('doctor'));
 router.get('/profile', doctorController.getProfile);
 router.put('/profile', doctorController.updateProfile);
