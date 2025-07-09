@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import {
   reviews,
 } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
+import api from 'src/app/shared/api/axios';
 
 @Component({
     selector: 'app-reviews',
@@ -17,18 +18,26 @@ import { routes } from 'src/app/shared/routes/routes';
     styleUrls: ['./reviews.component.scss'],
     standalone: false
 })
-export class ReviewsComponent {
+export class ReviewsComponent implements OnInit {
   public routes = routes;
   public tableData: Array<reviews> = [];
+  reviews: any[] = [];
+  totalReviews: number = 0;
+  currentPage: number = 1;
+  pageSize: number = 10;
+  loadingReviews = false;
+  errorReviews = '';
 
   // pagination variables
-  public pageSize = 10;
   public serialNumberArray: Array<number> = [];
   public totalData = 0;
   showFilter = false;
   dataSource!: MatTableDataSource<reviews>;
   public searchDataValue = '';
   // pagination variables end
+
+  deleteReviewId: string | null = null;
+  private _deleteListener: any;
 
   constructor(
     private data: DataService,
@@ -41,6 +50,28 @@ export class ReviewsComponent {
         this.pageSize = res.pageSize;
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.fetchReviews();
+    window.addEventListener('confirmDelete', this._deleteListener = () => this.confirmDeleteReview());
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('confirmDelete', this._deleteListener);
+  }
+
+  openDeleteModal(review: any) {
+    this.deleteReviewId = review._id;
+  }
+
+  confirmDeleteReview() {
+    if (!this.deleteReviewId) return;
+    api.delete(`/reviews/${this.deleteReviewId}`)
+      .then(() => {
+        this.fetchReviews(this.currentPage, this.pageSize);
+        this.deleteReviewId = null;
+      });
   }
 
   private getTableData(pageOption: pageSelection): void {
@@ -69,6 +100,25 @@ export class ReviewsComponent {
     });
   }
 
+  fetchReviews(page: number = this.currentPage, limit: number = this.pageSize) {
+    this.loadingReviews = true;
+    api.get('/reviews', { params: { page, limit } })
+      .then(res => {
+        this.reviews = res.data.reviews;
+        this.totalReviews = res.data.totalReviews;
+        this.loadingReviews = false;
+      })
+      .catch(err => {
+        this.errorReviews = err.response?.data?.message || 'Failed to load reviews';
+        this.loadingReviews = false;
+      });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.fetchReviews(page);
+  }
+
   public sortData(sort: Sort) {
     const data = this.tableData.slice();
 
@@ -81,5 +131,9 @@ export class ReviewsComponent {
         return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
       });
     }
+  }
+
+  min(a: number, b: number): number {
+    return Math.min(a, b);
   }
 }

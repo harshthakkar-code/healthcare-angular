@@ -6,5 +6,7 @@ const role = require('../middlewares/role');
 
 router.post('/', auth, role('patient'), reviewController.createReview);
 router.get('/doctor/:doctorId', reviewController.getReviewsForDoctor);
+router.get('/', auth, role('admin'), reviewController.getAllReviews);
+router.delete('/:id', auth, role('admin'), reviewController.deleteReview);
 
 module.exports = router; 

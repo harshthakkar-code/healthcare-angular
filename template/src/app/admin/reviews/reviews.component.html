@@ -34,40 +34,38 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (data of tableData; track data) {
-                    <tr>
-                      <td>
-                        <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img1" alt="User Image"></a>
-                          <a [routerLink] = "routes.adminProfile">{{data.patientName}} </a>
-                        </h2>
-                      </td>
-                      <td>
-                        <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img2" alt="User Image"></a>
-                          <a [routerLink] = "routes.adminProfile">{{data.doctorName}}</a>
-                        </h2>
-                      </td>
-                      <td>
-                        <i class="fe fe-star text-warning"></i>
-                        <i class="fe fe-star text-warning"></i>
-                        <i class="fe fe-star text-warning"></i>
-                        <i class="fe fe-star text-warning"></i>
-                        <i class="fe fe-star-o text-secondary"></i>
-                      </td>
-                      <td>
-                        {{data.description}}
-                      </td>
-                      <td>{{data.date}} <br><small>09.59 AM</small></td>
-                      <td>
-                        <div class="actions">
-                          <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal">
-                            <i class="fe fe-trash"></i> {{data.actions}}
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  }
+                  <tr *ngFor="let review of reviews">
+                    <td>
+                      <h2 class="table-avatar">
+                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                          <img class="avatar-img rounded-circle" [src]="review.patient?.avatar || 'assets/img/patients/default.png'" alt="User Image">
+                        </a>
+                        <a [routerLink]="routes.adminProfile">{{review.patient?.name}}</a>
+                      </h2>
+                    </td>
+                    <td>
+                      <h2 class="table-avatar">
+                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                          <img class="avatar-img rounded-circle" [src]="review.doctor?.avatar || 'assets/img/doctors/default.png'" alt="User Image">
+                        </a>
+                        <a [routerLink]="routes.adminProfile">{{review.doctor?.name}}</a>
+                      </h2>
+                    </td>
+                    <td>
+                      <ng-container *ngFor="let star of [1,2,3,4,5]">
+                        <i class="fe" [ngClass]="star <= review.rating ? 'fe-star text-warning' : 'fe-star-o text-secondary'"></i>
+                      </ng-container>
+                    </td>
+                    <td>{{review.comment}}</td>
+                    <td>{{review.createdAt | date:'short'}}</td>
+                    <td>
+                      <div class="actions">
+                        <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal" (click)="openDeleteModal(review)">
+                          <i class="fe fe-trash"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

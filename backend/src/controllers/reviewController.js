@@ -63,4 +63,34 @@ exports.getReviewsForDoctor = async (req, res, next) => {
 
     res.json({ avgRating, reviews, totalReviews });
   } catch (err) { next(err); }
+};
+
+// Get all reviews (admin, paginated)
+exports.getAllReviews = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [reviews, totalReviews] = await Promise.all([
+      Review.find()
+        .populate('doctor', 'name email avatar')
+        .populate('patient', 'name email avatar')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Review.countDocuments()
+    ]);
+
+    res.json({ reviews, totalReviews });
+  } catch (err) { next(err); }
+};
+
+// Delete a review (admin)
+exports.deleteReview = async (req, res, next) => {
+  try {
+    const reviewId = req.params.id;
+    await Review.findByIdAndDelete(reviewId);
+    res.json({ message: 'Review deleted' });
+  } catch (err) { next(err); }
 }; 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
   pageSelection,
   pageSize,
@@ -14,6 +14,7 @@ import { routes } from '../routes/routes';
     standalone: false
 })
 export class CustomPaginationComponent {
+  @Input() totalItems: number = 0;
   public routes = routes;
   public pageSize = 10;
   public tableData: Array<string> = [];
