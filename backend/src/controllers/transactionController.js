@@ -136,12 +136,9 @@ exports.deleteTransaction = async (req, res, next) => {
 
 exports.getTotalPaid = async (req, res, next) => {
   try {
-    const result = await Transaction.aggregate([
-      { $match: { status: 'paid' } },
-      { $group: { _id: null, totalPaid: { $sum: '$amount' } } }
-    ]);
-    const totalPaid = result[0]?.totalPaid || 0;
-    res.json({ totalPaid });
+    const transactions = await Transaction.find({ status: 'paid' });
+    const totalPaid = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+    res.json({ totalPaid, transactions });
   } catch (err) {
     next(err);
   }
