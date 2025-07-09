@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { PaginationService, tablePageSize } from 'src/app/shared/custom-pagination/pagination.service';
-import { DataService } from 'src/app/shared/data/data.service';
-import { pageSelection, apiResultFormat, invoiceReport } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
+import api from 'src/app/shared/api/axios';
 
 @Component({
     selector: 'app-invoice-report',
@@ -13,65 +12,94 @@ import { routes } from 'src/app/shared/routes/routes';
     styleUrls: ['./invoice-report.component.scss'],
     standalone: false
 })
-export class InvoiceReportComponent {
+export class InvoiceReportComponent implements OnInit, OnDestroy {
   public routes = routes;
-  public tableData: Array<invoiceReport> = [];
-
-  // pagination variables
-  public pageSize = 10;
-  public serialNumberArray: Array<number> = [];
-  public totalData = 0;
-  showFilter = false;
-  dataSource!: MatTableDataSource<invoiceReport>;
-  public searchDataValue = '';
-  // pagination variables end
+  invoices: any[] = [];
+  totalInvoices: number = 0;
+  currentPage: number = 1;
+  pageSize: number = 10;
+  loading = false;
+  error = '';
+  deleteInvoiceId: string | null = null;
+  editInvoice: any = null;
+  private _deleteListener: any;
 
   constructor(
-    private data: DataService,
     private pagination: PaginationService,
     private router: Router
   ) {
     this.pagination.tablePageSize.subscribe((res: tablePageSize) => {
       if (this.router.url == this.routes.adminInvoiceReport) {
-        this.getTableData({ skip: res.skip, limit: res.limit });
         this.pageSize = res.pageSize;
+        this.fetchInvoices(this.currentPage, this.pageSize);
       }
     });
   }
 
-  private getTableData(pageOption: pageSelection): void {
-    this.data.getInvoiceReport().subscribe((apiRes: apiResultFormat) => {
-      this.tableData = [];
-      this.serialNumberArray = [];
-      this.totalData = apiRes.totalData;
-      apiRes.data.map((res: invoiceReport, index: number) => {
-        const serialNumber = index + 1;
-        if (index >= pageOption.skip && serialNumber <= pageOption.limit) {
-          res.id = serialNumber;
-          this.tableData.push(res);
-          this.serialNumberArray.push(serialNumber);
+  ngOnInit(): void {
+    this.fetchInvoices();
+    window.addEventListener('confirmDelete', this._deleteListener = () => this.confirmDeleteInvoice());
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('confirmDelete', this._deleteListener);
+  }
+
+  fetchInvoices(page: number = this.currentPage, limit: number = this.pageSize) {
+    this.loading = true;
+    api.get('/transactions', { params: { page, limit } })
+      .then(res => {
+        this.invoices = res.data.data;
+        this.totalInvoices = res.data.total;
+        this.loading = false;
+      })
+      .catch(err => {
+        this.error = err.response?.data?.message || 'Failed to load invoices';
+        this.loading = false;
+      });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.fetchInvoices(page);
+  }
+
+  openDeleteModal(invoice: any) {
+    this.deleteInvoiceId = invoice._id;
+  }
+
+  confirmDeleteInvoice() {
+    if (!this.deleteInvoiceId) return;
+    api.delete(`/transactions/${this.deleteInvoiceId}`)
+      .then(() => {
+        this.fetchInvoices(this.currentPage, this.pageSize);
+        this.deleteInvoiceId = null;
+      });
+  }
+
+  openEditModal(invoice: any) {
+    this.editInvoice = { ...invoice };
+  }
+
+  updateInvoice() {
+    if (!this.editInvoice || !this.editInvoice._id) return;
+    api.put(`/transactions/${this.editInvoice._id}`, this.editInvoice)
+      .then(() => {
+        this.fetchInvoices(this.currentPage, this.pageSize);
+        // Close the modal after save
+        const modal = document.getElementById('edit_invoice_report');
+        if (modal) {
+          (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
         }
       });
-      this.dataSource = new MatTableDataSource<invoiceReport>(this.tableData);
-      this.pagination.calculatePageSize.next({
-        totalData: this.totalData,
-        pageSize: this.pageSize,
-        tableData: this.tableData,
-        serialNumberArray: this.serialNumberArray,
-        tableData2: [],
-        tableData3: [],
-        tableData4: []
-      });
-    });
   }
 
   public sortData(sort: Sort) {
-    const data = this.tableData.slice();
-
+    const data = this.invoices.slice();
     if (!sort.active || sort.direction === '') {
-      this.tableData = data;
+      this.invoices = data;
     } else {
-      this.tableData = data.sort((a, b) => {
+      this.invoices = data.sort((a, b) => {
         const aValue = (a as never)[sort.active];
         const bValue = (b as never)[sort.active];
         return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);

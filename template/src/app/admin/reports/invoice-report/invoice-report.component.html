@@ -35,27 +35,29 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (data of tableData; track data) {
+                  @for (data of invoices; track data) {
                     <tr>
-                      <td><a [routerLink] = "routes.adminInvoice">{{data.invoiceNumber}}</a></td>
-                      <td>{{data.patientId}}</td>
+                      <td><a [routerLink]="routes.adminInvoice">{{data._id}}</a></td>
+                      <td>{{data.appointment?.patient?._id}}</td>
                       <td>
                         <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img" alt="User Image"></a>
-                          <a [routerLink] = "routes.adminProfile">{{data.patientName}} </a>
+                          <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                            <img class="avatar-img rounded-circle" [src]="data.appointment?.patient?.profileImgUrl || 'assets/img/patients/default.png'" alt="User Image">
+                          </a>
+                          <a [routerLink]="routes.adminProfile">{{data.appointment?.patient?.name}}</a>
                         </h2>
                       </td>
-                      <td>{{data.totalAmount}}</td>
-                      <td>{{data.createdDate}}</td>
+                      <td>{{data.amount}}</td>
+                      <td>{{data.createdAt | date:'d MMM yyyy'}}</td>
                       <td>
                         <span class="badge rounded-pill bg-success inv-badge">{{data.status}}</span>
                       </td>
                       <td>
                         <div class="actions">
-                          <a data-bs-toggle="modal" href="#edit_invoice_report" class="btn btn-sm bg-success-light me-2">
+                          <a data-bs-toggle="modal" href="#edit_invoice_report" class="btn btn-sm bg-success-light me-2" (click)="openEditModal(data)">
                             <i class="fe fe-pencil"></i> {{data.action1}}
                           </a>
-                          <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal">
+                          <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal" (click)="openDeleteModal(data)">
                             <i class="fe fe-trash"></i> {{data.action2}}
                           </a>
                         </div>
@@ -84,47 +86,46 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form *ngIf="editInvoice" (ngSubmit)="updateInvoice()">
           <div class="row">
             <div class="col-12 col-sm-6">
               <div class="mb-3">
-                <label for="invoice-number" for="invoice" class="mb-2">Invoice Number</label>
-                <input type="text" class="form-control" value="#INV-0001">
+                <label for="invoice-number" class="mb-2">Invoice Number</label>
+                <input type="text" class="form-control" [(ngModel)]="editInvoice._id" name="invoiceNumber" readonly>
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="id">Patient ID</label>
-                <input type="text" class="form-control" value="	#PT002">
+                <input type="text" class="form-control" [(ngModel)]="editInvoice.appointment.patient._id" name="patientId" readonly>
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="name">Patient Name</label>
-                <input type="text" class="form-control" value="R Amer">
+                <input type="text" class="form-control" [(ngModel)]="editInvoice.appointment.patient.name" name="patientName">
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="img">Patient Image</label>
-                <input type="file"  class="form-control">
+                <input type="text" class="form-control" [(ngModel)]="editInvoice.appointment.patient.profileImgUrl" name="profileImgUrl">
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label for="total-amount" class="mb-2">Total Amount</label>
-                <input type="text"  class="form-control" value="$200.00">
+                <input type="number" class="form-control" [(ngModel)]="editInvoice.amount" name="amount">
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label for="created-date" class="mb-2">Created Date</label>
-                <input type="text"  class="form-control" value="29th Oct 2023">
+                <input type="text" class="form-control" [value]="editInvoice.createdAt | date:'d MMM yyyy'" readonly>
               </div>
             </div>
-
           </div>
-          <button  class="btn btn-primary w-100">Save</button>
+          <button class="btn btn-primary w-100">Save</button>
         </form>
       </div>
     </div>
