@@ -43,15 +43,22 @@ export class DataService {
       api.put(`/doctor/appointments/${appointmentId}/status`, { status })
     );
   }
-  public getSpecialities(): Observable<apiResultFormat> {
-    return this.http
-      .get<apiResultFormat>('assets/admin/json/specialities.json')
-      .pipe(
-        map((res: apiResultFormat) => {
-          return res;
-        })
-      );
-  }
+  // public getSpecialities(page: number = 1, limit: number = 10): Observable<apiResultFormat> {
+  //   return this.http
+  //     .get<{ data: any[]; totalData: number }>(`/api/speciality-options?page=${page}&limit=${limit}`)
+  //     .pipe(
+  //       map((res) => {
+  //         return {
+  //           totalData: res.totalData,
+  //           data: res.data.map((item, idx) => ({
+  //             id: idx + 1 + (page - 1) * limit,
+  //             specialities: item.name,
+  //             ...item
+  //           }))
+  //         };
+  //       })
+  //     );
+  // }
   public getDoctorList(): Observable<apiResultFormat> {
     return this.http
       .get<apiResultFormat>('assets/admin/json/doctor-list.json')

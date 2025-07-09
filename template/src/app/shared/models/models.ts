@@ -3,7 +3,7 @@ export interface pageSelection {
   limit: number;
 }
 export interface apiResultFormat {
-  data: [];
+  data: any[];
   totalData: number;
 }
 export interface url {
@@ -25,8 +25,9 @@ export interface appointmentList {
 }
 export interface specialities {
   id: number;
-  specialities: string;
+  name: string;
   img: string;
+  [key: string]: any;
 }
 export interface doctorList {
   isSelected: boolean;

@@ -595,4 +595,8 @@ export class ModalComponent implements OnInit {
       }
     });
   }
+
+  confirmDeleteGlobal() {
+    window.dispatchEvent(new CustomEvent('confirmDelete'));
+  }
 }

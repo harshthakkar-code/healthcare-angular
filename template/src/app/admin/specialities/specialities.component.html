@@ -39,17 +39,17 @@
                       <td>
                         <h2 class="table-avatar">
                           <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2">
-                            <img class="avatar-img" [src]="data.img" alt="Speciality">
+                            <img class="avatar-img" [src]="specialityImageMap[data.name] || 'assets/img/specialities/default.svg'" alt="Speciality">
                           </a>
-                          <a [routerLink] = "routes.adminProfile">{{data.specialities}}</a>
+                          <a [routerLink] = "routes.adminProfile">{{data.name}}</a>
                         </h2>
                       </td>
                       <td>
                         <div class="actions">
-                          <a class="btn btn-sm bg-success-light me-1" data-bs-toggle="modal" href="#edit_specialities_details">
+                          <a class="btn btn-sm bg-success-light me-1" data-bs-toggle="modal" href="#edit_specialities_details" (click)="openEditModal(data)">
                             <i class="fe fe-pencil"></i> Edit
                           </a>
-                          <a  data-bs-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light">
+                          <a data-bs-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light" (click)="openDeleteModal(data)">
                             <i class="fe fe-trash"></i> Delete
                           </a>
                         </div>
@@ -81,7 +81,7 @@
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="specialities">Specialities</label>
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" [(ngModel)]="newSpecialityName" name="specialityName">
               </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -90,9 +90,8 @@
                 <input type="file"  class="form-control">
               </div>
             </div>
-
           </div>
-          <button type="submit" class="btn btn-primary w-100">Save</button>
+          <button type="button" class="btn btn-primary w-100" (click)="addSpeciality(newSpecialityName)">Save</button>
         </form>
       </div>
     </div>
@@ -114,7 +113,7 @@
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="specialities">Specialities</label>
-                <input type="text" class="form-control" value="Cardiology">
+                <input type="text" class="form-control" [(ngModel)]="editSpecialityName" name="editSpecialityName">
               </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -125,7 +124,7 @@
             </div>
 
           </div>
-          <button type="submit" class="btn btn-primary w-100">Save</button>
+          <button type="submit" class="btn btn-primary w-100" (click)="saveEditSpeciality()">Save</button>
         </form>
       </div>
     </div>
