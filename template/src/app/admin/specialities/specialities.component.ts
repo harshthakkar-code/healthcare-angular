@@ -111,7 +111,17 @@ export class SpecialitiesComponent implements OnInit {
           ...item
         }));
         this.totalData = data.totalData;
+        this.serialNumberArray = this.tableData.map((_, idx) => idx + 1); // Ensure serialNumberArray is updated
         this.loadingOptions = false;
+        this.pagination.calculatePageSize.next({
+          totalData: this.totalData,
+          pageSize: this.pageSize,
+          tableData: this.tableData,
+          serialNumberArray: this.serialNumberArray,
+          tableData2: [],
+          tableData3: [],
+          tableData4: []
+        });
       })
       .catch(err => {
         this.errorOptions = err.response?.data?.message || 'Failed to load options';
@@ -127,7 +137,7 @@ export class SpecialitiesComponent implements OnInit {
   addSpeciality(name: string) {
     api.post('/speciality-options', { name, image: this.newSpecialityImage })
       .then(() => {
-        this.fetchSpecialityOptions(1, this.pageSize);
+        this.fetchSpecialityOptions(1, this.pageSize); // Go to first page after add
         (window as any).$ && (window as any).$('#Add_Specialities_details').modal('hide');
         this.newSpecialityName = '';
         this.newSpecialityImage = '';
@@ -160,12 +170,10 @@ export class SpecialitiesComponent implements OnInit {
     if (!this.deleteSpecialityId) return;
     api.delete(`/speciality-options/${this.deleteSpecialityId}`)
       .then(() => {
-        setTimeout(() => {
-          if (this.tableData.length === 1 && this.currentPage > 1) {
-            this.currentPage--;
-          }
-          this.fetchSpecialityOptions(this.currentPage, this.pageSize);
-        }, 0);
+        if (this.tableData.length === 1 && this.currentPage > 1) {
+          this.currentPage--;
+        }
+        this.fetchSpecialityOptions(this.currentPage, this.pageSize);
         (window as any).$ && (window as any).$('#delete_modal').modal('hide');
         this.deleteSpecialityId = null;
       });

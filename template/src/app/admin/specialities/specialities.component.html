@@ -38,10 +38,10 @@
                       <td>{{data.id}}</td>
                       <td>
                         <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2">
+                          <a  style="cursor: default;" class="avatar avatar-sm me-2">
                             <img class="avatar-img" [src]="specialityImageMap[data.name] || 'assets/img/specialities/default.svg'" alt="Speciality">
                           </a>
-                          <a [routerLink] = "routes.adminProfile">{{data.name}}</a>
+                          <a  style="cursor: default;">{{data.name}}</a>
                         </h2>
                       </td>
                       <td>

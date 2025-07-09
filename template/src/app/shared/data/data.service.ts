@@ -80,6 +80,8 @@ export class DataService {
             img: item.profileImgUrl || '',
             isStatus: item.isApproved === 'true',
             userId: item.user?._id || '',
+            avgRating: item.avgRating || 0,
+            reviewCount: item.reviews ? item.reviews.length : 0,
           } as doctorList;
         });
         return { data, totalData: data.length } as apiResultFormat;
@@ -2207,6 +2209,12 @@ export class DataService {
   public updateDoctorStatus(doctorId: string, isApproved: string) {
     return from(
       api.put(`/admin/doctor-status/${doctorId}`, { isApproved })
+    );
+  }
+
+  public getTotalRevenue(): Observable<any> {
+    return from(
+      api.get('/transactions/total-paid').then((response) => response.data)
     );
   }
 }

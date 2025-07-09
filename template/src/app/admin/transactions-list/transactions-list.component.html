@@ -39,10 +39,10 @@
                     <td>{{tx.appointment?.patient?._id}}</td>
                     <td>
                       <h2 class="table-avatar">
-                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                        <a  style="cursor: default;" class="avatar avatar-sm me-2">
                           <img class="avatar-img rounded-circle" [src]="tx.appointment?.patient?.avatar || 'assets/img/patients/default.png'" alt="User Image">
                         </a>
-                        <a [routerLink]="routes.adminProfile">{{tx.appointment?.patient?.name}}</a>
+                        <a  style="cursor: default;">{{tx.appointment?.patient?.name}}</a>
                       </h2>
                     </td>
                     <td>{{tx.amount}}</td>

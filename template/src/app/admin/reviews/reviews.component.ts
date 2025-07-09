@@ -50,6 +50,13 @@ export class ReviewsComponent implements OnInit {
         this.pageSize = res.pageSize;
       }
     });
+
+    // Subscribe to page size changes and fetch reviews with new page size
+    this.pagination.changePagesize.subscribe((res: { pageSize: number }) => {
+      this.pageSize = res.pageSize;
+      this.currentPage = 1;
+      this.fetchReviews(this.currentPage, this.pageSize);
+    });
   }
 
   ngOnInit(): void {
@@ -106,7 +113,22 @@ export class ReviewsComponent implements OnInit {
       .then(res => {
         this.reviews = res.data.reviews;
         this.totalReviews = res.data.totalReviews;
+        this.tableData = this.reviews.map((item: any, idx: number) => ({
+          id: idx + 1 + (page - 1) * limit,
+          ...item
+        }));
+        this.totalData = this.totalReviews;
+        this.serialNumberArray = this.tableData.map((_, idx) => idx + 1);
         this.loadingReviews = false;
+        this.pagination.calculatePageSize.next({
+          totalData: this.totalData,
+          pageSize: this.pageSize,
+          tableData: this.tableData,
+          serialNumberArray: this.serialNumberArray,
+          tableData2: [],
+          tableData3: [],
+          tableData4: []
+        });
       })
       .catch(err => {
         this.errorReviews = err.response?.data?.message || 'Failed to load reviews';

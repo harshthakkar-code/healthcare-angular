@@ -20,20 +20,12 @@ import api from 'src/app/shared/api/axios';
 })
 export class TransactionsListComponent implements OnInit {
   public routes = routes;
-  public tableData: Array<transactionsList> = [];
-  transactions: any[] = [];
+  public transactions: any[] = [];
   totalTransactions: number = 0;
   currentPage: number = 1;
   pageSize: number = 10;
   loading = false;
   error = '';
-
-  // pagination variables
-  public serialNumberArray: Array<number> = [];
-  showFilter = false;
-  dataSource!: MatTableDataSource<transactionsList>;
-  public searchDataValue = '';
-  // pagination variables end
 
   deleteTransactionId: string | null = null;
   private _deleteListener: any;
@@ -45,8 +37,9 @@ export class TransactionsListComponent implements OnInit {
   ) {
     this.pagination.tablePageSize.subscribe((res: tablePageSize) => {
       if (this.router.url == this.routes.adminTransactionsList) {
-        this.getTableData({ skip: res.skip, limit: res.limit });
         this.pageSize = res.pageSize;
+        this.currentPage = Math.floor(res.skip / res.pageSize) + 1;
+        this.fetchTransactions(this.currentPage, this.pageSize);
       }
     });
   }
@@ -73,31 +66,6 @@ export class TransactionsListComponent implements OnInit {
       });
   }
 
-  private getTableData(pageOption: pageSelection): void {
-    this.data.getTransactionsList().subscribe((apiRes: apiResultFormat) => {
-      this.tableData = [];
-      this.serialNumberArray = [];
-      apiRes.data.map((res: transactionsList, index: number) => {
-        const serialNumber = index + 1;
-        if (index >= pageOption.skip && serialNumber <= pageOption.limit) {
-          res.id = serialNumber;
-          this.tableData.push(res);
-          this.serialNumberArray.push(serialNumber);
-        }
-      });
-      this.dataSource = new MatTableDataSource<transactionsList>(this.tableData);
-      this.pagination.calculatePageSize.next({
-        totalData: this.totalTransactions,
-        pageSize: this.pageSize,
-        tableData: this.tableData,
-        serialNumberArray: this.serialNumberArray,
-        tableData2: [],
-        tableData3: [],
-        tableData4: []
-      });
-    });
-  }
-
   fetchTransactions(page: number = this.currentPage, limit: number = this.pageSize) {
     this.loading = true;
     api.get('/transactions', { params: { page, limit } })
@@ -105,6 +73,16 @@ export class TransactionsListComponent implements OnInit {
         this.transactions = res.data.data;
         this.totalTransactions = res.data.total;
         this.loading = false;
+        // Update pagination service with new data
+        this.pagination.calculatePageSize.next({
+          totalData: this.totalTransactions,
+          pageSize: this.pageSize,
+          tableData: this.transactions,
+          serialNumberArray: this.transactions.map((_, i) => (this.currentPage - 1) * this.pageSize + i + 1),
+          tableData2: [],
+          tableData3: [],
+          tableData4: []
+        });
       })
       .catch(err => {
         this.error = err.response?.data?.message || 'Failed to load transactions';
@@ -118,12 +96,11 @@ export class TransactionsListComponent implements OnInit {
   }
 
   public sortData(sort: Sort) {
-    const data = this.tableData.slice();
-
+    const data = this.transactions.slice();
     if (!sort.active || sort.direction === '') {
-      this.tableData = data;
+      this.transactions = data;
     } else {
-      this.tableData = data.sort((a, b) => {
+      this.transactions = data.sort((a, b) => {
         const aValue = (a as never)[sort.active];
         const bValue = (b as never)[sort.active];
         return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);

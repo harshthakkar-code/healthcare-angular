@@ -37,18 +37,18 @@
                   <tr *ngFor="let review of reviews">
                     <td>
                       <h2 class="table-avatar">
-                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                        <a  style="cursor: default;" class="avatar avatar-sm me-2">
                           <img class="avatar-img rounded-circle" [src]="review.patient?.avatar || 'assets/img/patients/default.png'" alt="User Image">
                         </a>
-                        <a [routerLink]="routes.adminProfile">{{review.patient?.name}}</a>
+                        <a  style="cursor: default;">{{review.patient?.name}}</a>
                       </h2>
                     </td>
                     <td>
                       <h2 class="table-avatar">
-                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                        <a  style="cursor: default;" class="avatar avatar-sm me-2">
                           <img class="avatar-img rounded-circle" [src]="review.doctor?.avatar || 'assets/img/doctors/default.png'" alt="User Image">
                         </a>
-                        <a [routerLink]="routes.adminProfile">{{review.doctor?.name}}</a>
+                        <a  style="cursor: default;">{{review.doctor?.name}}</a>
                       </h2>
                     </td>
                     <td>

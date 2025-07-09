@@ -40,6 +40,8 @@ export interface doctorList {
   img: string;
   isStatus: boolean;
   totalEarned?: string;
+  avgRating?: number;
+  reviewCount?: number;
 }
 export interface patientList {
   id: number;

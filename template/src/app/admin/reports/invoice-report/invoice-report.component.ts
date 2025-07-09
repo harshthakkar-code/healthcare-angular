@@ -31,6 +31,7 @@ export class InvoiceReportComponent implements OnInit, OnDestroy {
     this.pagination.tablePageSize.subscribe((res: tablePageSize) => {
       if (this.router.url == this.routes.adminInvoiceReport) {
         this.pageSize = res.pageSize;
+        this.currentPage = Math.floor(res.skip / res.pageSize) + 1;
         this.fetchInvoices(this.currentPage, this.pageSize);
       }
     });
@@ -52,6 +53,16 @@ export class InvoiceReportComponent implements OnInit, OnDestroy {
         this.invoices = res.data.data;
         this.totalInvoices = res.data.total;
         this.loading = false;
+        // Update pagination service with new data
+        this.pagination.calculatePageSize.next({
+          totalData: this.totalInvoices,
+          pageSize: this.pageSize,
+          tableData: this.invoices,
+          serialNumberArray: this.invoices.map((_, i) => (this.currentPage - 1) * this.pageSize + i + 1),
+          tableData2: [],
+          tableData3: [],
+          tableData4: []
+        });
       })
       .catch(err => {
         this.error = err.response?.data?.message || 'Failed to load invoices';

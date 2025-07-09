@@ -12,6 +12,7 @@ import {
   ApexMarkers,
   ApexLegend,
 } from "ng-apexcharts";
+import { DataService } from 'src/app/shared/data/data.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -32,11 +33,19 @@ export type ChartOptions = {
 export class DashboardComponent {
   public routes = routes;
 
+  public doctorCount = 0;
+  public patientCount = 0;
+  public appointmentCount = 0;
+  public doctorList: any[] = [];
+  public patientList: any[] = [];
+  public appointmentList: any[] = [];
+  public revenue: number = 0;
+
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions1: Partial<ChartOptions>;
   public chartOptions2: Partial<ChartOptions>;
 
-  constructor() {
+  constructor(private data: DataService) {
     this.chartOptions1 = {
       series: [
         {
@@ -127,4 +136,35 @@ export class DashboardComponent {
     };
   }
 
+  ngOnInit(): void {
+    this.data.getDoctorList().subscribe(res => {
+      this.doctorCount = res.totalData;
+      this.doctorList = res.data.slice(0, 5); // Top 5 doctors
+    });
+    this.data.getPatientList().subscribe(res => {
+      this.patientCount = res.totalData;
+      this.patientList = res.data.slice(0, 5); // Top 5 patients
+    });
+    this.data.getAppointmentList().subscribe(res => {
+      this.appointmentCount = res.totalData;
+      this.appointmentList = res.data.slice(0, 5); // Top 5 appointments
+    });
+    this.data.getTotalRevenue().subscribe(res => {
+      this.revenue = res.totalPaid || 0;
+    });
+  }
+
+  onDashboardAppointmentToggle(appointment: any, index: number) {
+    const appointmentId = appointment.appointmentId;
+    const newStatus = appointment.isStatus ? 'accepted' : 'rejected';
+    this.data.updateAppointmentStatus(appointmentId, newStatus).subscribe({
+      next: (res) => {
+        // Optionally show a success message
+      },
+      error: (err) => {
+        // Optionally revert the toggle or show an error
+        appointment.isStatus = !appointment.isStatus;
+      }
+    });
+  }
 }
