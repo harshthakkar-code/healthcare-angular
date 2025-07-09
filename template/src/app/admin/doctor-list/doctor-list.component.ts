@@ -90,4 +90,23 @@ export class DoctorListComponent {
       });
     }
   }
+  onStatusToggle(data: doctorList, index: number) {
+    console.log('Doctor row data:', data);
+    const userId = (data as any).userId;
+    console.log('userId:', userId);
+    if (!userId) {
+      alert('User ID is missing for this doctor. Cannot update status.');
+      return;
+    }
+    const newStatus = data.isStatus ? 'true' : 'false';
+    this.data.updateDoctorStatus(userId, newStatus).subscribe({
+      next: (res) => {
+        // Optionally show a success message
+      },
+      error: (err) => {
+        // Optionally revert the toggle or show an error
+        data.isStatus = !data.isStatus;
+      }
+    });
+  }
 }

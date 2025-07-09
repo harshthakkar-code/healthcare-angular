@@ -46,7 +46,7 @@
                       <td>{{data.earned}}</td>
                       <td>
                         <div class="status-toggle">
-                          <input type="checkbox" id="{{ 'data.toggle' + i }}" class="check" [(ngModel)]="data.isStatus" />
+                          <input type="checkbox" id="{{ 'data.toggle' + i }}" class="check" [(ngModel)]="data.isStatus" (change)="onStatusToggle(data, i)" />
                           <label for="{{ 'data.toggle' + i }}" class="checktoggle">checkbox</label>
                         </div>
                       </td>

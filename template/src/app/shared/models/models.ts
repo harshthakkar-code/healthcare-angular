@@ -21,7 +21,7 @@ export interface appointmentList {
   amount: string;
   img1: string;
   img2: string;
-  isStatus: false;
+  isStatus: boolean;
 }
 export interface specialities {
   id: number;

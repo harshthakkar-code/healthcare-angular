@@ -7,6 +7,8 @@ import { environment } from '../../../environments/environment';
 import api from '../api/axios';
 import { appointmentList } from '../models/models';
 import { from } from 'rxjs';
+import { doctorList } from '../models/models';
+import { patientList } from '../models/models';
 
 @Injectable({
   providedIn: 'root',
@@ -60,22 +62,45 @@ export class DataService {
   //     );
   // }
   public getDoctorList(): Observable<apiResultFormat> {
-    return this.http
-      .get<apiResultFormat>('assets/admin/json/doctor-list.json')
-      .pipe(
-        map((res: apiResultFormat) => {
-          return res;
-        })
-      );
+    return from(
+      api.get('/doctor/public').then((response) => {
+        const data = (response.data.data || []).map((item: any, index: number) => {
+          return {
+            isSelected: false,
+            id: index + 1,
+            doctorName: item.name || '',
+            speciality: item.specialization?.name || '',
+            memberSince: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '',
+            earned: item.earnings ? item.earnings.toString() : '',
+            time: '', // Optionally map if available
+            img: item.profileImgUrl || '',
+            isStatus: item.isApproved === 'true',
+            userId: item.user?._id || '',
+          } as doctorList;
+        });
+        return { data, totalData: data.length } as apiResultFormat;
+      })
+    );
   }
   public getPatientList(): Observable<apiResultFormat> {
-    return this.http
-      .get<apiResultFormat>('assets/admin/json/patient-list.json')
-      .pipe(
-        map((res: apiResultFormat) => {
-          return res;
-        })
-      );
+    return from(
+      api.get('/patient/all').then((response) => {
+        const data = (response.data || []).map((item: any, index: number) => {
+          return {
+            id: index + 1,
+            patientId: item.user?._id || item._id || '',
+            patientName: item.name || item.firstName + ' ' + item.lastName || '',
+            age: item.age ? item.age.toString() : '',
+            address: item.address || '',
+            phone: item.phone || '',
+            lastVisit: '', // Optionally map if available
+            paid: '', // Optionally map if available
+            img: item.profileImgUrl || item.avatar || '',
+          } as patientList;
+        });
+        return { data, totalData: data.length } as apiResultFormat;
+      })
+    );
   }
   public getReviews(): Observable<apiResultFormat> {
     return this.http
@@ -2173,5 +2198,11 @@ export class DataService {
   // Login with Google
   public loginWithGoogle(token: string) {
     return this.http.post<any>(`${environment.API_URL}/auth/google`, { token });
+  }
+
+  public updateDoctorStatus(doctorId: string, isApproved: string) {
+    return from(
+      api.put(`/admin/doctor-status/${doctorId}`, { isApproved })
+    );
   }
 }

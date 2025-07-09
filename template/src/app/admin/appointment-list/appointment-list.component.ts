@@ -94,4 +94,19 @@ export class AppointmentListComponent {
       });
     }
   }
+
+  onStatusToggle(data: appointmentList, index: number) {
+    // You need to have appointmentId in your appointmentList mapping for this to work
+    const appointmentId = (data as any).appointmentId;
+    const newStatus = data.isStatus ? 'accepted' : 'rejected';
+    this.data.updateAppointmentStatus(appointmentId, newStatus).subscribe({
+      next: (res) => {
+        // Optionally update UI or show a success message
+      },
+      error: (err) => {
+        // Optionally revert the toggle or show an error
+        data.isStatus = !data.isStatus;
+      }
+    });
+  }
 }

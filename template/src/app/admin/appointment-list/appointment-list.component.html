@@ -38,21 +38,21 @@
                     <tr>
                       <td>
                         <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img1" alt="User Image"></a>
+                          <!-- <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img1" ></a> -->
                           <a [routerLink] = "routes.adminProfile">{{data.doctorName}}</a>
                         </h2>
                       </td>
                       <td>{{data.speciality}}</td>
                       <td>
                         <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img2" alt="User Image"></a>
+                          <!-- <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img2" ></a> -->
                           <a [routerLink] = "routes.adminProfile">{{data.patientName}} </a>
                         </h2>
                       </td>
-                      <td>{{data.appointmentDate}} <span class="text-primary d-block">{{data.appointmentTime}}</span></td>
+                      <td>{{data.appointmentDate | date:'mediumDate'}} <span class="text-primary d-block">{{data.appointmentTime}}</span></td>
                       <td>
                         <div class="status-toggle">
-                          <input type="checkbox" id="{{ 'data.toggle' + i }}" class="check" [(ngModel)]="data.isStatus" />
+                          <input type="checkbox" id="{{ 'data.toggle' + i }}" class="check" [(ngModel)]="data.isStatus" (change)="onStatusToggle(data, i)" />
                           <label for="{{ 'data.toggle' + i }}" class="checktoggle">checkbox</label>
                         </div>
                       </td>
