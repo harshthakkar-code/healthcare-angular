@@ -4,6 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { apiResultFormat } from '../models/models';
 import { environment } from '../../../environments/environment';
+import api from '../api/axios';
+import { appointmentList } from '../models/models';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,13 +14,34 @@ import { environment } from '../../../environments/environment';
 export class DataService {
   constructor(private http: HttpClient) {}
   public getAppointmentList(): Observable<apiResultFormat> {
-    return this.http
-      .get<apiResultFormat>('assets/admin/json/appointment-list.json')
-      .pipe(
-        map((res: apiResultFormat) => {
-          return res;
-        })
-      );
+    // Fetch from backend API using axios
+    return from(
+      api.get('/admin/appointments').then((response) => {
+        // Map backend data to appointmentList[]
+        const data = (response.data || []).map((item: any, index: number) => {
+          return {
+            isSelected: false,
+            id: index + 1,
+            doctorName: item.doctor?.name || '',
+            speciality: item.specialty || '',
+            patientName: item.patient?.name || item.name || '',
+            appointmentTime: item.time || '',
+            appointmentDate: item.date || '',
+            amount: item.totalPrice ? item.totalPrice.toString() : '',
+            img1: '', // Optionally map doctor image if available
+            img2: '', // Optionally map patient image if available
+            isStatus: item.status === 'accepted',
+            appointmentId: item._id,
+          } as appointmentList;
+        });
+        return { data, totalData: data.length } as apiResultFormat;
+      })
+    );
+  }
+  public updateAppointmentStatus(appointmentId: string, status: string) {
+    return from(
+      api.put(`/doctor/appointments/${appointmentId}/status`, { status })
+    );
   }
   public getSpecialities(): Observable<apiResultFormat> {
     return this.http
