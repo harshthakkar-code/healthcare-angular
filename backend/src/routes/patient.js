@@ -13,5 +13,6 @@ router.get('/appointments', patientController.getAppointments);
 router.post('/review/:doctorId', patientController.postReview);
 router.get('/medical-records', patientController.getMedicalRecords);
 router.put('/change-password', patientController.changePassword);
+router.get('/all', role('admin'), patientController.getAllPatients);
 
 module.exports = router; 

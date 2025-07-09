@@ -147,4 +147,19 @@ exports.changePassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+// GET /patient/all (admin only)
+exports.getAllPatients = async (req, res, next) => {
+  try {
+    const patients = await PatientProfile.find().populate('user');
+    // Merge user and profile fields for each patient
+    const mergedPatients = patients.map(profile => {
+      const user = profile.user ? profile.user.toObject() : {};
+      return { ...user, ...profile.toObject() };
+    });
+    res.json(mergedPatients);
+  } catch (err) {
+    next(err);
+  }
 }; 
