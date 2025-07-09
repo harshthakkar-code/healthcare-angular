@@ -14,7 +14,7 @@ import { patientList } from '../models/models';
   providedIn: 'root',
 })
 export class DataService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   public getAppointmentList(): Observable<apiResultFormat> {
     // Fetch from backend API using axios
     return from(
@@ -69,10 +69,14 @@ export class DataService {
             isSelected: false,
             id: index + 1,
             doctorName: item.name || '',
-            speciality: item.specialization?.name || '',
+            speciality: !item.specializations || item.specializations.length === 0
+              ? '-'
+              : item.specializations.length === 1
+                ? item.specializations[0]
+                : `${item.specializations[0]} +${item.specializations.length - 1}`,
             memberSince: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '',
-            earned: item.earnings ? item.earnings.toString() : '',
-            time: '', // Optionally map if available
+            earned: item.totalEarned ? item.totalEarned.toString() : 0,
+            time: '',
             img: item.profileImgUrl || '',
             isStatus: item.isApproved === 'true',
             userId: item.user?._id || '',
@@ -93,8 +97,8 @@ export class DataService {
             age: item.age ? item.age.toString() : '',
             address: item.address || '',
             phone: item.phone || '',
-            lastVisit: '', // Optionally map if available
-            paid: '', // Optionally map if available
+            lastVisit: item.lastAppointmentDate ? item.lastAppointmentDate : 'N/A', // Optionally map if available
+            paid: item.totalPaid ? item.totalPaid.toString() : 0, // Optionally map if available
             img: item.profileImgUrl || item.avatar || '',
           } as patientList;
         });
@@ -838,7 +842,7 @@ export class DataService {
           openInNewTab: false,
           subMenus: [],
         },
-        
+
         {
           menuValue: 'Favourites',
           route: routes.favourites,
@@ -1201,8 +1205,8 @@ export class DataService {
             },
           ],
         },
-       
-       
+
+
       ],
     },
     {
@@ -1874,34 +1878,34 @@ export class DataService {
       distance: '1156 Patients',
       location: '500 m',
     }
-    
+
   ];
   public recommendedBlog = [
     {
       img: 'assets/img/blog/blog-18.jpg',
       title: 'Health and Safety',
-      date:'01 May 2023',
-     views:'1k views',
-     head:'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
-     para:'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
+      date: '01 May 2023',
+      views: '1k views',
+      head: 'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
+      para: 'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
     },
     {
       img: 'assets/img/blog/blog-19.jpg',
       title: 'Health and Safety',
-      date:'01 May 2023',
-     views:'1k views',
-     head:'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
-     para:'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
+      date: '01 May 2023',
+      views: '1k views',
+      head: 'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
+      para: 'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
     },
     {
       img: 'assets/img/blog/blog-20.jpg',
       title: 'Health and Safety',
-      date:'01 May 2023',
-     views:'1k views',
-     head:'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
-     para:'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
+      date: '01 May 2023',
+      views: '1k views',
+      head: 'Adapting Homes for Aging Gracefully: Design Tips for Old Age Comfort',
+      para: 'Explore practical design tips to make living spaces in old age homes adaptable and comfortable, enhancing the quality of life for seniors. Learn about accessibility, safety features, and creating a warm environment.'
     },
-    
+
   ];
   public restaurants = [
     {
@@ -2034,7 +2038,7 @@ export class DataService {
     {
       img: 'assets/img/partners/partners-12.svg',
     },
-   
+
   ];
   public nurseSlidertwo = [
     {
@@ -2044,9 +2048,9 @@ export class DataService {
       percentage: '94%',
       distance: '1756 Patients',
       location: '600 m',
-      fees:'$120',
-      day:'Per day',
-      country:'United States'
+      fees: '$120',
+      day: 'Per day',
+      country: 'United States'
     },
     {
       img: 'assets/img/nurses/nurse-05.jpg',
@@ -2055,9 +2059,9 @@ export class DataService {
       percentage: '98%',
       distance: '1856 Patients',
       location: '700 m',
-      fees:'$100',
-      day:'Per day',
-      country:'United States'
+      fees: '$100',
+      day: 'Per day',
+      country: 'United States'
     },
     {
       img: 'assets/img/nurses/nurse-06.jpg',
@@ -2066,9 +2070,9 @@ export class DataService {
       percentage: '95%',
       distance: '1156 Patients',
       location: '500 m',
-      fees:'$150',
-      day:'Per day',
-      country:'United States'
+      fees: '$150',
+      day: 'Per day',
+      country: 'United States'
     },
     {
       img: 'assets/img/nurses/nurse-01.jpg',
@@ -2077,9 +2081,9 @@ export class DataService {
       percentage: '98%',
       distance: '1856 Patients',
       location: '700 m',
-      fees:'$140',
-      day:'Per day',
-      country:'United States'
+      fees: '$140',
+      day: 'Per day',
+      country: 'United States'
     },
     {
       img: 'assets/img/nurses/nurse-02.jpg',
@@ -2088,9 +2092,9 @@ export class DataService {
       percentage: '97%',
       distance: '2589 Patients',
       location: '2.5 m',
-      fees:'$160',
-      day:'Per day',
-      country:'United Kingdom'
+      fees: '$160',
+      day: 'Per day',
+      country: 'United Kingdom'
     },
     {
       img: 'assets/img/nurses/nurse-03.jpg',
@@ -2099,11 +2103,11 @@ export class DataService {
       percentage: '91%',
       distance: '5478 Patients',
       location: '900 m',
-      fees:'$120',
-      day:'Per day',
-      country:'United States'
+      fees: '$120',
+      day: 'Per day',
+      country: 'United States'
     }
-    
+
   ];
   public listingDetails = [
     {
@@ -2115,7 +2119,7 @@ export class DataService {
     {
       img: 'assets/img/slider/video-slider-img-03.jpg',
     },
-    
+
     {
       img: 'assets/img/slider/video-slider-img-04.jpg',
     },

@@ -1,4 +1,5 @@
 const Specialization = require('../models/Specialization');
+const { syncDoctorSpecializations } = require('../utils/doctorProfileSync');
 
 // Create one or multiple specializations for a doctor
 exports.createSpecialization = async (req, res, next) => {
@@ -10,6 +11,7 @@ exports.createSpecialization = async (req, res, next) => {
     // Each specialization: { name, experience, services }
     const docs = specializations.map(s => ({ ...s, doctorId }));
     const created = await Specialization.insertMany(docs);
+    await syncDoctorSpecializations(doctorId);
     res.status(201).json(created);
   } catch (err) { next(err); }
 };
@@ -29,6 +31,9 @@ exports.updateSpecialization = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updated = await Specialization.findByIdAndUpdate(id, req.body, { new: true });
+    if (updated) {
+      await syncDoctorSpecializations(updated.doctorId);
+    }
     res.json(updated);
   } catch (err) { next(err); }
 };
@@ -37,7 +42,10 @@ exports.updateSpecialization = async (req, res, next) => {
 exports.deleteSpecialization = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await Specialization.findByIdAndDelete(id);
+    const deleted = await Specialization.findByIdAndDelete(id);
+    if (deleted) {
+      await syncDoctorSpecializations(deleted.doctorId);
+    }
     res.json({ message: 'Specialization deleted' });
   } catch (err) { next(err); }
 };

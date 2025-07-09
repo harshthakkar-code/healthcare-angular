@@ -3,6 +3,7 @@ const PatientProfile = require('../models/PatientProfile');
 const Appointment = require('../models/Appointment');
 const DoctorProfile = require('../models/DoctorProfile');
 const Review = require('../models/Review');
+const Transaction = require('../models/Transaction');
 
 async function updateDoctorAvgRating(doctorProfileId) {
   const doctor = await DoctorProfile.findById(doctorProfileId).populate('reviews');
@@ -153,11 +154,30 @@ exports.changePassword = async (req, res, next) => {
 exports.getAllPatients = async (req, res, next) => {
   try {
     const patients = await PatientProfile.find().populate('user');
-    // Merge user and profile fields for each patient
-    const mergedPatients = patients.map(profile => {
+    // Merge user and profile fields for each patient, and add lastAppointmentDate and totalPaid
+    const mergedPatients = await Promise.all(patients.map(async profile => {
       const user = profile.user ? profile.user.toObject() : {};
-      return { ...user, ...profile.toObject() };
-    });
+      const userId = user._id || profile.user;
+      // Find all appointments for this patient, sorted by date descending
+      const appointments = await Appointment.find({ patient: userId }).sort({ date: -1 });
+      let lastAppointmentDate = null;
+      if (appointments.length > 0) {
+        lastAppointmentDate = appointments[0].date || appointments[0].createdAt;
+      }
+      // Find all paid transactions for this patient's appointments
+      const appointmentIds = appointments.map(a => a._id);
+      const paidTransactions = await Transaction.find({
+        appointment: { $in: appointmentIds },
+        status: 'paid'
+      });
+      const totalPaid = paidTransactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+      return {
+        ...user,
+        ...profile.toObject(),
+        lastAppointmentDate,
+        totalPaid
+      };
+    }));
     res.json(mergedPatients);
   } catch (err) {
     next(err);

@@ -11,6 +11,7 @@ const Report = require('../models/Report');
 const Service = require('../models/Service');
 const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
+const Transaction = require('../models/Transaction');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -125,91 +126,61 @@ exports.getDoctors = async (req, res, next) => {
       query.city = { $regex: city, $options: 'i' };
     }
 
-    // If date filter is provided, use aggregation to filter doctors with a schedule on that date
-    if (date) {
-      // Convert date string to Date object for comparison
-      const dateObj = new Date(date);
-      const pipeline = [
-        { $match: query },
-        { $lookup: {
-            from: 'schedules',
-            localField: 'schedule',
-            foreignField: '_id',
-            as: 'schedules',
-        }},
-        { $addFields: {
-            hasDate: {
-              $in: [
-                dateObj,
-                { $map: { input: '$schedules', as: 's', in: '$$s.date' } }
-              ]
-            }
-        }},
-        { $match: { hasDate: true } },
-      ];
-      let doctors = await DoctorProfile.aggregate(pipeline);
-      // Populate specialization and reviews manually if needed
-      doctors = await DoctorProfile.populate(doctors, [
-        { path: 'specialization', select: 'name' },
-        { path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } }
-      ]);
-      // Calculate avgRating
-      let doctorsWithAvg = doctors.map(doc => {
-        const ratings = (doc.reviews || []).map(r => r.rating);
-        const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
-        return { ...doc, avgRating };
-      });
-      // Sorting
-      if (sort === '-avgRating') {
-        doctorsWithAvg.sort((a, b) => b.avgRating - a.avgRating);
-      } else if (sort === 'avgRating') {
-        doctorsWithAvg.sort((a, b) => a.avgRating - b.avgRating);
-      } else {
-        doctorsWithAvg.sort((a, b) => {
-          if (a[sort] < b[sort]) return -1;
-          if (a[sort] > b[sort]) return 1;
-          return 0;
-        });
-      }
-      // Pagination
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const paginatedDoctors = doctorsWithAvg.slice(skip, skip + parseInt(limit));
-      const total = doctorsWithAvg.length;
-      return res.json({
-        data: paginatedDoctors,
-        page: parseInt(page),
-        totalPages: Math.ceil(total / limit),
-        total
-      });
-    }
-
-    // If no date filter, use normal query
     let doctors = await DoctorProfile.find(query)
       .populate('user', '_id')
       .populate('specialization', 'name')
       .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } });
-    // Calculate average rating for each doctor
-    let doctorsWithAvg = doctors.map(doc => {
-      const ratings = doc.reviews.map(r => r.rating);
-      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
-      return { ...doc.toObject(), avgRating };
+
+    // Get all doctor user IDs (safe)
+    const doctorUserIds = doctors.map(doc => doc.user && doc.user._id ? doc.user._id : null).filter(Boolean);
+
+    // Get total earned (sum of paid transactions) for each doctor user ID
+    const transactionSums = await Transaction.aggregate([
+      {
+        $lookup: {
+          from: 'appointments',
+          localField: 'appointment',
+          foreignField: '_id',
+          as: 'appointmentData'
+        }
+      },
+      { $unwind: '$appointmentData' },
+      { $match: { status: 'paid' } },
+      {
+        $group: {
+          _id: '$appointmentData.doctor',
+          totalEarned: { $sum: '$amount' }
+        }
+      }
+    ]);
+    // Map: doctorUserId (as string) => totalEarned
+    const transactionSumMap = {};
+    transactionSums.forEach(ts => {
+      if (ts._id) transactionSumMap[ts._id.toString()] = ts.totalEarned;
     });
-    // Sort by avgRating if requested
-    if (sort === '-avgRating') {
-      doctorsWithAvg.sort((a, b) => b.avgRating - a.avgRating);
-    } else if (sort === 'avgRating') {
-      doctorsWithAvg.sort((a, b) => a.avgRating - b.avgRating);
-    } else {
-      doctorsWithAvg.sort((a, b) => {
-        if (a[sort] < b[sort]) return -1;
-        if (a[sort] > b[sort]) return 1;
-        return 0;
-      });
-    }
-    // Pagination and limit
+
+    // Prepare the response
+    const doctorsWithExtras = await Promise.all(doctors.map(async doc => {
+      // Find all specializations for this doctor by user ID
+      const allSpecs = await Specialization.find({ doctorId: doc.user && doc.user._id ? doc.user._id : null });
+      const specializations = allSpecs.map(s => s.name);
+      const totalEarned = doc.user && doc.user._id ? transactionSumMap[doc.user._id.toString()] || 0 : 0;
+      // Update the DoctorProfile document with these values
+      await DoctorProfile.updateOne(
+        { _id: doc._id },
+        { $set: { specializations, totalEarned } }
+      );
+      return {
+        ...doc.toObject(),
+        specializations,
+        totalEarned,
+      };
+    }));
+
+    // Pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    const paginatedDoctors = doctorsWithAvg.slice(skip, skip + parseInt(limit));
-    const total = doctorsWithAvg.length;
+    const paginatedDoctors = doctorsWithExtras.slice(skip, skip + parseInt(limit));
+    const total = doctorsWithExtras.length;
     res.json({
       data: paginatedDoctors,
       page: parseInt(page),

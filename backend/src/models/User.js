@@ -38,6 +38,8 @@ const userSchema = new mongoose.Schema({
   otpCode: { type: String },
   otpExpiry: { type: Date },
   availability: { type: String, enum: ['available', 'unavailable'], default: 'unavailable' },
+  specializations: { type: [String], default: [] },
+  totalEarned: { type: Number, default: 0 },
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

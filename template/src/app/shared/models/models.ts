@@ -39,6 +39,7 @@ export interface doctorList {
   time: string;
   img: string;
   isStatus: boolean;
+  totalEarned?: string;
 }
 export interface patientList {
   id: number;

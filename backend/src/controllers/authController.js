@@ -6,6 +6,7 @@ const sendMail = require('../utils/sendMail');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const { syncUserAndDoctorProfile } = require('../utils/userDoctorSync');
 
 exports.register = async (req, res, next) => {
   try {
@@ -73,6 +74,8 @@ exports.register = async (req, res, next) => {
         employmentProof
       });
       await doctorProfile.save();
+      // Sync specializations and totalEarned between User and DoctorProfile
+      await syncUserAndDoctorProfile(user._id);
     }
 
     // 6. Create patient profile if patient
