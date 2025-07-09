@@ -12,7 +12,7 @@ router.get('/by-user/:userId', doctorController.getDoctorByUserId);
 router.get('/public/profile/:doctorId', doctorController.getDoctorProfileAndSpecialization);
 router.post('/appointments', doctorController.createAppointment);
 router.get('/public/contact/:doctorId', doctorController.getDoctorContactInfo);
-router.use(auth, role('doctor'));
+router.use(auth, role('doctor', 'admin'));
 router.get('/profile', doctorController.getProfile);
 router.put('/profile', doctorController.updateProfile);
 router.post('/schedule', doctorController.createSchedule);

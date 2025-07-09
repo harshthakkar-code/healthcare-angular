@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const DoctorProfile = require('../models/DoctorProfile');
+const Appointment = require('../models/Appointment');
 
 exports.dashboard = async (req, res, next) => {
   try {
@@ -35,4 +36,15 @@ exports.deleteUser = async (req, res, next) => {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });
   } catch (err) { next(err); }
+};
+
+exports.getAllAppointments = async (req, res, next) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate('doctor', 'name email')
+      .populate('patient', 'name email');
+    res.json(appointments);
+  } catch (err) {
+    next(err);
+  }
 }; 

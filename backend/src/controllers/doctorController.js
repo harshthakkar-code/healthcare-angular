@@ -185,6 +185,7 @@ exports.getDoctors = async (req, res, next) => {
 
     // If no date filter, use normal query
     let doctors = await DoctorProfile.find(query)
+      .populate('user', '_id')
       .populate('specialization', 'name')
       .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } });
     // Calculate average rating for each doctor

@@ -9,5 +9,6 @@ router.get('/dashboard', adminController.dashboard);
 router.get('/users', adminController.getUsers);
 router.put('/doctor-status/:id', adminController.updateDoctorStatus);
 router.delete('/user/:id', adminController.deleteUser);
+router.get('/appointments', adminController.getAllAppointments);
 
 module.exports = router; 
