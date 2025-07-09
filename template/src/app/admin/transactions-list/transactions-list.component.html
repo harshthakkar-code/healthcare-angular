@@ -34,29 +34,29 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (data of tableData; track data) {
-                    <tr>
-                      <td><a [routerLink] = "routes.adminInvoice">{{data.invoiceNumber}}</a></td>
-                      <td>{{data.patientId}}</td>
-                      <td>
-                        <h2 class="table-avatar">
-                          <a [routerLink] = "routes.adminProfile" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img" alt="User Image"></a>
-                          <a [routerLink] = "routes.adminProfile">{{data.patientName}} </a>
-                        </h2>
-                      </td>
-                      <td>{{data.totalAmount}}</td>
-                      <td>
-                        <span class="badge rounded-pill bg-success inv-badge">{{data.status}}</span>
-                      </td>
-                      <td>
-                        <div class="actions">
-                          <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal">
-                            <i class="fe fe-trash"></i> {{data.actions}}
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  }
+                  <tr *ngFor="let tx of transactions">
+                    <td><a [routerLink]="routes.adminInvoice">{{tx._id}}</a></td>
+                    <td>{{tx.appointment?.patient?._id}}</td>
+                    <td>
+                      <h2 class="table-avatar">
+                        <a [routerLink]="routes.adminProfile" class="avatar avatar-sm me-2">
+                          <img class="avatar-img rounded-circle" [src]="tx.appointment?.patient?.avatar || 'assets/img/patients/default.png'" alt="User Image">
+                        </a>
+                        <a [routerLink]="routes.adminProfile">{{tx.appointment?.patient?.name}}</a>
+                      </h2>
+                    </td>
+                    <td>{{tx.amount}}</td>
+                    <td>
+                      <span class="badge rounded-pill bg-success inv-badge">{{tx.status}}</span>
+                    </td>
+                    <td>
+                      <div class="actions">
+                        <a class="btn btn-sm bg-danger-light" data-bs-toggle="modal" href="#delete_modal" (click)="openDeleteModal(tx)">
+                          <i class="fe fe-trash"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
