@@ -90,7 +90,7 @@
                   <a
                     href="javascript:void(0);"
                     class="d-inline-block average-rating"
-                    >{{ reviews?.length || 0 }} Reviews</a
+                    >{{ reviews.length || 0 }} Reviews</a
                   >
                 </div>
                 <ul class="contact-doctors">
@@ -448,7 +448,7 @@
         </div>
         <div class="doc-information-details" id="review" #review>
           <div class="detail-title">
-            <h4>Reviews ({{ filteredReviews?.length || 0 }})</h4>
+            <h4>Reviews ({{ filteredReviews.length || 0 }})</h4>
           </div>
           <ng-container *ngFor="let review of filteredReviews | slice:(currentReviewPage-1)*5:(currentReviewPage)*5">
             <div class="doc-review-card">
