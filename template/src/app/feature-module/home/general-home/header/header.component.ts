@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   islight=false;
   isMenuOpened=false;
   themeColor = 'light-mode';
+  searchValue: string = '';
   constructor(
     private common: CommonService,
     private data: DataService,
@@ -65,6 +66,13 @@ export class HeaderComponent implements OnInit {
   }
   public navigation() {
     this.router.navigate([routes.search1]);
+  }
+  onSearchSubmit(event: Event) {
+    event.preventDefault();
+    if (this.searchValue && this.searchValue.trim()) {
+      this.router.navigate(['/patients/search-doctor/search1'], { queryParams: { q: this.searchValue.trim() } });
+      this.isSearch = false;
+    }
   }
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -110,10 +118,15 @@ export class HeaderComponent implements OnInit {
     return this.user?.name || '';
   }
 
-  getUserImage(): string {
-    return this.user?.profileImgUrl
-      ? this.user.profileImgUrl
-      : 'assets/img/user-placeholder.png'; // Use your actual placeholder path
+  getUserImage(): string | null {
+    return this.user?.profileImgUrl ? this.user.profileImgUrl : null;
+  }
+
+  getUserInitials(): string {
+    if (!this.user?.name) return '';
+    const names = this.user.name.trim().split(' ');
+    if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
   }
 
   logout() {
