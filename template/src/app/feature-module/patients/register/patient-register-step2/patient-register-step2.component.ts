@@ -63,7 +63,7 @@ export class PatientRegisterStep2Component {
 
   continue() {
     this.patientRegService.setStepData({
-      gender: this.gender,
+      gender: this.gender.toLowerCase(),
       isPregnant: this.isPregnant,
       pregnancyTerm: this.pregnancyTerm,
       weight: this.weight,

@@ -4,6 +4,8 @@ import { DataService } from 'src/app/shared/data/data.service';
 import { adminSidebar } from 'src/app/shared/models/sidebar-model';
 import { SidebarService } from 'src/app/shared/sidebar/sidebar.service';
 import { routes } from 'src/app/shared/routes/routes';
+import { AuthService } from 'src/app/shared/auth/auth.service';
+import { Router } from '@angular/router';
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
@@ -22,7 +24,9 @@ export class SidebarComponent {
   constructor(
     private sidebar: SidebarService,
     private common: CommonService,
-    private data: DataService
+    private data: DataService,
+    private authService: AuthService,
+    private router: Router
   ) {
     this.common.base.subscribe((base: string) => {
       this.base = base;
@@ -86,5 +90,10 @@ export class SidebarComponent {
     } else {
       this.sidebar.expandSideBar.next(false);
     }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['']);
   }
 }

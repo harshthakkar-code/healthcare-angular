@@ -3,11 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 import { DoctorsComponent } from './doctors.component';
 import { DoctorRequestComponent } from './doctor-request/doctor-request.component';
 import { DoctorSpecialitiesComponent } from './doctor-specialities/doctor-specialities.component';
+import { DoctorAuthGuard } from 'src/app/shared/auth/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'register',
+    loadChildren: () =>
+      import('./register/register.module').then((m) => m.RegisterModule),
+    // No guard here!
+  },
+  {
     path: '',
     component: DoctorsComponent,
+    canActivate: [DoctorAuthGuard],
     children: [
       {
         path: 'accounts',
@@ -83,12 +91,6 @@ const routes: Routes = [
         loadChildren: () =>
           import('./reviews/reviews.module').then((m) => m.ReviewsModule),
       },
-      {
-        path: 'register',
-        loadChildren: () =>
-          import('./register/register.module').then((m) => m.RegisterModule),
-      },
-
       {
         path: 'blog',
         loadChildren: () =>
