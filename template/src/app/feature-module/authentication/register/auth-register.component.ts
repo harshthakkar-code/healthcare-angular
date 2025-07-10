@@ -2,21 +2,34 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { routes } from 'src/app/shared/routes/routes';
 import intlTelInput from 'intl-tel-input';
+import { PatientRegistrationService } from 'src/app/feature-module/patients/register/patient-registration.service';
 @Component({
-    selector: 'app-register',
-    templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
+    selector: 'app-auth-register',
+    templateUrl: './auth-register.component.html',
+    styleUrls: ['./auth-register.component.scss'],
     standalone: false
 })
-export class RegisterComponent {
+export class AuthRegisterComponent {
   public routes = routes;
-  constructor(private router: Router) {}
+  name: string = '';
+  email: string = '';
+  phone: string = '';
+  password: string = '';
+  gender: string = '';
+  constructor(private router: Router, private patientRegistrationService: PatientRegistrationService) {}
 
   public togglePasswordClass = false;
   togglePassword() {
     this.togglePasswordClass = !this.togglePasswordClass;
   }
   public navigation() {
+    this.patientRegistrationService.setStepData({
+      name: this.name,
+      email: this.email,
+      phone: this.phone,
+      password: this.password,
+      gender: this.gender ? this.gender.toLowerCase() : ''
+    });
     this.router.navigateByUrl('/patients/register/patient-register-step1');
   }
   ngAfterViewInit(): void {

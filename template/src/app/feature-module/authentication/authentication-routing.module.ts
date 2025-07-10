@@ -80,7 +80,7 @@ const routes: Routes = [
       {
         path: 'register',
         loadChildren: () =>
-          import('./register/register.module').then((m) => m.RegisterModule),
+          import('./register/auth-register.module').then((m) => m.AuthRegisterModule),
       },
       {
         path: 'mobile-otp',

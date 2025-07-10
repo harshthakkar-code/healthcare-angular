@@ -20,19 +20,26 @@
                                     <li><a href="javascript:void(0)">5</a></li>
                                 </ul>
                             </div>
-                            <form id="profile_pic_form" enctype="multipart/form-data">  
+                            <form (ngSubmit)="nextStep()" #step1Form="ngForm">
                                 <div class="profile-pic-col">
                                     <h3>Profile Picture</h3>
                                     <div class="profile-pic-upload">
                                         <div class="cam-col">
-                                            <img src="assets/img/icons/camera.svg" id="prof-avatar" alt="camera-image" class="img-fluid">
+                                            <img *ngIf="profileImage; else cameraIcon" [src]="profileImage" alt="Profile" class="img-fluid" style="max-width: 120px; border-radius: 50%;" />
+                                            <ng-template #cameraIcon>
+                                                <img src="assets/img/icons/camera.svg" id="prof-avatar" alt="camera-image" class="img-fluid">
+                                            </ng-template>
                                         </div>
                                         <span>Upload Profile Picture</span>
-                                        <input type="file" id="profile_image" name="profile_image"> 
+                                        <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onProfileImageSelected($event)" [disabled]="uploading">
+                                        <div *ngIf="uploadError" class="text-danger small mt-1">{{ uploadError }}</div>
+                                        <div *ngIf="uploading" class="text-info small mt-1">Uploading...</div>
                                     </div>
+                                    <button *ngIf="profileImage" type="button" class="btn btn-sm btn-danger mt-2" (click)="removeProfileImage()">Remove</button>
                                 </div>
+                                <!-- Add other step 1 fields here -->
                                 <div class="mt-5">
-                                    <a [routerLink]="routes.patientregister2" class="btn btn-primary w-100 btn-lg login-btn step1_submit">continue </a>
+                                    <button type="submit" class="btn btn-primary-gradient w-100">Next</button>
                                 </div>
                             </form>
                         </div>
@@ -49,3 +56,4 @@
 
 </div>		
 <!-- /Page Content -->
+

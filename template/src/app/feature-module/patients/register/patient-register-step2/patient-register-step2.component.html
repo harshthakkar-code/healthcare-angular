@@ -27,14 +27,14 @@
                 <div class="select-gender-col">
                   <div class="row">
                     <div class="col-6 pe-2">
-                      <input type="radio" id="test1" name="gender" value="Male" [(ngModel)]="selectedOption">
+                      <input type="radio" id="test1" name="gender" value="Male" [(ngModel)]="gender">
                       <label for="test1">
                         <span class="gender-icon"><img src="assets/img/icons/male.png" alt="male-icon"></span>
                         <span>Male</span>
                       </label>
                     </div>
                     <div class="col-6 ps-2">
-                      <input type="radio" id="test2" name="gender" value="Female" [(ngModel)]="selectedOption">
+                      <input type="radio" id="test2" name="gender" value="Female" [(ngModel)]="gender">
                       <label for="test2">
                         <span class="gender-icon"><img src="assets/img/icons/female.png" alt="female-icon"></span>
                         <span>Female</span>
@@ -42,13 +42,13 @@
                     </div>
                   </div>
                 </div>
-                @if (selectedOption === 'Female') {
+                @if (gender === 'Female') {
                   <div class="pregnant-col pt-4">
                     <div>
                       <div class="remember-me-col d-flex justify-content-between">
                         <span class="mt-1">Are you Pregnant</span>
                         <label class="custom_check">
-                          <input type="checkbox" class="" id="is_registered" name="pregnant" value="1" (click)="toggleDisplay()">
+                          <input type="checkbox" class="" id="is_registered" name="isPregnant" [(ngModel)]="isPregnant" (click)="toggleDisplay()">
                           <span class="checkmark"></span>
                         </label>
                       </div>
@@ -58,7 +58,7 @@
                 <div class="step-process-col mt-4">
                   <div class="mb-3" id="preg_div" [style.display]="displayStyle">
                     <label for="pregnancy-term" class="mb-2">Pregnancy Term</label>
-                    <select class="form-select form-control" id="preg_term" name="preg_term" tabindex="-1" aria-hidden="true">
+                    <select class="form-select form-control" id="preg_term" name="pregnancyTerm" [(ngModel)]="pregnancyTerm">
                       <option selected="" value="">Select Your Pregnancy Month</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -76,10 +76,10 @@
                     <label for="weight" class="mb-2">Your Weight</label>
                     <div class="row">
                       <div class="col-7 pe-2">
-                        <input type="text" class="form-control" name="weight" value="" id="weight">
+                        <input type="text" class="form-control" name="weight" id="weight" [(ngModel)]="weight">
                       </div>
                       <div class="col-5 ps-2">
-                        <select class="form-select form-control" id="weight_unit" name="weight_unit">
+                        <select class="form-select form-control" id="weight_unit" name="weightUnit" [(ngModel)]="weightUnit">
                           <option value="kg">Kg</option>
                         </select>
                       </div>
@@ -89,10 +89,10 @@
                     <label for="height" class="mb-2">Your Height</label>
                     <div class="row">
                       <div class="col-7 pe-2">
-                        <input type="text" class="form-control" id="height">
+                        <input type="text" class="form-control" id="height" name="height" [(ngModel)]="height">
                       </div>
                       <div class="col-5 ps-2">
-                        <select class="form-select form-control" id="height_unit" name="height_unit" tabindex="-1" aria-hidden="true">
+                        <select class="form-select form-control" id="height_unit" name="heightUnit" [(ngModel)]="heightUnit">
                           <option value="cm">cm</option>
                           <option value="ft">ft</option>
                         </select>
@@ -101,11 +101,11 @@
                   </div>
                   <div class="mb-3">
                     <label for="age" class="mb-2">Your Age</label>
-                    <input type="text" name="age" value="" class="form-control" id="age">
+                    <input type="text" name="age" class="form-control" id="age" [(ngModel)]="age">
                   </div>
                   <div class="mb-3">
                     <label for="blood-type" class="mb-2">Blood Type</label>
-                    <select class="form-select form-control" id="blood_group" name="blood_group" tabindex="-1" aria-hidden="true">
+                    <select class="form-select form-control" id="blood_group" name="blood" [(ngModel)]="blood">
                       <option value="">Select your blood group</option>
                       <option value="A-">A-</option>
                       <option value="A+">A+</option>
@@ -119,7 +119,7 @@
                   </div>
                   <div class="mb-3">
                     <label for="heart-rate" class="mb-2">Heart Rate</label>
-                    <select class="form-select form-control" id="heart_rate" name="heart_rate" tabindex="-1" aria-hidden="true">
+                    <select class="form-select form-control" id="heart_rate" name="heartRate" [(ngModel)]="heartRate">
                       <option value="">Select Your Heart Rate</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -127,7 +127,7 @@
                   </div>
                   <div class="mb-3">
                     <label class="mb-2" for="blood-pressure">Blood Pressure</label>
-                    <select class="form-select form-control" id="bp" name="bp" tabindex="-1" aria-hidden="true">
+                    <select class="form-select form-control" id="bp" name="bp" [(ngModel)]="bp">
                       <option value="">Select Your Blood Pressure</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -135,7 +135,7 @@
                   </div>
                   <div class="mb-3">
                     <label for="glucose-level" class="mb-2">Glucose Level</label>
-                    <select class="form-select form-control" id="glucose" name="glucose" tabindex="-1" aria-hidden="true">
+                    <select class="form-select form-control" id="glucose" name="glucose" [(ngModel)]="glucose">
                       <option value="">Select Your Glucose Level</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -143,40 +143,40 @@
                   </div>
                   <div class="mb-3">
                     <label class="mb-2" for="allergies">Allergies</label>
-                    <input type="text" class="form-control" value="" id="allergies" name="allergies">
+                    <input type="text" class="form-control" id="allergies" name="allergies" [(ngModel)]="allergies">
                   </div>
                   <div class="checklist-col pregnant-col">
                     <div class="remember-me-col d-flex justify-content-between">
                       <span class="mt-1">Do you have any pre-exisiting conditions?</span>
                       <label class="custom_check mb-3">
-                        <input type="checkbox" class="" name="cancer" id="cancer"  value="1">
+                        <input type="checkbox" class="" name="preExisting" id="cancer" [(ngModel)]="preExisting">
                         <span class="checkmark"></span>
                       </label>
                     </div>
                     <div class="remember-me-col" id="cancer_div" style="display:none">
                       <div class="condition_input">
-                        <input type="text" id="conditions" name="conditions[]" class="form-control" placeholder="">
+                        <input type="text" id="conditions" name="conditions[]" class="form-control" [(ngModel)]="conditions[0]">
                       </div>
                       <a href="javascript:void(0);" class="add_condition"><i class="fa fa-plus"></i></a>
                     </div>
                     <div class="remember-me-col d-flex justify-content-between">
                       <span class="mt-1">Are you currently taking any medication</span>
                       <label class="custom_check mb-3">
-                        <input type="checkbox" class="" name="medicine" id="medicine" value="1">
+                        <input type="checkbox" class="" name="medication" id="medicine" [(ngModel)]="medication">
                         <span class="checkmark"></span>
                       </label>
                     </div>
                     <div class="remember-me-col" id="medicine_div" style="display:none">
                       <div class="medicine_input">
-                        <input type="text" id="medicine_name" name="medicine_name[]" value="" class="form-control" placeholder="Enter medicine_name">
-                        <input type="text" value="" id="dosage" name="dosage[]" class="form-control" placeholder="Enter dosage">
+                        <input type="text" id="medicine_name" name="medicines[]" class="form-control" [(ngModel)]="medicines[0]">
+                        <input type="text" id="dosage" name="dosages[]" class="form-control" [(ngModel)]="dosages[0]">
                       </div>
                       <a href="javascript:void(0);" class="add_medicine"><i class="fa fa-plus"></i></a>
                     </div>
                   </div>
                 </div>
                 <div class="mt-5">
-                  <a [routerLink]="routes.patientregister3" class="btn btn-primary w-100 btn-lg login-btn step2_submit">continue </a>
+                  <button type="button" (click)="continue()" class="btn btn-primary w-100 btn-lg login-btn step2_submit">continue </button>
                 </div>
               </form>
             </div>

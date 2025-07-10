@@ -29,14 +29,14 @@
                                     <div class="remember-me-col d-flex justify-content-between">
                                         <span class="mt-1">Self</span>
                                         <label class="custom_check mb-3">
-                                            <input type="checkbox" class="" name="self" id="self" value="1" checked="">
+                                            <input type="checkbox" class="" name="self" id="self" value="1" [(ngModel)]="insuranceSelf">
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
                                     <div class="remember-me-col d-flex justify-content-between">
                                         <span class="mt-1">Spouse</span>
                                         <label class="custom_check mb-3">
-                                            <input type="checkbox" class="" name="spouse" id="spouse" value="1">
+                                            <input type="checkbox" class="" name="spouse" id="spouse" value="1" [(ngModel)]="insuranceSpouse">
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
@@ -44,29 +44,29 @@
                                         <span class="mt-1">Child</span>
                                         <div class="increment-decrement mt-3">
                                             <div class="input-groups">
-                                                <input type="button" value="-" (click)="reducePos(0)" (keydown)="reducePos(0)" tabindex="1" id="subs" class="button-minus dec button">
-                                                <input type="text" name="child" [(ngModel)]="cartValue[0]" id="child" value="0" class="quantity-field">
-                                                <input type="button" value="+" (click)="addPos(0)" (keydown)="addPos(0)" tabindex="1" id="adds" class="button-plus inc button a1 a2 a3 a4 a0">
+                                                <input type="button" value="-" (click)="reducePos()" (keydown)="reducePos()" tabindex="1" id="subs" class="button-minus dec button">
+                                                <input type="text" name="child" [(ngModel)]="insuranceChildCount" id="child" class="quantity-field">
+                                                <input type="button" value="+" (click)="addPos()" (keydown)="addPos()" tabindex="1" id="adds" class="button-plus inc button a1 a2 a3 a4 a0">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="remember-me-col d-flex justify-content-between">
                                         <span class="mt-1">Mother</span>
                                         <label class="custom_check mb-3">
-                                            <input type="checkbox" class="" name="mother" id="mother" value="1">
+                                            <input type="checkbox" class="" name="mother" id="mother" value="1" [(ngModel)]="insuranceMother">
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
                                     <div class="remember-me-col d-flex justify-content-between">
                                         <span class="mt-1">Father</span>
                                         <label class="custom_check mb-3">
-                                            <input type="checkbox" class="" name="father" id="father" value="1">
+                                            <input type="checkbox" class="" name="father" id="father" value="1" [(ngModel)]="insuranceFather">
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="mt-5">
-                                    <a [routerLink]="routes.patientregister4" class="btn btn-primary w-100 btn-lg login-btn step3_submit">continue </a>
+                                    <button type="button" (click)="continue()" class="btn btn-primary w-100 btn-lg login-btn step3_submit">continue </button>
                                 </div>
                             </form>
                         </div>

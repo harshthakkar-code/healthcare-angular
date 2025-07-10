@@ -28,39 +28,43 @@
                                 <div class="step-process-col mt-4">
                                     <div class="mb-3">
                                         <label class="mb-2" for="age">Child_1 Age</label>
-                                        <input type="text" class="form-control" id="Child_1_age" name="Child_1_age">
+                                        <input type="text" class="form-control" id="Child_1_age" name="Child_1_age" [(ngModel)]="child1Age">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="img">Child_1 Image</label>
-                                        <input type="file" class="form-control" id="Child_1_image" name="Child_1_image">
+                                        <input type="file" class="form-control" id="Child_1_image" name="Child_1_image" (change)="onImageSelected($event, 'child1Image')">
+                                        <img *ngIf="child1Image" [src]="child1Image" alt="Child 1" style="max-width: 80px; margin-top: 5px;">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="spouse-age">Spouse Age</label>
-                                        <input type="text" class="form-control" id="spouse_age" name="spouse_age">
+                                        <input type="text" class="form-control" id="spouse_age" name="spouse_age" [(ngModel)]="spouseAge">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="spouse-img">Spouse Image</label>
-                                        <input type="file" class="form-control" id="spouse_file" name="spouse_file">
+                                        <input type="file" class="form-control" id="spouse_file" name="spouse_file" (change)="onImageSelected($event, 'spouseImage')">
+                                        <img *ngIf="spouseImage" [src]="spouseImage" alt="Spouse" style="max-width: 80px; margin-top: 5px;">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="father">Father</label>
-                                        <input type="text" class="form-control" id="father_age" name="father_age">
+                                        <input type="text" class="form-control" id="father_age" name="father_age" [(ngModel)]="fatherAge">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="father-image">Father Image</label>
-                                        <input type="file" class="form-control" id="father_file" name="father_file">
+                                        <input type="file" class="form-control" id="father_file" name="father_file" (change)="onImageSelected($event, 'fatherImage')">
+                                        <img *ngIf="fatherImage" [src]="fatherImage" alt="Father" style="max-width: 80px; margin-top: 5px;">
                                     </div>
                                     <div class="mb-3">
                                         <label class="mb-2" for="">Mother</label>
-                                        <input type="text" class="form-control" id="mother_age" name="mother_age">
+                                        <input type="text" class="form-control" id="mother_age" name="mother_age" [(ngModel)]="motherAge">
                                     </div>
                                     <div class="mb-3">
                                         <label for="mother-img" class="mb-2">Mother Image</label>
-                                        <input type="file" class="form-control" id="mother_file" name="mother_file">
+                                        <input type="file" class="form-control" id="mother_file" name="mother_file" (change)="onImageSelected($event, 'motherImage')">
+                                        <img *ngIf="motherImage" [src]="motherImage" alt="Mother" style="max-width: 80px; margin-top: 5px;">
                                     </div>
                                 </div>
                                 <div class="mt-5">
-                                    <a [routerLink]="routes.patientregister5" class="btn btn-primary w-100 btn-lg login-btn step4_submit">continue </a>
+                                    <button type="button" (click)="continue()" class="btn btn-primary w-100 btn-lg login-btn step4_submit">continue </button>
                                 </div>
                             </form>
                         </div>
