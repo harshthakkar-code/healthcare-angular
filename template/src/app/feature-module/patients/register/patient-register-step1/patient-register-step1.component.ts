@@ -5,13 +5,14 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { uploadImage } from 'src/app/shared/api/image-upload';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-patient-register-step1',
     templateUrl: './patient-register-step1.component.html',
     styleUrls: ['./patient-register-step1.component.scss'],
     standalone: true,
-    imports: [FormsModule, RouterModule]
+    imports: [FormsModule, RouterModule, CommonModule]
 })
 export class PatientRegisterStep1Component {
   public routes = routes;
