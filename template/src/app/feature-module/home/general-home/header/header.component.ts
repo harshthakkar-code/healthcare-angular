@@ -1,4 +1,4 @@
-import { Component, HostListener, Renderer2 } from '@angular/core';
+import { Component, HostListener, Renderer2, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { DataService } from 'src/app/shared/data/data.service';
@@ -12,8 +12,9 @@ import { SidebarService } from 'src/app/shared/sidebar/sidebar.service';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
-public searchField  = false;
+export class HeaderComponent implements OnInit {
+  user: any = null;
+  public searchField  = false;
   public routes = routes;
   public header: header[];
   base = '';
@@ -74,6 +75,7 @@ public searchField  = false;
     this.isSearch=!this.isSearch;
   }
   ngOnInit(): void {
+    this.loadUser();
     const themeColor = localStorage.getItem('themeColor') || 'light-mode';
     this.sidebar.changeThemeColor(themeColor);
   }
@@ -83,5 +85,40 @@ public searchField  = false;
   }
   navigate():void{
     this.router.navigate([routes.search1]);
+  }
+  goToDashboard() {
+    const role = this.user?.role;
+    if (role === 'patient') {
+      this.router.navigate(['/patients/patient-dashboard']);
+    } else if (role === 'doctor') {
+      this.router.navigate(['/doctors/doctor-dashboard']);
+    } else if (role === 'admin') {
+      this.router.navigate(['/admin/dashboard']);
+    }
+  }
+
+  loadUser() {
+    const userStr = localStorage.getItem('user');
+    this.user = userStr ? JSON.parse(userStr) : null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.user;
+  }
+
+  getUserName(): string {
+    return this.user?.name || '';
+  }
+
+  getUserImage(): string {
+    return this.user?.profileImgUrl
+      ? this.user.profileImgUrl
+      : 'assets/img/user-placeholder.png'; // Use your actual placeholder path
+  }
+
+  logout() {
+    localStorage.removeItem('user');
+    // Optionally, remove token and redirect
+    window.location.reload();
   }
 }
