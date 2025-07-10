@@ -101,10 +101,10 @@
               <li class="searchbar">
                 <a href="javascript:void(0);" (click)="openSearch()"><i class="feather-search"></i></a>
                 <div class="togglesearch" [ngStyle]="{'display':isSearch?'block':'none'}">
-                  <form>
+                  <form (ngSubmit)="onSearchSubmit($event)">
                     <div class="input-group">
-                      <input type="text" class="form-control">
-                      <button type="submit" class="btn" (click)="navigate()">Search</button>
+                      <input type="text" class="form-control" [(ngModel)]="searchValue" name="searchValue">
+                      <button type="submit" class="btn">Search</button>
                     </div>
                   </form>
                 </div>
@@ -119,7 +119,14 @@
               </li>
               <li *ngIf="isLoggedIn()" class="d-flex align-items-center">
                 <span class="me-2">{{ getUserName() }}</span>
-                <img [src]="getUserImage()" alt="User" class="rounded-circle me-2" style="width:32px; height:32px; object-fit:cover; cursor:pointer;" (click)="goToDashboard()">
+                <ng-container *ngIf="getUserImage(); else initialsAvatar">
+                  <img [src]="getUserImage()" alt="User" class="rounded-circle me-2" style="width:32px; height:32px; object-fit:cover; cursor:pointer;" (click)="goToDashboard()">
+                </ng-container>
+                <ng-template #initialsAvatar>
+                  <span class="rounded-circle me-2 d-inline-flex align-items-center justify-content-center bg-secondary text-white" style="width:32px; height:32px; font-weight:bold; font-size:1rem; cursor:pointer;" (click)="goToDashboard()">
+                    {{ getUserInitials() }}
+                  </span>
+                </ng-template>
                 <button class="btn btn-md btn-outline-secondary rounded-pill" (click)="logout()">Logout</button>
               </li>
             </ul>

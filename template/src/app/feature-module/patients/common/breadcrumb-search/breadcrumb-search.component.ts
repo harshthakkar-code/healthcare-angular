@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { routes } from 'src/app/shared/routes/routes';
 
@@ -19,7 +19,7 @@ export class BreadcrumbSearchComponent {
   base = '';
   page = '';
   last = '';
-  searchValue: string = '';
+  @Input() searchValue: string = '';
   location: string = '';
   date: string = '';
   @Output() search = new EventEmitter<DoctorSearchFilters>();
@@ -29,6 +29,10 @@ export class BreadcrumbSearchComponent {
       this.base = res?.replaceAll('-', ' ');
     });
     this.common.page.subscribe((res: string) => {
+      let cleanRes = res?.replaceAll('-', ' ');
+      if (cleanRes && cleanRes.includes('?')) {
+        cleanRes = cleanRes.split('?')[0];
+      }
       if (res === 'chat') {
         this.page = 'Message';
       } else if (res === 'appointments') {
@@ -39,11 +43,15 @@ export class BreadcrumbSearchComponent {
         this.page = 'Invoices';
       } else {
         this.last = this.page;
-        this.page = res?.replaceAll('-', ' ');
+        this.page = cleanRes;
       }
     });
     this.common.last.subscribe((res: string) => {
-      this.last = res?.replaceAll('-', ' ');
+      let cleanRes = res?.replaceAll('-', ' ');
+      if (cleanRes && cleanRes.includes('?')) {
+        cleanRes = cleanRes.split('?')[0];
+      }
+      this.last = cleanRes;
     });
   }
 

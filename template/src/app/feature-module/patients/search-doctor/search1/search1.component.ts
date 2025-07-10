@@ -5,6 +5,7 @@ import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
 import { debounceTime, Subject } from 'rxjs';
 import { DoctorSearchFilters } from '../../common/breadcrumb-search/breadcrumb-search.component';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
     selector: 'app-search1',
     templateUrl: './search1.component.html',
@@ -30,17 +31,33 @@ export class Search1Component implements OnInit{
   total: number = 0;
   private searchSubject = new Subject<void>();
 
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+  }
+
   onBeforeSlide = (detail: BeforeSlideDetail): void => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { index, prevIndex } = detail;
   };
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['q']) {
+        this.searchTerm = params['q'];
+        this.page = 1;
+        this.doctors = [];
+        this.fetchDoctors();
+      }
+    });
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
       this.page = 1;
       this.doctors = [];
       this.fetchDoctors();
     });
-    this.fetchDoctors();
+    if (!this.searchTerm) {
+      this.fetchDoctors();
+    }
   }
 
   getPatientId(): string | null {
@@ -121,6 +138,11 @@ export class Search1Component implements OnInit{
     this.date = filters.date;
     this.page = 1;
     this.doctors = [];
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { q: this.searchTerm },
+      queryParamsHandling: 'merge',
+    });
     this.searchSubject.next();
   }
 
