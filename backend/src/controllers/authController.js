@@ -33,9 +33,9 @@ exports.register = async (req, res, next) => {
         return res.status(400).json({ message: 'Please fill all doctor profile fields.' });
       }
       const files = req.files || {};
-      // if (!files.profileImage || !files.certFile || !files.photoID || !files.employmentProof) {
-      //   return res.status(400).json({ message: 'All required files (profile image, certificate, photo ID, employment proof) must be uploaded.' });
-      // }
+      if (!files.profileImage || !files.certFile || !files.photoID || !files.employmentProof) {
+        return res.status(400).json({ message: 'All required files (profile image, certificate, photo ID, employment proof) must be uploaded.' });
+      }
     }
 
     // 4. Create user
@@ -124,6 +124,26 @@ exports.getMe = async (req, res, next) => {
   try {
     res.json(req.user);
   } catch (err) { next(err); }
+};
+
+exports.updateMe = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    // Only allow updating certain fields
+    const allowedFields = [
+      'name', 'email', 'phone', 'gender', 'profileImgUrl', 'age', 'weight', 'height', 'blood',
+      'address', 'address2', 'city', 'state', 'country', 'pincode', 'dob'
+      // Add more fields as needed
+    ];
+    const updates = {};
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) updates[field] = req.body[field];
+    });
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true });
+    res.json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.requestOtp = async (req, res, next) => {

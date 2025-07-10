@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middlewares/upload');
 const uploadController = require('../controllers/uploadController');
+const auth = require('../middlewares/auth');
 
-router.post('/document', upload.single('file'), uploadController.uploadDocument);
+// Universal image upload endpoint (protected)
+router.post('/image', auth, uploadController.uploadImage);
 
 module.exports = router;
 

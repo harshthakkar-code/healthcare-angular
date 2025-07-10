@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorRegistrationService } from '../doctor-registration.service';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
   selector: 'app-doctor-register-step2',
@@ -35,6 +36,9 @@ export class DoctorRegisterStep2Component {
 
   displayStyle: string = 'none';
 
+  uploading: { [key: string]: boolean } = {};
+  uploadError: { [key: string]: string } = {};
+
   constructor(private router: Router, private regService: DoctorRegistrationService) {
     const data = this.regService.getAllData();
     this.gender = data.gender || '';
@@ -63,12 +67,27 @@ export class DoctorRegisterStep2Component {
     this.displayStyle = this.displayStyle === 'none' ? 'block' : 'none';
   }
 
-  // File input handlers (for qualiCertificate, photoId, clinicalEmployment)
-  onFileChange(event: any, field: 'qualiCertificate' | 'photoId' | 'clinicalEmployment') {
+  async onFileSelected(event: any, field: 'qualiCertificate' | 'photoId' | 'clinicalEmployment') {
     const file = event.target.files && event.target.files[0];
-    if (file) {
-      this[field] = file.name;
+    if (!file) return;
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      this.uploadError[field] = 'Only JPG and PNG images are allowed.';
+      return;
     }
+    this.uploadError[field] = '';
+    this.uploading[field] = true;
+    try {
+      const url = await uploadImage(file);
+      this[field] = url;
+    } catch (err) {
+      this.uploadError[field] = 'Upload failed. Please try again.';
+    }
+    this.uploading[field] = false;
+  }
+
+  removeFile(field: 'qualiCertificate' | 'photoId' | 'clinicalEmployment') {
+    this[field] = '';
   }
 
   nextStep() {

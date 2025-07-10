@@ -22,11 +22,18 @@
                                     <h3>Profile Picture</h3>
                                     <div class="profile-pic-upload">
                                         <div class="cam-col">
-                                            <img src="assets/img/icons/camera.svg" id="prof-avatar" alt="camera-image" class="img-fluid">
+                                            <img *ngIf="profileImage; else cameraIcon" [src]="profileImage" alt="Profile" class="img-fluid" style="max-width: 120px; border-radius: 50%;" />
+                                            <ng-template #cameraIcon>
+                                                <img src="assets/img/icons/camera.svg" id="prof-avatar" alt="camera-image" class="img-fluid">
+                                            </ng-template>
                                         </div>
                                         <span>Upload Profile Picture</span>
-                                        <input type="file" class="form-control" name="profileImage" [(ngModel)]="profileImage" placeholder="Profile Image URL">
+                                        <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onProfileImageSelected($event)" [disabled]="uploading">
+                                        <div *ngIf="uploadError" class="text-danger small mt-1">{{ uploadError }}</div>
+                                        <div *ngIf="uploading" class="text-info small mt-1">Uploading...</div>
                                     </div>
+                                    <button *ngIf="profileImage" type="button" class="btn btn-sm btn-danger mt-2" (click)="removeProfileImage()">Remove</button>
+
                                 </div>
                                 <div class="mt-5">
                                     <button type="submit" class="btn btn-primary-gradient w-100">Next</button>

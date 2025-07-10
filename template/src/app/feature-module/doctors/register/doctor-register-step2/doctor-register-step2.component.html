@@ -87,32 +87,50 @@
                                     <div class="mb-3">
                                         <label class="mb-2" for="certification">Certification and Employer</label>
                                         <div class="row justify-content-center">
-                                            <div class="col-12 col-md-6 d-flex">
-                                                 <div class="profile-pic-upload d-flex flex-wrap justify-content-center">
-                                                    <div class="cam-col">
-                                                        <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                            <div class="col-12 col-md-6 d-flex flex-column align-items-center">
+                                                <div class="profile-pic-upload d-flex flex-wrap justify-content-center" style="background: #eaf6ff; border-radius: 16px; padding: 24px 12px;">
+                                                    <div class="cam-col mb-2">
+                                                        <img *ngIf="qualiCertificate; else certIcon" [src]="qualiCertificate" alt="Certificate" style="max-width: 100px; border-radius: 8px;" />
+                                                        <ng-template #certIcon>
+                                                            <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                                        </ng-template>
                                                     </div>
-                                                    <span class="text-center">Upload Rigth To sell Certigifcate</span>
-                                                    <input type="file" id="quali_certificate" name="quali_certificate" (change)="onFileChange($event, 'qualiCertificate')">
+                                                    <span class="text-center w-100">Upload Right To Sell Certificate</span>
+                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event, 'qualiCertificate')" [disabled]="uploading['qualiCertificate']">
+                                                    <div *ngIf="uploadError['qualiCertificate']" class="text-danger small mt-1 w-100">{{ uploadError['qualiCertificate'] }}</div>
+                                                    <div *ngIf="uploading['qualiCertificate']" class="text-info small uploading-center">Uploading...</div>
                                                 </div>
+                                                <button *ngIf="qualiCertificate" type="button" class="btn btn-sm btn-danger mt-2 w-100" (click)="removeFile('qualiCertificate')">Remove</button>
                                             </div>
-                                            <div class="col-12 col-md-6 d-flex">
-                                                <div class="profile-pic-upload d-flex flex-wrap justify-content-center">
-                                                    <div class="cam-col">
-                                                        <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                            <div class="col-12 col-md-6 d-flex flex-column align-items-center">
+                                                <div class="profile-pic-upload d-flex flex-wrap justify-content-center" style="background: #eaf6ff; border-radius: 16px; padding: 24px 12px;">
+                                                    <div class="cam-col mb-2">
+                                                        <img *ngIf="photoId; else photoIdIcon" [src]="photoId" alt="Photo ID" style="max-width: 100px; border-radius: 8px;" />
+                                                        <ng-template #photoIdIcon>
+                                                            <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                                        </ng-template>
                                                     </div>
-                                                    <span class="text-center">Upload Photo ID</span>
-                                                    <input type="file" id="photo_id" name="photo_id" (change)="onFileChange($event, 'photoId')">
+                                                    <span class="text-center w-100">Upload Photo ID</span>
+                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event, 'photoId')" [disabled]="uploading['photoId']">
+                                                    <div *ngIf="uploadError['photoId']" class="text-danger small mt-1 w-100">{{ uploadError['photoId'] }}</div>
+                                                    <div *ngIf="uploading['photoId']" class="text-info small uploading-center">Uploading...</div>
                                                 </div>
+                                                <button *ngIf="photoId" type="button" class="btn btn-sm btn-danger mt-2 w-100" (click)="removeFile('photoId')">Remove</button>
                                             </div>
-                                            <div class="col-12 col-md-6 d-flex">
-                                                <div class="profile-pic-upload d-flex flex-wrap justify-content-center">
-                                                    <div class="cam-col">
-                                                        <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                            <div class="col-12 col-md-6 d-flex flex-column align-items-center">
+                                                <div class="profile-pic-upload d-flex flex-wrap justify-content-center" style="background: #eaf6ff; border-radius: 16px; padding: 24px 12px;">
+                                                    <div class="cam-col mb-2">
+                                                        <img *ngIf="clinicalEmployment; else employmentIcon" [src]="clinicalEmployment" alt="Employment Proof" style="max-width: 100px; border-radius: 8px;" />
+                                                        <ng-template #employmentIcon>
+                                                            <img src="assets/img/icons/camera.svg" alt="camera-image">
+                                                        </ng-template>
                                                     </div>
-                                                    <span class="text-center">Upload Clinical employment</span>
-                                                    <input type="file" id="clinical_employment" name="clinical_employment" (change)="onFileChange($event, 'clinicalEmployment')">
+                                                    <span class="text-center w-100">Upload Clinical Employment</span>
+                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event, 'clinicalEmployment')" [disabled]="uploading['clinicalEmployment']">
+                                                    <div *ngIf="uploadError['clinicalEmployment']" class="text-danger small mt-1 w-100">{{ uploadError['clinicalEmployment'] }}</div>
+                                                    <div *ngIf="uploading['clinicalEmployment']" class="text-info small uploading-center">Uploading...</div>
                                                 </div>
+                                                <button *ngIf="clinicalEmployment" type="button" class="btn btn-sm btn-danger mt-2 w-100" (click)="removeFile('clinicalEmployment')">Remove</button>
                                             </div>
                                         </div>
                                     </div>
