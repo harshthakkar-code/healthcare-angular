@@ -110,43 +110,43 @@
         <div class="list-card card mb-0">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-center justify-content-xl-between flex-wrap gap-4 list-wraps">
-                    <a [routerLink]="routes.booking" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-secondary">
                             <img src="assets/img/icons/list-icon-01.svg" alt="img">
                         </div>
                         <h6>Book Appointment</h6>
                     </a>
-                    <a [routerLink]="routes.doctorGrid" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-primary">
                             <img src="assets/img/icons/list-icon-02.svg" alt="img">
                         </div>
                         <h6>Talk to Doctors</h6>
                     </a>
-                    <a [routerLink]="routes.Hospitals" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-pink">
                             <img src="assets/img/icons/list-icon-03.svg" alt="img">
                         </div>
                         <h6>Hospitals & Clinics</h6>
                     </a>
-                    <a [routerLink]="routes.home3" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-cyan">
                             <img src="assets/img/icons/list-icon-04.svg" alt="img">
                         </div>
                         <h6>Healthcare</h6>
                     </a>
-                    <a [routerLink]="routes.home13" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-purple">
                             <img src="assets/img/icons/list-icon-05.svg" alt="img">
                         </div>
                         <h6>Medicine & Supplies</h6>
                     </a>
-                    <a [routerLink]="routes.home12" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-orange">
                             <img src="assets/img/icons/list-icon-06.svg" alt="img">
                         </div>
                         <h6>Lab Testing</h6>
                     </a>
-                    <a [routerLink]="routes.home13" class="list-item aos" data-aos="fade-up">
+                    <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-teal">
                             <img src="assets/img/icons/list-icon-07.svg" alt="img">
                         </div>
@@ -167,112 +167,16 @@
             <h2>Highlighting the Care & Support</h2>
         </div>
         <owl-carousel-o class="spciality-slider custom-slide aos" data-aos="fade-up" [options]="spcialitySlider">
-            <ng-template carouselSlide>
+            <ng-template carouselSlide *ngFor="let spec of staticSpecialties">
                 <div class="spaciality-item">
                     <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-01.jpg" alt="img">
+                        <img [src]="spec.img" alt="img">
                         <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-01.svg" alt="img">
+                            <img [src]="spec.icon" alt="img">
                         </span>
                     </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Cardiology</a></h6>
-                    <p class="mb-0">254 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-02.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-02.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Orthopedics</a></h6>
-                    <p class="mb-0">151 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-03.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-03.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Neurology</a></h6>
-                    <p class="mb-0">176 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">							
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-04.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-04.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Pediatrics</a></h6>
-                    <p class="mb-0">124 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">						
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-05.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-05.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Psychiatry</a></h6>
-                    <p class="mb-0">112 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">													
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-06.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-06.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Endocrinology</a></h6>
-                    <p class="mb-0">104 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">						
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-07.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-07.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Pulmonology</a></h6>
-                    <p class="mb-0">41 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">						
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-08.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-08.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Urology</a></h6>
-                    <p class="mb-0">39 Doctors</p>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="spaciality-item">
-                    <div class="spaciality-img">
-                        <img src="assets/img/specialities/speciality-03.jpg" alt="img">
-                        <span class="spaciality-icon">
-                            <img src="assets/img/specialities/speciality-icon-03.svg" alt="img">
-                        </span>
-                    </div>
-                    <h6><a [routerLink]="routes.doctorGrid">Neurology</a></h6>
-                    <p class="mb-0">176 Doctors</p>
+                    <h6><a [routerLink]="routes.doctorGrid">{{ spec.name }}</a></h6>
+                    <p class="mb-0">{{ getSpecialtyCount(spec.name) }} Doctors</p>
                 </div>
             </ng-template>
         </owl-carousel-o>
@@ -290,12 +194,17 @@
         </div>
 
         <owl-carousel-o class="doctors-slider custom-slide aos" data-aos="fade-up" [options]="doctorSlider">
-            <ng-template carouselSlide>
+            <ng-template carouselSlide *ngFor="let doctor of featuredDoctors">
                 <div class="card">
                     <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-01.jpg" alt=""></a>
+                        <a [routerLink]="['/doctors/profile', doctor._id]">
+                            <img 
+  [src]="doctor.profileImage && doctor.profileImage !== '' ? doctor.profileImage : 'assets/img/doctor-grid/doctor-grid-01.jpg'" 
+  alt="Doctor"
+  style="width:100%; height:240px; object-fit:cover; background:#f5f5f5;">
+                        </a>
                         <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>5.0</span>
+                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.rating || 'N/A' }}</span>
                             <a href="javascript:void(0)" class="fav-icon">
                                 <i class="fa fa-heart"></i>
                             </a>
@@ -303,7 +212,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="d-flex active-bar align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">Psychologist</a>
+                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialization || 'Specialist' }}</a>
                             <span class="badge bg-success-light d-inline-flex align-items-center">
                                 <i class="fa-solid fa-circle fs-5 me-1"></i>
                                 Available
@@ -311,17 +220,17 @@
                         </div>
                         <div class="p-3 pt-0">
                             <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Michael Brown</a></h3>
+                                <h3 class="mb-1"><a [routerLink]="['/doctors/profile', doctor._id]">{{ doctor.name || 'Doctor Name' }}</a></h3>
                                 <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Minneapolis, MN</p>
+                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
                                     <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
+                                    <span class="fs-14 fw-medium">{{ doctor.consultationTime || '30 Min' }}</span>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$650</h3>
+                                    <h3 class="text-orange">{{ doctor.fees ? ('$' + doctor.fees) : '$0' }}</h3>
                                 </div>
                                 <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>
@@ -332,175 +241,19 @@
                     </div>
                 </div>
             </ng-template>
-            <ng-template carouselSlide>
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-02.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.6</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-pink align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-pink fw-medium fs-14">Pediatrician</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Nicholas Tello</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Ogden, IA</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">60 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$400</h3>
-                                </div>
-                                <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-03.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.8</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-teal align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-teal fw-medium fs-14">Neurologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Harold Bryant</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Winona, MS</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$500</h3>
-                                </div>
-                                <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-04.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.8</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-info align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-info fw-medium fs-14">Cardiologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Sandra Jones</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Beckley, WV</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$550</h3>
-                                </div>
-                                <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card">
-                    <div class="card-img card-img-hover">
-                        <a [routerLink]="routes.doctorProfile1"><img src="assets/img/doctor-grid/doctor-grid-05.jpg" alt=""></a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>4.2</span>
-                            <a href="javascript:void(0)" class="fav-icon">
-                                <i class="fa fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar active-bar-teal align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-teal fw-medium fs-14">Neurologist</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">Dr. Charles Scott</a></h3>
-                                <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>Hamshire, TX</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                    <span class="fs-14 fw-medium">30 Min</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                    <h3 class="text-orange">$600</h3>
-                                </div>
-                                <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+            <ng-template carouselSlide *ngIf="featuredDoctors.length === featuredDoctorsLimit">
+                <div class="card d-flex align-items-center justify-content-center" style="height: 100%; min-height: 420px;">
+                    <a [routerLink]="'/patients/search-doctor/search1'" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-decoration-none">
+                        <i class="fa fa-users fa-3x mb-3 text-primary"></i>
+                        <span class="h4 mb-2">View All Doctors</span>
+                        <button class="btn btn-primary-gradient btn-lg mt-2">View All</button>
+                    </a>
                 </div>
             </ng-template>
         </owl-carousel-o>
+        <div class="text-center mt-3" *ngIf="featuredDoctors.length === 10">
+  <a [routerLink]="'/patients/search-doctor/search1'" class="btn btn-primary-gradient btn-lg">View All</a>
+</div>
     </div>
 </section>
 <!-- /Doctor Section -->
@@ -702,117 +455,27 @@
 
         <!-- Testimonial Slider -->
         <owl-carousel-o class="testimonials-slider aos" data-aos="fade-up" [options]="testimonialSlider">
-            <ng-template carouselSlide>
+            <ng-template carouselSlide *ngFor="let review of reviews">
                 <div class="card shadow-none mb-0">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
                             <div class="rating d-flex">
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled"></i>
+                                <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
+                                    <i class="fa-solid fa-star" [ngClass]="{'filled': i < review.rating, 'me-1': true}"></i>
+                                </ng-container>
                             </div>
                             <span>
                                 <img src="assets/img/icons/quote-icon.svg" alt="img">
                             </span>
                         </div>
-                        <h6 class="fs-16 fw-medium mb-2">Nice Treatment</h6>
-                        <p>I had a wonderful experience the staff was friendly and attentive, and Dr. Smith took the time to explain everything clearly.</p>
+                        <h6 class="fs-16 fw-medium mb-2">{{ review.comment || 'No comment' }}</h6>
                         <div class="d-flex align-items-center">
                             <a href="javascript:void(0);" class="avatar avatar-lg">
-                                <img src="assets/img/patients/patient22.jpg" class="rounded-circle" alt="img">
+                                <img [src]="review.patient?.avatar || 'assets/img/patients/patient22.jpg'" class="rounded-circle" alt="img">
                             </a>
                             <div class="ms-2">
-                                <h6 class="mb-1"><a href="javascript:void(0);">Deny Hendrawan</a></h6>
-                                <p class="fs-14 mb-0">United States</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card shadow-none mb-0">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="rating d-flex">
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled"></i>
-                            </div>
-                            <span>
-                                <img src="assets/img/icons/quote-icon.svg" alt="img">
-                            </span>
-                        </div>
-                        <h6 class="fs-16 fw-medium mb-2">Good Hospitability</h6>
-                        <p>Genuinely cares about his patients. He helped me understand my condition and worked with me to create a plan.</p>
-                        <div class="d-flex align-items-center">
-                            <a href="javascript:void(0);" class="avatar avatar-lg">
-                                <img src="assets/img/patients/patient21.jpg" class="rounded-circle" alt="img">
-                            </a>
-                            <div class="ms-2">
-                                <h6 class="mb-1"><a href="javascript:void(0);">Johnson DWayne</a></h6>
-                                <p class="fs-14 mb-0">United States</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card shadow-none mb-0">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="rating d-flex">
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled"></i>
-                            </div>
-                            <span>
-                                <img src="assets/img/icons/quote-icon.svg" alt="img">
-                            </span>
-                        </div>
-                        <h6 class="fs-16 fw-medium mb-2">Nice Treatment</h6>
-                        <p>I had a great experience with Dr. Chen. She was not only professional but also made me feel comfortable discussing.</p>
-                        <div class="d-flex align-items-center">
-                            <a href="javascript:void(0);" class="avatar avatar-lg">
-                                <img src="assets/img/patients/patient.jpg" class="rounded-circle" alt="img">
-                            </a>
-                            <div class="ms-2">
-                                <h6 class="mb-1"><a href="javascript:void(0);">Rayan Smith</a></h6>
-                                <p class="fs-14 mb-0">United States</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template carouselSlide>
-                <div class="card shadow-none mb-0">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="rating d-flex">
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled me-1"></i>
-                                <i class="fa-solid fa-star filled"></i>
-                            </div>
-                            <span>
-                                <img src="assets/img/icons/quote-icon.svg" alt="img">
-                            </span>
-                        </div>
-                        <h6 class="fs-16 fw-medium mb-2">Excellent Service</h6>
-                        <p>I had a wonderful experience the staff was friendly and attentive, and Dr. Smith took the time to explain everything clearly.</p>
-                        <div class="d-flex align-items-center">
-                            <a href="javascript:void(0);" class="avatar avatar-lg">
-                                <img src="assets/img/patients/patient23.jpg" class="rounded-circle" alt="img">
-                            </a>
-                            <div class="ms-2">
-                                <h6 class="mb-1"><a href="javascript:void(0);">Sofia Doe</a></h6>
-                                <p class="fs-14 mb-0">United States</p>
+                                <h6 class="mb-1"><a href="javascript:void(0);">{{ review.patient?.name || 'Anonymous' }}</a></h6>
+                                <p class="fs-14 mb-0">{{ review.patient?.email || '' }}</p>
                             </div>
                         </div>
                     </div>
@@ -991,7 +654,7 @@
 </section>
 
 <!-- App Section -->
-<section class="app-section app-sec-one p-0">
+<!-- <section class="app-section app-sec-one p-0">
     <div class="container">
         <div class="app-bg">
             <div class="row">
@@ -1023,11 +686,11 @@
     <div class="download-bg">
         <img src="assets/img/bg/download-bg.png" alt="img">
     </div>
-</section>
+</section> -->
 <!-- /App Section -->
 
 <!-- Article Section -->
-<section class="article-section">
+<!-- <section class="article-section">
     <div class="container">
         <div class="section-header sec-header-one text-center aos" data-aos="fade-up">
             <span class="badge badge-primary">Recent Blogs</span>
@@ -1107,7 +770,7 @@
             <a [routerLink]="routes.blogGrid" class="btn btn-dark">View All Articles<i class="isax isax-arrow-right-3 ms-2"></i></a>
         </div>			
     </div>
-</section>
+</section> -->
 <!-- /Article Section -->
 
 <!-- Info Section -->
