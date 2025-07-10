@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 @Component({
     selector: 'app-doctor-sidebar',
     templateUrl: './doctor-sidebar.component.html',
@@ -22,7 +23,7 @@ export class DoctorSidebarComponent implements OnInit {
   specializations: any[] = [];
   doctorid: string | null | undefined;
 
-  constructor(private common: CommonService, private router: Router) {
+  constructor(private common: CommonService, private router: Router, private authService: AuthService) {
     this.common.base.subscribe((res: string) => {
       this.base = res;
     });
@@ -126,5 +127,11 @@ getSpecializationRows(): any[][] {
   }
   return rows;
 }
+
+  // Add logout method
+  logout() {
+    this.authService.logout();
+    this.router.navigate([this.routes.userLogin]);
+  }
 }
 

@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminAuthGuard  {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(): boolean | UrlTree {
-    const authenticatedAdmin = localStorage.getItem('authenticated-admin');
-
-    if (!authenticatedAdmin) {
-      return this.router.createUrlTree(['admin/admin-login']);
+    if (!this.authService.isAuthenticated('admin')) {
+      return this.router.createUrlTree(['']);
     }
-
     return true;
   }
 }
@@ -31,6 +29,34 @@ export class PharmacyAuthGuard  {
       return this.router.createUrlTree(['pharmacy/pharmacy-login']);
     }
 
+    return true;
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DoctorAuthGuard  {
+  constructor(private router: Router, private authService: AuthService) {}
+
+  canActivate(): boolean | UrlTree {
+    if (!this.authService.isAuthenticated('doctor')) {
+      return this.router.createUrlTree(['']);
+    }
+    return true;
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PatientAuthGuard  {
+  constructor(private router: Router, private authService: AuthService) {}
+
+  canActivate(): boolean | UrlTree {
+    if (!this.authService.isAuthenticated('patient')) {
+      return this.router.createUrlTree(['']);
+    }
     return true;
   }
 }

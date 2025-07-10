@@ -2,11 +2,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PatientsComponent } from './patients.component';
 import { PatientInvoiceComponent } from './patient-invoice/patient-invoice.component';
+import { PatientAuthGuard } from 'src/app/shared/auth/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'register',
+    loadChildren: () =>
+      import('./register/register.module').then((m) => m.RegisterModule),
+    // No guard here!
+  },
+  {
     path: '',
     component: PatientsComponent,
+    canActivate: [PatientAuthGuard],
     children: [
       {
         path: 'booking',
@@ -93,11 +101,6 @@ const routes: Routes = [
         path: 'payment',
         loadChildren: () =>
           import('./payment/payment.module').then((m) => m.PaymentModule),
-      },
-      {
-        path: 'register',
-        loadChildren: () =>
-          import('./register/register.module').then((m) => m.RegisterModule),
       },
       {
         path: 'medical-records',

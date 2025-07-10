@@ -5,6 +5,7 @@ import api from 'src/app/shared/api/axios';
 import { DataService } from 'src/app/shared/data/data.service';
 import { NgForm } from '@angular/forms';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 
 declare const google: any;
 
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
   public submitted = false;
   public googleError = '';
   public googleClientId = environment.GOOGLE_CLIENT_ID;
-  constructor(private router: Router, private dataService: DataService) { }
+  constructor(private router: Router, private dataService: DataService, private authService: AuthService) { }
   public togglePasswordClass = false;
   togglePassword() {
     this.togglePasswordClass = !this.togglePasswordClass;
@@ -73,11 +74,8 @@ export class LoginComponent implements OnInit {
         if (!this.email || !this.otp) return;
         this.dataService.loginWithOtp(this.email, this.otp).subscribe({
           next: (response) => {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            localStorage.setItem('userId', response.user.id);
-            localStorage.setItem('role', response.user.role);
-            this.router.navigate([this.routes.index]);
+            this.authService.setAuth(response.token, response.user);
+            this.navigateByRole(response.user.role);
           },
           error: (err) => {
             this.errorMessage = err.error?.message || 'OTP login failed';
@@ -93,11 +91,8 @@ export class LoginComponent implements OnInit {
           email: this.email,
           password: this.password
         });
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        localStorage.setItem('userId', response.data.user.id);
-        localStorage.setItem('role', response.data.user.role);
-        this.router.navigate([this.routes.index]);
+        this.authService.setAuth(response.data.token, response.data.user);
+        this.navigateByRole(response.data.user.role);
       } catch (error: any) {
         this.errorMessage = error.response?.data?.message || 'Login failed';
       }
@@ -116,15 +111,24 @@ export class LoginComponent implements OnInit {
     const token = response.credential;
     this.dataService.loginWithGoogle(token).subscribe({
       next: (res) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        localStorage.setItem('userId', res.user.id);
-        localStorage.setItem('role', res.user.role);
-        this.router.navigate([this.routes.index]);
+        this.authService.setAuth(res.token, res.user);
+        this.navigateByRole(res.user.role);
       },
       error: (err) => {
         this.googleError = err.error?.message || 'Google login failed';
       }
     });
+  }
+
+  navigateByRole(role: string) {
+    if (role === 'doctor') {
+      this.router.navigate(['/doctors/doctor-dashboard']);
+    } else if (role === 'patient') {
+      this.router.navigate(['/patients/patient-dashboard']);
+    } else if (role === 'admin') {
+      this.router.navigate(['/admin/dashboard']);
+    } else {
+      this.router.navigate([this.routes.index]);
+    }
   }
 }

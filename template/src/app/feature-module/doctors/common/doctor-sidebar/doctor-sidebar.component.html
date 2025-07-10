@@ -152,7 +152,7 @@
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.userLogin">
+                        <a (click)="logout()" style="cursor:pointer;">
                             <i class="isax isax-logout"></i>
                             <span>Logout</span>
                         </a>

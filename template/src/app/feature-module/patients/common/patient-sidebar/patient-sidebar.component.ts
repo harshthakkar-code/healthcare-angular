@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
+import { AuthService } from 'src/app/shared/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-patient-sidebar',
@@ -17,7 +19,7 @@ export class PatientSidebarComponent implements OnInit {
 
   patientProfile: any = null;
 
-  constructor(private common: CommonService) {
+  constructor(private common: CommonService, private authService: AuthService, private router: Router) {
     this.common.base.subscribe((base: string) => {
       this.base = base;
     });
@@ -37,5 +39,11 @@ export class PatientSidebarComponent implements OnInit {
     api.get('/patient/profile').then((res: any) => {
       this.patientProfile = res.data;
     });
+  }
+
+  // Add logout method
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['']);
   }
 }
