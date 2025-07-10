@@ -1,16 +1,99 @@
 import { Component } from '@angular/core';
-import { routes } from 'src/app/shared/routes/routes';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DoctorRegistrationService } from '../doctor-registration.service';
+
 @Component({
-    selector: 'app-doctor-register-step2',
-    templateUrl: './doctor-register-step2.component.html',
-    styleUrls: ['./doctor-register-step2.component.scss'],
-    standalone: false
+  selector: 'app-doctor-register-step2',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './doctor-register-step2.component.html',
+  styleUrls: ['./doctor-register-step2.component.scss']
 })
 export class DoctorRegisterStep2Component {
-  public routes = routes;
-  displayStyle = 'none';
+  gender = '';
+  isRegistered = false;
+  registerYears = '';
+  address = '';
+  address2 = '';
+  pincode = '';
+  clinicAddress = '';
+  qualiCertificate: string = '';
+  photoId: string = '';
+  clinicalEmployment: string = '';
+  weight: string = '';
+  weightUnit: string = 'kg';
+  height: string = '';
+  heightUnit: string = 'cm';
+  age: string = '';
+  blood: string = '';
+  bio = '';
+  specialization = '';
+  experience: string = '';
+  services: string[] = [];
+
+  displayStyle: string = 'none';
+
+  constructor(private router: Router, private regService: DoctorRegistrationService) {
+    const data = this.regService.getAllData();
+    this.gender = data.gender || '';
+    this.isRegistered = data.isRegistered || false;
+    this.registerYears = data.registerYears || '';
+    this.address = data.address || '';
+    this.address2 = data.address2 || '';
+    this.pincode = data.pincode || '';
+    this.clinicAddress = data.clinicAddress || '';
+    this.qualiCertificate = data.qualiCertificate || '';
+    this.photoId = data.photoId || '';
+    this.clinicalEmployment = data.clinicalEmployment || '';
+    this.weight = data.weight || '';
+    this.weightUnit = data.weightUnit || 'kg';
+    this.height = data.height || '';
+    this.heightUnit = data.heightUnit || 'cm';
+    this.age = data.age || '';
+    this.blood = data.blood || '';
+    this.bio = data.bio || '';
+    this.specialization = data.specialization || '';
+    this.experience = data.experience || '';
+    this.services = data.services || [];
+  }
 
   toggleDisplay() {
     this.displayStyle = this.displayStyle === 'none' ? 'block' : 'none';
+  }
+
+  // File input handlers (for qualiCertificate, photoId, clinicalEmployment)
+  onFileChange(event: any, field: 'qualiCertificate' | 'photoId' | 'clinicalEmployment') {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      this[field] = file.name;
+    }
+  }
+
+  nextStep() {
+    this.regService.setStepData({
+      gender: this.gender,
+      isRegistered: this.isRegistered,
+      registerYears: this.registerYears,
+      address: this.address,
+      address2: this.address2,
+      pincode: this.pincode,
+      clinicAddress: this.clinicAddress,
+      qualiCertificate: this.qualiCertificate,
+      photoId: this.photoId,
+      clinicalEmployment: this.clinicalEmployment,
+      weight: this.weight,
+      weightUnit: this.weightUnit,
+      height: this.height,
+      heightUnit: this.heightUnit,
+      age: this.age,
+      blood: this.blood,
+      bio: this.bio,
+      specialization: this.specialization,
+      experience: this.experience,
+      services: this.services
+    });
+    this.router.navigate(['/doctors/register/doctor-register-step3']);
   }
 }

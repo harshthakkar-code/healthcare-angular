@@ -1,36 +1,49 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { routes } from 'src/app/shared/routes/routes';
-import intlTelInput from 'intl-tel-input';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DoctorRegistrationService } from '../doctor-registration.service';
+
 @Component({
-    selector: 'app-doctor-register',
-    templateUrl: './doctor-register.component.html',
-    styleUrls: ['./doctor-register.component.scss'],
-    standalone: false
+  selector: 'app-doctor-register',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './doctor-register.component.html',
+  styleUrls: ['./doctor-register.component.scss']
 })
 export class DoctorRegisterComponent {
-  public routes = routes;
-  constructor(private router: Router) {}
+  name = '';
+  email = '';
+  phone = '';
+  password = '';
+  togglePasswordClass = false;
+  routes = {
+    register: '/register',
+    doctorRegisterStep1: '/doctors/register/doctor-register-step1',
+    userLogin: '/login',
+  };
 
-  public navigation() {
-    this.router.navigate([routes.doctorRegisterStep1]);
+  constructor(private router: Router, private regService: DoctorRegistrationService) {
+    // Load data if present
+    const data = this.regService.getAllData();
+    this.name = data.name || '';
+    this.email = data.email || '';
+    this.phone = data.phone || '';
+    this.password = data.password || '';
   }
 
-  public togglePasswordClass = false;
   togglePassword() {
     this.togglePasswordClass = !this.togglePasswordClass;
   }
-  ngAfterViewInit(): void {
-    const input = document.querySelector('#phone') as HTMLInputElement;
-    intlTelInput(input, {
-      initialCountry: 'us',
-      preferredCountries: ['us', 'gb', 'in'],
-      utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js'
-    }as any);
-    // Restrict input to numbers, "+", and allowed characters
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/[^0-9+()-\s]/g, ''); // Removes any character not allowed
+
+  navigation() {
+    // Save data to service
+    this.regService.setStepData({
+      name: this.name,
+      email: this.email,
+      phone: this.phone,
+      password: this.password
     });
-        
+    this.router.navigate([this.routes.doctorRegisterStep1]);
   }
 }

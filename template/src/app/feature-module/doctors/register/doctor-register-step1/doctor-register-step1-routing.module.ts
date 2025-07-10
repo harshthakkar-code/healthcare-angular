@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DoctorRegisterStep1Component } from './doctor-register-step1.component';
 
-const routes: Routes = [{ path: '', component: DoctorRegisterStep1Component }];
+const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./doctor-register-step1.component').then(m => m.DoctorRegisterStep1Component)
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

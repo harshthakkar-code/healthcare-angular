@@ -9,31 +9,19 @@ const routes: Routes = [
     children: [
       {
         path: 'doctor-register',
-        loadChildren: () =>
-          import('./doctor-register/doctor-register.module').then(
-            (m) => m.DoctorRegisterModule
-          ),
+        loadComponent: () => import('./doctor-register/doctor-register.component').then(m => m.DoctorRegisterComponent)
       },
       {
         path: 'doctor-register-step1',
-        loadChildren: () =>
-          import('./doctor-register-step1/doctor-register-step1.module').then(
-            (m) => m.DoctorRegisterStep1Module
-          ),
+        loadComponent: () => import('./doctor-register-step1/doctor-register-step1.component').then(m => m.DoctorRegisterStep1Component)
       },
       {
         path: 'doctor-register-step2',
-        loadChildren: () =>
-          import('./doctor-register-step2/doctor-register-step2.module').then(
-            (m) => m.DoctorRegisterStep2Module
-          ),
+        loadComponent: () => import('./doctor-register-step2/doctor-register-step2.component').then(m => m.DoctorRegisterStep2Component)
       },
       {
         path: 'doctor-register-step3',
-        loadChildren: () =>
-          import('./doctor-register-step3/doctor-register-step3.module').then(
-            (m) => m.DoctorRegisterStep3Module
-          ),
+        loadComponent: () => import('./doctor-register-step3/doctor-register-step3.component').then(m => m.DoctorRegisterStep3Component)
       },
     ],
   },
