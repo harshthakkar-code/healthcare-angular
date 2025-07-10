@@ -89,4 +89,28 @@ exports.deleteService = async (req, res, next) => {
     );
     res.json(updated);
   } catch (err) { next(err); }
+};
+
+// Get count of doctors by specialization name
+exports.countDoctorsBySpecialization = async (req, res, next) => {
+  try {
+    const counts = await Specialization.aggregate([
+      {
+        $group: {
+          _id: '$name',
+          count: { $addToSet: '$doctorId' }
+        }
+      },
+      {
+        $project: {
+          name: '$_id',
+          count: { $size: '$count' },
+          _id: 0
+        }
+      }
+    ]);
+    res.json(counts);
+  } catch (err) {
+    next(err);
+  }
 }; 

@@ -9,5 +9,6 @@ router.delete('/:id', specializationController.deleteSpecialization);
 router.post('/:id/services', specializationController.addService);
 router.put('/:id/services/:serviceId', specializationController.updateService);
 router.delete('/:id/services/:serviceId', specializationController.deleteService);
+router.get('/count-by-name', specializationController.countDoctorsBySpecialization);
 
 module.exports = router; 
