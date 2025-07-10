@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { routes } from 'src/app/shared/routes/routes';
 import {
   ChartComponent,
@@ -30,7 +30,7 @@ export type ChartOptions = {
     styleUrls: ['./dashboard.component.scss'],
     standalone: false
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   public routes = routes;
 
   public doctorCount = 0;
@@ -40,17 +40,19 @@ export class DashboardComponent {
   public patientList: any[] = [];
   public appointmentList: any[] = [];
   public revenue: number = 0;
+  public loading = true;
 
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions1: Partial<ChartOptions>;
   public chartOptions2: Partial<ChartOptions>;
 
   constructor(private data: DataService) {
+    // Initialize charts with empty data
     this.chartOptions1 = {
       series: [
         {
           name: "Revenue",
-          data: [60, 100, 240, 120, 80, 100, 300],
+          data: [],
           color: "#1b5a90"
         },
       ],
@@ -69,15 +71,7 @@ export class DashboardComponent {
         width: 2
       },
       xaxis: {
-        categories: [
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019"
-        ]
+        categories: []
       },
       markers: {
         size: 4,
@@ -91,12 +85,12 @@ export class DashboardComponent {
       series: [
         {
           name: 'Doctors',
-          data: [100, 20, 90, 50, 120],
+          data: [],
           color: '#1b5a90',
         },
         {
           name: 'Patients',
-          data: [30, 60, 120, 80, 150],
+          data: [],
           color: '#ff9d00',
         },
       ],
@@ -124,7 +118,7 @@ export class DashboardComponent {
         dashArray: 0,
     },
       xaxis: {
-        categories: ['2015', '2016', '2017', '2018', '2019'],
+        categories: [],
       },
       markers: {
         size: 4,
@@ -137,17 +131,87 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.loading = true;
+    this.data.getDashboardData().subscribe({
+      next: (dashboardData) => {
+        // Update counts
+        this.doctorCount = dashboardData.counts?.doctors || 0;
+        this.patientCount = dashboardData.counts?.patients || 0;
+        this.appointmentCount = dashboardData.counts?.appointments || 0;
+        this.revenue = dashboardData.revenue || 0;
+
+        // Update revenue chart
+        if (dashboardData.revenueChartData && dashboardData.revenueChartData.length > 0) {
+          this.chartOptions1.series[0].data = dashboardData.revenueChartData.map((item: any) => item.revenue);
+          this.chartOptions1.xaxis.categories = dashboardData.revenueChartData.map((item: any) => item.month);
+        }
+
+        // Update growth chart
+        if (dashboardData.growthChartData) {
+          const doctorData = dashboardData.growthChartData.doctors || [];
+          const patientData = dashboardData.growthChartData.patients || [];
+          
+          this.chartOptions2.series[0].data = doctorData.map((item: any) => item.count);
+          this.chartOptions2.series[1].data = patientData.map((item: any) => item.count);
+          this.chartOptions2.xaxis.categories = doctorData.map((item: any) => item.period);
+        }
+
+        // Update top doctors list
+        if (dashboardData.topDoctors) {
+          this.doctorList = dashboardData.topDoctors.map((doctor: any, index: number) => ({
+            id: index + 1,
+            doctorName: doctor.doctorName,
+            speciality: doctor.speciality || 'General',
+            earned: doctor.totalEarned?.toString() || '0',
+            avgRating: 4.5, // Default rating, can be enhanced later
+            reviewCount: doctor.appointmentCount || 0,
+            img: 'assets/admin/img/doctors/doctor-thumb-01.jpg'
+          }));
+        }
+
+        // Update recent appointments
+        if (dashboardData.recentAppointments) {
+          this.appointmentList = dashboardData.recentAppointments.map((appointment: any, index: number) => ({
+            id: index + 1,
+            doctorName: appointment.doctor?.name || appointment.doctorName || '',
+            speciality: appointment.specialty || '',
+            patientName: appointment.patient?.name || appointment.name || '',
+            appointmentTime: appointment.time || '',
+            appointmentDate: appointment.date || '',
+            amount: appointment.totalPrice?.toString() || '',
+            isStatus: appointment.status === 'accepted',
+            appointmentId: appointment._id,
+          }));
+        }
+
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard data:', error);
+        this.loading = false;
+        // Fallback to static data if API fails
+        this.loadFallbackData();
+      }
+    });
+  }
+
+  loadFallbackData(): void {
+    // Load individual data as fallback
     this.data.getDoctorList().subscribe(res => {
       this.doctorCount = res.totalData;
-      this.doctorList = res.data.slice(0, 5); // Top 5 doctors
+      this.doctorList = res.data.slice(0, 5);
     });
     this.data.getPatientList().subscribe(res => {
       this.patientCount = res.totalData;
-      this.patientList = res.data.slice(0, 5); // Top 5 patients
+      this.patientList = res.data.slice(0, 5);
     });
     this.data.getAppointmentList().subscribe(res => {
       this.appointmentCount = res.totalData;
-      this.appointmentList = res.data.slice(0, 5); // Top 5 appointments
+      this.appointmentList = res.data.slice(0, 5);
     });
     this.data.getTotalRevenue().subscribe(res => {
       this.revenue = res.totalPaid || 0;

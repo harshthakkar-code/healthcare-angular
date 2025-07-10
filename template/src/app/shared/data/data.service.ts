@@ -2212,9 +2212,29 @@ export class DataService {
     );
   }
 
+  public getDashboardData(): Observable<any> {
+    return from(
+      api.get('/admin/dashboard').then((response) => {
+        return response.data;
+      })
+    );
+  }
+
   public getTotalRevenue(): Observable<any> {
     return from(
       api.get('/transactions/total-paid').then((response) => response.data)
+    );
+  }
+  
+  public getProfile(): Observable<any> {
+    return from(
+      api.get('/auth/me').then((response) => response.data)
+    );
+  }
+
+  public updateProfile(profile: any): Observable<any> {
+    return from(
+      api.put('/auth/me', profile).then(res => res.data)
     );
   }
 }
