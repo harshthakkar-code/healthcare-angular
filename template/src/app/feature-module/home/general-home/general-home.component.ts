@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 
 @Component({
   selector: 'app-general-home',
@@ -33,6 +34,30 @@ export class GeneralHomeComponent implements OnInit {
   getSpecialtyCount(name: string): number {
     const found = this.specializationCounts.find(s => s.name.toLowerCase() === name.toLowerCase());
     return found ? found.count : 10;
+  }
+
+  getSpecializationClass(specialization: string): string {
+    if (!specialization) return 'text-indigo'; // default
+    switch (specialization.toLowerCase()) {
+      case 'psychologist': return 'text-indigo';
+      case 'pediatrician': return 'text-pink';
+      case 'neurologist': return 'text-teal';
+      case 'cardiologist': return 'text-info';
+      // Add more as needed to match your static mapping
+      default: return 'text-indigo';
+    }
+  }
+
+  getActiveBarClass(specialization: string): string {
+    if (!specialization) return 'active-bar';
+    switch (specialization.toLowerCase()) {
+      case 'psychologist': return 'active-bar';
+      case 'pediatrician': return 'active-bar-pink';
+      case 'neurologist': return 'active-bar-teal';
+      case 'cardiologist': return 'active-bar-info';
+      // Add more as needed to match your static mapping
+      default: return 'active-bar';
+    }
   }
 
   async ngOnInit() {
@@ -75,7 +100,7 @@ export class GeneralHomeComponent implements OnInit {
 public routes=routes;
 time: Date | null = null; // Bind this to the p-calendar
 bsValue=new Date();
-constructor(public router:Router){}
+constructor(public router:Router, private authService: AuthService){}
 public spcialitySlider : OwlOptions={
   loop: true,
 			margin: 24,
@@ -103,25 +128,28 @@ public spcialitySlider : OwlOptions={
 }
 public doctorSlider : OwlOptions={
   loop: true,
-			margin: 24,
-			dots: false,
-			nav: true,
-			smartSpeed: 2000,
-			navText: ['<i class="isax isax-arrow-left"></i>', '<i class="isax isax-arrow-right-1"></i>'],
-			responsive: {
-				0: {
-					items: 1
-				},
-				768: {
-					items: 2
-				},
-				992: {
-					items: 4
-				},
-				1300: {
-					items: 4
-				}
-			}
+  margin: 24,
+  dots: false,
+  nav: true,
+  smartSpeed: 2000,
+  navText: ['<i class="isax isax-arrow-left"></i>', '<i class="isax isax-arrow-right-1"></i>'],
+  responsive: {
+    0: {
+      items: 1
+    },
+    768: {
+      items: 2
+    },
+    992: {
+      items: 3
+    },
+    1200: {
+      items: 4
+    },
+    1300: {
+      items: 4
+    }
+  }
 }
 public testimonialSlider:OwlOptions={
   loop: true,
@@ -143,5 +171,22 @@ public testimonialSlider:OwlOptions={
 }
 navigate(){
 	this.router.navigate([routes.search2])
+}
+goToDoctorProfile(doctorId: string) {
+  if (this.authService.isAuthenticated('patient') || this.authService.isAuthenticated('doctor') || this.authService.isAuthenticated('admin')) {
+    this.router.navigate(['/patients/doctor-profile/doctor-profile1', doctorId]);
+  } else {
+    // alert('Please log in to view doctor profiles.');
+    this.router.navigate(['/authentication/login']);
+  }
+}
+
+goToBooking(doctorId: string) {
+  if (this.authService.isAuthenticated('patient') || this.authService.isAuthenticated('doctor') || this.authService.isAuthenticated('admin')) {
+    this.router.navigate(['/pages/booking', doctorId]);
+  } else {
+    // alert('Please log in to book an appointment.');
+    this.router.navigate(['/authentication/login']);
+  }
 }
 }

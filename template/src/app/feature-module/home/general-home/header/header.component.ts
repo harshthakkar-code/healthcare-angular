@@ -1,5 +1,6 @@
 import { Component, HostListener, Renderer2, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { DataService } from 'src/app/shared/data/data.service';
 import { header } from 'src/app/shared/models/sidebar-model';
@@ -30,6 +31,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private common: CommonService,
     private data: DataService,
+    private authService: AuthService,
     public sidebar: SidebarService,
     private router: Router,
     private renderer: Renderer2
@@ -130,8 +132,10 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('user');
+    this.authService.logout();
+    this.user = null; // Immediately update the header UI
+    // localStorage.removeItem('user');
     // Optionally, remove token and redirect
-    window.location.reload();
+    // window.location.reload();
   }
 }

@@ -197,7 +197,7 @@
             <ng-template carouselSlide *ngFor="let doctor of featuredDoctors">
                 <div class="card">
                     <div class="card-img card-img-hover">
-                        <a [routerLink]="['/doctors/profile', doctor._id]">
+                        <a (click)="goToDoctorProfile(doctor._id)">
                             <img 
   [src]="doctor.profileImage && doctor.profileImage !== '' ? doctor.profileImage : 'assets/img/doctor-grid/doctor-grid-01.jpg'" 
   alt="Doctor"
@@ -211,16 +211,22 @@
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div class="d-flex active-bar align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialization || 'Specialist' }}</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
-                            </span>
-                        </div>
+                        <div class="d-flex active-bar align-items-center justify-content-between p-3"
+     [ngClass]="getActiveBarClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
+  <a href="javascript:void(0);"
+     class="fw-medium fs-14"
+     [ngClass]="getSpecializationClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
+    {{ (doctor.specializations && doctor.specializations.length > 0) ? doctor.specializations[0] : 'Specialist' }}
+  </a>
+  <span class="badge d-inline-flex align-items-center"
+      [ngClass]="doctor.availability === true || doctor.availability === 'true' ? 'bg-success-light' : 'bg-danger-light'">
+  <i class="fa-solid fa-circle fs-5 me-1"></i>
+  {{ doctor.availability === true || doctor.availability === 'true' ? 'Available' : 'Not Available' }}
+</span>
+</div>
                         <div class="p-3 pt-0">
                             <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a [routerLink]="['/doctors/profile', doctor._id]">{{ doctor.name || 'Doctor Name' }}</a></h3>
+                                <h3 class="mb-1"><a (click)="goToDoctorProfile(doctor._id)">{{ doctor.name || 'Doctor Name' }}</a></h3>
                                 <div class="d-flex align-items-center">
                                     <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
                                     <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
@@ -232,7 +238,7 @@
                                     <p class="mb-1">Consultation Fees</p>
                                     <h3 class="text-orange">{{ doctor.fees ? ('$' + doctor.fees) : '$0' }}</h3>
                                 </div>
-                                <a href="javascript:void(0);" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
+                                <a (click)="goToBooking(doctor._id)" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>
                                     Book Now
                                 </a>

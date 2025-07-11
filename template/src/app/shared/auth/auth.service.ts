@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  constructor(private router: Router) {}
   setAuth(token: string, user: any) {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
@@ -38,13 +40,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-    localStorage.removeItem('authenticated-patient');
-    localStorage.removeItem('authenticated-doctor');
-    localStorage.removeItem('authenticated-admin');
-    localStorage.removeItem('authenticated-pharmacy');
+    localStorage.clear();
+    this.router.navigate(['/index']);
   }
 } 
