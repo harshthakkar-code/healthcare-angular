@@ -522,7 +522,13 @@
 														<div class="col-lg-12">
 															<div class="mb-3">
 																<label class="form-label">Attachment</label>
-																<input type="file" class="form-control">
+																<input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onAttachmentSelected($event)" [disabled]="uploading">
+																<div *ngIf="attachmentError" class="text-danger small mt-1">{{ attachmentError }}</div>
+																<div *ngIf="uploading" class="text-info small mt-1">Uploading...</div>
+																<div *ngIf="attachmentUrl" class="mt-2">
+																  <img [src]="attachmentUrl" alt="Attachment Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #eee;" />
+																  <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removeAttachment()">Remove</button>
+																</div>
 															</div>
 														</div>
 														<div class="col-lg-12">

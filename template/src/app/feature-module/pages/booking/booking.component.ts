@@ -3,6 +3,7 @@ import { routes } from 'src/app/shared/routes/routes';
 import { ActivatedRoute } from '@angular/router';
 import api from 'src/app/shared/api/axios';
 import { formatDate } from '@angular/common';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
   selector: 'app-booking',
@@ -55,6 +56,9 @@ export class BookingComponent implements OnInit {
   paymentEmail: string = '';
   paymentPassword: string = '';
   paymentError = { email: false, password: false };
+  attachmentUrl: string = '';
+  uploading: boolean = false;
+  attachmentError: string = '';
 
   constructor(private route: ActivatedRoute) {}
 
@@ -257,7 +261,8 @@ export class BookingComponent implements OnInit {
         phone: this.phone,
         symptoms: this.symptoms,
         price: this.selectedServicesTotal,
-        totalPrice: this.totalWithTaxAndDiscount
+        totalPrice: this.totalWithTaxAndDiscount,
+        attachmentUrl: this.attachmentUrl
       };
       const res = await api.post('/doctor/appointments', body);
       this.createdAppointment = res.data;
@@ -326,5 +331,32 @@ export class BookingComponent implements OnInit {
       return;
     }
     this.selectedFieldSet[0] = step;
+  }
+  
+  async onAttachmentSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      this.attachmentError = 'Only PNG, JPG, and JPEG images are allowed.';
+      return;
+    }
+    this.attachmentError = '';
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.attachmentUrl = imageUrl;
+      this.uploading = false;
+      // Optionally patch to your booking form or DB here
+    } catch (err) {
+      this.uploading = false;
+      this.attachmentError = 'Upload failed. Please try again.';
+    }
+  }
+
+  removeAttachment() {
+    this.attachmentUrl = '';
+    // Optionally patch to your booking form or DB here
   }
 }
