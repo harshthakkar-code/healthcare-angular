@@ -12,6 +12,7 @@ const Service = require('../models/Service');
 const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
+const { syncUserAndDoctorProfile } = require('../utils/userDoctorSync');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -26,7 +27,29 @@ exports.getProfile = async (req, res, next) => {
   }
 };
 
-exports.updateProfile = async (req, res, next) => { res.json({ message: 'Update doctor profile' }); };
+exports.updateProfile = async (req, res, next) => {
+  try {
+    // req.user._id should be set by your auth middleware
+    const userId = req.user._id;
+    const updateFields = {};
+    // Only allow updating certain fields
+    const allowedFields = ['profileImage', 'availability', 'name', 'email', 'phone', 'gender', 'specializations', 'profileImgUrl', 'age', 'weight', 'height', 'blood', 'address', 'address2', 'city', 'state', 'pincode'];
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) updateFields[field] = req.body[field];
+    });
+    // Update DoctorProfile
+    const updatedProfile = await DoctorProfile.findOneAndUpdate(
+      { user: userId },
+      { $set: updateFields },
+      { new: true }
+    );
+    // Sync with User model (profileImage and availability, and any other shared fields)
+    await syncUserAndDoctorProfile(userId);
+    res.json(updatedProfile);
+  } catch (err) {
+    next(err);
+  }
+};
 exports.createSchedule = async (req, res, next) => { res.json({ message: 'Create schedule' }); };
 exports.getAppointments = async (req, res, next) => { res.json({ message: 'Get doctor appointments' }); };
 exports.updateAppointment = async (req, res, next) => { res.json({ message: 'Update appointment' }); };
@@ -48,7 +71,8 @@ exports.createAppointment = async (req, res, next) => {
       phone,
       symptoms,
       price,
-      totalPrice
+      totalPrice,
+      attachmentUrl
     } = req.body;
 
     if (!doctorId || !date || !time) {
@@ -75,7 +99,8 @@ exports.createAppointment = async (req, res, next) => {
       doctorName,
       status: 'pending',
       price,
-      totalPrice
+      totalPrice,
+      attachmentUrl
     });
     await appointment.save();
     res.status(201).json(appointment);
@@ -110,7 +135,7 @@ exports.getDoctorListWithReviews = async (req, res, next) => {
 // Public: Get doctor list with search, pagination, specialities, and average reviews
 exports.getDoctors = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date } = req.query;
+    const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date, availability } = req.query;
     const query = {};
     if (search) {
       query.$or = [
@@ -124,6 +149,14 @@ exports.getDoctors = async (req, res, next) => {
     }
     if (city) {
       query.city = { $regex: city, $options: 'i' };
+    }
+    // Add availability filter if provided
+    if (availability !== undefined) {
+      if (availability === 'true' || availability === true) {
+        query.availability = true;
+      } else if (availability === 'false' || availability === false) {
+        query.availability = false;
+      }
     }
 
     let doctors = await DoctorProfile.find(query)
@@ -163,6 +196,7 @@ exports.getDoctors = async (req, res, next) => {
     const doctorsWithExtras = await Promise.all(doctors.map(async doc => {
       // Find all specializations for this doctor by user ID
       const allSpecs = await Specialization.find({ doctorId: doc.user && doc.user._id ? doc.user._id : null });
+      const services = allSpecs.map(s => s.services)
       const specializations = allSpecs.map(s => s.name);
       const totalEarned = doc.user && doc.user._id ? transactionSumMap[doc.user._id.toString()] || 0 : 0;
       // Update the DoctorProfile document with these values
@@ -174,6 +208,7 @@ exports.getDoctors = async (req, res, next) => {
         ...doc.toObject(),
         specializations,
         totalEarned,
+        services
       };
     }));
 
@@ -416,7 +451,7 @@ exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
     res.json({
       _id: doctor._id,
       name: doctor.name,
-      avatar: doctor.avatar,
+      avatar: doctor.profileImgUrl || doctor.profileImage,
       city: doctor.city,
       address: doctor.address,
       specializations, // Array with services
@@ -454,7 +489,7 @@ exports.getFullDoctorData = async (req, res, next) => {
     const services = await Service.find({ doctor: doctorId });
 
     // Specialization (already populated in profile, but can fetch all if needed)
-    const specializations = await Specialization.find({});
+    const specializations = await Specialization.find({ doctorId: doctorId });
 
     // Slot
     const slots = await Slot.find({ doctorId: doctorId });

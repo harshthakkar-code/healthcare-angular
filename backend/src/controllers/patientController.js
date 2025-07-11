@@ -82,7 +82,7 @@ exports.getAppointments = async (req, res, next) => {
     if ((req.user.role === 'admin' || req.user.role === 'doctor') && req.query.id) {
       userId = req.query.id;
     }
-    const appointments = await Appointment.find({ patient: userId }).populate('doctor', 'name');
+    const appointments = await Appointment.find({ patient: userId }).populate('doctor', 'name profileImage profileImgUrl');
     res.json({ appointments });
   } catch (err) {
     next(err);

@@ -69,6 +69,7 @@ exports.register = async (req, res, next) => {
         age,
         blood,
         profileImage,
+        profileImgUrl: profileImage,
         certFile,
         photoID,
         employmentProof
@@ -116,7 +117,16 @@ exports.login = async (req, res, next) => {
     if (!user || !(await user.comparePassword(password))) return res.status(400).json({ message: 'Invalid credentials' });
     if (user.role === 'doctor' && !user.isApproved) return res.status(403).json({ message: 'Doctor not approved yet' });
     const token = generateToken(user);
-    res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        profileImgUrl: user.profileImgUrl || null,
+        profileImage: user.profileImage || null
+      }
+    });
   } catch (err) { next(err); }
 };
 
@@ -182,7 +192,16 @@ exports.loginOtp = async (req, res, next) => {
     await user.save();
     if (user.role === 'doctor' && !user.isApproved) return res.status(403).json({ message: 'Doctor not approved yet' });
     const token = generateToken(user);
-    res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        profileImgUrl: user.profileImgUrl || null,
+        profileImage: user.profileImage || null
+      }
+    });
   } catch (err) { next(err); }
 };
 
@@ -243,7 +262,16 @@ exports.googleLogin = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Email not registered.' });
     const jwt = generateToken(user);
-    res.json({ token: jwt, user: { id: user._id, name: user.name, role: user.role } });
+    res.json({
+      token: jwt,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        profileImgUrl: user.profileImgUrl || null,
+        profileImage: user.profileImage || null
+      }
+    });
   } catch (err) {
     res.status(401).json({ message: 'Google login failed.' });
   }

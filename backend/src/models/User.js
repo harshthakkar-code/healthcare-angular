@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   profileImgUrl: { type: String },
   otpCode: { type: String },
   otpExpiry: { type: Date },
-  availability: { type: String, enum: ['available', 'unavailable'], default: 'unavailable' },
+  availability: { type: Boolean, default: false },
   specializations: { type: [String], default: [] },
   totalEarned: { type: Number, default: 0 },
 }, { timestamps: true });

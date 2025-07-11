@@ -17,4 +17,6 @@ router.put('/:id', favouriteController.updateFavourite);
 // Delete a favourite by ID
 router.delete('/:id', favouriteController.deleteFavourite);
 
+router.post('/status', favouriteController.getBatchFavouriteStatus);
+
 module.exports = router; 

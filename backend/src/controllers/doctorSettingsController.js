@@ -6,15 +6,12 @@ const DoctorProfile = require('../models/DoctorProfile');
 exports.upsertSettings = async (req, res, next) => {
   try {
     const { doctorId, profileSettings, insuranceSettings, experienceSettings, educationSettings, clinicsSettings, businessSettings, awardsSettings } = req.body;
-    console.log("test", doctorId)
-
     const userId = req.user._id;
-    console.log("test2", userId)
 
     const user = await User.findById(doctorId);
     const doctor = await DoctorProfile.findOne({ user: doctorId });
-    console.log("test", user , doctor)
     if (!user || !doctor) return res.status(404).json({ message: 'User or Doctor not found' });
+
     const data = {
       userId,
       doctorId,
@@ -32,6 +29,24 @@ exports.upsertSettings = async (req, res, next) => {
       data,
       { new: true, upsert: true }
     );
+
+    // --- SYNC PROFILE IMAGE TO DoctorProfile AND User ---
+    if (
+      Array.isArray(profileSettings) &&
+      profileSettings.length > 0 &&
+      profileSettings[0].profileImgUrl
+    ) {
+      const imgUrl = profileSettings[0].profileImgUrl;
+      await DoctorProfile.findOneAndUpdate(
+        { user: doctorId },
+        { profileImage: imgUrl, profileImgUrl: imgUrl }
+      );
+      await User.findByIdAndUpdate(
+        doctorId,
+        { profileImgUrl: imgUrl }
+      );
+    }
+
     res.json(settings);
   } catch (err) {
     next(err);

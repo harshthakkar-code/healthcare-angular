@@ -81,4 +81,30 @@ exports.deleteFavourite = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// POST /favourites/batch-status
+exports.getBatchFavouriteStatus = async (req, res) => {
+  try {
+    const { patientId, doctorIds } = req.body;
+    if (!patientId || !Array.isArray(doctorIds)) {
+      return res.status(400).json({ error: 'patientId and doctorIds are required' });
+    }
+    const favourites = await Favourite.find({
+      patientId,
+      doctorId: { $in: doctorIds },
+      favourites: true
+    });
+    // Map doctorId to favourite object (or null)
+    const result = {};
+    doctorIds.forEach(id => {
+      result[id] = null;
+    });
+    favourites.forEach(fav => {
+      result[fav.doctorId.toString()] = fav;
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 
