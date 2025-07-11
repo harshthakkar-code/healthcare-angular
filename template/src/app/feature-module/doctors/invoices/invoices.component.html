@@ -43,7 +43,7 @@
 													<td>
 														<h2 class="table-avatar">
 															<a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-																<img class="avatar-img rounded-3" [src]="t.appointment?.patient?.image || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
+																<img class="avatar-img rounded-3" [src]="t.appointment?.patient?.profileImgUrl || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
 															</a>
 															<a [routerLink]="routes.doctorProfile1">{{ t.appointment?.patient?.name || '-' }}</a>
 														</h2>

@@ -178,7 +178,7 @@
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img [src]="apt.doctorImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                          <img [src]="apt.doctor.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
                         </a>
                         <div class="doctor-name-info">
                           <h5><a href="javascript:void(0);">{{ apt.doctorName || 'Doctor' }}</a></h5>
@@ -379,7 +379,7 @@
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img [src]="dashboardPastAppointments[0]?.doctorImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                          <img [src]="dashboardPastAppointments[0]?.doctor.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
                         </a>
                         <div class="doctor-name-info">
                           <h5><a href="javascript:void(0);">{{ dashboardPastAppointments[0]?.doctorName || 'Doctor' }}</a></h5>
@@ -497,7 +497,7 @@
                                <td>
                                  <h2 class="table-avatar">
                                    <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                     <img class="avatar-img rounded-3" [src]="apt.doctorImage || 'assets/img/doctors/doctor-thumb-24.jpg'" alt="User Image">
+                                     <img class="avatar-img rounded-3" [src]="apt?.doctor?.profileImgUrl || 'assets/img/doctors/doctor-thumb-24.jpg'" alt="User Image">
                                    </a>
                                    <a [routerLink]="routes.doctorProfile1">{{ apt.doctorName || "Doctor Name" }}</a>
                                  </h2>
@@ -866,7 +866,7 @@
                                  <td>
                                    <h2 class="table-avatar">
                                      <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" [src]="inv.doctorImage || 'assets/img/doctors/doctor-thumb-21.jpg'" alt="User Image">
+                                       <img class="avatar-img rounded-3" [src]="inv?.appointment?.doctorProfile?.profileImage || 'assets/img/doctors/doctor-thumb-21.jpg'" alt="User Image">
                                      </a>
                                      <a [routerLink]="routes.doctorProfile1">{{ inv.appointment.doctor.doctorName || "Doctor Name" }}</a>
                                    </h2>

@@ -49,7 +49,7 @@ exports.getReviewsForDoctor = async (req, res, next) => {
     const totalReviews = await Review.countDocuments(filter);
 
     const reviews = await Review.find(filter)
-      .populate('patient', 'name email avatar')
+      .populate('patient', 'name email profileImgUrl')
       .sort({ createdAt: -1 })
       // .skip((page - 1) * pageSize)
       // .limit(pageSize);
@@ -74,8 +74,8 @@ exports.getAllReviews = async (req, res, next) => {
 
     const [reviews, totalReviews] = await Promise.all([
       Review.find()
-        .populate('doctor', 'name email avatar')
-        .populate('patient', 'name email avatar')
+        .populate('doctor', 'name email profileImgUrl')
+        .populate('patient', 'name email profileImgUrl')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
