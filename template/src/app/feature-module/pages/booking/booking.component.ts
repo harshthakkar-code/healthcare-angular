@@ -48,11 +48,20 @@ export class BookingComponent implements OnInit {
   selectedSlot: any = null;
   createdAppointment: any = null;
   patientId: any;
+  serviceError = false;
+  appointmentTypeError = false;
+  slotError = false;
+  basicInfoError = false;
+  paymentEmail: string = '';
+  paymentPassword: string = '';
+  paymentError = { email: false, password: false };
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.doctorId = this.route.snapshot.paramMap.get('doctorId');
+    // Set selectedDate to today by default
+    this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     if (this.doctorId) {
       this.fetchDoctorDetails(this.doctorId);
       this.fetchSlots();
@@ -81,14 +90,31 @@ export class BookingComponent implements OnInit {
     if (!this.doctorId) return;
     try {
       const res = await api.get(`/slots/${this.doctorId}`);
-      this.slots = res.data.slots || [];
+      const now = new Date();
+      // Only keep slots with date+endTime in the future
+      this.slots = (res.data.slots || []).filter((slot: any) => {
+        const slotDate = new Date(slot.date);
+        // If slot has endTime, use it, else use startTime
+        let slotTime = slot.startTime || '00:00';
+        if (slot.endTime) slotTime = slot.endTime;
+        const [h, m] = slotTime.split(':').map(Number);
+        slotDate.setHours(h, m, 0, 0);
+        return slotDate >= now;
+      });
       // Extract unique available dates (as yyyy-MM-dd)
       this.availableDates = Array.from(new Set(this.slots.map((slot: any) => formatDate(slot.date, 'yyyy-MM-dd', 'en-US'))));
       this.availableDatesAsDateObjects = this.availableDates.map(d => new Date(d));
-      // Optionally, set default selected date to first available
-      if (this.availableDates.length) {
-        this.selectedDate = this.availableDates[0];
+      // Always set selectedDate to today
+      const todayStr = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+      this.selectedDate = todayStr;
+      if (this.availableDates.includes(todayStr)) {
         this.filterSlotsForSelectedDate();
+      } else {
+        // No slots for today, so clear slots for selected date
+        this.slotsForSelectedDate = [];
+        this.morningSlots = [];
+        this.afternoonSlots = [];
+        this.eveningSlots = [];
       }
     } catch (err) {
       // handle error if needed
@@ -103,9 +129,18 @@ export class BookingComponent implements OnInit {
       this.eveningSlots = [];
       return;
     }
+    const now = new Date();
     this.slotsForSelectedDate = this.slots.filter(
-      slot => formatDate(slot.date, 'yyyy-MM-dd', 'en-US') === this.selectedDate
-    );
+      slot => formatDate(slot.date, 'yyyy-MM-dd', 'en-US') === formatDate(this.selectedDate || '', 'yyyy-MM-dd', 'en-US')
+    ).filter(slot => {
+      // Only show slots with endTime (or startTime) in the future
+      const slotDate = new Date(slot.date);
+      let slotTime = slot.startTime || '00:00';
+      if (slot.endTime) slotTime = slot.endTime;
+      const [h, m] = slotTime.split(':').map(Number);
+      slotDate.setHours(h, m, 0, 0);
+      return slotDate >= now;
+    });
     // Categorize by startTime and filter out booked slots
     this.morningSlots = this.slotsForSelectedDate.filter(slot => {
       const hour = parseInt(slot.startTime.split(':')[0], 10);
@@ -147,10 +182,12 @@ export class BookingComponent implements OnInit {
     } else {
       this.selectedServices.push(serviceId);
     }
+    this.serviceError = false;
   }
 
   selectAppointmentType(type: string) {
     this.selectedAppointmentType = type;
+    this.appointmentTypeError = false;
   }
 
   isLastSelectedService(serviceId: string, services: any[]): boolean {
@@ -179,6 +216,7 @@ export class BookingComponent implements OnInit {
 
   onSlotSelected(slot: any) {
     this.selectedSlot = slot;
+    this.slotError = false;
   }
 
   get selectedServicesTotal(): number {
@@ -194,6 +232,12 @@ export class BookingComponent implements OnInit {
   }
 
   async confirmAndPay() {
+    // Validate payment fields
+    this.paymentError.email = !this.paymentEmail;
+    this.paymentError.password = !this.paymentPassword;
+    if (this.paymentError.email || this.paymentError.password) {
+      return;
+    }
     if (!this.selectedSlot || !this.selectedSpecialization) return;
     try {
       const body = {
@@ -221,5 +265,66 @@ export class BookingComponent implements OnInit {
     } catch (err) {
       // Optionally handle error
     }
+  }
+
+  onNextStep() {
+    if (!this.selectedServices || this.selectedServices.length === 0) {
+      this.serviceError = true;
+      this.selectedFieldSet[0] = 0;
+      return;
+    }
+    this.serviceError = false;
+    this.selectedFieldSet[0] = 1;
+  }
+
+  onNextStepType() {
+    if (!this.selectedAppointmentType) {
+      this.appointmentTypeError = true;
+      this.selectedFieldSet[0] = 1;
+      return;
+    }
+    this.appointmentTypeError = false;
+    this.selectedFieldSet[0] = 2;
+  }
+
+  onNextStepSlot() {
+    if (!this.selectedSlot) {
+      this.slotError = true;
+      this.selectedFieldSet[0] = 2;
+      return;
+    }
+    this.slotError = false;
+    this.selectedFieldSet[0] = 3;
+  }
+
+  onNextStepBasicInfo() {
+    if (!this.firstName || !this.lastName || !this.phone || !this.email || !this.selectedDependant || !this.symptoms || !this.reason) {
+      this.basicInfoError = true;
+      return;
+    }
+    this.basicInfoError = false;
+    this.selectedFieldSet[0] = 4;
+  }
+
+  goToStep(step: number) {
+    // Step 0: Services
+    if (step > 0 && (!this.selectedServices || this.selectedServices.length === 0)) {
+      this.serviceError = true;
+      this.selectedFieldSet[0] = 0;
+      return;
+    }
+    // Step 1: Appointment Type
+    if (step > 1 && !this.selectedAppointmentType) {
+      this.appointmentTypeError = true;
+      this.selectedFieldSet[0] = 1;
+      return;
+    }
+    // Step 2: Slot
+    if (step > 2 && !this.selectedSlot) {
+      this.slotError = true;
+      this.selectedFieldSet[0] = 2;
+      return;
+    }
+    this.selectedFieldSet[0] = step;
   }
 }

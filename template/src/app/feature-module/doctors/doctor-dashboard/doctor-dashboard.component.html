@@ -93,7 +93,7 @@
                         <td>
                           <div class="patient-info-profile">
                             <a class="table-avatar">
-                              <img [src]="appt.patient?.avatar || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
+                              <img [src]="appt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
                             </a>
                             <div class="patient-name-info">
                               <span>#{{ appt._id?.slice(-6) }}</span>
@@ -231,7 +231,7 @@
                     <ng-container *ngFor="let patient of recentPatients; let i = index">
                       <div class="recent-patient-grid">
                         <a [routerLink]="routes.patientDetails" class="patient-img">
-                          <img [src]="patient?.avatar || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'" alt="Img" />
+                          <img [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'" alt="Img" />
                         </a>
                         <h5>
                           <a [routerLink]="routes.patientDetails">{{ patient?.name || 'Unknown' }}</a>
@@ -270,7 +270,7 @@
                 <ng-container *ngIf="upcomingAppointment; else noUpcoming">
                   <div class="upcoming-patient-info">
                     <div class="info-details">
-                      <span class="img-avatar"><img [src]="upcomingAppointment.patient?.avatar || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img"></span>
+                      <span class="img-avatar"><img [src]="upcomingAppointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img"></span>
                       <div class="name-info">
                         <span>#{{ upcomingAppointment._id?.slice(-6) }}</span>
                         <h6>{{ upcomingAppointment.patient?.name || 'Unknown' }}</h6>
@@ -328,7 +328,7 @@
                           <td>
                             <div class="patient-info-profile">
                               <a [routerLink]="routes.invoice" class="table-avatar">
-                                <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img" />
+                                <img [src]="invoice.appointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
                               </a>
                               <div class="patient-name-info">
                                 <h5>
