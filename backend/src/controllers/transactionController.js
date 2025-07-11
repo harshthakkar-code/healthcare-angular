@@ -67,6 +67,24 @@ exports.getTransactions = async (req, res, next) => {
         }
       },
       { $unwind: '$appointment.doctor' },
+      // Lookup doctor profile
+      {
+        $lookup: {
+          from: 'doctorprofiles',
+          localField: 'appointment.doctor._id',
+          foreignField: 'user',
+          as: 'appointment.doctorProfile'
+        }
+      },
+      { $unwind: { path: '$appointment.doctorProfile', preserveNullAndEmptyArrays: true } },
+      // Add profileImgUrl from doctorProfile (if exists) or from user
+      {
+        $addFields: {
+          'appointment.doctor.profileImgUrl': {
+            $ifNull: ['$appointment.doctorProfile.profileImgUrl', '$appointment.doctor.profileImgUrl']
+          }
+        }
+      },
       { $addFields: { idStr: { $toString: '$_id' } } },
       // Add search match if needed
       ...(search ? [{ $match: {
