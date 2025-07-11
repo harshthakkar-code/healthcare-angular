@@ -9,14 +9,14 @@
           <div class="doc-info-left">
             <div class="doctor-img">
               <img
-                [src]="profile?.profileImage ? 'assets/img/doctors/' + profile.profileImage : 'assets/img/doctors/doc-profile-02.jpg'"
+                [src]="profileImageUrl"
                 class="img-fluid"
                 alt="User Image"
               />
             </div>
             <div class="doc-info-cont">
-              <span class="badge doc-avail-badge"
-                ><i class="fa-solid fa-circle"></i>Available
+              <span class="badge doc-avail-badge" [ngClass]="availabilityBadgeClass">
+                <i class="fa-solid fa-circle"></i>{{ availabilityText }}
               </span>
               <h4 class="doc-name">
                 Dr.{{ profile?.name || 'Doctor Name' }}
@@ -29,7 +29,7 @@
               <p>Speaks : {{ settings?.profileSettings?.[0]?.knownLanguages || 'English' }}</p>
               <p class="address-detail">
                 <span class="loc-icon"
-                  ><i class="feather icon-map-pin"></i></span
+                  ><i class="feather-map-pin"></i></span
                 >{{ profile?.clinicAddress || profile?.address2 || 'No address available' }}
                 <span class="view-text">( View Location )</span>
               </p>
@@ -128,23 +128,23 @@
               <span class="bg-blue"
                 ><img src="assets/img/icons/calendar3.svg" alt="Img"
               /></span>
-              Nearly {{ appointmentCount !== null ? appointmentCount : '200+' }} Appointment Booked
+              Nearly {{ appointmentCount !== null ? appointmentCount : '0' }} Appointment Booked
             </li>
             <li>
               <span class="bg-dark-blue"
                 ><img src="assets/img/icons/bullseye.svg" alt="Img"
               /></span>
-              In Practice for {{ totalYearsInPractice !== null ? totalYearsInPractice : '21' }} Years
+              In Practice for {{ totalYearsInPractice !== null ? totalYearsInPractice : '0' }} Years
             </li>
             <li>
               <span class="bg-green"
                 ><img src="assets/img/icons/bookmark-star.svg" alt="Img"
               /></span>
-              {{ settings?.awardsSettings?.length || '15+' }} Awards
+              {{ settings?.awardsSettings?.length || '0' }} Awards
             </li>
           </ul>
           <div class="bottom-book-btn">
-            <p><span>Price : {{ profile?.priceRange ? ('$' + profile.priceRange) : '$100 - $200' }} </span> for a Session</p>
+            <p><span>Price : {{ priceRange || '$0' }} </span> for a Session</p>
             <div class="clinic-booking">
               <a class="apt-btn" [routerLink]="[routes.booking, profile?._id]">
                 Book Appointment
@@ -205,11 +205,11 @@
             technology to streamline patient care. Committed to delivering
             compassionate, personalized care to each and every patient."
           </p>
-          <a
+          <!-- <a
             href="javascript:void(0);"
             class="show-more d-flex align-items-center"
             >See More<i class="fa-solid fa-chevron-down ms-2"></i
-          ></a>
+          ></a> -->
         </div>
         <div class="doc-information-details" id="experience" #experience>
           <div class="detail-title slider-nav d-flex justify-content-between align-items-center">
@@ -332,12 +332,12 @@
               </div>
               <div class="col-lg-5">
                 <div class="contact-map d-flex">
-                  <iframe
+                  <!-- <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3193.7301009561315!2d-76.13077892422932!3d36.82498697224007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89bae976cfe9f8af%3A0xa61eac05156fbdb9!2sBeachStreet%20USA!5e0!3m2!1sen!2sin!4v1669777904208!5m2!1sen!2sin"
                     allowfullscreen=""
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  ></iframe> -->
                 </div>
               </div>
             </div>
@@ -372,12 +372,12 @@
               </div>
               <div class="col-lg-5">
                 <div class="contact-map d-flex">
-                  <iframe
+                  <!-- <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3193.7301009561315!2d-76.13077892422932!3d36.82498697224007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89bae976cfe9f8af%3A0xa61eac05156fbdb9!2sBeachStreet%20USA!5e0!3m2!1sen!2sin!4v1669777904208!5m2!1sen!2sin"
                     allowfullscreen=""
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  ></iframe> -->
                 </div>
               </div>
             </div>

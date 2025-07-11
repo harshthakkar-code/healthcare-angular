@@ -2,15 +2,13 @@
     <div class="profile-sidebar doctor-sidebar profile-sidebar-new">
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
-                <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img">
-                    <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image">
-                    <!-- <a [routerLink]="routes.doctorProfile2" class="booking-doc-img">
-                        <img *ngIf="doctorProfile?.profileImage; else defaultImg"
-                             [src]="'/uploads/' + doctorProfile?.profileImage"
-                             alt="User Image">
-                        <ng-template #defaultImg>
-                            <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image">
-                        </ng-template> -->
+                <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img" [ngClass]="availability ? 'available' : 'unavailable'">
+                    <img *ngIf="doctorProfile?.profileImage; else defaultImg"
+                         [src]="doctorProfile.profileImage"
+                         alt="User Image">
+                    <ng-template #defaultImg>
+                        <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg" alt="User Image">
+                    </ng-template>
                 </a>
                 <div class="profile-det-info">
                     <h3>
@@ -57,8 +55,8 @@
                     placeholder="I am Available Now"
                     [(ngModel)]="availability"
                     (selectionChange)="onAvailabilityChange($event.value)">
-                    <mat-option value="available">I am Available Now</mat-option>
-                    <mat-option value="unavailable">Not Available</mat-option>
+                    <mat-option [value]="true">I am Available Now</mat-option>
+                    <mat-option [value]="false">Not Available</mat-option>
                 </mat-select>
             </div>
         </div>

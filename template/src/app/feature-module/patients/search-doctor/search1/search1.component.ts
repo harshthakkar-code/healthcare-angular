@@ -30,6 +30,7 @@ export class Search1Component implements OnInit{
   pageSize: number = 12;
   total: number = 0;
   private searchSubject = new Subject<void>();
+  availabilityFilter: boolean | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -72,31 +73,89 @@ export class Search1Component implements OnInit{
   async fetchDoctors() {
     this.loading = true;
     try {
-      const res = await api.get('/doctor/public', {
-        params: {
-          page: this.page,
-          limit: this.pageSize,
-          search: this.searchTerm,
-          city: this.location,
-          date: this.date
+      const params: any = {
+        page: this.page,
+        limit: this.pageSize,
+        search: this.searchTerm,
+        city: this.location,
+        date: this.date
+      };
+      if (this.availabilityFilter !== null) {
+        params.availability = this.availabilityFilter;
+      }
+      const res = await api.get('/doctor/public', { params });
+      const newDoctors = res.data.data || [];
+      this.total = res.data.total || 0;
+      // Optimized: Fetch favourite status for all doctors in one call
+      const patientId = this.getPatientId();
+      if (patientId && newDoctors.length > 0) {
+        const doctorIds = newDoctors.map((doc: any) => doc._id);
+        try {
+          const favRes = await api.post('/favourites/status', { patientId, doctorIds });
+          const batchStatus = favRes.data;
+          newDoctors.forEach((doc: any) => {
+            doc.favourite = batchStatus[doc._id] || null;
+          });
+        } catch {
+          newDoctors.forEach((doc: any) => {
+            doc.favourite = null;
+          });
+        }
+      }
+      // Enhance doctor data for dynamic display
+      newDoctors.forEach((doc: any) => {
+        // Avatar
+        if (doc.profileImage) {
+          if (doc.profileImage.startsWith('http')) {
+            doc.avatar = doc.profileImage;
+          } else {
+            doc.avatar = 'https://varmd.s3.eu-north-1.amazonaws.com/healthcare/' + doc.profileImage;
+          }
+        } else {
+          doc.avatar = 'assets/img/doctor-grid/doctor-grid-01.jpg';
+        }
+        // Max service price (flatten 2D services array if needed)
+        let prices: number[] = [];
+        if (Array.isArray(doc.services) && doc.services.length > 0) {
+          const flatServices = doc.services.flat();
+          prices.push(...flatServices
+            .map((s: any) => typeof s.price === 'number' ? s.price : null)
+            .filter((p: number | null) => p !== null));
+        }
+        if (Array.isArray(doc.specializations) && doc.specializations.length > 0) {
+          doc.specializations.forEach((spec: any) => {
+            if (Array.isArray(spec.services)) {
+              prices.push(...spec.services
+                .map((s: any) => typeof s.price === 'number' ? s.price : null)
+                .filter((p: number | null) => p !== null));
+            }
+          });
+        }
+        doc.maxServicePrice = prices.length > 0 ? Math.max(...prices) : null;
+        console.log( doc.maxServicePrice)
+        // Speciality text
+        if (Array.isArray(doc.specializations) && doc.specializations.length > 0) {
+          doc.specialityText = doc.specializations.join(', ');
+        } else if (doc.specialization && doc.specialization.name) {
+          doc.specialityText = doc.specialization.name;
+        } else {
+          doc.specialityText = 'Specialist';
+        }
+        // Rating text
+        if (typeof doc.avgRating === 'number') {
+          doc.ratingText = doc.avgRating.toFixed(1);
+        } else {
+          doc.ratingText = 'N/A';
+        }
+        // Availability (boolean only)
+        if (doc.availability === true || doc.availability == "true") {
+          doc.statusText = 'Available';
+          doc.statusClass = 'bg-success-light';
+        } else {
+          doc.statusText = 'Unavailable';
+          doc.statusClass = 'bg-danger-light';
         }
       });
-      const newDoctors = res.data.data || [];
-      console.log(newDoctors)
-      this.total = res.data.total || 0;
-      // Fetch favourite status for each doctor using DoctorProfile._id
-      const patientId = this.getPatientId();
-      if (patientId) {
-        await Promise.all(newDoctors.map(async (doc: any) => {
-          try {
-            // Use DoctorProfile._id for doctorId
-            const favRes = await api.get(`/favourites?patientId=${patientId}&doctorId=${doc._id}`);
-            doc.favourite = favRes.data.data && favRes.data.data.length > 0 ? favRes.data.data[0] : null;
-          } catch {
-            doc.favourite = null;
-          }
-        }));
-      }
       if (this.page === 1) {
         this.doctors = newDoctors;
       } else {
@@ -158,5 +217,12 @@ export class Search1Component implements OnInit{
   }
   filterOpen():void{
     this.isfilter=!this.isfilter;
+  }
+
+  onAvailabilityToggle(event: any) {
+    this.availabilityFilter = event.target.checked ? true : null;
+    this.page = 1;
+    this.doctors = [];
+    this.fetchDoctors();
   }
 }

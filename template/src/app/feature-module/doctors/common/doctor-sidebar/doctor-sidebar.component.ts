@@ -19,7 +19,7 @@ export class DoctorSidebarComponent implements OnInit {
   pendingRequestCount: number = 0;
   doctorSettings: any = null;
   educationDetails: any[] = [];
-  availability: string = 'unavailable';
+  availability: boolean = false;
   specializations: any[] = [];
   doctorid: string | null | undefined;
 
@@ -50,7 +50,7 @@ getDoctorProfile() {
   api.get('/doctor/profile').then((res: any) => {
     console.log('Doctor profile received:', res);
     this.doctorProfile = res.data;
-    this.availability = res.data.availability || 'unavailable';
+    this.availability = res.data.availability === true;
   });
 }
 
@@ -86,7 +86,7 @@ getDoctorSettings() {
   });
 }
 
-onAvailabilityChange(newValue: string) {
+onAvailabilityChange(newValue: boolean) {
   this.availability = newValue;
   api.put('/doctor/profile', { availability: newValue })
     .then((res: any) => {
@@ -132,6 +132,10 @@ getSpecializationRows(): any[][] {
   logout() {
     this.authService.logout();
     this.router.navigate([this.routes.userLogin]);
+  }
+
+  get availabilityText(): string {
+    return this.availability ? 'Available' : 'Unavailable';
   }
 }
 

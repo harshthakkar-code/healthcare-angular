@@ -122,9 +122,11 @@ export class LoginComponent implements OnInit {
 
   navigateByRole(role: string) {
     if (role === 'doctor') {
-      this.router.navigate(['/doctors/doctor-dashboard']);
+      // this.router.navigate(['/doctors/doctor-dashboard']);
+      this.router.navigate([this.routes.index]);
     } else if (role === 'patient') {
-      this.router.navigate(['/patients/patient-dashboard']);
+      // this.router.navigate(['/patients/patient-dashboard']);
+      this.router.navigate([this.routes.index]);
     } else if (role === 'admin') {
       this.router.navigate(['/admin/dashboard']);
     } else {

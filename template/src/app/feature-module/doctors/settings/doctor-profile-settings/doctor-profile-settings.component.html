@@ -52,16 +52,17 @@
           <div class="setting-card">
             <div class="change-avatar img-upload">
               <div class="profile-img">
-                <i class="fa-solid fa-file-image"></i>
+                <img *ngIf="profileImgUrl" [src]="profileImgUrl" alt="Profile" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;" />
+                <i *ngIf="!profileImgUrl" class="fa-solid fa-file-image"></i>
               </div>
               <div class="upload-img">
                 <h5>Profile Image</h5>
                 <div class="imgs-load d-flex align-items-center">
                   <div class="change-photo">
                     Upload New 
-                    <input type="file" class="upload">
+                    <input type="file" class="upload" (change)="onProfileImageSelected($event)" accept="image/*">
                   </div>
-                  <a href="javascript:void(0)" class="upload-remove">Remove</a>
+                  <a href="javascript:void(0)" class="upload-remove" (click)="removeProfileImage()">Remove</a>
                 </div>
                 <p class="form-text">Your Image should Below 4 MB, Accepted format Jpg,Png,Svg</p>
               </div>			

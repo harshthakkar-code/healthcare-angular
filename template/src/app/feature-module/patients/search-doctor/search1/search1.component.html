@@ -13,8 +13,14 @@
                     <div class="doctor-filter-availability me-3">
                         <p>Availability</p>
                         <div class="status-toggle status-tog">
-                            <input type="checkbox" id="status_6" class="check">
-                            <label for="status_6" class="checktoggle">checkbox</label>
+                            <input
+                                type="checkbox"
+                                id="status_6"
+                                class="check"
+                                [checked]="availabilityFilter === true"
+                                (change)="onAvailabilityToggle($event)"
+                            >
+                            <label for="status_6" class="checktoggle">Available Only</label>
                         </div>
                     </div>
                     <a href="javascript:void(0);" class="btn btn-sm head-icon me-3" (click)="filterOpen()" id="filter_search"><i class="isax isax-sort"></i></a>
@@ -103,9 +109,9 @@
                 <div class="col-xxl-3 col-lg-4 col-md-6" *ngFor="let doctor of doctors">
                 <div class="card">
                     <div class="card-img card-img-hover">
-                            <a [routerLink]="routes.doctorProfile1"><img [src]="doctor.avatar || 'assets/img/doctor-grid/doctor-grid-01.jpg'" alt=""></a>
+                            <a [routerLink]="[routes.doctorProfile1, doctor._id]"><img [src]="doctor.avatar || 'assets/img/doctor-grid/doctor-grid-01.jpg'" alt=""></a>
                         <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                                <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.avgRating || 'N/A' }}</span>
+                                <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.ratingText }}</span>
                             <a href="javascript:void(0)" class="fav-icon" (click)="toggleFavourite(doctor)">
                                 <i class="fa" [ngClass]="[
                                     doctor.favourite && doctor.favourite.favourites ? 'fa-heart text-danger' : 'fa-heart '
@@ -115,15 +121,17 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="d-flex active-bar align-items-center justify-content-between p-3">
-                                <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialization?.name || 'Specialist' }}</a>
-                            <span class="badge bg-success-light d-inline-flex align-items-center">
+                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialityText }}</a>
+                            <span class="badge" [ngClass]="doctor.statusClass + ' d-inline-flex align-items-center'">
                                 <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                Available
+                                {{ doctor.statusText }}
                             </span>
                         </div>
                         <div class="p-3 pt-0">
                             <div class="doctor-info-detail mb-3 pb-3">
-                                    <h3 class="mb-1"><a [routerLink]="routes.doctorProfile1">{{ doctor.name || 'Doctor Name' }}</a></h3>
+                                    <h3 class="mb-1">
+                                        <a [routerLink]="[routes.doctorProfile1, doctor._id]">{{ doctor.name || 'Doctor Name' }}</a>
+                                    </h3>
                                 <div class="d-flex align-items-center">
                                         <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
                                     <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
@@ -133,7 +141,7 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <p class="mb-1">Consultation Fees</p>
-                                        <h3 class="text-orange">{{ doctor.consultationFees ? ('$' + doctor.consultationFees) : '$0' }}</h3>
+                                        <h3 class="text-orange">{{ doctor.maxServicePrice ? ('$' + doctor.maxServicePrice) : '$0' }}</h3>
                                 </div>
                                 <a [routerLink]="[routes.booking, doctor._id]" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>

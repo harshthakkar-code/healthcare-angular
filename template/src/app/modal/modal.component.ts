@@ -76,6 +76,7 @@ export class ModalComponent implements OnInit {
     // Add more fields as needed
   };
   savingSlot = false;
+  slotApiError: string = '';
 
   durationOptions = [15, 30, 45, 60];
   selectedDuration = 30;
@@ -396,6 +397,7 @@ export class ModalComponent implements OnInit {
     const doctorId = user.id || user._id;
     if (!doctorId) return;
     this.savingSlot = true;
+    this.slotApiError = '';
     // Compute the date for the selected day in the current week
     const daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const today = new Date();
@@ -422,6 +424,7 @@ export class ModalComponent implements OnInit {
     this.slotService.createSlots(slotData).subscribe({
       next: () => {
         this.savingSlot = false;
+        this.slotApiError = '';
         this.slotModalService.emitSlotCreated();
         this.slotModalService.resetForm();
         const modal = document.getElementById('add_slot');
@@ -429,8 +432,11 @@ export class ModalComponent implements OnInit {
       },
       error: (err) => {
         this.savingSlot = false;
-        alert('Failed to save slot');
-        console.error('Save slot error:', err);
+        this.slotApiError = err?.error?.error  || err?.response?.data?.error || 'Failed to save slot';
+        if (this.slotApiError) {
+          setTimeout(() => { this.slotApiError = ''; }, 3000);
+        }
+        // console.error('Save slot error:', err);
       }
     });
   }

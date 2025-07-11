@@ -1207,6 +1207,9 @@
       </div>
       <form (ngSubmit)="saveSlot()">
         <div class="modal-body">
+          <div *ngIf="slotApiError" class="alert alert-danger" style="font-size: 14px;">
+            {{ slotApiError }}
+          </div>
           <div class="timing-modal">
             <div class="row">
               <div class="col-md-6">

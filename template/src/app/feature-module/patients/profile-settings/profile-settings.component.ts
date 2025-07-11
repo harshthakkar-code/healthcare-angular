@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 import api from 'src/app/shared/api/axios';
 import { routes } from 'src/app/shared/routes/routes';
 @Component({
@@ -17,6 +18,8 @@ export class ProfileSettingsComponent implements OnInit {
   loading = true;
   error: string | null = null;
   profileForm: FormGroup;
+  profileImgUrl: string = '';
+  uploading: boolean = false;
 
   constructor(private fb: FormBuilder) {
     this.profileForm = this.fb.group({
@@ -36,17 +39,18 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchProfile();
+    this.loadProfile();
     this.myDateValue = new Date();
   }
 
-  fetchProfile() {
+  loadProfile() {
     this.loading = true;
     api.get('/patient/profile')
       .then(res => {
         this.profile = res.data;
         this.user = res.data.user;
         this.profileForm.patchValue(this.profile); // Patch form values
+        this.profileImgUrl = this.profile.profileImgUrl || '';
         this.loading = false;
       })
       .catch(() => {
@@ -84,7 +88,7 @@ export class ProfileSettingsComponent implements OnInit {
         this.profile = res.data.profile;
         this.profileForm.patchValue(this.profile);
         this.loading = false;
-        this.fetchProfile();
+        this.loadProfile();
       })
       .catch(() => {
         this.error = 'Failed to create profile.';
@@ -94,5 +98,49 @@ export class ProfileSettingsComponent implements OnInit {
 
   onDateChange(newDate: Date) {
     // Optionally update form if needed
+  }
+
+  async onProfileImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.profileImgUrl = imageUrl;
+      this.uploading = false;
+      this.patchPatientProfileImage(imageUrl);
+    } catch (err) {
+      this.uploading = false;
+      // Optionally show error
+    }
+  }
+
+  patchPatientProfileImage(imageUrl: string) {
+    const payload = {
+      profileImgUrl: imageUrl,
+      // ...other fields as needed
+    };
+    api.put('/patient/profile', payload).then(() => {
+      // Optionally show success
+    });
+  }
+
+  removeProfileImage() {
+    this.profileImgUrl = '';
+    this.patchPatientProfileImage('');
+  }
+
+  saveChanges() {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+      return;
+    }
+    const payload = {
+      ...this.profileForm.value,
+      profileImgUrl: this.profileImgUrl || ''
+    };
+    api.put('/patient/profile', payload).then(() => {
+      // Optionally show success
+    });
   }
 }

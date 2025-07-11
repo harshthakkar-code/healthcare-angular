@@ -279,9 +279,24 @@ export class PatientDashboardComponent implements OnInit {
         });
       // Fetch favourites for dashboard (first 4)
       api.get(`/favourites?patientId=${patientId}&favourites=true&page=1&limit=4`)
-        .then(res => {
+        .then(async res => {
           // Only use the doctorId object for each favourite
           this.dashboardFavourites = (res.data.data || res.data || []).filter((fav: any) => fav.doctorId);
+          // If you want to show favourite status for these doctors elsewhere, use batch endpoint
+          if (this.dashboardFavourites.length > 0) {
+            const doctorIds = this.dashboardFavourites.map((fav: any) => fav.doctorId._id || fav.doctorId);
+            try {
+              const favRes = await api.post('/favourites/status', { patientId, doctorIds });
+              const batchStatus = favRes.data;
+              this.dashboardFavourites.forEach((fav: any) => {
+                fav.favourite = batchStatus[fav.doctorId._id || fav.doctorId] || null;
+              });
+            } catch {
+              this.dashboardFavourites.forEach((fav: any) => {
+                fav.favourite = null;
+              });
+            }
+          }
         })
         .catch(() => {
           this.dashboardFavourites = [];

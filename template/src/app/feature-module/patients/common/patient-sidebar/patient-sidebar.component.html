@@ -6,7 +6,12 @@
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
                 <a [routerLink]="routes.profileSettings" class="booking-doc-img">
-                    <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image">
+                    <img *ngIf="patientProfile?.profileImgUrl; else defaultImg"
+                         [src]="patientProfile.profileImgUrl"
+                         alt="User Image">
+                    <ng-template #defaultImg>
+                        <img src="assets/img/default-profile.png" alt="User Image">
+                    </ng-template>
                 </a>
                 <div class="profile-det-info">
                     <h3><a [routerLink]="routes.profileSettings">{{ patientProfile?.name || 'Patient Name' }}</a></h3>

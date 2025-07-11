@@ -72,6 +72,26 @@ export class GeneralHomeComponent implements OnInit {
         }
       });
       this.featuredDoctors = res.data.data || [];
+      // Compute max service price for each doctor
+      this.featuredDoctors.forEach((doc: any) => {
+        let prices: number[] = [];
+        if (Array.isArray(doc.services) && doc.services.length > 0) {
+          const flatServices = doc.services.flat();
+          prices.push(...flatServices
+            .map((s: any) => typeof s.price === 'number' ? s.price : null)
+            .filter((p: number | null) => p !== null));
+        }
+        if (Array.isArray(doc.specializations) && doc.specializations.length > 0) {
+          doc.specializations.forEach((spec: any) => {
+            if (Array.isArray(spec.services)) {
+              prices.push(...spec.services
+                .map((s: any) => typeof s.price === 'number' ? s.price : null)
+                .filter((p: number | null) => p !== null));
+            }
+          });
+        }
+        doc.fees = prices.length > 0 ? Math.max(...prices) : null;
+      });
     } catch (err) {
       this.featuredDoctors = [];
     }

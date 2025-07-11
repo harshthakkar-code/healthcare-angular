@@ -114,6 +114,7 @@ export class DoctorProfile1Component implements OnInit {
   public Math = Math;
   public appointmentCount: number | null = null;
   public totalYearsInPractice: number | null = null;
+  public priceRange: string | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -145,9 +146,33 @@ export class DoctorProfile1Component implements OnInit {
           } else {
             this.totalYearsInPractice = null;
           }
+          // Calculate price range from specializations/services
+          this.setPriceRange();
         });
       }
     });
+  }
+
+  setPriceRange() {
+    let prices: number[] = [];
+    if (Array.isArray(this.specializations)) {
+      this.specializations.forEach((spec: any) => {
+        if (Array.isArray(spec.services)) {
+          spec.services.forEach((service: any) => {
+            if (typeof service.price === 'number') {
+              prices.push(service.price);
+            }
+          });
+        }
+      });
+    }
+    if (prices.length > 0) {
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      this.priceRange = min === max ? `$${min}` : `$${min} - $${max}`;
+    } else {
+      this.priceRange = null;
+    }
   }
 
   setActiveTab(tabName: string) {
@@ -193,6 +218,38 @@ export class DoctorProfile1Component implements OnInit {
     }
     if (diffDay === 1) return 'Yesterday';
     return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+  }
+
+  get availabilityBadgeClass(): string {
+    if (this.profile && this.profile.availability === true) {
+      return 'bg-success-light';
+    } else if (this.profile && this.profile.availability === false) {
+      return 'bg-danger-light';
+    }
+    return 'bg-secondary';
+  }
+
+  get availabilityText(): string {
+    if (this.profile && this.profile.availability === true) {
+      return 'Available';
+    } else if (this.profile && this.profile.availability === false) {
+      return 'Unavailable';
+    }
+    return 'Unknown';
+  }
+
+  get profileImageUrl(): string {
+    if (this.profile?.profileImage) {
+      return this.profile.profileImage;
+    } else if (this.profile?.profileImgUrl) {
+      if (this.profile.profileImage.startsWith('http')) {
+        return this.profile.profileImgUrl;
+      } else {
+        return 'https://varmd.s3.eu-north-1.amazonaws.com/healthcare/' + this.profile.profileImage;
+      }
+    } else {
+      return 'assets/img/doctors/doc-profile-02.jpg';
+    }
   }
 
   getPatientId(): string | null {

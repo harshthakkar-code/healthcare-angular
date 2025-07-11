@@ -17,6 +17,7 @@ const appointmentSchema = new mongoose.Schema({
   symptoms: { type: String },
   price: { type: Number },
   totalPrice: { type: Number },
+  attachmentUrl: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema); 

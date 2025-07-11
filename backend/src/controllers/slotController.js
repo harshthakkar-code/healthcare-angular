@@ -17,31 +17,58 @@ exports.createSlots = async (req, res) => {
     if (!doctorId || !date || !startTime || !endTime || !duration) {
       return res.status(400).json({ error: 'doctorId, date, startTime, endTime, and duration are required' });
     }
+    if (!fees || Number(fees) === 0) {
+      return res.status(400).json({ error: 'Appointment fees must be greater than 0.' });
+    }
     const start = timeStringToMinutes(startTime);
     const end = timeStringToMinutes(endTime);
     const durationMin = Number(duration);
     const intervalMin = Number(interval) || 0; // default to 0 if not provided
     let t = start;
     let slotDocs = [];
+    let duplicateTimes = [];
     while (t + durationMin <= end) {
-      // Create spaceAssignments array
-      const spaceAssignments = Array.from({ length: spaces }, (_, i) => ({
-        spaceNumber: i + 1,
-        userId: null,
-        status: 'available'
-      }));
-      slotDocs.push({
+      const slotStartTime = minutesToTimeString(t);
+      const slotEndTime = minutesToTimeString(t + durationMin);
+      // Check for overlapping slot (same doctor, date, overlapping time)
+      const overlapping = await Slot.findOne({
         doctorId,
-        date,
-        startTime: minutesToTimeString(t),
-        endTime: minutesToTimeString(t + durationMin),
-        duration: durationMin,
-        fees,
-        status: 'available',
-        spaces,
-        spaceAssignments
+        date: new Date(date),
+        $or: [
+          {
+            startTime: { $lt: slotEndTime },
+            endTime: { $gt: slotStartTime }
+          }
+        ]
       });
+      if (overlapping) {
+        duplicateTimes.push(slotStartTime + '-' + slotEndTime);
+      } else {
+        // Create spaceAssignments array
+        const spaceAssignments = Array.from({ length: spaces }, (_, i) => ({
+          spaceNumber: i + 1,
+          userId: null,
+          status: 'available'
+        }));
+        slotDocs.push({
+          doctorId,
+          date,
+          startTime: slotStartTime,
+          endTime: slotEndTime,
+          duration: durationMin,
+          fees,
+          status: 'available',
+          spaces,
+          spaceAssignments
+        });
+      }
       t = t + durationMin + intervalMin; // add interval after each slot
+    }
+    if (duplicateTimes.length > 0) {
+      return res.status(409).json({ error: `Slot overlaps with existing slot(s) at: ${duplicateTimes.join(', ')}. Please select a different time.` });
+    }
+    if (slotDocs.length === 0) {
+      return res.status(400).json({ error: 'No new slots to create.' });
     }
     const created = await Slot.insertMany(slotDocs);
     res.status(201).json(created);

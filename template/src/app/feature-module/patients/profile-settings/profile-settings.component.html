@@ -33,15 +33,18 @@
                                 <label class="form-label mb-2">Profile Photo</label>
                                 <div class="change-avatar img-upload">
                                     <div class="profile-img">
-                                        <img [src]="profile?.profileImgUrl || 'assets/img/default-profile.png'" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        <img *ngIf="profileImgUrl; else defaultImg" [src]="profileImgUrl" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        <ng-template #defaultImg>
+                                            <img src="assets/img/default-profile.png" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        </ng-template>
                                     </div>
                                     <div class="upload-img">
                                         <div class="imgs-load d-flex align-items-center">
                                             <div class="change-photo">
                                                 Upload New 
-                                                <input type="file" class="upload">
+                                                <input type="file" class="upload" (change)="onProfileImageSelected($event)" accept="image/*">
                                             </div>
-                                            <a href="javascript:void(0);" class="upload-remove">Remove</a>
+                                            <a href="javascript:void(0);" class="upload-remove" (click)="removeProfileImage()">Remove</a>
                                         </div>
                                         <p>Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
                                     </div>			

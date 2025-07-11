@@ -7,6 +7,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialogComponent } from '../../doctor-specialities/confirm-delete-dialog.component';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 export interface Fruit {
   name: string;
@@ -38,6 +39,9 @@ export class DoctorProfileSettingsComponent implements OnInit {
 
   knownLanguages: string[] = [];
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
+  profileImgUrl: string = '';
+  uploading: boolean = false;
 
   getDoctorId(): string | null {
     try {
@@ -112,6 +116,9 @@ export class DoctorProfileSettingsComponent implements OnInit {
           // Patch the rest of the profile fields (excluding memberships)
           const { memberships, ...restProfile } = profile;
           this.settingsForm.get('profileSettings')?.patchValue(restProfile);
+
+          // Set profile image URL for preview
+          this.profileImgUrl = profile.profileImgUrl || '';
         }
       })
       .catch((err) => {
@@ -147,9 +154,14 @@ export class DoctorProfileSettingsComponent implements OnInit {
     if (!this.doctorId) return;
     // Get the latest memberships array values
     const memberships = this.membershipsFormArray.value;
+    // Get the current profileSettings from the form
+    const profileSettingsForm = this.settingsForm.value.profileSettings;
+    // Ensure image URL and time are included
     const profileSettings = {
-      ...this.settingsForm.value.profileSettings,
-      memberships
+      ...profileSettingsForm,
+      memberships,
+      profileImgUrl: this.profileImgUrl || '',
+      profileImgUpdatedAt: this.profileImgUrl ? new Date().toISOString() : profileSettingsForm.profileImgUpdatedAt
     };
     const payload = {
       doctorId: this.doctorId,
@@ -163,6 +175,11 @@ export class DoctorProfileSettingsComponent implements OnInit {
       .catch((err) => {
         // Optionally show error message
       });
+  }
+
+  removeProfileImage() {
+    this.profileImgUrl = '';
+    this.patchDoctorProfileImage('');
   }
 
   addEducationFunc() {
@@ -224,5 +241,43 @@ export class DoctorProfileSettingsComponent implements OnInit {
 
   getMembershipGroup(i: number): FormGroup {
     return this.membershipsFormArray.at(i) as FormGroup;
+  }
+
+  onProfileImageSelected = async (event: any) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploading = true;
+    console.log(file)
+    try {
+      const imageUrl = await uploadImage(file);
+      this.profileImgUrl = imageUrl; // For preview
+      this.uploading = false;
+      this.patchDoctorProfileImage(imageUrl);
+    } catch (err) {
+      this.uploading = false;
+      // Optionally show error
+    }
+  }
+
+  patchDoctorProfileImage(imageUrl: string) {
+    if (!this.doctorId) return;
+    // Get the current profileSettings from the form
+    const currentProfile = this.settingsForm.value.profileSettings;
+    const updatedProfile = {
+      ...currentProfile,
+      profileImgUrl: imageUrl,
+      profileImgUpdatedAt: new Date().toISOString()
+    };
+    const payload = {
+      doctorId: this.doctorId,
+      profileSettings: [updatedProfile]
+    };
+    api.post(this.apiUrl, payload)
+      .then((res) => {
+        // Optionally update local state, show success, etc.
+      })
+      .catch((err) => {
+        // Optionally show error
+      });
   }
 }
