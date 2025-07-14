@@ -38,7 +38,7 @@
           <div class="dependent-info">
               <div class="patinet-information">
                 <a [routerLink] = "routes.patientProfile">
-                  <img [src]="d.profileImage || 'assets/img/dependent/dependent-01.jpg'" >
+                  <img [src]="d.profileImgUrl || 'assets/img/dependent/dependent-01.jpg'" >
                 </a>
                 <div class="patient-info">
                   <h5>{{ d.name }}</h5>

@@ -23,6 +23,7 @@ import { SlotModalService } from '../feature-module/doctors/available-timings/sl
 import { forkJoin } from 'rxjs';
 import { DependantService } from '../feature-module/patients/dependent/dependant.service';
 import { DependantEditService } from 'src/app/shared/data/dependant-edit.service';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -93,6 +94,7 @@ export class ModalComponent implements OnInit {
   addDepStatus = 'active';
   addDepBloodGroup = '';
   addDepLoading = false;
+  addDepProfileImgUrl = '';
 
   editDependant: any = {};
 
@@ -518,6 +520,20 @@ export class ModalComponent implements OnInit {
     }
   }
 
+  async onAddDepImageChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      try {
+        // Optionally, show a loading indicator here
+        const url = await uploadImage(file);
+        this.addDepProfileImgUrl = url;
+      } catch (err) {
+        alert('Image upload failed');
+      }
+    }
+  }
+
   addDependantFromModal(event: Event) {
     event.preventDefault();
     const userId = this.getPatientId();
@@ -529,7 +545,7 @@ export class ModalComponent implements OnInit {
       relation: this.addDepRelation,
       gender: this.addDepGender,
       dob: this.addDepDob,
-      profileImage: this.addDepProfileImage,
+      profileImgUrl: this.addDepProfileImgUrl, // <-- use the new variable
       status: this.addDepStatus,
       bloodGroup: this.addDepBloodGroup
     };
@@ -543,7 +559,7 @@ export class ModalComponent implements OnInit {
         this.addDepRelation = '';
         this.addDepGender = '';
         this.addDepDob = '';
-        this.addDepProfileImage = '';
+        this.addDepProfileImgUrl = '';
         this.addDepStatus = 'active';
         this.addDepBloodGroup = '';
       },
@@ -587,7 +603,14 @@ export class ModalComponent implements OnInit {
 
   onFileChange(input: HTMLInputElement) {
     if (this.editDependant && input.files && input.files.length > 0) {
-      this.editDependant.profileImage = input.files[0];
+      const file = input.files[0];
+      this.editDependant.profileImage = file;
+      // Show preview for the new file
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editDependant.profileImagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 

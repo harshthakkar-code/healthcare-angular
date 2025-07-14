@@ -2589,6 +2589,16 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Profile Image Upload -->
+                  <div class="col-md-6">
+                    <div class="form-wrap">
+                      <label class="form-label">Profile Image</label>
+                      <input type="file" class="form-control" (change)="onAddDepImageChange($event)">
+                      <div *ngIf="addDepProfileImgUrl">
+                        <img [src]="addDepProfileImgUrl" alt="Profile Preview" style="max-width: 100px; margin-top: 10px;">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2630,13 +2640,19 @@
                   <label class="form-label">Profile Photo </label>
                   <div class="change-avatar img-upload">
                     <div class="profile-img">
-                      <i class="fa-solid fa-file-image"></i>
+                      <ng-container *ngIf="editDependant.profileImage instanceof File; else showUrl">
+                        <img [src]="editDependant.profileImagePreview" alt="Profile Preview" style="max-width: 100px;">
+                      </ng-container>
+                      <ng-template #showUrl>
+                        <img *ngIf="editDependant.profileImgUrl" [src]="editDependant.profileImgUrl" alt="Profile Image" style="max-width: 100px;">
+                        <i *ngIf="!editDependant.profileImgUrl" class="fa-solid fa-file-image"></i>
+                      </ng-template>
                     </div>
                     <div class="upload-img">
                       <div class="imgs-load d-flex align-items-center">
                         <div class="change-photo">
                           Upload New
-                          <input type="file" class="upload" #fileInput (change)="onFileChange(fileInput)">
+                          <input type="file" class="upload"  #fileInput (change)="onFileChange(fileInput)">
                         </div>
                         <a href="javascript:void(0);" class="upload-remove">Remove</a>
                       </div>

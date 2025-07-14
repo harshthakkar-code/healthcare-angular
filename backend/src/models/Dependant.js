@@ -8,7 +8,7 @@ const dependantSchema = new mongoose.Schema({
   gender: { type: String },
   bloodGroup: { type: String },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
-  profileImage: { type: String }
+  profileImgUrl: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Dependant', dependantSchema); 
