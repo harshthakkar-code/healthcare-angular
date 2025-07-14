@@ -19,6 +19,7 @@ export class GeneralHomeComponent implements OnInit {
   reviews: any[] = [];
   reviewLimit = 6;
   specializationCounts: any[] = [];
+  userRole: string | null = null;
 
   staticSpecialties = [
     { name: 'Cardiology', img: 'assets/img/specialities/speciality-01.jpg', icon: 'assets/img/specialities/speciality-icon-01.svg' },
@@ -61,6 +62,8 @@ export class GeneralHomeComponent implements OnInit {
   }
 
   async ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.userRole = user.role || null;
     this.loading = true;
     try {
       const res = await api.get('/doctor/public', {

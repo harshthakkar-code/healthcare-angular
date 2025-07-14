@@ -12,6 +12,20 @@ const routes: Routes = [
     // No guard here!
   },
   {
+    path: 'doctor-profile',
+    loadChildren: () =>
+      import('./doctor-profile/doctor-profile.module').then(
+        (m) => m.DoctorProfileModule
+      ),
+  },
+  {
+    path: 'search-doctor',
+    loadChildren: () =>
+      import('./search-doctor/search-doctor.module').then(
+        (m) => m.SearchDoctorModule
+      ),
+  },
+  {
     path: '',
     component: PatientsComponent,
     canActivate: [PatientAuthGuard],
@@ -25,20 +39,6 @@ const routes: Routes = [
         path: 'doctors',
         loadChildren: () =>
           import('./doctors/doctors.module').then((m) => m.DoctorsModule),
-      },
-      {
-        path: 'search-doctor',
-        loadChildren: () =>
-          import('./search-doctor/search-doctor.module').then(
-            (m) => m.SearchDoctorModule
-          ),
-      },
-      {
-        path: 'doctor-profile',
-        loadChildren: () =>
-          import('./doctor-profile/doctor-profile.module').then(
-            (m) => m.DoctorProfileModule
-          ),
       },
       {
         path: 'checkout',

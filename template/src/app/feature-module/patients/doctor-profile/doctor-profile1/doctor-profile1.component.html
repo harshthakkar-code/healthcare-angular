@@ -145,7 +145,7 @@
           <div class="bottom-book-btn">
             <p><span>Price : {{ priceRange || '$0' }} </span> for a Session</p>
             <div class="clinic-booking">
-              <a class="apt-btn" [routerLink]="[routes.booking, profile?._id]">
+              <a *ngIf="userRole !== 'doctor'" class="apt-btn" [routerLink]="[routes.booking, profile?._id]">
                 Book Appointment
               </a>
             </div>

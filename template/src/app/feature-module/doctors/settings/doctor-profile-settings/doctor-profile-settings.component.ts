@@ -79,8 +79,45 @@ export class DoctorProfileSettingsComponent implements OnInit {
     return (this.settingsForm.get('profileSettings.memberships') as FormArray);
   }
 
+  fetchAndPatchUserFields() {
+    api.get('/auth/me').then((response: any) => {
+      const user = response.data;
+      console.log(user);
+      this.settingsForm.get('profileSettings')?.patchValue({
+        fullName: user.fullName || user.name || '',
+        lastName: user.lastName || '',
+        displayName: user.displayName || '',
+        designation: user.designation || '',
+        phone: user.phone || '',
+        email: user.email || '',
+        knownLanguages: Array.isArray(user.knownLanguages)
+          ? user.knownLanguages.join(', ')
+          : user.knownLanguages || '',
+        // Add any other fields you want to sync
+      });
+      // Patch memberships array if present
+      if (user.memberships && Array.isArray(user.memberships)) {
+        const membershipsArray = this.membershipsFormArray;
+        membershipsArray.clear();
+        user.memberships.forEach((m: any) => {
+          membershipsArray.push(this.fb.group({
+            title: [m.title, Validators.required],
+            aboutMembership: [m.aboutMembership]
+          }));
+        });
+        if (user.memberships.length === 0) {
+          membershipsArray.push(this.fb.group({
+            title: ['', Validators.required],
+            aboutMembership: ['']
+          }));
+        }
+      }
+    });
+  }
+
   ngOnInit() {
     this.doctorId = this.getDoctorId();
+    this.fetchAndPatchUserFields();
     if (this.doctorId) {
       this.getDoctorSettings();
     }

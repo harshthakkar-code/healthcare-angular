@@ -115,10 +115,13 @@ export class DoctorProfile1Component implements OnInit {
   public appointmentCount: number | null = null;
   public totalYearsInPractice: number | null = null;
   public priceRange: string | null = null;
+  userRole: string | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.userRole = user.role || null;
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {

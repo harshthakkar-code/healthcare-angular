@@ -31,6 +31,7 @@ export class Search1Component implements OnInit{
   total: number = 0;
   private searchSubject = new Subject<void>();
   availabilityFilter: boolean | null = null;
+  userRole: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,6 +44,8 @@ export class Search1Component implements OnInit{
     const { index, prevIndex } = detail;
   };
   ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.userRole = user.role || null;
     this.route.queryParams.subscribe(params => {
       if (params['q']) {
         this.searchTerm = params['q'];
