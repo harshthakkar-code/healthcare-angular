@@ -4,13 +4,14 @@ import { PatientRegistrationService } from '../patient-registration.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-patient-register-step2',
     templateUrl: './patient-register-step2.component.html',
     styleUrls: ['./patient-register-step2.component.scss'],
     standalone: true,
-    imports: [FormsModule, RouterModule]
+    imports: [CommonModule, FormsModule, RouterModule]
 })
 export class PatientRegisterStep2Component {
   public routes = routes;
@@ -34,6 +35,13 @@ export class PatientRegisterStep2Component {
   conditions: string[] = [];
   medicines: string[] = [];
   dosages: string[] = [];
+
+  genderError = '';
+  weightError = '';
+  heightError = '';
+  ageError = '';
+  bloodError = '';
+  pregnancyTermError = '';
 
   constructor(private patientRegService: PatientRegistrationService, private router: Router) {
     const data = this.patientRegService.getAllData();
@@ -62,6 +70,43 @@ export class PatientRegisterStep2Component {
   }
 
   continue() {
+    this.genderError = '';
+    this.weightError = '';
+    this.heightError = '';
+    this.ageError = '';
+    this.bloodError = '';
+    this.pregnancyTermError = '';
+
+    let valid = true;
+    if (!this.gender) {
+      this.genderError = 'Gender is required';
+      valid = false;
+    }
+    if (!this.weight.trim()) {
+      this.weightError = 'Weight is required';
+      valid = false;
+    }
+    if (!this.height.trim()) {
+      this.heightError = 'Height is required';
+      valid = false;
+    }
+    if (!this.age.trim()) {
+      this.ageError = 'Age is required';
+      valid = false;
+    }
+    if (!this.blood) {
+      this.bloodError = 'Blood type is required';
+      valid = false;
+    }
+    if (this.gender === 'Female' && this.isPregnant && !this.pregnancyTerm) {
+      this.pregnancyTermError = 'Pregnancy Term is required';
+      valid = false;
+    }
+
+    if (!valid) {
+      return;
+    }
+
     this.patientRegService.setStepData({
       gender: this.gender.toLowerCase(),
       isPregnant: this.isPregnant,

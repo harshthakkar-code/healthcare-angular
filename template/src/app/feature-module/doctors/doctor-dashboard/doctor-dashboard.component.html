@@ -89,6 +89,9 @@
                 <div class="table-responsive">
                   <table class="table dashboard-table appoint-table">
                     <tbody>
+                      <tr *ngIf="!appointments || appointments.length === 0">
+                        <td colspan="100%" class="text-center">NO APPOINTMENT AVAILABLE</td>
+                      </tr>
                       <tr *ngFor="let appt of appointments">
                         <td>
                           <div class="patient-info-profile">
@@ -324,6 +327,9 @@
                   <div class="table-responsive">
                     <table class="table dashboard-table">
                       <tbody>
+                        <tr *ngIf="!invoices || invoices.length === 0">
+                          <td colspan="100%" class="text-center">NO INVOICE AVAILABLE</td>
+                        </tr>
                         <tr *ngFor="let invoice of invoices | slice:0:5">
                           <td>
                             <div class="patient-info-profile">

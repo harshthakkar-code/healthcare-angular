@@ -17,26 +17,29 @@
                             <form (ngSubmit)="navigation()">
                                 <div class="mb-3">
                                     <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" [(ngModel)]="name" name="name">
+                                    <input type="text" class="form-control" [(ngModel)]="name" name="name" (ngModelChange)="nameError = ''">
+                                    <div *ngIf="nameError" class="text-danger small">{{ nameError }}</div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" [(ngModel)]="email" name="email">
+                                    <input type="email" class="form-control" [(ngModel)]="email" name="email" (ngModelChange)="emailError = ''">
+                                    <div *ngIf="emailError" class="text-danger small">{{ emailError }}</div>
                                 </div>
                                 <div class="mb-3 custom-tel">
                                     <label class="form-label">Phone</label>
-                                    <div>
-                                    </div>
-                                    <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123" [(ngModel)]="phone" name="phone"/>
+                                    <div></div>
+                                    <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123" [(ngModel)]="phone" name="phone" (ngModelChange)="phoneError = ''"/>
+                                    <div *ngIf="phoneError" class="text-danger small">{{ phoneError }}</div>
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-group-flex">
                                         <label class="form-label">Create Password</label>
                                     </div>
                                     <div class="pass-group">
-                                        <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" [(ngModel)]="password" name="password">
+                                        <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" [(ngModel)]="password" name="password" (ngModelChange)="passwordError = ''">
                                         <span class="toggle-password-sub" (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" [ngClass]=" togglePasswordClass ?  'feather-eye' : 'feather-eye-off'"></span>
                                     </div>
+                                    <div *ngIf="passwordError" class="text-danger small">{{ passwordError }}</div>
                                 </div>
                                 <div class="mb-3">
                                     <button type="submit" class="btn btn-primary-gradient w-100">Sign Up</button>

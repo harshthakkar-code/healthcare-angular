@@ -27,14 +27,14 @@
                 <div class="select-gender-col">
                   <div class="row">
                     <div class="col-6 pe-2">
-                      <input type="radio" id="test1" name="gender" value="Male" [(ngModel)]="gender">
+                      <input type="radio" id="test1" name="gender" value="Male" [(ngModel)]="gender" (ngModelChange)="genderError = ''">
                       <label for="test1">
                         <span class="gender-icon"><img src="assets/img/icons/male.png" alt="male-icon"></span>
                         <span>Male</span>
                       </label>
                     </div>
                     <div class="col-6 ps-2">
-                      <input type="radio" id="test2" name="gender" value="Female" [(ngModel)]="gender">
+                      <input type="radio" id="test2" name="gender" value="Female" [(ngModel)]="gender" (ngModelChange)="genderError = ''">
                       <label for="test2">
                         <span class="gender-icon"><img src="assets/img/icons/female.png" alt="female-icon"></span>
                         <span>Female</span>
@@ -58,7 +58,7 @@
                 <div class="step-process-col mt-4">
                   <div class="mb-3" id="preg_div" [style.display]="displayStyle">
                     <label for="pregnancy-term" class="mb-2">Pregnancy Term</label>
-                    <select class="form-select form-control" id="preg_term" name="pregnancyTerm" [(ngModel)]="pregnancyTerm">
+                    <select class="form-select form-control" id="preg_term" name="pregnancyTerm" [(ngModel)]="pregnancyTerm" (ngModelChange)="pregnancyTermError = ''">
                       <option selected="" value="">Select Your Pregnancy Month</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -71,12 +71,14 @@
                       <option value="9">9</option>
                       <option value="10">10</option>
                     </select>
+                    <div *ngIf="pregnancyTermError && gender === 'Female' && isPregnant" class="text-danger small">{{ pregnancyTermError }}</div>
                   </div>
                   <div class="mb-3">
                     <label for="weight" class="mb-2">Your Weight</label>
                     <div class="row">
                       <div class="col-7 pe-2">
-                        <input type="text" class="form-control" name="weight" id="weight" [(ngModel)]="weight">
+                        <input type="text" class="form-control" name="weight" id="weight" [(ngModel)]="weight" (ngModelChange)="weightError = ''">
+                        <div *ngIf="weightError" class="text-danger small">{{ weightError }}</div>
                       </div>
                       <div class="col-5 ps-2">
                         <select class="form-select form-control" id="weight_unit" name="weightUnit" [(ngModel)]="weightUnit">
@@ -89,7 +91,8 @@
                     <label for="height" class="mb-2">Your Height</label>
                     <div class="row">
                       <div class="col-7 pe-2">
-                        <input type="text" class="form-control" id="height" name="height" [(ngModel)]="height">
+                        <input type="text" class="form-control" id="height" name="height" [(ngModel)]="height" (ngModelChange)="heightError = ''">
+                        <div *ngIf="heightError" class="text-danger small">{{ heightError }}</div>
                       </div>
                       <div class="col-5 ps-2">
                         <select class="form-select form-control" id="height_unit" name="heightUnit" [(ngModel)]="heightUnit">
@@ -101,11 +104,12 @@
                   </div>
                   <div class="mb-3">
                     <label for="age" class="mb-2">Your Age</label>
-                    <input type="text" name="age" class="form-control" id="age" [(ngModel)]="age">
+                    <input type="text" name="age" class="form-control" id="age" [(ngModel)]="age" (ngModelChange)="ageError = ''">
+                    <div *ngIf="ageError" class="text-danger small">{{ ageError }}</div>
                   </div>
                   <div class="mb-3">
                     <label for="blood-type" class="mb-2">Blood Type</label>
-                    <select class="form-select form-control" id="blood_group" name="blood" [(ngModel)]="blood">
+                    <select class="form-select form-control" id="blood_group" name="blood" [(ngModel)]="blood" (ngModelChange)="bloodError = ''">
                       <option value="">Select your blood group</option>
                       <option value="A-">A-</option>
                       <option value="A+">A+</option>
@@ -116,6 +120,7 @@
                       <option value="O-">O-</option>
                       <option value="O+">O+</option>
                     </select>
+                    <div *ngIf="bloodError" class="text-danger small">{{ bloodError }}</div>
                   </div>
                   <div class="mb-3">
                     <label for="heart-rate" class="mb-2">Heart Rate</label>

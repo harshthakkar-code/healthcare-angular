@@ -23,20 +23,14 @@
                             <form method="post">
                                 <h3 class="my-4">Your Location</h3>
                                 <div class="mb-3">
-                                    <label for="select-city" class="mb-2">Select City</label>
-                                    <select class="form-select form-control" id="select-city" name="select-city" [(ngModel)]="city">
-                                        <option value="">Select Your City</option>
-                                        <option value="City 1">City 1</option>
-                                        <option value="City 2">City 2</option>
-                                    </select>
+                                    <label for="city" class="mb-2">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="city" required>
+                                    <div *ngIf="cityError" class="text-danger small">{{ cityError }}</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="select-state" class="mb-2">Select State</label>
-                                    <select class="form-select form-control" id="select-state" name="select-state" [(ngModel)]="state">
-                                        <option value="">Select Your State</option>
-                                        <option value="State 1">State 1</option>
-                                        <option value="State 2">State 2</option>
-                                    </select>
+                                    <label for="state" class="mb-2">State</label>
+                                    <input type="text" class="form-control" id="state" name="state" [(ngModel)]="state" required>
+                                    <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
                                 </div>
                                 
                                 <div class="mt-5">

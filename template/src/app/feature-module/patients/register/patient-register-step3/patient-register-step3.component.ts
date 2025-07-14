@@ -36,6 +36,10 @@ export class PatientRegisterStep3Component {
   }
 
   continue() {
+    // Always ensure at least 'self' is selected
+    if (!this.insuranceSelf && !this.insuranceSpouse && !this.insuranceMother && !this.insuranceFather && this.insuranceChildCount === 0) {
+      this.insuranceSelf = true;
+    }
     this.patientRegService.setStepData({
       insuranceSelf: this.insuranceSelf,
       insuranceSpouse: this.insuranceSpouse,

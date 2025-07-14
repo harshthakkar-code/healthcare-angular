@@ -21,11 +21,13 @@
                                 <h3 class="my-4">Your Location</h3>
                                 <div class="mb-3">
                                     <label class="form-label">City</label>
-                                    <input type="text" class="form-control" name="city" [(ngModel)]="city">
+                                    <input type="text" class="form-control" name="city" [(ngModel)]="city" (ngModelChange)="cityError = ''">
+                                    <div *ngIf="cityError" class="text-danger small">{{ cityError }}</div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">State</label>
-                                    <input type="text" class="form-control" name="state" [(ngModel)]="state">
+                                    <input type="text" class="form-control" name="state" [(ngModel)]="state" (ngModelChange)="stateError = ''">
+                                    <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
                                 </div>
                                 <button type="submit" class="btn btn-primary-gradient w-100">Update</button>
                             </form>

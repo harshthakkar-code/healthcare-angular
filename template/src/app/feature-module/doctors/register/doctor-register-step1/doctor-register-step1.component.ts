@@ -46,6 +46,11 @@ export class DoctorRegisterStep1Component {
   }
 
   nextStep() {
+    if (!this.profileImage) {
+      this.uploadError = 'Profile picture is required.';
+      return;
+    }
+    this.uploadError = '';
     this.regService.setStepData({ profileImage: this.profileImage });
     this.router.navigate(['/doctors/register/doctor-register-step2']);
   }

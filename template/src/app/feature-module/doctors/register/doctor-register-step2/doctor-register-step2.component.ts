@@ -39,6 +39,19 @@ export class DoctorRegisterStep2Component {
   uploading: { [key: string]: boolean } = {};
   uploadError: { [key: string]: string } = {};
 
+  genderError = '';
+  addressError = '';
+  pincodeError = '';
+  clinicAddressError = '';
+  qualiCertificateError = '';
+  photoIdError = '';
+  clinicalEmploymentError = '';
+  weightError = '';
+  heightError = '';
+  ageError = '';
+  bloodError = '';
+  registerYearsError = '';
+
   constructor(private router: Router, private regService: DoctorRegistrationService) {
     const data = this.regService.getAllData();
     this.gender = data.gender || '';
@@ -91,6 +104,77 @@ export class DoctorRegisterStep2Component {
   }
 
   nextStep() {
+    console.log('Next step called');
+    // Reset errors
+    this.genderError = '';
+    this.addressError = '';
+    this.pincodeError = '';
+    this.clinicAddressError = '';
+    this.qualiCertificateError = '';
+    this.photoIdError = '';
+    this.clinicalEmploymentError = '';
+    this.weightError = '';
+    this.heightError = '';
+    this.ageError = '';
+    this.bloodError = '';
+    this.registerYearsError = '';
+
+    let valid = true;
+
+    if (!this.gender) {
+      this.genderError = 'Gender is required';
+      valid = false;
+    }
+    // if (!this.address.trim()) {
+    //   this.addressError = 'Address is required';
+    //   valid = false;
+    // }
+    if (!this.pincode.trim()) {
+      this.pincodeError = 'Pincode is required';
+      valid = false;
+    }
+    if (!this.clinicAddress.trim()) {
+      this.clinicAddressError = 'Clinic address is required';
+      valid = false;
+    }
+    if (!this.weight.trim()) {
+      this.weightError = 'Weight is required';
+      valid = false;
+    }
+    if (!this.height.trim()) {
+      this.heightError = 'Height is required';
+      valid = false;
+    }
+    if (!this.age.trim()) {
+      this.ageError = 'Age is required';
+      valid = false;
+    }
+    if (!this.blood) {
+      this.bloodError = 'Blood type is required';
+      valid = false;
+    }
+    if (this.isRegistered && !this.registerYears) {
+      this.registerYearsError = 'Please select years of being registered';
+      valid = false;
+    }
+
+    if (!valid) {
+      console.log('Validation failed', {
+        gender: this.gender,
+        // address: this.address,
+        pincode: this.pincode,
+        clinicAddress: this.clinicAddress,
+        weight: this.weight,
+        height: this.height,
+        age: this.age,
+        blood: this.blood,
+        registerYears: this.registerYears,
+        isRegistered: this.isRegistered
+      });
+      return;
+    }
+
+    // Save and navigate if valid
     this.regService.setStepData({
       gender: this.gender,
       isRegistered: this.isRegistered,
