@@ -6,6 +6,8 @@ const slotSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   startTime: { type: String, required: true }, // '09:00'
   endTime: { type: String, required: true },   // '09:30'
+  duration: { type: Number }, // duration in minutes
+  interval: { type: Number }, // interval in minutes
   status: { type: String, enum: ['available', 'booked', 'cancelled'], default: 'available' },
   fees: { type: Number },
   day: { type: String }, // 'Monday', 'Tuesday', etc.

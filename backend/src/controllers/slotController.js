@@ -56,6 +56,7 @@ exports.createSlots = async (req, res) => {
           startTime: slotStartTime,
           endTime: slotEndTime,
           duration: durationMin,
+          interval: intervalMin,
           fees,
           status: 'available',
           spaces,
@@ -119,12 +120,12 @@ exports.deleteSlot = async (req, res) => {
 // Check for slot overlap (without creating)
 exports.checkSlotOverlap = async (req, res) => {
   try {
-    const { doctorId, date, startTime, endTime } = req.body;
+    const { doctorId, date, startTime, endTime, id } = req.body;
     if (!doctorId || !date || !startTime || !endTime) {
       return res.status(400).json({ error: 'doctorId, date, startTime, and endTime are required' });
     }
-    // Find any overlapping slot
-    const overlappingSlots = await Slot.find({
+    // Build query
+    const query = {
       doctorId,
       date: new Date(date),
       $or: [
@@ -133,7 +134,11 @@ exports.checkSlotOverlap = async (req, res) => {
           endTime: { $gt: startTime }
         }
       ]
-    });
+    };
+    if (id) {
+      query._id = { $ne: id }; // Exclude the slot being edited
+    }
+    const overlappingSlots = await Slot.find(query);
     if (overlappingSlots.length > 0) {
       const conflictTimes = overlappingSlots.map(slot => `${slot.startTime}-${slot.endTime}`);
       return res.json({ overlap: true, conflictTimes });

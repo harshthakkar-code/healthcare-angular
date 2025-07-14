@@ -363,6 +363,8 @@ export class ModalComponent implements OnInit {
     this.hours.splice(index, 1);
   }
   ngOnInit() {
+    // Expose updateEditEndTime for external calls (e.g., from available-timings)
+    (window as any).modalComponentRef = this;
     this.myDateValue = new Date();
     this.durationOptions = [15, 30, 45, 60];
     this.setupSlotFormWatchers();
@@ -639,5 +641,108 @@ export class ModalComponent implements OnInit {
 
   confirmDeleteGlobal() {
     window.dispatchEvent(new CustomEvent('confirmDelete'));
+  }
+
+  savingEditSlot = false;
+  editSlotError: string = '';
+
+  async updateSlot() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const doctorId = user.doctorId || user.doctorId;
+    if (!doctorId) return;
+    this.savingEditSlot = true;
+    this.slotApiError = '';
+    // Compute the date for the selected day in the current week
+    const daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    monday.setDate(today.getDate() + diff);
+    const selectedDay = this.slotModalService.editSlotForm.day || 'Monday';
+    const targetIndex = daysOfWeek.indexOf(selectedDay);
+    const mondayIndex = 1; // Monday
+    const offset = targetIndex - mondayIndex;
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + offset);
+    const latestFees = this.slotModalService.editSlotForm.fees;
+    const slotData = {
+      doctorId,
+      date: date.toISOString().slice(0, 10),
+      startTime: this.slotModalService.editSlotForm.startTime,
+      endTime: this.slotModalService.editSlotForm.endTime,
+      duration: this.slotModalService.editSlotForm.duration,
+      interval: this.slotModalService.editSlotForm.interval,
+      fees: latestFees,
+      spaces: this.slotModalService.editSlotForm.spaces,
+      day: selectedDay,
+    };
+    const slotId = this.slotModalService.editSlotForm.id;
+    // Check for overlap before updating
+    try {
+      const res = await this.slotService.checkSlotOverlap({ ...slotData, id: slotId }).toPromise();
+      if (res?.data?.overlap) {
+        this.savingEditSlot = false;
+        this.editSlotError = `Slot conflicts with: ${res.data.conflictTimes.join(', ')}`;
+        if (this.editSlotError) {
+          setTimeout(() => { this.editSlotError = ''; }, 3000);
+        }
+        return;
+      }
+    } catch (err) {
+      this.savingEditSlot = false;
+      this.editSlotError = 'Error checking slot overlap.';
+      setTimeout(() => { this.editSlotError = ''; }, 3000);
+      return;
+    }
+    // Call backend to update slot
+    try {
+      await this.slotService.updateSlot(slotId, slotData).toPromise();
+      this.savingEditSlot = false;
+      this.editSlotError = '';
+      this.slotModalService.emitSlotUpdated({ ...slotData, id: slotId });
+      this.slotModalService.resetEditForm();
+      const modal = document.getElementById('edit_slot');
+      if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+    } catch (err: any) {
+      this.savingEditSlot = false;
+      this.editSlotError = err?.error?.error || 'Failed to update slot.';
+      setTimeout(() => { this.editSlotError = ''; }, 3000);
+    }
+  }
+
+  onEditStartTimeChange() {
+    this.updateEditEndTime();
+  }
+
+  onEditDurationChange() {
+    this.updateEditEndTime();
+  }
+
+  updateEditEndTime() {
+    const startTime = this.slotModalService.editSlotForm.startTime;
+    const duration = this.slotModalService.editSlotForm.duration;
+    if (!startTime || !duration) {
+      this.slotModalService.editSlotForm.endTime = '';
+      return;
+    }
+    const [h, m] = startTime.split(':').map(Number);
+    const start = new Date();
+    start.setHours(h, m, 0, 0);
+    const end = new Date(start.getTime() + duration * 60000);
+    const endH = end.getHours().toString().padStart(2, '0');
+    const endM = end.getMinutes().toString().padStart(2, '0');
+    this.slotModalService.editSlotForm.endTime = `${endH}:${endM}`;
+    this.validateEditSlotTimes();
+  }
+
+  validateEditSlotTimes() {
+    const startTime = this.slotModalService.editSlotForm.startTime;
+    const endTime = this.slotModalService.editSlotForm.endTime;
+    if (startTime && endTime && startTime >= endTime) {
+      this.editSlotError = 'Start time must be before end time.';
+    } else {
+      this.editSlotError = '';
+    }
   }
 }

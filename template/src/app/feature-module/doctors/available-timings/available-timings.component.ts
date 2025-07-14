@@ -89,6 +89,11 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
       this.fetchSlots();
       this.fetchClinicSlots();
     });
+    this.slotModalService.slotUpdated$.subscribe((slotData: any) => {
+      // After editing, refetch slots
+      this.fetchSlots();
+      this.fetchClinicSlots();
+    });
   }
 
   getDoctorIdFromLocalStorage(): string | null {
@@ -276,6 +281,28 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     });
   }
 
+  openEditSlotModal(slot: any) {
+    // Copy slot data to editSlotForm
+    this.slotModalService.editSlotForm = {
+      id: slot._id || slot.id || '',
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      duration: slot.duration != null ? slot.duration : 30,
+      interval: slot.interval != null ? slot.interval : 10,
+      fees: slot.fees,
+      spaces: slot.spaces,
+      day: slot.day || this.selectedDay,
+    };
+    // Ensure end time is recalculated based on start time and duration
+    if ((window as any).modalComponentRef && (window as any).modalComponentRef.updateEditEndTime) {
+      (window as any).modalComponentRef.updateEditEndTime();
+    }
+    const modal = document.getElementById('edit_slot');
+    if (modal) {
+      (window as any).bootstrap?.Modal.getOrCreateInstance(modal).show();
+    }
+  }
+
   // New method to save all pending slots after checking overlap
   async saveAllSlots() {
     if (!this.pendingSlots.length) return;
@@ -302,10 +329,10 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   }
 
   get hasAnySlotsForSelectedDay(): boolean {
-    return (
-      (this.slotsByDay[this.selectedDay] && this.slotsByDay[this.selectedDay].length > 0) ||
-      this.pendingSlots.filter(slot => slot.day === this.selectedDay).length > 0
-    );
+    const selected = (this.selectedDay || '').toLowerCase();
+    const saved = (this.slotsByDay[this.selectedDay] || []).length > 0;
+    const pending = this.pendingSlots.some(slot => (slot.day || '').toLowerCase() === selected);
+    return saved || pending;
   }
 
   get pendingSlotsForSelectedDay(): any[] {

@@ -55,7 +55,7 @@
                             <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal()">Add Slots</a>
                           </li>
                           <li>
-                            <a href="javascript:void(0);" class="del-slot" (click)="deleteAllGeneralSlotsForSelectedDay()">Delete All</a>
+                            <a href="javascript:void(0);" class="del-slot" (click)="hasAnySlotsForSelectedDay && deleteAllGeneralSlotsForSelectedDay()" [class.disabled]="!hasAnySlotsForSelectedDay" [attr.aria-disabled]="!hasAnySlotsForSelectedDay ? true : null">Delete All</a>
                           </li>
                         </ul>
                       </div>
@@ -70,6 +70,9 @@
                           <li *ngFor="let slot of slotsByDay[selectedDay]" (click)="onSlotSelect(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }}
                             <!-- <span class="slot-space">Space : {{ slot.spaces }}</span> -->
+                            <button class="btn btn-link btn-sm p-0 ms-2" (click)="openEditSlotModal(slot); $event.stopPropagation();" title="Edit Slot">
+                              <i class="fa fa-edit"></i>
+                            </button>
                           </li>
                         </ul>
                         <ng-template #noSlots>
