@@ -109,7 +109,7 @@ export class Search1Component implements OnInit{
           if (doc.profileImage.startsWith('http')) {
             doc.avatar = doc.profileImage;
           } else {
-            doc.avatar = 'https://varmd.s3.eu-north-1.amazonaws.com/healthcare/' + doc.profileImage;
+            doc.avatar = 'assets/img/doctor-grid/doctor-grid-01.jpg';
           }
         } else {
           doc.avatar = 'assets/img/doctor-grid/doctor-grid-01.jpg';

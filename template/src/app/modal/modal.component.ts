@@ -394,9 +394,9 @@ export class ModalComponent implements OnInit {
     this.bill.splice(index, 1);
   }
 
-  saveSlot() {
+  async saveSlot() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const doctorId = user.id || user._id;
+    const doctorId = user.doctorId || user.doctorId;
     if (!doctorId) return;
     this.savingSlot = true;
     this.slotApiError = '';
@@ -413,6 +413,8 @@ export class ModalComponent implements OnInit {
     const offset = targetIndex - mondayIndex;
     const date = new Date(monday);
     date.setDate(monday.getDate() + offset);
+    // Always get the latest fees value from the form
+    const latestFees = this.slotModalService.slotForm.fees;
     const slotData = {
       doctorId,
       date: date.toISOString().slice(0, 10),
@@ -420,27 +422,37 @@ export class ModalComponent implements OnInit {
       endTime: this.slotModalService.slotForm.endTime,
       duration: this.slotModalService.slotForm.duration,
       interval: this.slotModalService.slotForm.interval,
-      fees: this.slotModalService.slotForm.fees,
+      fees: latestFees,
       spaces: this.slotModalService.slotForm.spaces,
+      day: selectedDay,
     };
-    this.slotService.createSlots(slotData).subscribe({
-      next: () => {
+    // Check for overlap before emitting
+    try {
+      const res = await this.slotService.checkSlotOverlap(slotData).toPromise();
+      console.log(res)
+      if (res?.data?.overlap) {
         this.savingSlot = false;
-        this.slotApiError = '';
-        this.slotModalService.emitSlotCreated();
-        this.slotModalService.resetForm();
-        const modal = document.getElementById('add_slot');
-        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
-      },
-      error: (err) => {
-        this.savingSlot = false;
-        this.slotApiError = err?.error?.error  || err?.response?.data?.error || 'Failed to save slot';
+        this.slotApiError = `Slot conflicts with: ${res.data.conflictTimes.join(', ')}`;
         if (this.slotApiError) {
           setTimeout(() => { this.slotApiError = ''; }, 3000);
         }
-        // console.error('Save slot error:', err);
+        // Do NOT close the modal
+        return;
       }
-    });
+    } catch (err) {
+      this.savingSlot = false;
+      this.slotApiError = 'Error checking slot overlap.';
+      setTimeout(() => { this.slotApiError = ''; }, 3000);
+      // Do NOT close the modal
+      return;
+    }
+    // No overlap, emit slotData to parent
+    this.savingSlot = false;
+    this.slotApiError = '';
+    this.slotModalService.emitSlotCreated(slotData);
+    this.slotModalService.resetForm();
+    const modal = document.getElementById('add_slot');
+    if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
   }
 
   onSubmit():void{

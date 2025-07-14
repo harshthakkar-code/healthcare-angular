@@ -21,4 +21,8 @@ export class SlotService {
   deleteSlot(slotId: string): Observable<any> {
     return from(api.delete(`${this.baseUrl}/${slotId}`));
   }
+
+  checkSlotOverlap(data: any): Observable<any> {
+    return from(api.post(this.baseUrl + '/check-overlap', data));
+  }
 } 

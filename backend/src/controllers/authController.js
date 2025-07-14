@@ -116,11 +116,24 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) return res.status(400).json({ message: 'Invalid credentials' });
     if (user.role === 'doctor' && !user.isApproved) return res.status(403).json({ message: 'Doctor not approved yet' });
+    let doctorId = null;
+    let patientProfileId = null;
+    if (user.role === 'doctor') {
+      const doctorProfile = await DoctorProfile.findOne({ user: user._id });
+      if (doctorProfile) doctorId = doctorProfile._id;
+    }
+    if (user.role === 'patient') {
+      const patientProfile = await PatientProfile.findOne({ user: user._id });
+      if (patientProfile) patientProfileId = patientProfile._id;
+    }
     const token = generateToken(user);
     res.json({
       token,
+      loginTime: Date.now(),
       user: {
         id: user._id,
+        doctorId,
+        patientProfileId,
         name: user.name,
         role: user.role,
         profileImgUrl: user.profileImgUrl || null,

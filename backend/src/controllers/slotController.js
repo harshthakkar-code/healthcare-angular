@@ -114,4 +114,33 @@ exports.deleteSlot = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+// Check for slot overlap (without creating)
+exports.checkSlotOverlap = async (req, res) => {
+  try {
+    const { doctorId, date, startTime, endTime } = req.body;
+    if (!doctorId || !date || !startTime || !endTime) {
+      return res.status(400).json({ error: 'doctorId, date, startTime, and endTime are required' });
+    }
+    // Find any overlapping slot
+    const overlappingSlots = await Slot.find({
+      doctorId,
+      date: new Date(date),
+      $or: [
+        {
+          startTime: { $lt: endTime },
+          endTime: { $gt: startTime }
+        }
+      ]
+    });
+    if (overlappingSlots.length > 0) {
+      const conflictTimes = overlappingSlots.map(slot => `${slot.startTime}-${slot.endTime}`);
+      return res.json({ overlap: true, conflictTimes });
+    } else {
+      return res.json({ overlap: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }; 

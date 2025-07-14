@@ -228,6 +228,14 @@ export class DoctorProfile1Component implements OnInit {
     }
     return 'bg-secondary';
   }
+  get dotClass(): string {
+    if (this.profile && this.profile.availability === true) {
+      return 'dot-available';
+    } else if (this.profile && this.profile.availability === false) {
+      return 'dot-unavailable';
+    }
+    return 'dot-unknown';
+  }
 
   get availabilityText(): string {
     if (this.profile && this.profile.availability === true) {
@@ -245,7 +253,7 @@ export class DoctorProfile1Component implements OnInit {
       if (this.profile.profileImage.startsWith('http')) {
         return this.profile.profileImgUrl;
       } else {
-        return 'https://varmd.s3.eu-north-1.amazonaws.com/healthcare/' + this.profile.profileImage;
+        return 'assets/img/doctors/doc-profile-02.jpg';
       }
     } else {
       return 'assets/img/doctors/doc-profile-02.jpg';

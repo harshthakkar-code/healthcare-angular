@@ -47,6 +47,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   public selectedDay: string = 'Monday';
   public selectedSlotId: string | null = null;
   public updateError: string | null = null;
+  public pendingSlots: any[] = [];
 
   constructor(
     private renderer: Renderer2,
@@ -76,9 +77,13 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
       this.fetchSlots();
       this.fetchClinicSlots();
     }
-    this.slotModalService.slotCreated$.subscribe(() => {
-      this.fetchSlots();
-      this.fetchClinicSlots();
+    this.slotModalService.slotCreated$.subscribe((slotData: any) => {
+      // Instead of fetching from backend, add to pendingSlots
+      if (slotData) {
+        this.pendingSlots.push(slotData);
+      }
+      // this.fetchSlots();
+      // this.fetchClinicSlots();
     });
     this.slotModalService.slotsDeleted$.subscribe(() => {
       this.fetchSlots();
@@ -89,11 +94,12 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   getDoctorIdFromLocalStorage(): string | null {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.id || user._id || null;
+      return user.doctorId || user._id || null;
     } catch {
       return null;
     }
   }
+  
 
   fetchSlots(): void {
     this.loading = true;
@@ -268,5 +274,41 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
         console.error('Update slot error:', err);
       }
     });
+  }
+
+  // New method to save all pending slots after checking overlap
+  async saveAllSlots() {
+    if (!this.pendingSlots.length) return;
+    this.loading = true;
+    try {
+      // Update all pending slots with the latest appointmentFees
+      for (const slot of this.pendingSlots) {
+        slot.fees = this.appointmentFees;
+      }
+      for (const slot of this.pendingSlots) {
+        await this.slotService.createSlots(slot).toPromise();
+      }
+      this.pendingSlots = [];
+      this.fetchSlots();
+      this.fetchClinicSlots();
+      this.updateError = null;
+    } catch (err : any) {
+      this.updateError = err?.error?.error  || err?.response?.data?.error || 'Failed to save slot';
+      if (this.updateError) {
+        setTimeout(() => { this.updateError = ''; }, 3000);
+      }
+    }
+    this.loading = false;
+  }
+
+  get hasAnySlotsForSelectedDay(): boolean {
+    return (
+      (this.slotsByDay[this.selectedDay] && this.slotsByDay[this.selectedDay].length > 0) ||
+      this.pendingSlots.filter(slot => slot.day === this.selectedDay).length > 0
+    );
+  }
+
+  get pendingSlotsForSelectedDay(): any[] {
+    return this.pendingSlots.filter(slot => slot.day === this.selectedDay);
   }
 }

@@ -15,12 +15,12 @@ export class SlotModalService {
   };
 
   // Event for when a slot is created
-  private slotCreatedSource = new Subject<void>();
+  private slotCreatedSource = new Subject<any>();
   slotCreated$ = this.slotCreatedSource.asObservable();
 
-  // Call this after successful slot creation
-  emitSlotCreated() {
-    this.slotCreatedSource.next();
+  // Call this after slot data is selected in modal
+  emitSlotCreated(slotData: any) {
+    this.slotCreatedSource.next(slotData);
   }
 
   // Optionally, reset the form

@@ -14,4 +14,7 @@ router.put('/:slotId', slotController.updateSlot);
 // Delete a slot
 router.delete('/:slotId', slotController.deleteSlot);
 
+// Check for slot overlap
+router.post('/check-overlap', slotController.checkSlotOverlap);
+
 module.exports = router; 

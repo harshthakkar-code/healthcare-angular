@@ -61,7 +61,12 @@
                       </div>
                       <div class="slot-body">
                         <!-- <div class="text-muted small mb-2">{{ getDateForWeekday(selectedDay) }}</div> -->
-                        <ul class="time-slots" *ngIf="slotsByDay[selectedDay] && slotsByDay[selectedDay].length > 0; else noSlots">
+                        <ul class="time-slots" *ngIf="hasAnySlotsForSelectedDay; else noSlots">
+                          <!-- Pending slots (not yet saved) -->
+                          <li *ngFor="let slot of pendingSlotsForSelectedDay" style="opacity:0.6;">
+                            <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }} <span class="text-warning">(Pending)</span>
+                          </li>
+                          <!-- Saved slots -->
                           <li *ngFor="let slot of slotsByDay[selectedDay]" (click)="onSlotSelect(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }}
                             <!-- <span class="slot-space">Space : {{ slot.spaces }}</span> -->
@@ -80,10 +85,8 @@
                   <input type="number" class="form-control" [(ngModel)]="appointmentFees" />
                 </div>
                 <div *ngIf="updateError" class="text-danger mb-2" style="font-size: 14px;">{{ updateError }}</div>
-                <div class="modal-btn text-end">
-                  <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal"
-                  data-bs-dismiss="modal">Cancel</a>
-                  <button class="btn btn-primary prime-btn" (click)="updateSlotFees()">Save Changes</button>
+                <div class="modal-btn text-end mt-3">
+                  <button class="btn btn-primary prime-btn" (click)="saveAllSlots()" [disabled]="!pendingSlots.length || loading">Save Changes</button>
                 </div>
               </div>
             </div>
