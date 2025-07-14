@@ -35,6 +35,13 @@ const doctorProfileSchema = new mongoose.Schema({
   availability: { type: Boolean, default: false },
   specializations: { type: [String], default: [] },
   totalEarned: { type: Number, default: 0 },
+  profileSettings: [{ type: Object }],
+  insuranceSettings: [{ type: Object }],
+  experienceSettings: [{ type: Object }],
+  educationSettings: [{ type: Object }],
+  clinicsSettings: [{ type: Object }],
+  businessSettings: [{ type: Object }],
+  awardsSettings: [{ type: Object }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('DoctorProfile', doctorProfileSchema); 

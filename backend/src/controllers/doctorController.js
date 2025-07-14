@@ -4,7 +4,6 @@ const Specialization = require('../models/Specialization');
 const Schedule = require('../models/Schedule');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
-const DoctorSettings = require('../models/DoctorSettings');
 const Favourite = require('../models/Favourite');
 const Payout = require('../models/Payout');
 const Report = require('../models/Report');
@@ -470,8 +469,16 @@ exports.getFullDoctorData = async (req, res, next) => {
       .populate('specialization')
       .populate('reviews');
 
-    // Doctor Settings
-    const settings = await DoctorSettings.findOne({ doctorId: doctorId });
+    // Doctor Settings (now embedded in profile)
+    const settings = profile ? {
+      profileSettings: profile.profileSettings,
+      insuranceSettings: profile.insuranceSettings,
+      experienceSettings: profile.experienceSettings,
+      educationSettings: profile.educationSettings,
+      clinicsSettings: profile.clinicsSettings,
+      businessSettings: profile.businessSettings,
+      awardsSettings: profile.awardsSettings
+    } : null;
 
     // Reviews
     const reviews = await Review.find({ doctor: doctorId }).populate('patient');
