@@ -583,39 +583,36 @@ export class ModalComponent implements OnInit {
     });
   }
 
+  removeEditDepImage() {
+    if (this.editDependant) {
+      this.editDependant.profileImage = null;
+      this.editDependant.profileImagePreview = '';
+      this.editDependant.profileImgUrl = '';
+      this.editDependant._imageRemoved = true; // flag for backend update
+    }
+  }
+
   saveEditDependant() {
     if (!this.editDependant || !this.editDependant._id) return;
     let data: any = { ...this.editDependant };
     if (data.dob instanceof Date) {
       data.dob = data.dob.toISOString();
     }
-    // Handle file upload if profileImage is a File
-    if (data.profileImage instanceof File) {
-      const formData = new FormData();
-      for (const key in data) {
-        if (data.hasOwnProperty(key) && data[key] !== undefined && data[key] !== null) {
-          formData.append(key, data[key]);
-        }
+    // Always send profileImgUrl (can be empty string)
+    data.profileImgUrl = this.editDependant.profileImgUrl || '';
+    // Remove temp preview and flag before sending
+    delete data.profileImagePreview;
+    delete data._imageRemoved;
+    this.dependantService.updateDependant(data._id, data).subscribe({
+      next: () => {
+        this.dependantService.notifyDependantsChanged();
+        const modal = document.getElementById('edit_dependent');
+        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
       }
-      this.dependantService.updateDependant(data._id, formData).subscribe({
-        next: () => {
-          this.dependantService.notifyDependantsChanged();
-          const modal = document.getElementById('edit_dependent');
-          if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
-        }
-      });
-    } else {
-      this.dependantService.updateDependant(data._id, data).subscribe({
-        next: () => {
-          this.dependantService.notifyDependantsChanged();
-          const modal = document.getElementById('edit_dependent');
-          if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
-        }
-      });
-    }
+    });
   }
 
-  onFileChange(input: HTMLInputElement) {
+  async onFileChange(input: HTMLInputElement) {
     if (this.editDependant && input.files && input.files.length > 0) {
       const file = input.files[0];
       this.editDependant.profileImage = file;
@@ -625,6 +622,14 @@ export class ModalComponent implements OnInit {
         this.editDependant.profileImagePreview = e.target.result;
       };
       reader.readAsDataURL(file);
+
+      // Upload to AWS and set the URL
+      try {
+        const url = await uploadImage(file);
+        this.editDependant.profileImgUrl = url;
+      } catch (err) {
+        alert('Image upload failed');
+      }
     }
   }
 

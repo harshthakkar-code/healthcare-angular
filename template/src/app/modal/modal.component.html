@@ -2654,7 +2654,7 @@
                           Upload New
                           <input type="file" class="upload"  #fileInput (change)="onFileChange(fileInput)">
                         </div>
-                        <a href="javascript:void(0);" class="upload-remove">Remove</a>
+                        <a href="javascript:void(0);" class="upload-remove" (click)="removeEditDepImage()">Remove</a>
                       </div>
                       <p>Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
                     </div>
