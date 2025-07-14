@@ -26,7 +26,13 @@ export class InvoicesComponent implements OnInit {
 
   fetchTransactions() {
     this.loading = true;
-    this.invoicesService.getTransactions({ page: this.page, limit: this.limit, search: this.search }).subscribe({
+    const userId = this.getUserIdFromLocalStorage();
+    if (!userId) {
+      this.transactions = [];
+      this.loading = false;
+      return;
+    }
+    this.invoicesService.getTransactionsByUserId(userId, { page: this.page, limit: this.limit, search: this.search }).subscribe({
       next: (res) => {
         this.transactions = res.data.data || [];
         this.total = res.data.total || 0;
@@ -59,5 +65,14 @@ export class InvoicesComponent implements OnInit {
 
   get totalPages(): number[] {
     return Array(Math.ceil(this.total / this.limit)).fill(0).map((x, i) => i + 1);
+  }
+
+  getUserIdFromLocalStorage(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
   }
 }

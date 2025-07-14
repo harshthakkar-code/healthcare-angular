@@ -31,13 +31,14 @@
                                             </ng-template>
                                         </div>
                                         <span>Upload Profile Picture</span>
-                                        <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onProfileImageSelected($event)" [disabled]="uploading">
+                                        <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onProfileImageSelected($event); profileImageError = ''" [disabled]="uploading">
                                         <div *ngIf="uploadError" class="text-danger small mt-1">{{ uploadError }}</div>
                                         <div *ngIf="uploading" class="text-info small mt-1">Uploading...</div>
                                     </div>
-                                    <button *ngIf="profileImage" type="button" class="btn btn-sm btn-danger mt-2" (click)="removeProfileImage()">Remove</button>
+                                    <div *ngIf="profileImageError" class="text-danger small mt-2">{{ profileImageError }}</div>
+                                    <button *ngIf="profileImage" type="button" class="btn btn-sm btn-danger mt-2" (click)="removeProfileImage(); profileImageError = ''">Remove</button>
                                 </div>
-                                <!-- Add other step 1 fields here -->
+                                
                                 <div class="mt-5">
                                     <button type="submit" class="btn btn-primary-gradient w-100">Next</button>
                                 </div>

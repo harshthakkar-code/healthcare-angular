@@ -16,6 +16,10 @@ export class AuthRegisterComponent {
   phone: string = '';
   password: string = '';
   gender: string = '';
+  nameError = '';
+  emailError = '';
+  phoneError = '';
+  passwordError = '';
   constructor(private router: Router, private patientRegistrationService: PatientRegistrationService) {}
 
   public togglePasswordClass = false;
@@ -23,6 +27,32 @@ export class AuthRegisterComponent {
     this.togglePasswordClass = !this.togglePasswordClass;
   }
   public navigation() {
+    this.nameError = '';
+    this.emailError = '';
+    this.phoneError = '';
+    this.passwordError = '';
+
+    let valid = true;
+    if (!this.name.trim()) {
+      this.nameError = 'Name is required';
+      valid = false;
+    }
+    if (!this.email.trim()) {
+      this.emailError = 'Email is required';
+      valid = false;
+    }
+    if (!this.phone.trim()) {
+      this.phoneError = 'Phone is required';
+      valid = false;
+    }
+    if (!this.password.trim()) {
+      this.passwordError = 'Password is required';
+      valid = false;
+    }
+    if (!valid) {
+      return;
+    }
+
     this.patientRegistrationService.setStepData({
       name: this.name,
       email: this.email,

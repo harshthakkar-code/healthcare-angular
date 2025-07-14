@@ -15,6 +15,8 @@ import api from 'src/app/shared/api/axios';
 export class DoctorRegisterStep3Component {
   city = '';
   state = '';
+  cityError = '';
+  stateError = '';
 
   constructor(private router: Router, private regService: DoctorRegistrationService) {
     const data = this.regService.getAllData();
@@ -23,6 +25,22 @@ export class DoctorRegisterStep3Component {
   }
 
   async update() {
+    this.cityError = '';
+    this.stateError = '';
+
+    let valid = true;
+    if (!this.city.trim()) {
+      this.cityError = 'City is required';
+      valid = false;
+    }
+    if (!this.state.trim()) {
+      this.stateError = 'State is required';
+      valid = false;
+    }
+    if (!valid) {
+      return;
+    }
+
     this.regService.setStepData({ city: this.city, state: this.state });
     const allData: DoctorRegistrationData = this.regService.getAllData();
     const payload = {

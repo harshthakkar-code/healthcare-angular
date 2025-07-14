@@ -16,8 +16,18 @@ import { CommonModule } from '@angular/common';
 export class PatientRegisterStep4Component {
   public routes = routes;
 
-  child1Age: string = '';
-  child1Image: string = '';
+  showSelf = true;
+  showSpouse = false;
+  showChild = false;
+  showMother = false;
+  showFather = false;
+  childCount = 0;
+
+  selfAge: string = '';
+  selfImage: string = '';
+  childAges: string[] = [];
+  childImages: string[] = [];
+  childAgeErrors: string[] = [];
   spouseAge: string = '';
   spouseImage: string = '';
   fatherAge: string = '';
@@ -25,10 +35,31 @@ export class PatientRegisterStep4Component {
   motherAge: string = '';
   motherImage: string = '';
 
+  // Error messages
+  selfAgeError = '';
+  spouseAgeError = '';
+  fatherAgeError = '';
+  motherAgeError = '';
+
   constructor(private patientRegService: PatientRegistrationService, private router: Router) {
     const data = this.patientRegService.getAllData();
-    this.child1Age = data['child1Age'] || '';
-    this.child1Image = data['child1Image'] || '';
+    this.showSelf = data['insuranceSelf'] ?? true;
+    this.showSpouse = data['insuranceSpouse'] ?? false;
+    this.childCount = data['insuranceChildCount'] ?? 0;
+    this.showChild = this.childCount > 0;
+    this.showMother = data['insuranceMother'] ?? false;
+    this.showFather = data['insuranceFather'] ?? false;
+    this.selfAge = data['selfAge'] || '';
+    this.selfImage = data['selfImage'] || '';
+    // Initialize children arrays
+    this.childAges = [];
+    this.childImages = [];
+    this.childAgeErrors = [];
+    for (let i = 0; i < this.childCount; i++) {
+      this.childAges[i] = (data['childAges'] && data['childAges'][i]) || '';
+      this.childImages[i] = (data['childImages'] && data['childImages'][i]) || '';
+      this.childAgeErrors[i] = '';
+    }
     this.spouseAge = data['spouseAge'] || '';
     this.spouseImage = data['spouseImage'] || '';
     this.fatherAge = data['fatherAge'] || '';
@@ -37,14 +68,19 @@ export class PatientRegisterStep4Component {
     this.motherImage = data['motherImage'] || '';
   }
 
-  async onImageSelected(event: any, field: string) {
+  async onImageSelected(event: any, field: string, index?: number) {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
     try {
       const url = await uploadImage(file);
       switch (field) {
-        case 'child1Image':
-          this.child1Image = url;
+        case 'selfImage':
+          this.selfImage = url;
+          break;
+        case 'childImage':
+          if (typeof index === 'number') {
+            this.childImages[index] = url;
+          }
           break;
         case 'spouseImage':
           this.spouseImage = url;
@@ -56,16 +92,54 @@ export class PatientRegisterStep4Component {
           this.motherImage = url;
           break;
       }
-      this.patientRegService.setStepData({ [field]: url });
+      if (field === 'childImage' && typeof index === 'number') {
+        this.patientRegService.setStepData({ childImages: this.childImages });
+      } else {
+        this.patientRegService.setStepData({ [field]: url });
+      }
     } catch (err) {
       console.error('Image upload failed', err);
     }
   }
 
   continue() {
+    // Reset errors
+    this.selfAgeError = '';
+    this.childAgeErrors = Array(this.childCount).fill('');
+    this.spouseAgeError = '';
+    this.fatherAgeError = '';
+    this.motherAgeError = '';
+    let valid = true;
+    if (this.showSelf && !this.selfAge.trim()) {
+      this.selfAgeError = 'Self age is required';
+      valid = false;
+    }
+    if (this.showChild) {
+      for (let i = 0; i < this.childCount; i++) {
+        if (!this.childAges[i] || !this.childAges[i].trim()) {
+          this.childAgeErrors[i] = `Child ${i + 1} age is required`;
+          valid = false;
+        }
+      }
+    }
+    if (this.showSpouse && !this.spouseAge.trim()) {
+      this.spouseAgeError = 'Spouse age is required';
+      valid = false;
+    }
+    if (this.showFather && !this.fatherAge.trim()) {
+      this.fatherAgeError = 'Father age is required';
+      valid = false;
+    }
+    if (this.showMother && !this.motherAge.trim()) {
+      this.motherAgeError = 'Mother age is required';
+      valid = false;
+    }
+    if (!valid) return;
     this.patientRegService.setStepData({
-      child1Age: this.child1Age,
-      child1Image: this.child1Image,
+      selfAge: this.selfAge,
+      selfImage: this.selfImage,
+      childAges: this.childAges,
+      childImages: this.childImages,
       spouseAge: this.spouseAge,
       spouseImage: this.spouseImage,
       fatherAge: this.fatherAge,

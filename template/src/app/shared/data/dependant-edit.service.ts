@@ -10,4 +10,8 @@ export class DependantEditService {
     this.dependantSource.next(dep);
     console.log(dep)
   }
+
+  getDependant() {
+    return this.dependantSource.getValue();
+  }
 } 

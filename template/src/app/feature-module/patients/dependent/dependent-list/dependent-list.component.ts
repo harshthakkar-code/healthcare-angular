@@ -8,6 +8,7 @@ import { dependentList, apiResultFormat, pageSelection } from 'src/app/shared/mo
 import { routes } from 'src/app/shared/routes/routes';
 import { DependantService } from '../dependant.service';
 import { DependantEditService } from 'src/app/shared/data/dependant-edit.service';
+import api from 'src/app/shared/api/axios';
 
 @Component({
     selector: 'app-dependent-list',
@@ -55,6 +56,25 @@ export class DependentListComponent implements OnInit {
       });
     } else {
       this.dependants = [];
+    }
+    window.addEventListener('confirmDelete', this.handleGlobalDelete);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('confirmDelete', this.handleGlobalDelete);
+  }
+
+  handleGlobalDelete = () => {
+    const dep = this.dependantEditService.getDependant();
+    if (dep && dep._id) {
+      api.delete(`/dependants/${dep._id}`)
+        .then(() => {
+          this.fetchDependants();
+          this.dependantEditService.setDependant(null);
+        })
+        .catch((err) => {
+          console.error('Delete failed', err);
+        });
     }
   }
 
@@ -150,7 +170,21 @@ export class DependentListComponent implements OnInit {
 
   onDeleteDependant(dep: any) {
     this.dependantEditService.setDependant({ ...dep });
-    const modal = document.getElementById('delete_modal');
+  const modal = document.getElementById('delete_modal');
     if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).show();
+  }
+
+  deleteDependantById() {
+    const dep = this.dependantEditService.getDependant();
+    if (!dep || !dep._id) return;
+    api.delete(`/dependant/${dep._id}`)
+      .then(() => {
+        this.fetchDependants();
+        const modal = document.getElementById('delete_modal');
+        if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+      })
+      .catch((err) => {
+        console.error('Delete failed', err);
+      });
   }
 }

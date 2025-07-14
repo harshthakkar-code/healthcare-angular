@@ -23,6 +23,7 @@ export class PatientRegisterStep1Component {
   email: string = '';
   phone: string = '';
   password: string = '';
+  profileImageError = '';
 
   constructor(private router: Router, private regService: PatientRegistrationService) {
     const data = this.regService.getAllData();
@@ -68,6 +69,11 @@ export class PatientRegisterStep1Component {
   }
 
   nextStep() {
+    this.profileImageError = '';
+    if (!this.profileImage) {
+      this.profileImageError = 'Profile picture is required';
+      return;
+    }
     this.regService.setStepData({ profileImage: this.profileImage });
     this.router.navigate(['/patients/register/patient-register-step2']);
   }

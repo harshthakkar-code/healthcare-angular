@@ -4,6 +4,7 @@ import { PatientRegistrationService } from '../patient-registration.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import api from 'src/app/shared/api/axios';
 
 @Component({
@@ -11,13 +12,15 @@ import api from 'src/app/shared/api/axios';
     templateUrl: './patient-register-step5.component.html',
     styleUrls: ['./patient-register-step5.component.scss'],
     standalone: true,
-    imports: [FormsModule, RouterModule]
+    imports: [CommonModule, FormsModule, RouterModule]
 })
 export class PatientRegisterStep5Component {
   public routes = routes;
 
   city: string = '';
   state: string = '';
+  cityError: string = '';
+  stateError: string = '';
 
   constructor(private patientRegService: PatientRegistrationService, private router: Router) {
     const data = this.patientRegService.getAllData();
@@ -26,6 +29,18 @@ export class PatientRegisterStep5Component {
   }
 
   async onComplete() {
+    this.cityError = '';
+    this.stateError = '';
+    let valid = true;
+    if (!this.city.trim()) {
+      this.cityError = 'City is required';
+      valid = false;
+    }
+    if (!this.state.trim()) {
+      this.stateError = 'State is required';
+      valid = false;
+    }
+    if (!valid) return;
     this.patientRegService.setStepData({
       city: this.city,
       state: this.state

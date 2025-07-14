@@ -29,9 +29,9 @@
                                         </div>
                                         <span>Upload Profile Picture</span>
                                         <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg" (change)="onProfileImageSelected($event)" [disabled]="uploading">
-                                        <div *ngIf="uploadError" class="text-danger small mt-1">{{ uploadError }}</div>
                                         <div *ngIf="uploading" class="text-info small mt-1">Uploading...</div>
                                     </div>
+                                    <div *ngIf="uploadError" class="text-danger small mt-2">{{ uploadError }}</div>
                                     <button *ngIf="profileImage" type="button" class="btn btn-sm btn-danger mt-2" (click)="removeProfileImage()">Remove</button>
 
                                 </div>

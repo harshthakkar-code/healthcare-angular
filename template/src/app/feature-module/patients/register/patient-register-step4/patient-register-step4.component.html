@@ -26,39 +26,50 @@
                                     <h4 class="mt-3">Age</h4>
                                 </div>
                                 <div class="step-process-col mt-4">
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="age">Child_1 Age</label>
-                                        <input type="text" class="form-control" id="Child_1_age" name="Child_1_age" [(ngModel)]="child1Age">
+                                    <!-- Self -->
+                                    <div *ngIf="showSelf" class="mb-3">
+                                        <label class="mb-2" for="self_age">Self Age</label>
+                                        <input type="text" class="form-control" id="self_age" name="self_age" [(ngModel)]="selfAge" required>
+                                        <div *ngIf="selfAgeError" class="text-danger small">{{ selfAgeError }}</div>
+                                        <label class="mb-2 mt-2" for="self_img">Self Image</label>
+                                        <input type="file" class="form-control" id="self_file" name="self_file" (change)="onImageSelected($event, 'selfImage')">
+                                        <img *ngIf="selfImage" [src]="selfImage" alt="Self" style="max-width: 80px; margin-top: 5px;">
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="img">Child_1 Image</label>
-                                        <input type="file" class="form-control" id="Child_1_image" name="Child_1_image" (change)="onImageSelected($event, 'child1Image')">
-                                        <img *ngIf="child1Image" [src]="child1Image" alt="Child 1" style="max-width: 80px; margin-top: 5px;">
+                                    <!-- Children -->
+                                    <div *ngIf="showChild">
+                                        <div *ngFor="let age of childAges; let i = index" class="mb-3">
+                                            <label class="mb-2" [for]="'child_age_' + i">Child {{ i + 1 }} Age</label>
+                                            <input type="text" class="form-control" [id]="'child_age_' + i" [name]="'child_age_' + i" [(ngModel)]="childAges[i]" required>
+                                            <div *ngIf="childAgeErrors[i]" class="text-danger small">{{ childAgeErrors[i] }}</div>
+                                            <label class="mb-2 mt-2" [for]="'child_img_' + i">Child {{ i + 1 }} Image</label>
+                                            <input type="file" class="form-control" [id]="'child_file_' + i" [name]="'child_file_' + i" (change)="onImageSelected($event, 'childImage', i)">
+                                            <img *ngIf="childImages[i]" [src]="childImages[i]" [alt]="'Child ' + (i + 1)" style="max-width: 80px; margin-top: 5px;">
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="spouse-age">Spouse Age</label>
-                                        <input type="text" class="form-control" id="spouse_age" name="spouse_age" [(ngModel)]="spouseAge">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="spouse-img">Spouse Image</label>
+                                    <!-- Spouse -->
+                                    <div *ngIf="showSpouse" class="mb-3">
+                                        <label class="mb-2" for="spouse_age">Spouse Age</label>
+                                        <input type="text" class="form-control" id="spouse_age" name="spouse_age" [(ngModel)]="spouseAge" required>
+                                        <div *ngIf="spouseAgeError" class="text-danger small">{{ spouseAgeError }}</div>
+                                        <label class="mb-2 mt-2" for="spouse_img">Spouse Image</label>
                                         <input type="file" class="form-control" id="spouse_file" name="spouse_file" (change)="onImageSelected($event, 'spouseImage')">
                                         <img *ngIf="spouseImage" [src]="spouseImage" alt="Spouse" style="max-width: 80px; margin-top: 5px;">
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="father">Father</label>
-                                        <input type="text" class="form-control" id="father_age" name="father_age" [(ngModel)]="fatherAge">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="father-image">Father Image</label>
+                                    <!-- Father -->
+                                    <div *ngIf="showFather" class="mb-3">
+                                        <label class="mb-2" for="father_age">Father Age</label>
+                                        <input type="text" class="form-control" id="father_age" name="father_age" [(ngModel)]="fatherAge" required>
+                                        <div *ngIf="fatherAgeError" class="text-danger small">{{ fatherAgeError }}</div>
+                                        <label class="mb-2 mt-2" for="father_img">Father Image</label>
                                         <input type="file" class="form-control" id="father_file" name="father_file" (change)="onImageSelected($event, 'fatherImage')">
                                         <img *ngIf="fatherImage" [src]="fatherImage" alt="Father" style="max-width: 80px; margin-top: 5px;">
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="mb-2" for="">Mother</label>
-                                        <input type="text" class="form-control" id="mother_age" name="mother_age" [(ngModel)]="motherAge">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mother-img" class="mb-2">Mother Image</label>
+                                    <!-- Mother -->
+                                    <div *ngIf="showMother" class="mb-3">
+                                        <label class="mb-2" for="mother_age">Mother Age</label>
+                                        <input type="text" class="form-control" id="mother_age" name="mother_age" [(ngModel)]="motherAge" required>
+                                        <div *ngIf="motherAgeError" class="text-danger small">{{ motherAgeError }}</div>
+                                        <label class="mb-2 mt-2" for="mother_img">Mother Image</label>
                                         <input type="file" class="form-control" id="mother_file" name="mother_file" (change)="onImageSelected($event, 'motherImage')">
                                         <img *ngIf="motherImage" [src]="motherImage" alt="Mother" style="max-width: 80px; margin-top: 5px;">
                                     </div>
