@@ -99,7 +99,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   getDoctorIdFromLocalStorage(): string | null {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.doctorId || user._id || null;
+       return user.id || user._id || null;
     } catch {
       return null;
     }
