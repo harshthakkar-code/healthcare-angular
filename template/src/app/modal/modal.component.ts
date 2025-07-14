@@ -398,7 +398,7 @@ export class ModalComponent implements OnInit {
 
   async saveSlot() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const doctorId = user.doctorId || user.doctorId;
+    const doctorId = user._id || user.id || null;
     if (!doctorId) return;
     this.savingSlot = true;
     this.slotApiError = '';
@@ -653,7 +653,7 @@ export class ModalComponent implements OnInit {
 
   async updateSlot() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const doctorId = user.doctorId || user.doctorId;
+    const doctorId = user._id || user.id || null;
     if (!doctorId) return;
     this.savingEditSlot = true;
     this.slotApiError = '';

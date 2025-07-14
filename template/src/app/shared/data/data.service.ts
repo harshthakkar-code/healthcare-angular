@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { routes } from '../routes/routes';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, BehaviorSubject } from 'rxjs';
 import { apiResultFormat } from '../models/models';
 import { environment } from '../../../environments/environment';
 import api from '../api/axios';
@@ -61,9 +61,13 @@ export class DataService {
   //       })
   //     );
   // }
-  public getDoctorList(): Observable<apiResultFormat> {
+  public getDoctorList(isApproved?: string): Observable<apiResultFormat> {
+    let url = '/doctor/public';
+    if (isApproved) {
+      url += `?isApproved=${isApproved}`;
+    }
     return from(
-      api.get('/doctor/public').then((response) => {
+      api.get(url).then((response) => {
         const data = (response.data.data || []).map((item: any, index: number) => {
           return {
             isSelected: false,
@@ -79,9 +83,10 @@ export class DataService {
             time: '',
             img: item.profileImgUrl || '',
             isStatus: item.isApproved === 'true',
-            userId: item.user?._id || '',
+            userId: item._id || '',
             avgRating: item.avgRating || 0,
             reviewCount: item.reviews ? item.reviews.length : 0,
+            isApproved: item.isApproved
           } as doctorList;
         });
         return { data, totalData: data.length } as apiResultFormat;
@@ -2236,5 +2241,15 @@ export class DataService {
     return from(
       api.put('/auth/me', profile).then(res => res.data)
     );
+  }
+
+  private doctorListRefresh$ = new BehaviorSubject<void>(undefined);
+
+  triggerDoctorListRefresh() {
+    this.doctorListRefresh$.next();
+  }
+
+  getDoctorListRefresh() {
+    return this.doctorListRefresh$.asObservable();
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { PaginationService, tablePageSize } from 'src/app/shared/custom-paginati
 import { DataService } from 'src/app/shared/data/data.service';
 import { doctorList, pageSelection, apiResultFormat } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
+import api from 'src/app/shared/api/axios';
 
 @Component({
     selector: 'app-doctor-list',
@@ -17,6 +18,7 @@ export class DoctorListComponent {
   public routes = routes;
   public tableData: Array<doctorList> = [];
   initChecked = false;
+  isLoading = false;
   
   // pagination variables
   public pageSize = 10;
@@ -26,6 +28,7 @@ export class DoctorListComponent {
   dataSource!: MatTableDataSource<doctorList>;
   public searchDataValue = '';
   // pagination variables end
+  statusFilter: string = '';
 
   constructor(
     private data: DataService,
@@ -108,5 +111,45 @@ export class DoctorListComponent {
         data.isStatus = !data.isStatus;
       }
     });
+  }
+
+  approveDoctor(doctor: any) {
+    // if (!window.confirm('Are you sure you want to approve this doctor?')) return;
+    this.isLoading = true;
+    api.put(`/doctor/admin/${doctor.userId}/approve`, { isApproved: 'true' })
+      .then(() => {
+        this.data.triggerDoctorListRefresh();
+        this.fetchDoctors();
+        this.isLoading = false;
+      })
+      .catch(() => this.isLoading = false);
+  }
+
+  rejectDoctor(doctor: any) {
+    // if (!window.confirm('Are you sure you want to reject this doctor?')) return;
+    this.isLoading = true;
+    api.put(`/doctor/admin/${doctor.userId}/approve`, { isApproved: 'false' })
+      .then(() => {
+        this.data.triggerDoctorListRefresh();
+        this.fetchDoctors();
+        this.isLoading = false;
+      })
+      .catch(() => this.isLoading = false);
+  }
+
+  fetchDoctors() {
+    this.isLoading = true;
+    this.data.getDoctorList(this.statusFilter).subscribe({
+      next: (apiRes) => {
+        this.tableData = apiRes.data;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+  onStatusFilterChange() {
+    this.fetchDoctors();
   }
 }

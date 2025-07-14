@@ -1,0 +1,74 @@
+
+.text-success-icon,
+.text-danger-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+    padding: 0;
+    font-size: 16px;
+}
+
+.text-success-icon {
+    border: 1px solid #04BD6C;
+    color: #04BD6C;
+}
+
+.text-success-icon:hover {
+    background-color: #04BD6C;
+    color: #fff;
+}
+
+.text-danger-icon {
+    border: 1px solid #FF0000;
+    color: #FF0000;
+}
+
+.text-danger-icon:hover {
+    background-color: #FF0000;
+    color: #fff;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  padding: 2px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  &.pending {
+    background: #8e24aa;
+  }
+  &.approved {
+    background: #4caf50;
+  }
+  &.rejected {
+    background: #f44336;
+  }
+}
+
+// Remove margin from buttons inside status-row
+.status-row .btn {
+  margin: 0;
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.status-filter select {
+  min-width: 100px;
+  max-width: 140px;
+  font-size: 0.95rem;
+  padding: 2px 8px;
+}

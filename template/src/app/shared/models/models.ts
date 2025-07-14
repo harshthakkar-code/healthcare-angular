@@ -42,6 +42,8 @@ export interface doctorList {
   totalEarned?: string;
   avgRating?: number;
   reviewCount?: number;
+  isApproved?: string;
+  _id?:string;
 }
 export interface patientList {
   id: number;
