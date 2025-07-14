@@ -292,57 +292,90 @@
 																	<div class="book-title">	
 																		<h6 class="fs-14 mb-2">Morning</h6>
 																	</div>
-																	<div class="token-slot mt-2 mb-2">
-																		<ng-container *ngIf="morningSlots.length; else noMorning">
-																			<div class="form-check-inline visits me-0" *ngFor="let slot of morningSlots">
-																				<label class="visit-btns">
-																				<input
-																					type="checkbox"
-																					class="form-check-input"
-																					[disabled]="slot.status !== 'available'"
-																					[checked]="selectedSlot?._id === slot._id"
-																					(click)="onSlotSelected(slot)"
-																					[value]="slot._id"
-																					name="appointmentSlot"
-																				>
-																				<span class="visit-rsn" style="margin: 5px;">
-																					{{ slot.startTime }}
-																					 
-																				</span>
-																				</label>
-																			</div>
-																		</ng-container>
-																		<ng-template #noMorning>
-																			<div class="text-muted">No morning slot available</div>
-																		</ng-template>
-																	</div>	
-																	<div class="book-title">	
-																		<h6 class="fs-14 mb-2">Afternoon</h6>
-																	</div>
-																	<div class="token-slot mt-2 mb-2">
-																		<ng-container *ngIf="afternoonSlots.length; else noAfternoon">
-																			<div class="form-check-inline visits me-0" *ngFor="let slot of afternoonSlots">
-																				<label class="visit-btns">
-																				<input
-																					type="checkbox"
-																					class="form-check-input"
-																					[disabled]="slot.status !== 'available'"
-																					[checked]="selectedSlot?._id === slot._id"
-																					(click)="onSlotSelected(slot)"
-																					[value]="slot._id"
-																					name="appointmentSlot"
-																				>
-																				<span class="visit-rsn">
-																					{{ slot.startTime }} 
-																					 
-																				</span>
-																				</label>
-																			</div>
-																		</ng-container>
-																		<ng-template #noAfternoon>
-																			<div class="text-muted">No afternoon slot available</div>
-																		</ng-template>
-																	</div>	
+																	<!-- Morning Slots -->
+<div class="book-title">  
+  <h6 class="fs-14 mb-2">Morning</h6>
+</div>
+<div class="token-slot mt-2 mb-2">
+  <ng-container *ngIf="morningSlots.length; else noMorning">
+    <div class="form-check-inline visits me-0" *ngFor="let slot of morningSlots">
+      <label class="visit-btns">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [disabled]="slot.status !== 'available'"
+          [checked]="selectedSlot?._id === slot._id"
+          (click)="onSlotSelected(slot)"
+          [value]="slot._id"
+          name="appointmentSlot"
+        >
+        <span class="visit-rsn" style="min-width: 100px;">
+          {{ slot.startTime }} - {{ slot.endTime }}
+          <span *ngIf="slot.status === 'booked'">(Booked)</span>
+        </span>
+      </label>
+    </div>
+  </ng-container>
+  <ng-template #noMorning>
+    <div class="text-muted">No morning slot available</div>
+  </ng-template>
+</div>
+<!-- Afternoon Slots -->
+<div class="book-title">  
+  <h6 class="fs-14 mb-2">Afternoon</h6>
+</div>
+<div class="token-slot mt-2 mb-2">
+  <ng-container *ngIf="afternoonSlots.length; else noAfternoon">
+    <div class="form-check-inline visits me-0" *ngFor="let slot of afternoonSlots">
+      <label class="visit-btns">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [disabled]="slot.status !== 'available'"
+          [checked]="selectedSlot?._id === slot._id"
+          (click)="onSlotSelected(slot)"
+          [value]="slot._id"
+          name="appointmentSlot"
+        >
+        <span class="visit-rsn">
+          {{ slot.startTime }} - {{ slot.endTime }}
+          <span *ngIf="slot.status === 'booked'">(Booked)</span>
+        </span>
+      </label>
+    </div>
+  </ng-container>
+  <ng-template #noAfternoon>
+    <div class="text-muted">No afternoon slot available</div>
+  </ng-template>
+</div>
+<!-- Evening Slots -->
+<div class="book-title">  
+  <h6 class="fs-14 mb-2">Evening</h6>
+</div>
+<div class="token-slot mt-2 mb-2">
+  <ng-container *ngIf="eveningSlots.length; else noEvening">
+    <div class="form-check-inline visits me-0" *ngFor="let slot of eveningSlots">
+      <label class="visit-btns">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [disabled]="slot.status !== 'available'"
+          [checked]="selectedSlot?._id === slot._id"
+          (click)="onSlotSelected(slot)"
+          [value]="slot._id"
+          name="appointmentSlot"
+        >
+        <span class="visit-rsn">
+          {{ slot.startTime }} - {{ slot.endTime }}
+          <span *ngIf="slot.status === 'booked'">(Booked)</span>
+        </span>
+      </label>
+    </div>
+  </ng-container>
+  <ng-template #noEvening>
+    <div class="text-muted">No evening slot available</div>
+  </ng-template>
+</div>	
 																	<div class="book-title">	
 																		<h6 class="fs-14 mb-2">Evening</h6>
 																	</div>
