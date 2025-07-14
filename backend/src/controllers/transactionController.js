@@ -1,15 +1,16 @@
 const Transaction = require('../models/Transaction');
 const Appointment = require('../models/Appointment');
-const { syncDoctorTotalEarned } = require('../utils/doctorProfileSync');
+const User = require('../models/User'); // Add this import if not present
 
 exports.createTransaction = async (req, res, next) => {
   try {
     const transaction = new Transaction(req.body);
     await transaction.save();
-    // Sync totalEarned for the doctor
-    const appointment = await Appointment.findById(transaction.appointment);
-    if (appointment) {
-      await syncDoctorTotalEarned(appointment.doctor);
+    // If the transaction is paid, increment totalEarned for the doctor
+    if (transaction.status === 'paid') {
+      await User.findByIdAndUpdate(transaction.doctor, {
+        $inc: { totalEarned: transaction.amount || 0 }
+      });
     }
     res.status(201).json(transaction);
   } catch (err) { next(err); }
@@ -67,24 +68,6 @@ exports.getTransactions = async (req, res, next) => {
         }
       },
       { $unwind: '$appointment.doctor' },
-      // Lookup doctor profile
-      {
-        $lookup: {
-          from: 'doctorprofiles',
-          localField: 'appointment.doctor._id',
-          foreignField: 'user',
-          as: 'appointment.doctorProfile'
-        }
-      },
-      { $unwind: { path: '$appointment.doctorProfile', preserveNullAndEmptyArrays: true } },
-      // Add profileImgUrl from doctorProfile (if exists) or from user
-      {
-        $addFields: {
-          'appointment.doctor.profileImgUrl': {
-            $ifNull: ['$appointment.doctorProfile.profileImgUrl', '$appointment.doctor.profileImgUrl']
-          }
-        }
-      },
       { $addFields: { idStr: { $toString: '$_id' } } },
       // Add search match if needed
       ...(search ? [{ $match: {
@@ -128,12 +111,24 @@ exports.getTransaction = async (req, res, next) => {
 
 exports.updateTransaction = async (req, res, next) => {
   try {
-    const transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const transaction = await Transaction.findById(req.params.id);
     if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
-    // Sync totalEarned for the doctor
-    const appointment = await Appointment.findById(transaction.appointment);
-    if (appointment) {
-      await syncDoctorTotalEarned(appointment.doctor);
+    const prevStatus = transaction.status;
+    const prevAmount = transaction.amount;
+    // Update transaction fields
+    Object.assign(transaction, req.body);
+    await transaction.save();
+    // If status changed to 'paid'
+    if (prevStatus !== 'paid' && transaction.status === 'paid') {
+      await User.findByIdAndUpdate(transaction.doctor, {
+        $inc: { totalEarned: transaction.amount || 0 }
+      });
+    }
+    // If status changed from 'paid' to something else
+    else if (prevStatus === 'paid' && transaction.status !== 'paid') {
+      await User.findByIdAndUpdate(transaction.doctor, {
+        $inc: { totalEarned: -(prevAmount || 0) }
+      });
     }
     res.json(transaction);
   } catch (err) { next(err); }
@@ -143,10 +138,11 @@ exports.deleteTransaction = async (req, res, next) => {
   try {
     const transaction = await Transaction.findByIdAndDelete(req.params.id);
     if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
-    // Sync totalEarned for the doctor
-    const appointment = await Appointment.findById(transaction.appointment);
-    if (appointment) {
-      await syncDoctorTotalEarned(appointment.doctor);
+    // If the transaction was paid, decrement totalEarned for the doctor
+    if (transaction.status === 'paid') {
+      await User.findByIdAndUpdate(transaction.doctor, {
+        $inc: { totalEarned: -(transaction.amount || 0) }
+      });
     }
     res.json({ message: 'Transaction deleted' });
   } catch (err) { next(err); }
@@ -160,4 +156,34 @@ exports.getTotalPaid = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+// Get all transactions for a user (doctor or patient)
+exports.getTransactionsByUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.query; // 'doctor', 'patient', or undefined
+    let appointmentQuery = {};
+    if (role === 'doctor') {
+      appointmentQuery.doctor = userId;
+    } else if (role === 'patient') {
+      appointmentQuery.patient = userId;
+    } else {
+      appointmentQuery = { $or: [ { doctor: userId }, { patient: userId } ] };
+    }
+    // Find all relevant appointments
+    const appointments = await Appointment.find(appointmentQuery).select('_id');
+    const appointmentIds = appointments.map(a => a._id);
+    // Find all transactions for these appointments
+    const transactions = await Transaction.find({ appointment: { $in: appointmentIds } })
+      .populate({
+        path: 'appointment',
+        populate: [
+          { path: 'patient', select: 'name email' },
+          { path: 'doctor', select: 'name _id' }
+        ],
+        select: 'patient doctor date createdAt time service'
+      });
+    res.json({ total: transactions.length, data: transactions });
+  } catch (err) { next(err); }
 }; 

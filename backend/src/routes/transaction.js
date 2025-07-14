@@ -7,6 +7,7 @@ const role = require('../middlewares/role');
 router.post('/', auth, transactionController.createTransaction);
 router.get('/', auth, transactionController.getTransactions);
 router.get('/total-paid', transactionController.getTotalPaid);
+router.get('/user/:userId', auth, transactionController.getTransactionsByUser);
 router.get('/:id', auth, transactionController.getTransaction);
 router.put('/:id', auth, transactionController.updateTransaction);
 router.delete('/:id', auth, transactionController.deleteTransaction);
