@@ -90,6 +90,7 @@
                 <div *ngIf="updateError" class="text-danger mb-2" style="font-size: 14px;">{{ updateError }}</div>
                 <div class="modal-btn text-end mt-3">
                   <button class="btn btn-primary prime-btn" (click)="saveAllSlots()" [disabled]="!pendingSlots.length || loading">Save Changes</button>
+                  <button class="btn btn-primary prime-btn ms-2" (click)="updateSlotFees()" [disabled]="!selectedSlotId || loading">Save Fee for Selected Slot</button>
                 </div>
               </div>
             </div>
