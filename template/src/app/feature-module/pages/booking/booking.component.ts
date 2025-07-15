@@ -126,8 +126,14 @@ export class BookingComponent implements OnInit {
         slotDate.setHours(h, m, 0, 0);
         return slotDate >= now;
       });
-      // Extract unique available dates (as yyyy-MM-dd)
-      this.availableDates = Array.from(new Set(this.slots.map((slot: any) => formatDate(slot.date, 'yyyy-MM-dd', 'en-US'))));
+      // Extract unique available dates (as yyyy-MM-dd) where at least one slot is available
+      this.availableDates = Array.from(
+        new Set(
+          this.slots
+            .filter((slot: any) => slot.status === 'available')
+            .map((slot: any) => formatDate(slot.date, 'yyyy-MM-dd', 'en-US'))
+        )
+      );
       this.availableDatesAsDateObjects = this.availableDates.map(d => new Date(d));
       // Always set selectedDate to today
       const todayStr = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
@@ -146,6 +152,17 @@ export class BookingComponent implements OnInit {
     }
   }
 
+  // Helper function for UTC date comparison
+  isSameDayUTC(date1: string | Date, date2: string | Date): boolean {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return (
+      d1.getUTCFullYear() === d2.getUTCFullYear() &&
+      d1.getUTCMonth() === d2.getUTCMonth() &&
+      d1.getUTCDate() === d2.getUTCDate()
+    );
+  }
+
   filterSlotsForSelectedDate() {
     if (!this.selectedDate) {
       this.slotsForSelectedDate = [];
@@ -155,8 +172,16 @@ export class BookingComponent implements OnInit {
       return;
     }
     const now = new Date();
+    // Debug log for slot date comparison
+    this.slots.forEach(slot => {
+      console.log(
+        'slot.date:', slot.date,
+        'selectedDate:', this.selectedDate,
+        'isSameDayUTC:', this.isSameDayUTC(slot.date, this.selectedDate || '')
+      );
+    });
     this.slotsForSelectedDate = this.slots.filter(
-      slot => formatDate(slot.date, 'yyyy-MM-dd', 'en-US') === formatDate(this.selectedDate || '', 'yyyy-MM-dd', 'en-US')
+      slot => this.isSameDayUTC(slot.date, this.selectedDate || '')
     ).filter(slot => {
       // Only show slots with endTime (or startTime) in the future
       const slotDate = new Date(slot.date);
@@ -169,7 +194,7 @@ export class BookingComponent implements OnInit {
     // Categorize by startTime and filter out booked slots
     this.morningSlots = this.slotsForSelectedDate.filter(slot => {
       const hour = parseInt(slot.startTime.split(':')[0], 10);
-      return hour >= 5 && hour < 12 && slot.status === 'available';
+      return hour >= 0 && hour < 12 && slot.status === 'available';
     });
     this.afternoonSlots = this.slotsForSelectedDate.filter(slot => {
       const hour = parseInt(slot.startTime.split(':')[0], 10);

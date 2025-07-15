@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import api from 'src/app/shared/api/axios';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialogComponent } from '../../doctor-specialities/confirm-delete-dialog.component';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
     selector: 'app-doctor-clinics-settings',
@@ -16,6 +17,7 @@ export class DoctorClinicsSettingsComponent implements OnInit {
   clinicsForm!: FormGroup;
   doctorId!: string | null;
   loading = false;
+  logoPreviews: string[] = [];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
@@ -27,9 +29,7 @@ export class DoctorClinicsSettingsComponent implements OnInit {
     if (this.doctorId) {
       this.fetchClinics();
     }
-    if (this.clinicsArray.length > 0) {
-      (this.clinicsArray.at(0) as FormGroup).markAllAsTouched();
-    }
+    // Removed markAllAsTouched() from here to prevent showing errors on initial load
   }
 
   private getDoctorId(): string | null {
@@ -57,13 +57,16 @@ export class DoctorClinicsSettingsComponent implements OnInit {
             ? data
             : [];
         this.clinicsArray.clear();
+        this.logoPreviews = [];
         clinicsArr.forEach((clinic: any) => {
           this.clinicsArray.push(this.fb.group({
             clinicName: [clinic.clinicName || '', Validators.required],
             location: [clinic.location || '', Validators.required],
             address: [clinic.address || '', Validators.required],
+            logo: [clinic.logo || ''],
             gallery: this.fb.array((clinic.gallery || []).map((img: string) => this.fb.control(img)))
           }));
+          this.logoPreviews.push(clinic.logo || '');
         });
         this.loading = false;
       })
@@ -75,9 +78,29 @@ export class DoctorClinicsSettingsComponent implements OnInit {
       clinicName: ['', Validators.required],
       location: ['', Validators.required],
       address: ['', Validators.required],
+      logo: [''],
       gallery: this.fb.array([])
     }));
+    this.logoPreviews.push('');
     (this.clinicsArray.at(this.clinicsArray.length - 1) as FormGroup).markAllAsTouched();
+  }
+
+  async onLogoChange(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      // Show local preview
+      this.logoPreviews[index] = URL.createObjectURL(file);
+      // Upload to server
+      try {
+        const imageUrl = await uploadImage(file);
+        this.clinicsArray.at(index).get('logo')?.setValue(imageUrl);
+        this.logoPreviews[index] = imageUrl;
+      } catch (e) {
+        // Optionally show error
+        this.logoPreviews[index] = '';
+      }
+    }
   }
 
   async deleteEducationFunc(index: number) {
@@ -87,6 +110,7 @@ export class DoctorClinicsSettingsComponent implements OnInit {
     const result = await dialogRef.afterClosed().toPromise();
     if (result) {
       this.clinicsArray.removeAt(index);
+      this.logoPreviews.splice(index, 1);
     }
   }
 

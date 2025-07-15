@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import api from 'src/app/shared/api/axios';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialogComponent } from '../../doctor-specialities/confirm-delete-dialog.component';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
     selector: 'app-doctor-experience-settings',
@@ -16,6 +17,7 @@ export class DoctorExperienceSettingsComponent implements OnInit {
   experiencesForm!: FormGroup;
   doctorId!: string | null;
   loading = false;
+  logoPreviews: string[] = [];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
@@ -27,9 +29,7 @@ export class DoctorExperienceSettingsComponent implements OnInit {
     if (this.doctorId) {
       this.fetchExperiences();
     }
-    if (this.experiences.length > 0) {
-      (this.experiences.at(0) as FormGroup).markAllAsTouched();
-    }
+    // Removed markAllAsTouched() from here to prevent showing errors on initial load
   }
 
   private getDoctorId(): string | null {
@@ -57,6 +57,7 @@ export class DoctorExperienceSettingsComponent implements OnInit {
             ? data
             : [];
         this.experiences.clear();
+        this.logoPreviews = [];
         experiencesArr.forEach((exp: any) => {
           this.experiences.push(this.fb.group({
             title: [exp.title || '', Validators.required],
@@ -65,10 +66,12 @@ export class DoctorExperienceSettingsComponent implements OnInit {
             location: [exp.location || '', Validators.required],
             employment: [exp.employment || ''],
             description: [exp.description || '', Validators.required],
-            startDate: [exp.startDate || '', Validators.required],
-            endDate: [exp.endDate || '', Validators.required],
-            currentlyWorking: [exp.currentlyWorking || false]
+            startDate: [exp.startDate ? new Date(exp.startDate) : '', Validators.required],
+            endDate: [exp.endDate ? new Date(exp.endDate) : '', Validators.required],
+            currentlyWorking: [exp.currentlyWorking || false],
+            logo: [exp.logo || '']
           }));
+          this.logoPreviews.push(exp.logo || '');
         });
         this.loading = false;
       })
@@ -85,9 +88,29 @@ export class DoctorExperienceSettingsComponent implements OnInit {
       description: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
-      currentlyWorking: [false]
+      currentlyWorking: [false],
+      logo: ['']
     }));
+    this.logoPreviews.push('');
     (this.experiences.at(this.experiences.length - 1) as FormGroup).markAllAsTouched();
+  }
+
+  async onLogoChange(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      // Show local preview
+      this.logoPreviews[index] = URL.createObjectURL(file);
+      // Upload to server
+      try {
+        const imageUrl = await uploadImage(file);
+        this.experiences.at(index).get('logo')?.setValue(imageUrl);
+        this.logoPreviews[index] = imageUrl;
+      } catch (e) {
+        // Optionally show error
+        this.logoPreviews[index] = '';
+      }
+    }
   }
 
   async deleteEducationFunc(index: number) {
@@ -97,6 +120,7 @@ export class DoctorExperienceSettingsComponent implements OnInit {
     const result = await dialogRef.afterClosed().toPromise();
     if (result) {
       this.experiences.removeAt(index);
+      this.logoPreviews.splice(index, 1);
     }
   }
 
