@@ -48,7 +48,7 @@ export class InvoiceReportComponent implements OnInit, OnDestroy {
 
   fetchInvoices(page: number = this.currentPage, limit: number = this.pageSize) {
     this.loading = true;
-    api.get('/transactions', { params: { page, limit } })
+    api.get('/invoices', { params: { page, limit } })
       .then(res => {
         this.invoices = res.data.data;
         this.totalInvoices = res.data.total;
@@ -81,7 +81,7 @@ export class InvoiceReportComponent implements OnInit, OnDestroy {
 
   confirmDeleteInvoice() {
     if (!this.deleteInvoiceId) return;
-    api.delete(`/transactions/${this.deleteInvoiceId}`)
+    api.delete(`/invoices/${this.deleteInvoiceId}`)
       .then(() => {
         this.fetchInvoices(this.currentPage, this.pageSize);
         this.deleteInvoiceId = null;
@@ -94,7 +94,7 @@ export class InvoiceReportComponent implements OnInit, OnDestroy {
 
   updateInvoice() {
     if (!this.editInvoice || !this.editInvoice._id) return;
-    api.put(`/transactions/${this.editInvoice._id}`, this.editInvoice)
+    api.put(`/invoices/${this.editInvoice._id}`, this.editInvoice)
       .then(() => {
         this.fetchInvoices(this.currentPage, this.pageSize);
         // Close the modal after save

@@ -30,28 +30,28 @@
                     <th mat-sort-header="patientName">Patient Name</th>
                     <th mat-sort-header="totalAmount">Total Amount</th>
                     <th mat-sort-header="createdDate">Created Date</th>
-                    <th mat-sort-header="status">Status</th>
+                    <!-- <th mat-sort-header="status">Status</th> -->
                     <th mat-sort-header="actions">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (data of invoices; track data) {
                     <tr>
-                      <td><a [routerLink]="routes.adminInvoice">{{data._id}}</a></td>
-                      <td>{{data.appointment?.patient?._id}}</td>
+                      <td><a [routerLink]="routes.adminInvoice">{{data.invoiceNo}}</a></td>
+                      <td>{{data.appointment?.patient?._id?.slice(0, 8)}}</td>
                       <td>
                         <h2 class="table-avatar">
                           <a  style="cursor: default;" class="avatar avatar-sm me-2">
-                            <img class="avatar-img rounded-circle" [src]="data.appointment?.patient?.profileImgUrl || 'assets/img/patients/default.png'" alt="User Image">
+                            <!-- <img class="avatar-img rounded-circle" [src]="data.appointment?.patient?.profileImgUrl || 'assets/img/patients/default.png'" alt="User Image"> -->
                           </a>
                           <a  style="cursor: default;">{{data.appointment?.patient?.name}}</a>
                         </h2>
                       </td>
-                      <td>{{data.amount}}</td>
-                      <td>{{data.createdAt | date:'d MMM yyyy'}}</td>
-                      <td>
+                      <td>{{data.totalAmount}}</td>
+                      <td>{{data.issuedDate | date:'d MMM yyyy'}}</td>
+                      <!-- <td>
                         <span class="badge rounded-pill bg-success inv-badge">{{data.status}}</span>
-                      </td>
+                      </td> -->
                       <td>
                         <div class="actions">
                           <a data-bs-toggle="modal" href="#edit_invoice_report" class="btn btn-sm bg-success-light me-2" (click)="openEditModal(data)">
@@ -115,13 +115,13 @@
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label for="total-amount" class="mb-2">Total Amount</label>
-                <input type="number" class="form-control" [(ngModel)]="editInvoice.amount" name="amount">
+                <input type="number" class="form-control" [(ngModel)]="editInvoice.totalAmount" name="amount">
               </div>
             </div>
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label for="created-date" class="mb-2">Created Date</label>
-                <input type="text" class="form-control" [value]="editInvoice.createdAt | date:'d MMM yyyy'" readonly>
+                <input type="text" class="form-control" [value]="editInvoice.issuedDate | date:'d MMM yyyy'" readonly>
               </div>
             </div>
           </div>

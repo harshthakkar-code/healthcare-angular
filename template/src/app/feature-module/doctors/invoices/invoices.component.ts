@@ -32,7 +32,7 @@ export class InvoicesComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.invoicesService.getTransactionsByUserId(userId, { page: this.page, limit: this.limit, search: this.search }).subscribe({
+    this.invoicesService.getInvoicesByUserId(userId, { page: this.page, limit: this.limit, search: this.search }).subscribe({
       next: (res) => {
         this.transactions = res.data.data || [];
         this.total = res.data.total || 0;

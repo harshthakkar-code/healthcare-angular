@@ -314,8 +314,8 @@ export class DoctorDashboardComponent {
         this.invoices = [];
         return;
       }
-      const res = await api.get(`/transactions/user/${doctorId}`);
-      this.invoices = Array.isArray(res.data) ? res.data : (res.data.data || []);
+      const res = await api.get(`/invoices/doctor/${doctorId}`, { params: { page: 1, limit: 10 } });
+      this.invoices = Array.isArray(res.data.data) ? res.data.data : [];
     } catch (error) {
       this.invoices = [];
     }

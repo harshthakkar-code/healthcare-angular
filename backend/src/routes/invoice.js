@@ -3,6 +3,11 @@ const router = express.Router();
 const invoiceController = require('../controllers/invoiceController');
 
 router.post('/', invoiceController.createInvoice);
+router.get('/doctor/:doctorId', invoiceController.getInvoicesByDoctor);
+router.get('/patient/:patientId', invoiceController.getInvoicesByPatient);
 router.get('/:id', invoiceController.getInvoiceById);
+router.get('/', invoiceController.getAllInvoices);
+router.put('/:id', invoiceController.updateInvoice);
+router.delete('/:id', invoiceController.deleteInvoice);
 
 module.exports = router; 

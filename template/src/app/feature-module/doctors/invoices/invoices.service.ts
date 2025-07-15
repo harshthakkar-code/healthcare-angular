@@ -4,11 +4,12 @@ import api from 'src/app/shared/api/axios';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
-  getTransactions(params: { page?: number; limit?: number; search?: string }): Observable<any> {
-    return from(api.get('/transactions/user/', { params }));
+  getInvoices(params: { page?: number; limit?: number; search?: string }): Observable<any> {
+    return from(api.get('/invoices', { params }));
   }
 
-  getTransactionsByUserId(userId: string, params: { page?: number; limit?: number; search?: string }): Observable<any> {
-    return from(api.get(`/transactions/user/${userId}`, { params }));
+  getInvoicesByUserId(userId: string, params: { page?: number; limit?: number; search?: string }): Observable<any> {
+    // Call the doctor invoices endpoint
+    return from(api.get(`/invoices/doctor/${userId}`, { params }));
   }
 } 

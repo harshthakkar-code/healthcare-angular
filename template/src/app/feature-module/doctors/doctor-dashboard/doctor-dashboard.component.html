@@ -340,20 +340,20 @@
                                 <h5>
                                   <a [routerLink]="routes.invoice">{{ invoice.appointment.patient?.name || invoice.patientName || 'Unknown' }}</a>
                                 </h5>
-                                <span>#{{ invoice.appointmentId || invoice._id?.slice(-6) }}</span>
+                                <span>#{{  invoice?.invoiceNo?.slice(-6) || invoice.appointmentId  }}</span>
                               </div>
                             </div>
                           </td>
                           <td>
                             <div class="appointment-date-created">
                               <span class="paid-text">Paid On</span>
-                              <h6>{{ invoice.paidOn ? (invoice.paidOn | date:'dd MMM yyyy') : (invoice.createdAt | date:'dd MMM yyyy') }}</h6>
+                              <h6>{{  (invoice.issuedDate | date:'dd MMM yyyy') }}</h6>
                             </div>
                           </td>
                           <td>
                             <div class="appointment-date-created">
                               <span class="paid-text">Amount</span>
-                              <h6>${{ invoice.amount || invoice.total || 0 }}</h6>
+                              <h6>${{ invoice.totalAmount || invoice.total || 0 }}</h6>
                             </div>
                           </td>
                           <td>

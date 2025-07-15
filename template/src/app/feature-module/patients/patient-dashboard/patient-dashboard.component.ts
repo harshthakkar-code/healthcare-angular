@@ -210,11 +210,15 @@ export class PatientDashboardComponent implements OnInit {
     try {
       // Get profile using Bearer token
       this.patientInfo = await this.dashboardService.getProfile();
-      // Get patientId from localStorage for appointments
-      // Use the same logic as DependentListComponent
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const patientId = user.id || user._id || null;
-      console.log('patientId', patientId);
+      // Get patientId once at the top of the method
+      const patientId = (() => {
+        try {
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          return user.id || user._id || null;
+        } catch {
+          return null;
+        }
+      })();
       // this.appointments = await this.dashboardService.getAppointments(patientId);
       if (!patientId) {
         this.errorMessage = 'No patient ID found in local storage.';
@@ -269,8 +273,12 @@ export class PatientDashboardComponent implements OnInit {
           console.log('Dashboard report appointments error', err);
           this.dashboardReportAppointments = [];
         });
-      // Fetch invoices for reports tab (use /transactions like PatientInvoiceService)
-      api.get('/transactions', { params: { page: 1, limit: 10 } })
+      // Fetch invoices for reports tab (use /invoices/patient/:patientId)
+      if (!patientId) {
+        this.dashboardReportInvoices = [];
+        return;
+      }
+      api.get(`/invoices/patient/${patientId}`, { params: { page: 1, limit: 10 } })
         .then((res: any) => {
           this.dashboardReportInvoices = res.data.data || [];
         })

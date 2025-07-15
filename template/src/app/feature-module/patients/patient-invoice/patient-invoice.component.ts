@@ -25,7 +25,14 @@ export class PatientInvoiceComponent implements OnInit {
 
   fetchTransactions() {
     this.loading = true;
-    this.patientInvoiceService.getTransactions({ page: this.page, limit: this.limit, search: this.search }).subscribe({
+    const patientId = this.getPatientId();
+    if (!patientId) {
+      this.transactions = [];
+      this.total = 0;
+      this.loading = false;
+      return;
+    }
+    this.patientInvoiceService.getTransactions(patientId, { page: this.page, limit: this.limit, search: this.search }).subscribe({
       next: (res) => {
         this.transactions = res.data.data || [];
         this.total = res.data.total || 0;
@@ -33,6 +40,15 @@ export class PatientInvoiceComponent implements OnInit {
       },
       error: () => { this.loading = false; }
     });
+  }
+
+  getPatientId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
   }
 
   onSearch(term: string) {

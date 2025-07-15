@@ -862,18 +862,18 @@
                              </thead>
                              <tbody>
                                <tr *ngFor="let inv of dashboardReportInvoices">
-                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#{{ inv._id?.slice(-6) }}</a></td>
+                                 <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#{{ inv.invoiceNo?.slice(-6) }}</a></td>
                                  <td>
                                    <h2 class="table-avatar">
                                      <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
                                        <img class="avatar-img rounded-3" [src]="inv?.appointment?.doctorProfile?.profileImage || 'assets/img/doctors/doctor-thumb-21.jpg'" alt="User Image">
                                      </a>
-                                     <a [routerLink]="routes.doctorProfile1">{{ inv.appointment.doctor.doctorName || "Doctor Name" }}</a>
+                                     <a [routerLink]="routes.doctorProfile1">{{ inv.appointment.doctor.name || "Doctor Name" }}</a>
                                    </h2>
                                  </td>
                                  <td>{{ inv.appointment.date | date: 'mediumDate'  }}</td>
-                                 <td>{{ inv.createdAt | date:'mediumDate' }}</td>
-                                 <td>{{ inv.amount | currency }}</td>
+                                 <td>{{ inv.issuedDate | date:'mediumDate' }}</td>
+                                 <td>{{ inv.totalAmount | currency }}</td>
                                  <td>
                                    <div class="action-item">
                                      <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">

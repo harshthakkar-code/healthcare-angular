@@ -339,7 +339,9 @@ exports.stripeWebhook = async (req, res, next) => {
             totalAmount: transaction.amount,
             appointment: appointment._id,
             transaction: transaction._id,
-            otherInfo: appointment.reason || ''
+            otherInfo: appointment.reason || '',
+            doctor: appointment.doctor, // add doctor user id
+            patient: appointment.patient // add patient user id
           };
           // Generate invoice number
           const InvoiceModel = require('../models/Invoice');
@@ -423,7 +425,9 @@ exports.stripeWebhook = async (req, res, next) => {
                 totalAmount: transaction.amount,
                 appointment: appointment._id,
                 transaction: transaction._id,
-                otherInfo: appointment.reason || ''
+                otherInfo: appointment.reason || '',
+                doctor: appointment.doctor, // add doctor user id
+                patient: appointment.patient // add patient user id
               };
               const count = await InvoiceModel.countDocuments();
               invoiceData.invoiceNo = `#INV${(count + 1).toString().padStart(3, '0')}`;

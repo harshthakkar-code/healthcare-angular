@@ -31,7 +31,9 @@ const invoiceSchema = new mongoose.Schema({
   totalAmount: Number,
   appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
   transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' },
-  otherInfo: String
+  otherInfo: String,
+  doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema); 

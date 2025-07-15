@@ -1,4 +1,3 @@
-const DoctorProfile = require('../models/DoctorProfile');
 const Review = require('../models/Review');
 const Specialization = require('../models/Specialization');
 const Schedule = require('../models/Schedule');
@@ -319,18 +318,10 @@ exports.createReview = async (req, res, next) => {
     }
     const review = new Review({ doctor: doctorId, patient: patientId, rating, comment });
     await review.save();
-    // Add review to doctor profile
-    const doctorProfile = await DoctorProfile.findOne({ user: doctorId });
-    if (doctorProfile) {
-      doctorProfile.reviews = doctorProfile.reviews || [];
-      doctorProfile.reviews.push(review._id);
-      // Update avgRating
-      const allReviews = await Review.find({ doctor: doctorId });
-      const avgRating = allReviews.length ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length) : null;
-      doctorProfile.avgRating = avgRating;
-      await doctorProfile.save();
-    }
-    // Optionally, add review to patient profile (not required for now)
+    // Update avgRating on User (doctor) if you want to store it, or just calculate on the fly
+    const allReviews = await Review.find({ doctor: doctorId });
+    const avgRating = allReviews.length ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length) : null;
+    await User.findByIdAndUpdate(doctorId, { avgRating });
     // Populate doctor and patient info in response
     const populated = await Review.findById(review._id)
       .populate('doctor', 'name email avatar')
