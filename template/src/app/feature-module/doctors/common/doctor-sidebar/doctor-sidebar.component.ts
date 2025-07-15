@@ -57,7 +57,8 @@ getDoctorProfile() {
 getDoctorId(): string | null {
   try {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return user.doctorId ||  null;
+          return user.id || user._id || null;
+
   } catch {
     return null;
   }
