@@ -178,7 +178,7 @@
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img [src]="apt.doctor.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                          <img [src]="apt?.doctor?.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
                         </a>
                         <div class="doctor-name-info">
                           <h5><a href="javascript:void(0);">{{ apt.doctorName || 'Doctor' }}</a></h5>

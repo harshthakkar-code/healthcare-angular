@@ -3,8 +3,8 @@
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
                 <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img" [ngClass]="availability ? 'available' : 'unavailable'">
-                    <img *ngIf="doctorProfile?.profileImage; else defaultImg"
-                         [src]="doctorProfile.profileImage"
+                    <img *ngIf="doctorProfile?.profileImage || doctorProfile?.profileImgUrl ; else defaultImg"
+                         [src]="doctorProfile.profileImage || doctorProfile?.profileImgUrl"
                          alt="User Image">
                     <ng-template #defaultImg>
                         <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image">

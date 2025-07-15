@@ -260,7 +260,7 @@
 																<div>
 																	<h6 class="fs-14 fw-medium mb-1">Date & Time</h6>
 																	<p class="mb-0">
-																		{{ selectedSlot ? (selectedSlot.startTime + ' - ' + selectedSlot.endTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
+																		{{ selectedSlot ? (selectedSlot.startTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
 																	</p>
 																</div>
 															</div>
@@ -289,9 +289,9 @@
 														<div class="col-lg-7">	
 															<div class="card booking-wizard-slots">
 																<div class="card-body">
-																	<div class="book-title">	
+																	<!-- <div class="book-title">	
 																		<h6 class="fs-14 mb-2">Morning</h6>
-																	</div>
+																	</div> -->
 																	<!-- Morning Slots -->
 <div class="book-title">  
   <h6 class="fs-14 mb-2">Morning</h6>
@@ -310,7 +310,7 @@
           name="appointmentSlot"
         >
         <span class="visit-rsn" style="min-width: 100px;">
-          {{ slot.startTime }} - {{ slot.endTime }}
+          {{ slot.startTime }} 
           <span *ngIf="slot.status === 'booked'">(Booked)</span>
         </span>
       </label>
@@ -338,7 +338,7 @@
           name="appointmentSlot"
         >
         <span class="visit-rsn">
-          {{ slot.startTime }} - {{ slot.endTime }}
+          {{ slot.startTime }}
           <span *ngIf="slot.status === 'booked'">(Booked)</span>
         </span>
       </label>
@@ -349,7 +349,7 @@
   </ng-template>
 </div>
 <!-- Evening Slots -->
-<div class="book-title">  
+<!-- <div class="book-title">  
   <h6 class="fs-14 mb-2">Evening</h6>
 </div>
 <div class="token-slot mt-2 mb-2">
@@ -366,7 +366,7 @@
           name="appointmentSlot"
         >
         <span class="visit-rsn">
-          {{ slot.startTime }} - {{ slot.endTime }}
+          {{ slot.startTime }}
           <span *ngIf="slot.status === 'booked'">(Booked)</span>
         </span>
       </label>
@@ -375,7 +375,7 @@
   <ng-template #noEvening>
     <div class="text-muted">No evening slot available</div>
   </ng-template>
-</div>	
+</div>	 -->
 																	<div class="book-title">	
 																		<h6 class="fs-14 mb-2">Evening</h6>
 																	</div>
@@ -675,7 +675,7 @@
 															<div class="mb-3">
 																<label class="form-label">Date & Time</label>
 																<div class="form-plain-text">
-																	{{ selectedSlot ? (selectedSlot.startTime + ' - ' + selectedSlot.endTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
+																	{{ selectedSlot ? (selectedSlot.startTime + ', ' + (selectedSlot.date | date:'dd, MMM yyyy')) : '-' }}
 																</div>
 															</div>
 															<div class="mb-3">
@@ -743,9 +743,9 @@
 																</h5>
 															</div>
 															<div class="card-header d-flex align-items-center flex-wrap rpw-gap-2">
-																<span class="avatar avatar-lg avatar-rounded me-2 flex-shrink-0">
+																<!-- <span class="avatar avatar-lg avatar-rounded me-2 flex-shrink-0">
 																	<img [src]="doctor?.avatar || 'assets/img/clients/client-16.jpg'" alt="">
-																</span>
+																</span> -->
 																<p class="mb-0">
 																	<ng-container *ngIf="paymentResult === 'cancel'; else successMsg">
 																		Your payment for booking with <span class="text-dark">Dr. {{ doctor?.name || 'Doctor Name' }}</span> failed or was cancelled.

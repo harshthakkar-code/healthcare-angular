@@ -263,6 +263,7 @@ export class PatientDashboardComponent implements OnInit {
       api.get('/patient/appointments')
         .then((res: any) => {
           this.dashboardReportAppointments = Array.isArray(res.data.appointments) ? res.data.appointments : [];
+          console.log('Dashboard report appointments', this.dashboardReportAppointments);
         })
         .catch((err: any) => {
           console.log('Dashboard report appointments error', err);
