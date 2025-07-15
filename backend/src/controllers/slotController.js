@@ -13,7 +13,7 @@ function minutesToTimeString(minutes) {
 // Create slots (generate from start/end/duration)
 exports.createSlots = async (req, res) => {
   try {
-    const { doctorId, date, startTime, endTime, duration, interval, fees, spaces = 1 } = req.body;
+    const { doctorId, date, startTime, endTime, duration, interval, fees, spaces = 1, type = 'general', clinicName } = req.body;
     if (!doctorId || !date || !startTime || !endTime || !duration) {
       return res.status(400).json({ error: 'doctorId, date, startTime, endTime, and duration are required' });
     }
@@ -60,7 +60,9 @@ exports.createSlots = async (req, res) => {
           fees,
           status: 'available',
           spaces,
-          spaceAssignments
+          spaceAssignments,
+          type,
+          clinicName // Add this
         });
       }
       t = t + durationMin + intervalMin; // add interval after each slot
@@ -78,13 +80,14 @@ exports.createSlots = async (req, res) => {
   }
 };
 
-// Get all slots for a doctor (optionally by date)
+// Get all slots for a doctor (optionally by date and type)
 exports.getSlots = async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query;
+    const { date, type } = req.query;
     const query = { doctorId };
     if (date) query.date = date;
+    if (type) query.type = type;
     const slots = await Slot.find(query).sort({ date: 1, startTime: 1 });
     res.json({
       total: slots.length,
@@ -95,7 +98,7 @@ exports.getSlots = async (req, res) => {
   }
 };
 
-// Update a slot (e.g., mark as booked/cancelled)
+// Update a slot (e.g., mark as booked/cancelled, or change type)
 exports.updateSlot = async (req, res) => {
   try {
     const { slotId } = req.params;
@@ -120,14 +123,15 @@ exports.deleteSlot = async (req, res) => {
 // Check for slot overlap (without creating)
 exports.checkSlotOverlap = async (req, res) => {
   try {
-    const { doctorId, date, startTime, endTime, id } = req.body;
-    if (!doctorId || !date || !startTime || !endTime) {
-      return res.status(400).json({ error: 'doctorId, date, startTime, and endTime are required' });
+    const { doctorId, date, startTime, endTime, id, type } = req.body;
+    if (!doctorId || !date || !startTime || !endTime || !type) {
+      return res.status(400).json({ error: 'doctorId, date, startTime, endTime, and type are required' });
     }
     // Build query
     const query = {
       doctorId,
       date: new Date(date),
+      type, // Only check overlap within the same type!
       $or: [
         {
           startTime: { $lt: endTime },

@@ -42,14 +42,14 @@
                                       </td>
                                       <td>
                                           <h2 class="table-avatar">
-                                              <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                                              <a [routerLink]="[routes.doctorProfile2 , t?.appointment?.doctor?._id]" class="avatar avatar-sm me-2">
                                                   <img class="avatar-img rounded-3" [src]="t.appointment?.doctor?.image || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
                                               </a>
-                                              <a [routerLink]="routes.doctorProfile2">{{ t.appointment?.doctor?.name || '-' }}</a>
+                                              <a [routerLink]="[routes.doctorProfile2 , t?.appointment?.doctor?._id]">{{ t.appointment?.doctor?.name || '-' }}</a>
                                           </h2>
                                       </td>
-                                      <td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') : (t.appointment?.date || '-') }}</td>
-                                      <td>{{ t.appointment?.issuedDate ? (t.appointment.issuedDate | date:'dd MMM yyyy') : '-' }}</td>
+                                      <td>{{ (t.appointment?.date | date:'dd MMM yyyy') || '-'}}</td>
+                                      <td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') : '-' }}</td>
                                       <td>${{ t.totalAmount }}</td>
                                       <td>
                                           <div class="action-item">

@@ -16,11 +16,11 @@
           <ul class="nav">
             <li class="nav-item" role="presentation">
               <a class="nav-link active" href="javascript:void(0);" data-bs-toggle="tab"
-              data-bs-target="#general-availability">General Availability</a>
+              data-bs-target="#general-availability" (click)="onTabChange('general')">General Availability</a>
             </li>
             <li class="nav-item" role="presentation">
               <a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab"
-              data-bs-target="#clinic-availability">Clinic Availability</a>
+              data-bs-target="#clinic-availability" (click)="onTabChange('clinic')">Clinic Availability</a>
             </li>
           </ul>
         </div>
@@ -52,7 +52,7 @@
                         </h5>
                         <ul>
                           <li>
-                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal()">Add Slots</a>
+                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal('general')">Add Slots</a>
                           </li>
                           <li>
                             <a href="javascript:void(0);" class="del-slot" (click)="hasAnySlotsForSelectedDay && deleteAllGeneralSlotsForSelectedDay()" [class.disabled]="!hasAnySlotsForSelectedDay" [attr.aria-disabled]="!hasAnySlotsForSelectedDay ? true : null">Delete All</a>
@@ -69,7 +69,6 @@
                           <!-- Saved slots -->
                           <li *ngFor="let slot of slotsByDay[selectedDay]" (click)="onSlotSelect(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }}
-                            <!-- <span class="slot-space">Space : {{ slot.spaces }}</span> -->
                             <button class="btn btn-link btn-sm p-0 ms-2" (click)="openEditSlotModal(slot); $event.stopPropagation();" title="Edit Slot">
                               <i class="fa fa-edit"></i>
                             </button>
@@ -105,15 +104,13 @@
                 <div class="col-md-6">
                   <mat-select [(ngModel)]="selectedClinic" (selectionChange)="onClinicChange()" class="custom-mat-select img-mat-select">
                     <mat-select-trigger>
-                      <img matListAvatar [src]="selectedClinic.image" alt="clinic image">
-                      {{ selectedClinic.name }}
+                      <img matListAvatar [src]="selectedClinic?.logo || 'assets/img/doctors-dashboard/clinic-01.jpg'" alt="clinic image">
+                      {{ selectedClinic?.clinicName || 'Select Clinic' }}
                     </mat-select-trigger>
-                    @for (clinic of clinics; track clinic) {
-                      <mat-option [value]="clinic">
-                        <img matListAvatar [src]="clinic.image" alt="clinic image">
-                        {{ clinic.name }}
-                      </mat-option>
-                    }
+                    <mat-option *ngFor="let clinic of clinics" [value]="clinic">
+                      <img matListAvatar [src]="clinic.logo || 'assets/img/doctors-dashboard/clinic-01.jpg'" alt="clinic image">
+                      {{ clinic?.clinicName }}
+                    </mat-option>
                   </mat-select>
                 </div>
               </div>
@@ -142,7 +139,7 @@
                         </h5>
                         <ul>
                           <li>
-                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal()">Add Slots</a>
+                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal('clinic')">Add Slots</a>
                           </li>
                           <li>
                             <a href="javascript:void(0);" class="del-slot" (click)="deleteAllClinicSlotsForSelectedDay()">Delete All</a>
@@ -154,6 +151,7 @@
                         <ul class="time-slots" *ngIf="clinicSlotsByDay[selectedDay] && clinicSlotsByDay[selectedDay].length > 0; else noClinicSlots">
                           <li *ngFor="let slot of clinicSlotsByDay[selectedDay]" (click)="onSlotSelect(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }}
+                            <span *ngIf="slot.clinicName" class="ms-2">({{ slot.clinicName }})</span>
                             <span class="slot-space">Space : {{ slot.spaces }}</span>
                           </li>
                         </ul>

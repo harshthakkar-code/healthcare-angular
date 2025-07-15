@@ -12,6 +12,8 @@ const slotSchema = new mongoose.Schema({
   fees: { type: Number },
   day: { type: String }, // 'Monday', 'Tuesday', etc.
   spaces: { type: Number, default: 1 }, // number of spaces for this slot
+  type: { type: String, enum: ['general', 'clinic'], default: 'general' },
+  clinicName: { type: String }, // Optional, only for clinic slots
   spaceAssignments: [{
     spaceNumber: Number, // 1, 2, 3, ...
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // patient who booked this space

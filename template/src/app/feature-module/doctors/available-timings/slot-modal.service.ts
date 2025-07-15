@@ -12,6 +12,8 @@ export class SlotModalService {
     fees: 0,
     spaces: 1,
     day: 'Monday',
+    type: 'general',
+    clinicName: '',
   };
 
   // Event for when a slot is created
@@ -33,6 +35,8 @@ export class SlotModalService {
       fees: 0,
       spaces: 1,
       day: 'Monday',
+      type: 'general',
+      clinicName: '',
     };
   }
 
@@ -46,6 +50,8 @@ export class SlotModalService {
     fees: 0,
     spaces: 1,
     day: 'Monday',
+    type: 'general',
+    clinicName: '',
   };
 
   // Event for when a slot is updated
@@ -66,6 +72,8 @@ export class SlotModalService {
       fees: 0,
       spaces: 1,
       day: 'Monday',
+      type: 'general',
+      clinicName: '',
     };
   }
 

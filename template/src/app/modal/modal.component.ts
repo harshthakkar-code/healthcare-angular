@@ -427,6 +427,7 @@ export class ModalComponent implements OnInit {
       fees: latestFees,
       spaces: this.slotModalService.slotForm.spaces,
       day: selectedDay,
+      type: this.slotModalService.slotForm.type, // Ensure type is included
     };
     // Check for overlap before emitting
     try {
@@ -681,6 +682,7 @@ export class ModalComponent implements OnInit {
       fees: latestFees,
       spaces: this.slotModalService.editSlotForm.spaces,
       day: selectedDay,
+      type: this.slotModalService.editSlotForm.type, // Ensure type is included
     };
     const slotId = this.slotModalService.editSlotForm.id;
     // Check for overlap before updating

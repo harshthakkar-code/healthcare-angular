@@ -5,6 +5,7 @@ import { routes } from 'src/app/shared/routes/routes';
 import { SlotService } from './slot.service';
 import { SlotModalService } from './slot-modal.service';
 import { forkJoin } from 'rxjs';
+import api from 'src/app/shared/api/axios';
 
 @Component({
     selector: 'app-available-timings',
@@ -18,18 +19,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   public page = '';
   public last = '';
   selectedClinic: any;
-  clinics = [
-    {
-      name: 'The Family Dentistry Clinic',
-      value: 'family_dentistry',
-      image: 'assets/img/doctors-dashboard/clinic-01.jpg',
-    },
-    {
-      name: 'Dentistry Clinic',
-      value: 'dentistry',
-      image: 'assets/img/doctors-dashboard/clinic-02.jpg',
-    },
-  ];
+  clinics: Array<{ clinicName: string; logo?: string; [key: string]: any }> = [];
   public slotsByDay: { [key: string]: any[] } = {};
   public clinicSlotsByDay: { [key: string]: any[] } = {};
   public loading = false;
@@ -48,6 +38,8 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   public selectedSlotId: string | null = null;
   public updateError: string | null = null;
   public pendingSlots: any[] = [];
+  // Remove selectedType property
+  activeTabType: 'general' | 'clinic' = 'general';
 
   constructor(
     private renderer: Renderer2,
@@ -55,7 +47,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     private slotService: SlotService,
     private slotModalService: SlotModalService
   ) {
-    this.selectedClinic = this.clinics[0];
+    // this.selectedClinic = this.clinics[0];
     this.common.base.subscribe((base: string) => {
       this.base = base;
     });
@@ -71,15 +63,35 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.activeTabType = 'general';
+    // Remove selectedType = 'general';
     this.doctorId = this.getDoctorIdFromLocalStorage();
     console.log('ngOnInit doctorId:', this.doctorId);
     if (this.doctorId) {
+      api.get(`/doctor/public/profile/${this.doctorId}`).then(response => {
+        const profile = response.data;
+        console.log(profile)
+        if (profile && profile.clinicsSettings) {
+          this.clinics = profile.clinicsSettings;
+          this.selectedClinic = this.clinics[0];
+          console.log(this.selectedClinic , this.clinics)
+        }
+      }).catch(error => {
+        console.error('Failed to fetch doctor profile:', error);
+      });
       this.fetchSlots();
       this.fetchClinicSlots();
     }
     this.slotModalService.slotCreated$.subscribe((slotData: any) => {
-      // Instead of fetching from backend, add to pendingSlots
       if (slotData) {
+        // Ensure type is set
+        if (!slotData.type) {
+          slotData.type = this.activeTabType;
+        }
+        // Ensure clinicName is set for clinic slots
+        if (slotData.type === 'clinic' && !slotData.clinicName) {
+          slotData.clinicName = this.selectedClinic?.name || '';
+        }
         this.pendingSlots.push(slotData);
       }
       // this.fetchSlots();
@@ -108,8 +120,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
 
   fetchSlots(): void {
     this.loading = true;
-    console.log('Fetching slots for doctor:', this.doctorId);
-    this.slotService.getSlots(this.doctorId!).subscribe({
+    this.slotService.getSlots(this.doctorId!, { type: 'general' }).subscribe({
       next: (res) => {
         console.log('API response (general):', res);
         const slots = res.data.slots || [];
@@ -145,8 +156,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   fetchClinicSlots(): void {
     if (!this.doctorId || !this.selectedClinic) return;
     this.loading = true;
-    console.log('Fetching clinic slots for doctor:', this.doctorId, 'clinic:', this.selectedClinic);
-    this.slotService.getSlots(this.doctorId!).subscribe({
+    this.slotService.getSlots(this.doctorId!, { type: 'clinic' }).subscribe({
       next: (res) => {
         console.log('API response (clinic):', res);
         const slots = res.slots || [];
@@ -180,9 +190,15 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     this.renderer.removeClass(document.body, 'available-timings-img-select');
   }
 
-  openAddSlotModal() {
+  openAddSlotModal(type: 'general' | 'clinic' = 'general') {
     this.slotModalService.slotForm.fees = this.appointmentFees;
     this.slotModalService.slotForm.day = this.selectedDay;
+    this.slotModalService.slotForm.type = type;
+    if (type === 'clinic') {
+      this.slotModalService.slotForm.clinicName = this.selectedClinic?.name || '';
+    } else {
+      this.slotModalService.slotForm.clinicName = '';
+    }
     const modal = document.getElementById('add_slot');
     if (modal) {
       (window as any).bootstrap?.Modal.getOrCreateInstance(modal).show();
@@ -292,6 +308,8 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
       fees: slot.fees,
       spaces: slot.spaces,
       day: slot.day || this.selectedDay,
+      type: slot.type || 'general',
+      clinicName: slot.clinicName || '',
     };
     // Ensure end time is recalculated based on start time and duration
     if ((window as any).modalComponentRef && (window as any).modalComponentRef.updateEditEndTime) {
@@ -335,7 +353,11 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     return saved || pending;
   }
 
+  onTabChange(type: 'general' | 'clinic') {
+    this.activeTabType = type;
+  }
+
   get pendingSlotsForSelectedDay(): any[] {
-    return this.pendingSlots.filter(slot => slot.day === this.selectedDay);
+    return this.pendingSlots.filter(slot => slot.day === this.selectedDay && slot.type === this.activeTabType);
   }
 }

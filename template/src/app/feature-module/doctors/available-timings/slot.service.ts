@@ -6,8 +6,8 @@ import api from 'src/app/shared/api/axios';
 export class SlotService {
   private baseUrl = '/slots';
 
-  getSlots(doctorId: string, day?: string): Observable<any> {
-    return from(api.get(`${this.baseUrl}/${doctorId}`));
+  getSlots(doctorId: string, params?: any): Observable<any> {
+    return from(api.get(`${this.baseUrl}/${doctorId}`, { params }));
   }
 
   createSlots(data: any): Observable<any> {
