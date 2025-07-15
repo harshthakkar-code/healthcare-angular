@@ -60,7 +60,7 @@ export class AppointmentListComponent implements OnInit {
 
   get upcomingAppointments() {
     return this.allAppointments.filter(a => {
-      const statusMatch = a.status === 'pending' || a.status === 'accepted';
+      const statusMatch =  a.status === 'accepted';
       const nameMatch = this.searchTerm ? (a.patient?.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) || a.patient?.email?.toLowerCase().includes(this.searchTerm.toLowerCase())) : true;
       const dateMatch = this.bsRangeValue && this.bsRangeValue.length === 2 ?
         (new Date(a.date) >= new Date(this.bsRangeValue[0]) && new Date(a.date) <= new Date(this.bsRangeValue[1])) : true;

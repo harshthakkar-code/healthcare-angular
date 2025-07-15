@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import api from 'src/app/shared/api/axios';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialogComponent } from '../../doctor-specialities/confirm-delete-dialog.component';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
     selector: 'app-doctor-education-settings',
@@ -16,6 +17,7 @@ export class DoctorEducationSettingsComponent implements OnInit {
   educationForm!: FormGroup;
   doctorId!: string | null;
   loading = false;
+  logoPreviews: string[] = [];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
@@ -27,9 +29,7 @@ export class DoctorEducationSettingsComponent implements OnInit {
     if (this.doctorId) {
       this.fetchEducation();
     }
-    if (this.educationArray.length > 0) {
-      (this.educationArray.at(0) as FormGroup).markAllAsTouched();
-    }
+    // Removed markAllAsTouched() from here to prevent showing errors on initial load
   }
 
   private getDoctorId(): string | null {
@@ -57,15 +57,18 @@ export class DoctorEducationSettingsComponent implements OnInit {
             ? data
             : [];
         this.educationArray.clear();
+        this.logoPreviews = [];
         educationArr.forEach((edu: any) => {
           this.educationArray.push(this.fb.group({
             institution: [edu.institution || '', Validators.required],
             course: [edu.course || '', Validators.required],
-            startDate: [edu.startDate || '', Validators.required],
-            endDate: [edu.endDate || '', Validators.required],
+            startDate: [edu.startDate ? new Date (edu.startDate) : '', Validators.required],
+            endDate: [edu.endDate ? new Date (edu.endDate) : '', Validators.required],
             years: [edu.years || '', Validators.required],
-            description: [edu.description || '', Validators.required]
+            description: [edu.description || '', Validators.required],
+            logo: [edu.logo || '']
           }));
+          this.logoPreviews.push(edu.logo || '');
         });
         this.loading = false;
       })
@@ -79,9 +82,29 @@ export class DoctorEducationSettingsComponent implements OnInit {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       years: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      logo: ['']
     }));
+    this.logoPreviews.push('');
     (this.educationArray.at(this.educationArray.length - 1) as FormGroup).markAllAsTouched();
+  }
+
+  async onLogoChange(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      // Show local preview
+      this.logoPreviews[index] = URL.createObjectURL(file);
+      // Upload to server
+      try {
+        const imageUrl = await uploadImage(file);
+        this.educationArray.at(index).get('logo')?.setValue(imageUrl);
+        this.logoPreviews[index] = imageUrl;
+      } catch (e) {
+        // Optionally show error
+        this.logoPreviews[index] = '';
+      }
+    }
   }
 
   async deleteEducationFunc(index: number) {
@@ -91,6 +114,7 @@ export class DoctorEducationSettingsComponent implements OnInit {
     const result = await dialogRef.afterClosed().toPromise();
     if (result) {
       this.educationArray.removeAt(index);
+      this.logoPreviews.splice(index, 1);
     }
   }
 

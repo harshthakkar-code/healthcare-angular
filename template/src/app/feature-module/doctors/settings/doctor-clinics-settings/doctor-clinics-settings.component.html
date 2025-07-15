@@ -66,16 +66,17 @@
                           <div class="form-wrap mb-2">
                             <div class="change-avatar img-upload">
                               <div class="profile-img">
-                                <i class="fa-solid fa-file-image"></i>
+                                <i class="fa-solid fa-file-image" *ngIf="!logoPreviews[i]"></i>
+                                <img *ngIf="logoPreviews[i]" [src]="logoPreviews[i]" alt="Logo" style="max-width: 60px; max-height: 60px; border-radius: 6px;" />
                               </div>
                               <div class="upload-img">
                                 <h5>Logo</h5>
                                 <div class="imgs-load d-flex align-items-center">
                                   <div class="change-photo">
                                     Upload New
-                                    <input type="file" class="upload">
+                                    <input type="file" class="upload" (change)="onLogoChange($event, i)" accept="image/*" />
                                   </div>
-                                  <a href="javascript:void(0)" class="upload-remove">Remove</a>
+                                  <a href="javascript:void(0)" class="upload-remove" (click)="clinic.get('logo')?.setValue(''); logoPreviews[i]=''">Remove</a>
                                 </div>
                                 <p class="form-text">Your Image should Below 4 MB, Accepted format jpg,png,svg</p>
                               </div>
