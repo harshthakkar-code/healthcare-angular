@@ -6,7 +6,6 @@ const sendMail = require('../utils/sendMail');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const { syncUserAndDoctorProfile } = require('../utils/userDoctorSync');
 
 exports.register = async (req, res, next) => {
   try {
@@ -27,7 +26,7 @@ exports.register = async (req, res, next) => {
     }
 
     // 3. For doctor, validate extra fields and files
-    let doctorProfile;
+    let profileImage, certFile, photoID, employmentProof;
     if (role === 'doctor') {
       if (!clinicAddress || !city || !state || !pincode || !weight || !height || !age || !blood) {
         return res.status(400).json({ message: 'Please fill all doctor profile fields.' });
@@ -36,69 +35,39 @@ exports.register = async (req, res, next) => {
       // if (!files.profileImage || !files.certFile || !files.photoID || !files.employmentProof) {
       //   return res.status(400).json({ message: 'All required files (profile image, certificate, photo ID, employment proof) must be uploaded.' });
       // }
+      profileImage = files.profileImage ? files.profileImage[0].filename : undefined;
+      certFile = files.certFile ? files.certFile[0].filename : undefined;
+      photoID = files.photoID ? files.photoID[0].filename : undefined;
+      employmentProof = files.employmentProof ? files.employmentProof[0].filename : undefined;
     }
 
-    // 4. Create user
-    const user = new User({ name, email, password, role, phone, gender, isApproved: role === 'doctor' ? false : true });
+    // 4. Create user (store all fields and files in User)
+    const user = new User({
+      name,
+      email,
+      password,
+      role,
+      phone,
+      gender,
+      isApproved: role === 'doctor' ? false : true,
+      clinicName,
+      clinicAddress,
+      address,
+      address2,
+      city,
+      state,
+      pincode,
+      weight,
+      height,
+      age,
+      blood,
+      profileImage,
+      profileImgUrl: profileImage,
+      certFile,
+      photoID,
+      employmentProof
+    });
     await user.save();
-
-    // 5. Create doctor profile if doctor
-    if (role === 'doctor') {
-      const files = req.files || {};
-      const profileImage = files.profileImage ? files.profileImage[0].filename : undefined;
-      const certFile = files.certFile ? files.certFile[0].filename : undefined;
-      const photoID = files.photoID ? files.photoID[0].filename : undefined;
-      const employmentProof = files.employmentProof ? files.employmentProof[0].filename : undefined;
-
-      doctorProfile = new DoctorProfile({
-        user: user._id,
-        name,
-        email,
-        password,
-        clinicName,
-        clinicAddress,
-        address,
-        address2,
-        city,
-        state,
-        pincode,
-        phone,
-        gender,
-        weight,
-        height,
-        age,
-        blood,
-        profileImage,
-        profileImgUrl: profileImage,
-        certFile,
-        photoID,
-        employmentProof
-      });
-      await doctorProfile.save();
-      // Sync specializations and totalEarned between User and DoctorProfile
-      await syncUserAndDoctorProfile(user._id);
-    }
-
-    // 6. Create patient profile if patient
-    if (role === 'patient') {
-      const patientProfile = new PatientProfile({
-        user: user._id,
-        name,
-        email,
-        phone,
-        gender,
-        address,
-        address2,
-        city,
-        state,
-        pincode,
-        weight,
-        height,
-        age,
-        blood
-      });
-      await patientProfile.save();
-    }
 
     res.status(201).json({ message: 'Registration successful, please login.' });
   } catch (err) {
@@ -116,24 +85,12 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) return res.status(400).json({ message: 'Invalid credentials' });
     if (user.role === 'doctor' && !user.isApproved) return res.status(403).json({ message: 'Doctor not approved yet' });
-    let doctorId = null;
-    let patientProfileId = null;
-    if (user.role === 'doctor') {
-      const doctorProfile = await DoctorProfile.findOne({ user: user._id });
-      if (doctorProfile) doctorId = doctorProfile._id;
-    }
-    if (user.role === 'patient') {
-      const patientProfile = await PatientProfile.findOne({ user: user._id });
-      if (patientProfile) patientProfileId = patientProfile._id;
-    }
     const token = generateToken(user);
     res.json({
       token,
       loginTime: Date.now(),
       user: {
         id: user._id,
-        doctorId,
-        patientProfileId,
         name: user.name,
         role: user.role,
         profileImgUrl: user.profileImgUrl || null,
@@ -295,8 +252,6 @@ exports.deleteUserCascade = async (req, res) => {
   try {
     const userId = req.params.id;
     const User = require('../models/User');
-    const PatientProfile = require('../models/PatientProfile');
-    const DoctorProfile = require('../models/DoctorProfile');
     const Appointment = require('../models/Appointment');
     const Favourite = require('../models/Favourite');
     const Dependant = require('../models/Dependant');
@@ -312,9 +267,8 @@ exports.deleteUserCascade = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Delete related profiles and data
+    // Delete related data
     if (user.role === 'patient') {
-      await PatientProfile.deleteOne({ user: userId });
       await Dependant.deleteMany({ userId });
       await Appointment.deleteMany({ patient: userId });
       await Favourite.deleteMany({ patientId: userId });
@@ -325,18 +279,14 @@ exports.deleteUserCascade = async (req, res) => {
       await Chat.deleteMany({ participants: userId });
       await Payout.deleteMany({ patient: userId });
     } else if (user.role === 'doctor') {
-      const doctorProfile = await DoctorProfile.findOne({ user: userId });
-      if (doctorProfile) {
-        await Appointment.deleteMany({ doctor: userId });
-        await Favourite.deleteMany({ doctorId: doctorProfile._id });
-        await Review.deleteMany({ doctor: userId });
-        await Notification.deleteMany({ user: userId });
-        await Report.deleteMany({ doctor: userId });
-        await Schedule.deleteMany({ doctor: userId });
-        await Chat.deleteMany({ participants: userId });
-        await Payout.deleteMany({ doctor: doctorProfile._id });
-        await DoctorProfile.deleteOne({ user: userId });
-      }
+      await Appointment.deleteMany({ doctor: userId });
+      await Favourite.deleteMany({ doctorId: userId });
+      await Review.deleteMany({ doctor: userId });
+      await Notification.deleteMany({ user: userId });
+      await Report.deleteMany({ doctor: userId });
+      await Schedule.deleteMany({ doctor: userId });
+      await Chat.deleteMany({ participants: userId });
+      await Payout.deleteMany({ doctor: userId });
     }
 
     // Delete user

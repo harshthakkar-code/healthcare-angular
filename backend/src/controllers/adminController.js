@@ -8,8 +8,8 @@ exports.dashboard = async (req, res, next) => {
   try {
     // Basic counts (only approved doctors and patients)
     const users = await User.countDocuments();
-    const doctors = await DoctorProfile.countDocuments();
-    const patients = await Patient.countDocuments();
+    const doctors = await User.countDocuments({ role: 'doctor' });
+    const patients = await User.countDocuments({ role: 'patient' });
     const appointments = await Appointment.countDocuments();
     
     // Revenue calculations
@@ -36,8 +36,9 @@ exports.dashboard = async (req, res, next) => {
       { $limit: 7 }
     ]);
     
-    // Doctor and patient growth data for chart (using DoctorProfile and Patient)
-    const doctorGrowth = await DoctorProfile.aggregate([
+    // Doctor and patient growth data for chart (using User)
+    const doctorGrowth = await User.aggregate([
+      { $match: { role: 'doctor' } },
       {
         $group: {
           _id: {
@@ -51,7 +52,8 @@ exports.dashboard = async (req, res, next) => {
       { $limit: 5 }
     ]);
     
-    const patientGrowth = await Patient.aggregate([
+    const patientGrowth = await User.aggregate([
+      { $match: { role: 'patient' } },
       {
         $group: {
           _id: {
@@ -65,11 +67,25 @@ exports.dashboard = async (req, res, next) => {
       { $limit: 5 }
     ]);
     
-    // Top doctors by totalEarned from DoctorProfile
-    const topDoctors = await DoctorProfile.find()
-      .sort({ totalEarned: -1 })
-      .limit(5)
-      .select('name speciality totalEarned profileImgUrl');
+    // Top doctors by totalEarned (from transactions)
+    const topDoctorsAgg = await Transaction.aggregate([
+      { $match: { status: 'paid' } },
+      {
+        $group: {
+          _id: '$doctor',
+          totalEarned: { $sum: '$amount' }
+        }
+      },
+      { $sort: { totalEarned: -1 } },
+      { $limit: 5 }
+    ]);
+    const topDoctorIds = topDoctorsAgg.map(d => d._id);
+    const topDoctors = await User.find({ _id: { $in: topDoctorIds } }, 'name profileImgUrl').lean();
+    // Attach totalEarned to each doctor
+    const topDoctorsWithEarnings = topDoctors.map(doc => ({
+      ...doc,
+      totalEarned: topDoctorsAgg.find(d => String(d._id) === String(doc._id))?.totalEarned || 0
+    }));
     
     // Recent appointments
     const recentAppointments = await Appointment.find()
@@ -100,7 +116,7 @@ exports.dashboard = async (req, res, next) => {
       revenue,
       revenueChartData,
       growthChartData,
-      topDoctors,
+      topDoctors: topDoctorsWithEarnings,
       recentAppointments
     });
   } catch (err) { 
@@ -124,7 +140,6 @@ exports.updateDoctorStatus = async (req, res, next) => {
     }
     console.log(isApproved);
     const user = await User.findByIdAndUpdate(req.params.id, { isApproved }, { new: true });
-    await DoctorProfile.findOneAndUpdate({ user: req.params.id }, { isApproved });
     res.json(user);
   } catch (err) { next(err); }
 };

@@ -22,11 +22,7 @@ exports.getProfile = async (req, res, next) => {
     }
     const user = await User.findById(userId).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    const profile = await PatientProfile.findOne({ user: userId });
-    if (!profile) return res.status(404).json({ message: 'Patient profile not found' });
-    // Merge user and profile fields (profile fields overwrite user fields if duplicate)
-    const mergedProfile = { ...user.toObject(), ...profile.toObject() };
-    res.json(mergedProfile);
+    res.json(user);
   } catch (err) {
     next(err);
   }
@@ -39,7 +35,6 @@ exports.updateProfile = async (req, res, next) => {
     if (req.user.role === 'admin' && req.query.id) {
       userId = req.query.id;
     }
-
     // Update User with all fields that exist in User schema
     const userUpdateFields = {};
     const userSchemaPaths = Object.keys(User.schema.paths);
@@ -50,26 +45,8 @@ exports.updateProfile = async (req, res, next) => {
     });
     delete userUpdateFields._id; // Remove _id if present
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: userUpdateFields }, { new: true });
-
-    // Update PatientProfile with all fields that exist in PatientProfile schema
-    const profileUpdateFields = {};
-    const profileSchemaPaths = Object.keys(PatientProfile.schema.paths);
-    Object.keys(req.body).forEach(key => {
-      if (profileSchemaPaths.includes(key)) {
-        profileUpdateFields[key] = req.body[key];
-      }
-    });
-    delete profileUpdateFields._id; // Remove _id if present
-    const updatedProfile = await PatientProfile.findOneAndUpdate(
-      { user: userId },
-      { $set: profileUpdateFields },
-      { new: true }
-    );
-    if (!updatedProfile) return res.status(404).json({ message: 'Patient profile not found' });
-
-    // Merge and return updated profile
-    const mergedProfile = { ...updatedUser.toObject(), ...updatedProfile.toObject() };
-    res.json(mergedProfile);
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+    res.json(updatedUser);
   } catch (err) {
     next(err);
   }
@@ -119,12 +96,18 @@ exports.createProfile = async (req, res, next) => {
     if (req.user.role === 'admin' && req.body.userId) {
       userId = req.body.userId;
     }
-    // Prevent duplicate profile
-    const existing = await PatientProfile.findOne({ user: userId });
-    if (existing) return res.status(400).json({ message: 'Profile already exists' });
-    const profile = new PatientProfile({ ...req.body, user: userId });
-    await profile.save();
-    res.status(201).json({ message: 'Profile created', profile });
+    // Update User with all fields that exist in User schema
+    const userUpdateFields = {};
+    const userSchemaPaths = Object.keys(User.schema.paths);
+    Object.keys(req.body).forEach(key => {
+      if (userSchemaPaths.includes(key)) {
+        userUpdateFields[key] = req.body[key];
+      }
+    });
+    delete userUpdateFields._id; // Remove _id if present
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: userUpdateFields }, { new: true });
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+    res.status(201).json({ message: 'Profile created/updated', user: updatedUser });
   } catch (err) {
     next(err);
   }
@@ -153,11 +136,11 @@ exports.changePassword = async (req, res, next) => {
 // GET /patient/all (admin only)
 exports.getAllPatients = async (req, res, next) => {
   try {
-    const patients = await PatientProfile.find().populate('user');
-    // Merge user and profile fields for each patient, and add lastAppointmentDate and totalPaid
-    const mergedPatients = await Promise.all(patients.map(async profile => {
-      const user = profile.user ? profile.user.toObject() : {};
-      const userId = user._id || profile.user;
+    // Find all users with role 'patient'
+    const users = await User.find({ role: 'patient' }).select('-password');
+    // For each user, add lastAppointmentDate and totalPaid
+    const mergedPatients = await Promise.all(users.map(async user => {
+      const userId = user._id;
       // Find all appointments for this patient, sorted by date descending
       const appointments = await Appointment.find({ patient: userId }).sort({ date: -1 });
       let lastAppointmentDate = null;
@@ -172,8 +155,7 @@ exports.getAllPatients = async (req, res, next) => {
       });
       const totalPaid = paidTransactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
       return {
-        ...user,
-        ...profile.toObject(),
+        ...user.toObject(),
         lastAppointmentDate,
         totalPaid
       };

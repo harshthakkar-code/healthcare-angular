@@ -11,16 +11,13 @@ const Service = require('../models/Service');
 const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
-const { syncUserAndDoctorProfile } = require('../utils/userDoctorSync');
 
 
 exports.getProfile = async (req, res, next) => {
   try {
-    // req.user._id should be set by your auth middleware
-    const doctor = await DoctorProfile.findOne({ user: req.user._id })
-      .populate('specialization', 'name description');
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-    res.json(doctor);
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
   } catch (err) {
     next(err);
   }
@@ -28,7 +25,6 @@ exports.getProfile = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    // req.user._id should be set by your auth middleware
     const userId = req.user._id;
     const updateFields = {};
     // Only allow updating certain fields
@@ -36,15 +32,9 @@ exports.updateProfile = async (req, res, next) => {
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updateFields[field] = req.body[field];
     });
-    // Update DoctorProfile
-    const updatedProfile = await DoctorProfile.findOneAndUpdate(
-      { user: userId },
-      { $set: updateFields },
-      { new: true }
-    );
-    // Sync with User model (profileImage and availability, and any other shared fields)
-    await syncUserAndDoctorProfile(userId);
-    res.json(updatedProfile);
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: updateFields }, { new: true });
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+    res.json(updatedUser);
   } catch (err) {
     next(err);
   }
@@ -113,18 +103,18 @@ exports.createAppointment = async (req, res, next) => {
 exports.getDoctorListWithReviews = async (req, res, next) => {
   try {
     const { specialization, city, name, avgReview } = req.query;
-    const query = {};
-    if (specialization) query.specialization = specialization;
+    const query = { role: 'doctor' };
+    if (specialization) query.specializations = specialization;
     if (city) query.city = { $regex: city, $options: 'i' };
     if (name) query.name = { $regex: name, $options: 'i' };
-    let doctors = await DoctorProfile.find(query)
-      .populate({ path: 'reviews', select: 'rating comment createdAt', populate: { path: 'patient', select: 'name' } })
-      .populate({ path: 'schedule' });
-    doctors = doctors.map(doc => {
-      const ratings = doc.reviews.map(r => r.rating);
+    let doctors = await User.find(query).select('-password');
+    // Attach reviews and avgRating
+    doctors = await Promise.all(doctors.map(async doc => {
+      const reviews = await Review.find({ doctor: doc._id });
+      const ratings = reviews.map(r => r.rating);
       const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
-      return { ...doc.toObject(), avgRating };
-    });
+      return { ...doc.toObject(), reviews, avgRating };
+    }));
     if (avgReview) {
       const avg = parseFloat(avgReview);
       doctors = doctors.filter(doc => doc.avgRating && Math.round(doc.avgRating) === avg);
@@ -137,8 +127,8 @@ exports.getDoctorListWithReviews = async (req, res, next) => {
 // Public: Get doctor list with search, pagination, specialities, and average reviews
 exports.getDoctors = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date, availability } = req.query;
-    const query = {};
+    const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date, availability, isApproved } = req.query;
+    const query = { role: 'doctor' };
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -147,7 +137,7 @@ exports.getDoctors = async (req, res, next) => {
       ];
     }
     if (specialization) {
-      query.specialization = specialization;
+      query.specializations = specialization;
     }
     if (city) {
       query.city = { $regex: city, $options: 'i' };
@@ -160,93 +150,45 @@ exports.getDoctors = async (req, res, next) => {
         query.availability = false;
       }
     }
-
-    let doctors = await DoctorProfile.find(query)
-      .populate('user', '_id')
-      .populate('specialization', 'name')
-      .populate({ path: 'reviews', select: 'rating comment', populate: { path: 'patient', select: 'name' } });
-
-    // Get all doctor user IDs (safe)
-    const doctorUserIds = doctors.map(doc => doc.user && doc.user._id ? doc.user._id : null).filter(Boolean);
-
-    // Get total earned (sum of paid transactions) for each doctor user ID
-    const transactionSums = await Transaction.aggregate([
-      {
-        $lookup: {
-          from: 'appointments',
-          localField: 'appointment',
-          foreignField: '_id',
-          as: 'appointmentData'
-        }
-      },
-      { $unwind: '$appointmentData' },
-      { $match: { status: 'paid' } },
-      {
-        $group: {
-          _id: '$appointmentData.doctor',
-          totalEarned: { $sum: '$amount' }
-        }
-      }
-    ]);
-    // Map: doctorUserId (as string) => totalEarned
-    const transactionSumMap = {};
-    transactionSums.forEach(ts => {
-      if (ts._id) transactionSumMap[ts._id.toString()] = ts.totalEarned;
-    });
-
-    // Prepare the response
-    const doctorsWithExtras = await Promise.all(doctors.map(async doc => {
-      // Find all specializations for this doctor by user ID
-      const allSpecs = await Specialization.find({ doctorId: doc.user && doc.user._id ? doc.user._id : null });
-      const services = allSpecs.map(s => s.services)
-      const specializations = allSpecs.map(s => s.name);
-      const totalEarned = doc.user && doc.user._id ? transactionSumMap[doc.user._id.toString()] || 0 : 0;
-      // Update the DoctorProfile document with these values
-      await DoctorProfile.updateOne(
-        { _id: doc._id },
-        { $set: { specializations, totalEarned } }
-      );
-      return {
-        ...doc.toObject(),
-        specializations,
-        totalEarned,
-        services
-      };
-    }));
-
-    // Pagination
+    // Add isApproved filter if provided
+    if (isApproved !== undefined) {
+      query.isApproved = isApproved;
+    }
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    const paginatedDoctors = doctorsWithExtras.slice(skip, skip + parseInt(limit));
-    const total = doctorsWithExtras.length;
-    res.json({
-      data: paginatedDoctors,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / limit),
-      total
-    });
+    let doctors = await User.find(query).select('-password').skip(skip).limit(parseInt(limit)).sort(sort);
+    // Attach reviews, avgRating, and specializations
+    doctors = await Promise.all(doctors.map(async doc => {
+      const reviews = await Review.find({ doctor: doc._id });
+      const ratings = reviews.map(r => r.rating);
+      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+      const allSpecs = await Specialization.find({ doctorId: doc._id });
+      const specializations = allSpecs.map(s => s.name);
+      return { ...doc.toObject(), reviews, avgRating, specializations };
+    }));
+    const total = await User.countDocuments(query);
+    res.json({ total, data: doctors });
   } catch (err) { next(err); }
 };
 
 // Public: Get doctor details by ID (with reviews, specialization, etc)
 exports.getDoctorDetails = async (req, res, next) => {
   try {
-    const doctor = await DoctorProfile.findById(req.params.id)
-      .populate('specialization', 'name description')
-      .populate({ path: 'reviews', select: 'rating comment createdAt', populate: { path: 'patient', select: 'name' } });
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-    // Calculate average rating
-    const ratings = doctor.reviews.map(r => r.rating);
+    const doctor = await User.findById(req.params.id).select('-password');
+    if (!doctor || doctor.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
+    const specializations = await Specialization.find({ doctorId: doctor._id });
+    const reviews = await Review.find({ doctor: doctor._id }).populate('patient', 'name email avatar');
+    const ratings = reviews.map(r => r.rating);
     const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
-    res.json({ ...doctor.toObject(), avgRating });
+    res.json({ ...doctor.toObject(), specializations, reviews, avgRating });
   } catch (err) { next(err); }
 };
 
 exports.getDoctorByUserId = async (req, res, next) => {
   try {
-    const doctor = await DoctorProfile.findOne({ user: req.params.userId })
-      .populate('specialization', 'name description');
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-    res.json(doctor);
+    const doctor = await User.findById(req.params.userId).select('-password');
+    if (!doctor || doctor.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
+    const specializations = await Specialization.find({ doctorId: doctor._id });
+    res.json({ ...doctor.toObject(), specializations });
   } catch (err) { next(err); }
 };
 
@@ -443,22 +385,10 @@ exports.changePassword = async (req, res, next) => {
 
 exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
   try {
-    const doctor = await DoctorProfile.findById(req.params.doctorId);
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-
-    // Fetch all specializations for this doctor, including services
-    const specializations = await Specialization.find({ doctorId: doctor.user })
-      .select('-__v -createdAt -updatedAt');
-
-    res.json({
-      _id: doctor._id,
-      name: doctor.name,
-      avatar: doctor.profileImgUrl || doctor.profileImage,
-      city: doctor.city,
-      address: doctor.address,
-      specializations, // Array with services
-      // Add more doctor fields as needed
-    });
+    const doctor = await User.findById(req.params.doctorId);
+    if (!doctor || doctor.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
+    const specializations = await Specialization.find({ doctorId: req.params.doctorId });
+    res.json({ ...doctor.toObject(), specializations: specializations });
   } catch (err) {
     next(err);
   }
@@ -466,14 +396,11 @@ exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
 exports.getFullDoctorData = async (req, res, next) => {
   try {
     const doctorId = req.params.id;
-
-    // Doctor Profile
-    const profile = await DoctorProfile.findById(doctorId)
-      .populate('specialization')
-      .populate('reviews');
-
-    // Doctor Settings (now embedded in profile)
-    const settings = profile ? {
+    // Doctor Profile (now User)
+    const profile = await User.findById(doctorId).select('-password');
+    if (!profile || profile.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
+    // Doctor Settings (now embedded in user)
+    const settings = {
       profileSettings: profile.profileSettings,
       insuranceSettings: profile.insuranceSettings,
       experienceSettings: profile.experienceSettings,
@@ -481,35 +408,25 @@ exports.getFullDoctorData = async (req, res, next) => {
       clinicsSettings: profile.clinicsSettings,
       businessSettings: profile.businessSettings,
       awardsSettings: profile.awardsSettings
-    } : null;
-
+    };
     // Reviews
     const reviews = await Review.find({ doctor: doctorId }).populate('patient');
-
     // Favourite
     const favourites = await Favourite.find({ doctor: doctorId });
-
     // Payout
     const payouts = await Payout.find({ doctor: doctorId });
-
     // Report
     const reports = await Report.find({ doctor: doctorId });
-
     // Service
     const services = await Service.find({ doctor: doctorId });
-
-    // Specialization (already populated in profile, but can fetch all if needed)
+    // Specialization
     const specializations = await Specialization.find({ doctorId: doctorId });
-
     // Slot
     const slots = await Slot.find({ doctorId: doctorId });
-
     // Social Media
     const socialMedia = await SocialMedia.findOne({ userId: doctorId });
-
     // Appointments
     const appointments = await Appointment.find({ doctor: doctorId });
-
     res.json({
       profile,
       settings,
@@ -530,15 +447,22 @@ exports.getFullDoctorData = async (req, res, next) => {
 
 exports.getDoctorContactInfo = async (req, res, next) => {
   try {
-    // Try to find by DoctorProfile _id first
-    let doctor = await DoctorProfile.findById(req.params.doctorId).select('email phone');
-    // If not found, try to find by user field
-    if (!doctor) {
-      doctor = await DoctorProfile.findOne({ user: req.params.doctorId }).select('email phone');
-    }
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    const doctor = await User.findById(req.params.doctorId).select('email phone');
+    if (!doctor || doctor.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
     res.json({ email: doctor.email, phone: doctor.phone });
   } catch (err) {
     next(err);
+  }
+};
+
+exports.approveDoctor = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const { isApproved } = req.body; // expects 'true' or 'false'
+    const doctor = await User.findByIdAndUpdate(doctorId, { isApproved }, { new: true });
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    res.json({ success: true, doctor });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

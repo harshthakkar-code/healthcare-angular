@@ -26,5 +26,6 @@ router.get('/appointments/patient/:patientId', doctorController.getAppointmentsB
 router.put('/appointments/:id/status', doctorController.updateAppointmentStatus);
 router.get('/patients-with-appointments', doctorController.getPatientsWithAppointments);
 router.put('/change-password', doctorController.changePassword);
+router.put('/admin/:doctorId/approve', role('admin'), doctorController.approveDoctor);
 
 module.exports = router; 

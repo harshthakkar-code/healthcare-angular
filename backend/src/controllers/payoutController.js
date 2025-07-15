@@ -59,13 +59,7 @@ exports.updatePayout = async (req, res, next) => {
     Object.assign(payout, req.body);
     await payout.save();
 
-    // If status changed to completed and was not previously completed, update doctor's earnings
-    if (prevStatus !== 'completed' && payout.status === 'completed') {
-      await DoctorProfile.findByIdAndUpdate(
-        payout.doctor,
-        { $inc: { earnings: -Math.abs(payout.amount) } }
-      );
-    }
+    // DoctorProfile earnings update removed (no longer needed)
 
     res.json(payout);
   } catch (err) {
