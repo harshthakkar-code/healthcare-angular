@@ -58,6 +58,7 @@ exports.createAppointment = async (req, res, next) => {
     // Accept both guest and logged-in users
     let patientId = null;
     if (req.user && req.user._id) patientId = req.user._id;
+    patientId = req.body.patient;
     const {
       user: doctorId,
       specialty,
@@ -71,7 +72,8 @@ exports.createAppointment = async (req, res, next) => {
       symptoms,
       price,
       totalPrice,
-      attachmentUrl
+      attachmentUrl,
+      slot
     } = req.body;
 
     if (!doctorId || !date || !time) {
@@ -99,7 +101,8 @@ exports.createAppointment = async (req, res, next) => {
       status: 'pending',
       price,
       totalPrice,
-      attachmentUrl
+      attachmentUrl,
+      slot // <-- save slot in appointment
     });
     await appointment.save();
     res.status(201).json(appointment);

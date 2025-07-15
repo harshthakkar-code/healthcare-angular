@@ -14,7 +14,7 @@ const invoiceSchema = new mongoose.Schema({
     extra: String
   },
   paymentMethod: {
-    type: String,
+    type: { type: String, required: true },
     details: String,
     bank: String
   },

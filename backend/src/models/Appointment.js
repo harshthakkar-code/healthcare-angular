@@ -18,6 +18,7 @@ const appointmentSchema = new mongoose.Schema({
   price: { type: Number },
   totalPrice: { type: Number },
   attachmentUrl: { type: String },
+  slot: { type: mongoose.Schema.Types.ObjectId, ref: 'Slot' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema); 

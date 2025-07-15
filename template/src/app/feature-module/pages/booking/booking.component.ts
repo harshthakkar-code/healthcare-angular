@@ -72,6 +72,7 @@ export class BookingComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
+    this.patientId = this.getPatientId();
     this.doctorId = this.route.snapshot.paramMap.get('doctorId');
     // Set selectedDate to today by default
     this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
@@ -227,7 +228,7 @@ export class BookingComponent implements OnInit {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user.id || user._id || null;
-      this.patientId=userId;
+      this.patientId= userId;
       if (!userId) return;
       const res = await api.get(`/dependants?userId=${userId}`);
       this.dependants = res.data;
@@ -280,7 +281,8 @@ export class BookingComponent implements OnInit {
         symptoms: this.symptoms,
         price: this.selectedServicesTotal,
         totalPrice: this.totalWithTaxAndDiscount,
-        attachmentUrl: this.attachmentUrl
+        attachmentUrl: this.attachmentUrl,
+        slot: this.selectedSlot?._id
       };
       const res = await api.post('/doctor/appointments', body);
       this.createdAppointment = res.data;
@@ -385,5 +387,14 @@ export class BookingComponent implements OnInit {
       return;
     }
     this.selectedFieldSet[0] = step;
+  }
+
+  getPatientId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
   }
 }
