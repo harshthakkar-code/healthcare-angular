@@ -7,6 +7,8 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+// Stripe webhook needs raw body
+app.use('/api/transactions/stripe/webhook', express.raw({type: 'application/json'}));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -20,7 +22,8 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/reports', require('./routes/report'));
 app.use('/api/slots', require('./routes/slot'));
 app.use('/api/reviews', require('./routes/review'));
-app.use('/api/transactions', require('./routes/transaction'));
+const transactionRoutes = require('./routes/transaction');
+app.use('/api/transactions', transactionRoutes);
 app.use('/api/social-media', require('./routes/socialMedia'));
 app.use('/api/doctor-settings', require('./routes/doctorSettings'));
 app.use('/api/payouts', require('./routes/payout'));

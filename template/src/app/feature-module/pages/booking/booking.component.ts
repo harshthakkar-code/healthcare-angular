@@ -5,6 +5,8 @@ import api from 'src/app/shared/api/axios';
 import { formatDate } from '@angular/common';
 import { uploadImage } from 'src/app/shared/api/image-upload';
 
+declare var Stripe: any;
+
 @Component({
   selector: 'app-booking',
   standalone: false,
@@ -59,6 +61,13 @@ export class BookingComponent implements OnInit {
   attachmentUrl: string = '';
   uploading: boolean = false;
   attachmentError: string = '';
+  showStripeForm = false;
+  stripe: any;
+  card: any;
+  clientSecret: string = '';
+  stripeLoading = false;
+  stripeError: string = '';
+  paymentResult: 'success' | 'cancel' | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -71,6 +80,15 @@ export class BookingComponent implements OnInit {
       this.fetchSlots();
     }
     this.fetchDependants();
+    this.route.queryParams.subscribe(params => {
+      if (params['payment'] === 'success') {
+        this.paymentResult = 'success';
+        this.selectedFieldSet[0] = 5;
+      } else if (params['payment'] === 'cancel') {
+        this.paymentResult = 'cancel';
+        this.selectedFieldSet[0] = 5;
+      }
+    });
   }
 
   async fetchDoctorDetails(id: string) {
@@ -266,10 +284,46 @@ export class BookingComponent implements OnInit {
       };
       const res = await api.post('/doctor/appointments', body);
       this.createdAppointment = res.data;
-      this.selectedFieldSet[0] = 5; // Move to step 6
+      // After appointment is created, call backend to create Stripe Checkout Session
+      const paymentRes = await api.post('/transactions/stripe/checkout', {
+        appointment: this.createdAppointment._id,
+        doctor: this.doctorId,
+        patient: this.patientId,
+        amount: this.totalWithTaxAndDiscount,
+        successUrl: window.location.origin + '/pages/booking/' + this.doctorId + '?payment=success',
+        cancelUrl: window.location.origin + '/pages/booking/' + this.doctorId + '?payment=cancel'
+      });
+      window.location.href = paymentRes.data.url; // Redirect to Stripe Checkout
     } catch (err) {
       // Optionally handle error
     }
+  }
+  
+  async onAttachmentSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      this.attachmentError = 'Only PNG, JPG, and JPEG images are allowed.';
+      return;
+    }
+    this.attachmentError = '';
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.attachmentUrl = imageUrl;
+      this.uploading = false;
+      // Optionally patch to your booking form or DB here
+    } catch (err) {
+      this.uploading = false;
+      this.attachmentError = 'Upload failed. Please try again.';
+    }
+  }
+
+  removeAttachment() {
+    this.attachmentUrl = '';
+    // Optionally patch to your booking form or DB here
   }
 
   onNextStep() {
@@ -331,32 +385,5 @@ export class BookingComponent implements OnInit {
       return;
     }
     this.selectedFieldSet[0] = step;
-  }
-  
-  async onAttachmentSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-    // Validate file type
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      this.attachmentError = 'Only PNG, JPG, and JPEG images are allowed.';
-      return;
-    }
-    this.attachmentError = '';
-    this.uploading = true;
-    try {
-      const imageUrl = await uploadImage(file);
-      this.attachmentUrl = imageUrl;
-      this.uploading = false;
-      // Optionally patch to your booking form or DB here
-    } catch (err) {
-      this.uploading = false;
-      this.attachmentError = 'Upload failed. Please try again.';
-    }
-  }
-
-  removeAttachment() {
-    this.attachmentUrl = '';
-    // Optionally patch to your booking form or DB here
   }
 }

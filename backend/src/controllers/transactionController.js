@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User'); // Add this import if not present
+const stripe = require('../utils/stripe');
 
 exports.createTransaction = async (req, res, next) => {
   try {
@@ -186,4 +187,109 @@ exports.getTransactionsByUser = async (req, res, next) => {
       });
     res.json({ total: transactions.length, data: transactions });
   } catch (err) { next(err); }
+};
+
+// Create Stripe PaymentIntent and Transaction
+exports.createStripePayment = async (req, res, next) => {
+  try {
+    const { appointment, doctor, patient, amount, currency = 'usd', paymentDate, ...rest } = req.body;
+    // Create PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe expects cents
+      currency,
+      metadata: {
+        appointment,
+        doctor,
+        patient,
+        paymentDate,
+        ...rest
+      }
+    });
+    // Create Transaction in DB
+    const transaction = await Transaction.create({
+      appointment,
+      amount,
+      status: 'pending',
+      paymentIntentId: paymentIntent.id,
+      stripeStatus: paymentIntent.status,
+      reference: paymentIntent.id
+    });
+    res.status(201).json({
+      clientSecret: paymentIntent.client_secret,
+      transaction
+    });
+  } catch (err) { next(err); }
+};
+
+// Create Stripe Checkout Session
+exports.createStripeCheckoutSession = async (req, res, next) => {
+  try {
+    const { appointment, doctor, patient, amount, successUrl, cancelUrl } = req.body;
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Appointment Payment',
+          },
+          unit_amount: Math.round(amount * 100),
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        appointment,
+        doctor,
+        patient
+      }
+    });
+    // Optionally, create a Transaction in DB with status 'pending' and session.id
+    await Transaction.create({
+      appointment,
+      amount,
+      status: 'pending',
+      paymentIntentId: session.payment_intent,
+      stripeStatus: 'pending',
+      reference: session.id
+    });
+    res.json({ url: session.url });
+  } catch (err) { next(err); }
+};
+
+// Stripe Webhook Handler
+exports.stripeWebhook = async (req, res, next) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+  // Handle event types
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+    // Update transaction to paid
+    await Transaction.findOneAndUpdate(
+      { paymentIntentId: paymentIntent.id },
+      {
+        status: 'paid',
+        stripeStatus: paymentIntent.status,
+        reference: paymentIntent.id
+      }
+    );
+    // TODO: Trigger invoice creation here
+  } else if (event.type === 'payment_intent.payment_failed') {
+    const paymentIntent = event.data.object;
+    await Transaction.findOneAndUpdate(
+      { paymentIntentId: paymentIntent.id },
+      {
+        status: 'failed',
+        stripeStatus: paymentIntent.status
+      }
+    );
+  }
+  res.status(200).json({ received: true });
 }; 

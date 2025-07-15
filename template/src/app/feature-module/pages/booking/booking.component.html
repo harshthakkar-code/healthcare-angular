@@ -735,15 +735,25 @@
 														<div class="card ">
 															<div class="card-header">
 																<h5 class="d-flex align-items-center flex-wrap rpw-gap-2">
-																	<i class="isax isax-tick-circle5 text-success me-2"></i>
-																	Booking Confirmed
+																	<i
+																		class="isax me-2"
+																		[ngClass]="paymentResult === 'cancel' ? 'isax-close-circle text-danger' : 'isax-tick-circle5 text-success'"
+																	></i>
+																	{{ paymentResult === 'cancel' ? 'Booking Payment Failed' : 'Booking Confirmed' }}
 																</h5>
 															</div>
 															<div class="card-header d-flex align-items-center flex-wrap rpw-gap-2">
 																<span class="avatar avatar-lg avatar-rounded me-2 flex-shrink-0">
 																	<img [src]="doctor?.avatar || 'assets/img/clients/client-16.jpg'" alt="">
 																</span>
-																<p class="mb-0">Your Booking has been Confirmed with <span class="text-dark">Dr. {{ doctor?.name || 'Doctor Name' }} </span>  be on time before <span class="text-dark">15 Mins </span> From the appointment Time</p>
+																<p class="mb-0">
+																	<ng-container *ngIf="paymentResult === 'cancel'; else successMsg">
+																		Your payment for booking with <span class="text-dark">Dr. {{ doctor?.name || 'Doctor Name' }}</span> failed or was cancelled.
+																	</ng-container>
+																	<ng-template #successMsg>
+																		Your Booking has been Confirmed with <span class="text-dark">Dr. {{ doctor?.name || 'Doctor Name' }}</span>. Be on time before <span class="text-dark">15 Mins</span> from the appointment time.
+																	</ng-template>
+																</p>
 															</div>
 															<div class="card-body pb-1">
 																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-3">
@@ -834,13 +844,15 @@
 													</div>
 												</div>
 											</div>
-										</div>
-                                    </div>
-									<div>
-										<a [routerLink]="routes.booking" class="" (click)="selectedFieldSet[0] = 0">
+											<div *ngIf="paymentResult === 'cancel'" class="alert alert-danger text-center mt-4">
+												<h5>Payment Failed or Cancelled</h5>
+												<p>Your payment was not completed. Please try again or contact support.</p>
+												<a [routerLink]="routes.booking" class="" (click)="selectedFieldSet[0] = 0">
 											<i class="isax isax-arrow-left-2 me-1"></i>
 											Back to Bookings
 										</a>
+											</div>
+										</div>
 									</div>
                                 </fieldset>
                             </div>
