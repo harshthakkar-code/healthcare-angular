@@ -34,15 +34,15 @@ export class DoctorSpecialitiesComponent implements OnInit {
   attemptedSave = false;
 
   // Static options for dropdowns
-  specialityOptions = ['Cardiology', 'Neurology', 'Urology'];
+  specialityOptions: any[] = [];
   serviceOptions = ['Surgery', 'General Checkup'];
 
-  constructor(private specService: DoctorSpecialitiesService, private dialog: MatDialog) {}
+  constructor(private specService: DoctorSpecialitiesService, private dialog: MatDialog) { }
 
   getDoctorId(): string | null {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.doctorId ||  null;
+      return user.id || user._id || null;
     } catch {
       return null;
     }
@@ -55,7 +55,15 @@ export class DoctorSpecialitiesComponent implements OnInit {
       this.loading = false;
       return;
     }
+    this.fetchSpecialityOptions();
     this.loadSpecializations();
+  }
+
+  fetchSpecialityOptions() {
+    this.specService.getSpecialityOptions().subscribe((res: any) => {
+      this.specialityOptions = Array.isArray(res.data.data) ? res.data.data : [];
+      console.log(this.specialityOptions )
+    });
   }
 
   loadSpecializations() {
@@ -82,7 +90,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
 
   addNewServiceRow() {
     if (this.newSpecialization && Array.isArray(this.newSpecialization.services)) {
-      this.newSpecialization.services.push({ name: "" , price: 0, about: '' });
+      this.newSpecialization.services.push({ name: "", price: 0, about: '' });
     }
   }
 
@@ -96,6 +104,12 @@ export class DoctorSpecialitiesComponent implements OnInit {
     this.attemptedSave = true;
     if (!this.newSpecialization || !this.isSpecializationValid(this.newSpecialization)) {
       this.error = 'Please fill all required fields';
+      setTimeout(() => this.error = '', 3000);
+      return;
+    }
+    // Prevent duplicate specialization
+    if (this.specializations.some(s => s.name === this.newSpecialization?.name)) {
+      this.error = 'This speciality is already added!';
       setTimeout(() => this.error = '', 3000);
       return;
     }
@@ -188,5 +202,9 @@ export class DoctorSpecialitiesComponent implements OnInit {
       if (!s.name || !s.price || s.price <= 0) return false;
     }
     return true;
+  }
+
+  isSpecialityAlreadyAdded(optionName: string): boolean {
+    return this.specializations.some(s => s.name === optionName);
   }
 }

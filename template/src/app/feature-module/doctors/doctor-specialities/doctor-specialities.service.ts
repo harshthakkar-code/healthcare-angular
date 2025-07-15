@@ -33,4 +33,8 @@ export class DoctorSpecialitiesService {
   deleteService(specializationId: string, serviceId: string): Observable<any> {
     return from(api.delete(`${this.baseUrl}/${specializationId}/services/${serviceId}`));
   }
+
+  getSpecialityOptions(): Observable<any> {
+    return from(api.get('/speciality-options'));
+  }
 } 

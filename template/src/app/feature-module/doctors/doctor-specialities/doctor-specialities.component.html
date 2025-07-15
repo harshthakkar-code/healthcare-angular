@@ -28,7 +28,9 @@
                     <div class="form-wrap">
                       <label class="col-form-label" for="speciality">Speciality <span class="text-danger">*</span></label>
                       <mat-select class="custom-mat-select" [(ngModel)]="newSpecialization.name" #specialityName="ngModel" name="specialityName" required>
-                        <mat-option *ngFor="let option of specialityOptions" [value]="option">{{ option }}</mat-option>
+                        <mat-option *ngFor="let option of specialityOptions || []" [value]="option.name" [disabled]="isSpecialityAlreadyAdded(option.name)">
+                          {{ option.name }}
+                        </mat-option>
                       </mat-select>
                       <div *ngIf="specialityName.invalid && (specialityName.touched || attemptedSave)" class="text-danger small">Speciality is required.</div>
                     </div>

@@ -30,6 +30,7 @@ app.use('/api/payouts', require('./routes/payout'));
 app.use('/api/favourites', require('./routes/favourite'));
 app.use('/api/dependants', require('./routes/dependant'));
 app.use('/api/speciality-options', require('./routes/specialityOption'));
+app.use('/api/invoices', require('./routes/invoice'));
 // Add more as needed
 
 app.use(require('./middlewares/errorHandler'));

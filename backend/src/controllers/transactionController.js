@@ -2,6 +2,7 @@ const Transaction = require('../models/Transaction');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User'); // Add this import if not present
 const stripe = require('../utils/stripe');
+const Invoice = require('../models/Invoice');
 
 exports.createTransaction = async (req, res, next) => {
   try {
@@ -272,15 +273,59 @@ exports.stripeWebhook = async (req, res, next) => {
   if (event.type === 'payment_intent.succeeded') {
     const paymentIntent = event.data.object;
     // Update transaction to paid
-    await Transaction.findOneAndUpdate(
+    const transaction = await Transaction.findOneAndUpdate(
       { paymentIntentId: paymentIntent.id },
       {
         status: 'paid',
         stripeStatus: paymentIntent.status,
         reference: paymentIntent.id
-      }
+      },
+      { new: true }
     );
-    // TODO: Trigger invoice creation here
+    // Create invoice if transaction and appointment exist
+    if (transaction && transaction.appointment) {
+      const appointment = await Appointment.findById(transaction.appointment).populate('doctor patient');
+      if (appointment) {
+        // Fill invoice fields (customize as needed)
+        const invoiceData = {
+          issuedDate: new Date(),
+          billingFrom: {
+            name: appointment.doctor?.name || 'Clinic',
+            address: appointment.doctor?.address || '',
+            extra: ''
+          },
+          billingTo: {
+            name: appointment.patient?.name || '',
+            address: appointment.patient?.address || '',
+            extra: ''
+          },
+          paymentMethod: {
+            type: 'Card',
+            details: paymentIntent.charges?.data?.[0]?.payment_method_details?.card?.last4 ? `**** **** **** ${paymentIntent.charges.data[0].payment_method_details.card.last4}` : '',
+            bank: paymentIntent.charges?.data?.[0]?.payment_method_details?.card?.brand || ''
+          },
+          items: [
+            {
+              description: appointment.service || 'Consultation',
+              quantity: 1,
+              vat: '$0',
+              total: transaction.amount
+            }
+          ],
+          subtotal: transaction.amount,
+          discount: '0%',
+          totalAmount: transaction.amount,
+          appointment: appointment._id,
+          transaction: transaction._id,
+          otherInfo: appointment.reason || ''
+        };
+        // Generate invoice number
+        const InvoiceModel = require('../models/Invoice');
+        const count = await InvoiceModel.countDocuments();
+        invoiceData.invoiceNo = `#INV${(count + 1).toString().padStart(3, '0')}`;
+        await InvoiceModel.create(invoiceData);
+      }
+    }
   } else if (event.type === 'payment_intent.payment_failed') {
     const paymentIntent = event.data.object;
     await Transaction.findOneAndUpdate(
