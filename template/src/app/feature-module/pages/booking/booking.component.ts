@@ -82,12 +82,14 @@ export class BookingComponent implements OnInit {
     }
     this.fetchDependants();
     this.route.queryParams.subscribe(params => {
-      if (params['payment'] === 'success') {
-        this.paymentResult = 'success';
+      if (params['payment'] === 'success' || params['payment'] === 'cancel') {
+        this.paymentResult = params['payment'] === 'success' ? 'success' : 'cancel';
         this.selectedFieldSet[0] = 5;
-      } else if (params['payment'] === 'cancel') {
-        this.paymentResult = 'cancel';
-        this.selectedFieldSet[0] = 5;
+        const lastAppointmentId = localStorage.getItem('lastAppointmentId');
+        if (lastAppointmentId) {
+          this.fetchAppointmentDetails(lastAppointmentId);
+          localStorage.removeItem('lastAppointmentId');
+        }
       }
     });
   }
@@ -286,6 +288,8 @@ export class BookingComponent implements OnInit {
       };
       const res = await api.post('/doctor/appointments', body);
       this.createdAppointment = res.data;
+      // Store appointment ID for retrieval after payment
+      localStorage.setItem('lastAppointmentId', this.createdAppointment._id);
       // After appointment is created, call backend to create Stripe Checkout Session
       const paymentRes = await api.post('/transactions/stripe/checkout', {
         appointment: this.createdAppointment._id,
@@ -395,6 +399,15 @@ export class BookingComponent implements OnInit {
       return user.id || user._id || null;
     } catch {
       return null;
+    }
+  }
+
+  async fetchAppointmentDetails(appointmentId: string) {
+    try {
+      const res = await api.get(`/doctor/appointments/${appointmentId}`);
+      this.createdAppointment = res.data;
+    } catch (err) {
+      this.createdAppointment = null;
     }
   }
 }

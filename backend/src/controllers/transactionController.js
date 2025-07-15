@@ -353,6 +353,10 @@ exports.stripeWebhook = async (req, res, next) => {
             await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
             console.log('Slot status updated to booked:', appointment.slot);
           }
+          // Update appointment status to 'pending' after payment
+          appointment.status = 'pending';
+          await appointment.save();
+          console.log('Appointment status updated to pending:', appointment._id);
         } catch (err) {
           console.error('Error creating invoice:', err);
         }
@@ -431,6 +435,10 @@ exports.stripeWebhook = async (req, res, next) => {
                 await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
                 console.log('Slot status updated to booked:', appointment.slot);
               }
+              // Update appointment status to 'pending' after payment
+              appointment.status = 'pending';
+              await appointment.save();
+              console.log('Appointment status updated to pending:', appointment._id);
             } catch (err) {
               console.error('Error creating invoice (from session.completed):', err);
             }
