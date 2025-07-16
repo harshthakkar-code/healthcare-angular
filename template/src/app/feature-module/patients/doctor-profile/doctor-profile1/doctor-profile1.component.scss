@@ -7,3 +7,11 @@
   .dot-unknown {
     color: #6c757d !important; /* gray */
   }
+.special-links a {
+  margin-right: 16px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.special-links a:last-child {
+  margin-right: 0;
+}

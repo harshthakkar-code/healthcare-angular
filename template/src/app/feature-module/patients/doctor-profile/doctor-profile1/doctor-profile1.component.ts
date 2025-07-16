@@ -249,19 +249,25 @@ export class DoctorProfile1Component implements OnInit {
     return 'Unknown';
   }
 
-  get profileImageUrl(): string {
-    if (this.profile?.profileImage) {
-      return this.profile.profileImage;
-    } else if (this.profile?.profileImgUrl) {
-      if (this.profile.profileImage.startsWith('http')) {
-        return this.profile.profileImgUrl;
-      } else {
-        return 'assets/img/doctors/doc-profile-02.jpg';
-      }
-    } else {
-      return 'assets/img/doctors/doc-profile-02.jpg';
-    }
+    getDoctorImage(doctor: any): string {
+    return doctor.profileImgUrl || doctor.profileSettings?.profileImgUrl || doctor.profileImage || '';
   }
+  onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/img/doctors/doc-profile-02.jpg';
+  }
+  // get profileImageUrl(): string {
+  //   if (this.profile?.profileImage) {
+  //     return this.profile.profileImage;
+  //   } else if (this.profile?.profileImgUrl) {
+  //     if (this.profile.profileImage.startsWith('http')) {
+  //       return this.profile.profileImgUrl;
+  //     } else {
+  //       return 'assets/img/doctors/doc-profile-02.jpg';
+  //     }
+  //   } else {
+  //     return 'assets/img/doctors/doc-profile-02.jpg';
+  //   }
+  // }
 
   getPatientId(): string | null {
     try {
