@@ -16,5 +16,7 @@ router.delete('/:id', auth, transactionController.deleteTransaction);
 router.post('/stripe/pay', auth, transactionController.createStripePayment);
 router.post('/stripe/checkout', auth, transactionController.createStripeCheckoutSession);
 // router.post('/stripe/webhook', express.raw({type: 'application/json'}), transactionController.stripeWebhook);
+router.get('/stripe/payment/:id', transactionController.getStripePaymentDetails);
+router.get('/stripe/charge/:id', transactionController.getStripeChargeDetails);
 
 module.exports = router; 
