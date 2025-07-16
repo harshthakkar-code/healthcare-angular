@@ -270,24 +270,32 @@ exports.createStripeCheckoutSession = async (req, res, next) => {
 
 // Stripe Webhook Handler
 exports.stripeWebhook = async (req, res, next) => {
+  console.log('Received Stripe webhook event');
   const sig = req.headers['stripe-signature'];
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature error:', err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
   console.log('Received Stripe event:', event.type);
-  // Handle event types
+
   if (event.type === 'payment_intent.succeeded') {
     const piId = event.data.object.id;
-    // Fetch the PaymentIntent from Stripe, expanding charges
     const paymentIntent = await stripe.paymentIntents.retrieve(piId, { expand: ['charges'] });
-    console.log("", paymentIntent);
-    // Defensive: ensure charges are present
-    const charge = paymentIntent.charges?.data?.[0];
-    // Update transaction to paid
+
+    let charge = null;
+    if (paymentIntent.latest_charge) {
+      try {
+        charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
+      } catch (e) {
+        console.error('Failed to retrieve latest charge:', e);
+      }
+    }
+
     const transaction = await Transaction.findOneAndUpdate(
       { paymentIntentId: paymentIntent.id },
       {
@@ -297,18 +305,28 @@ exports.stripeWebhook = async (req, res, next) => {
       },
       { new: true }
     );
+
     if (!transaction) {
       console.error('No transaction found for paymentIntent:', paymentIntent.id);
     }
-    // Create invoice if transaction and appointment exist
+
     if (transaction && transaction.appointment) {
       const appointment = await Appointment.findById(transaction.appointment).populate('doctor patient');
       if (!appointment) {
         console.error('No appointment found for transaction:', transaction._id);
       }
+
       if (appointment) {
         try {
-          // Fill invoice fields (customize as needed)
+          const InvoiceModel = require('../models/Invoice');
+          // Check for existing invoice for this transaction
+          const existingInvoice = await InvoiceModel.findOne({ transaction: transaction._id });
+          if (existingInvoice) {
+            console.log('Invoice already exists for transaction:', transaction._id);
+            return res.status(200).json({ received: true });
+          }
+          // Use unique invoice number
+          const invoiceNo = `#INV${Date.now()}`;
           const invoiceData = {
             issuedDate: new Date(),
             billingFrom: {
@@ -323,8 +341,18 @@ exports.stripeWebhook = async (req, res, next) => {
             },
             paymentMethod: {
               type: 'Card',
-              details: charge?.payment_method_details?.card?.last4 ? `**** **** **** ${charge.payment_method_details.card.last4}` : '',
-              bank: charge?.payment_method_details?.card?.brand || ''
+              details: charge?.payment_method_details?.card?.last4
+                ? `**** **** **** ${charge.payment_method_details.card.last4}`
+                : '',
+              bank: charge?.payment_method_details?.card?.brand || '',
+              expiry: charge?.payment_method_details?.card?.exp_month && charge?.payment_method_details?.card?.exp_year
+                ? `${charge.payment_method_details.card.exp_month}/${charge.payment_method_details.card.exp_year}`
+                : ''
+            },
+            receiptUrl: charge?.receipt_url || '',
+            customer: {
+              name: charge?.billing_details?.name || '',
+              email: charge?.billing_details?.email || ''
             },
             items: [
               {
@@ -340,22 +368,20 @@ exports.stripeWebhook = async (req, res, next) => {
             appointment: appointment._id,
             transaction: transaction._id,
             otherInfo: appointment.reason || '',
-            doctor: appointment.doctor, // add doctor user id
-            patient: appointment.patient // add patient user id
+            doctor: appointment.doctor,
+            patient: appointment.patient,
+            invoiceNo: invoiceNo
           };
-          // Generate invoice number
-          const InvoiceModel = require('../models/Invoice');
-          const count = await InvoiceModel.countDocuments();
-          invoiceData.invoiceNo = `#INV${(count + 1).toString().padStart(3, '0')}`;
+
           await InvoiceModel.create(invoiceData);
           console.log('Invoice created for transaction:', transaction._id);
-          // Book the slot if appointment has a slot
+
           if (appointment.slot) {
             const Slot = require('../models/Slot');
             await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
             console.log('Slot status updated to booked:', appointment.slot);
           }
-          // Update appointment status to 'pending' after payment
+
           appointment.status = 'pending';
           await appointment.save();
           console.log('Appointment status updated to pending:', appointment._id);
@@ -375,77 +401,97 @@ exports.stripeWebhook = async (req, res, next) => {
     );
   } else if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    // Find the transaction by session.id (reference)
     const transaction = await Transaction.findOne({ reference: session.id });
+
     if (transaction) {
-      // Update the transaction with the paymentIntentId
       transaction.paymentIntentId = session.payment_intent;
       transaction.stripeStatus = 'completed';
       await transaction.save();
       console.log('Transaction updated with paymentIntentId:', session.payment_intent);
 
-      // Fetch the PaymentIntent from Stripe, expanding charges
       const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent, { expand: ['charges'] });
-      const charge = paymentIntent.charges?.data?.[0];
+
+      let charge = null;
+      if (paymentIntent.latest_charge) {
+        try {
+          charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
+        } catch (e) {
+          console.error('Failed to retrieve charge (session.completed):', e);
+        }
+      }
+
       if (paymentIntent.status === 'succeeded') {
-        // Check if invoice already exists for this transaction
         const InvoiceModel = require('../models/Invoice');
+        // Check for existing invoice for this transaction
         const existingInvoice = await InvoiceModel.findOne({ transaction: transaction._id });
-        if (!existingInvoice && transaction.appointment) {
-          const appointment = await Appointment.findById(transaction.appointment).populate('doctor patient');
-          if (appointment) {
-            try {
-              const invoiceData = {
-                issuedDate: new Date(),
-                billingFrom: {
-                  name: appointment.doctor?.name || 'Clinic',
-                  address: appointment.doctor?.address || '',
-                  extra: ''
-                },
-                billingTo: {
-                  name: appointment.patient?.name || '',
-                  address: appointment.patient?.address || '',
-                  extra: ''
-                },
-                paymentMethod: {
-                  type: 'Card',
-                  details: charge?.payment_method_details?.card?.last4 ? `**** **** **** ${charge.payment_method_details.card.last4}` : '',
-                  bank: charge?.payment_method_details?.card?.brand || ''
-                },
-                items: [
-                  {
-                    description: appointment.service || 'Consultation',
-                    quantity: 1,
-                    vat: '$0',
-                    total: transaction.amount
-                  }
-                ],
-                subtotal: transaction.amount,
-                discount: '0%',
-                totalAmount: transaction.amount,
-                appointment: appointment._id,
-                transaction: transaction._id,
-                otherInfo: appointment.reason || '',
-                doctor: appointment.doctor, // add doctor user id
-                patient: appointment.patient // add patient user id
-              };
-              const count = await InvoiceModel.countDocuments();
-              invoiceData.invoiceNo = `#INV${(count + 1).toString().padStart(3, '0')}`;
-              await InvoiceModel.create(invoiceData);
-              console.log('Invoice created for transaction (from session.completed):', transaction._id);
-              // Book the slot if appointment has a slot
-              if (appointment.slot) {
-                const Slot = require('../models/Slot');
-                await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
-                console.log('Slot status updated to booked:', appointment.slot);
-              }
-              // Update appointment status to 'pending' after payment
-              appointment.status = 'pending';
-              await appointment.save();
-              console.log('Appointment status updated to pending:', appointment._id);
-            } catch (err) {
-              console.error('Error creating invoice (from session.completed):', err);
+        if (existingInvoice) {
+          console.log('Invoice already exists for transaction:', transaction._id);
+          return res.status(200).json({ received: true });
+        }
+        // Use unique invoice number
+        const invoiceNo = `#INV${Date.now()}`;
+        const appointment = await Appointment.findById(transaction.appointment).populate('doctor patient');
+        if (appointment) {
+          try {
+            const invoiceData = {
+              issuedDate: new Date(),
+              billingFrom: {
+                name: appointment.doctor?.name || 'Clinic',
+                address: appointment.doctor?.address || '',
+                extra: ''
+              },
+              billingTo: {
+                name: appointment.patient?.name || '',
+                address: appointment.patient?.address || '',
+                extra: ''
+              },
+              paymentMethod: {
+                type: 'Card',
+                details: charge?.payment_method_details?.card?.last4
+                  ? `**** **** **** ${charge.payment_method_details.card.last4}`
+                  : '',
+                bank: charge?.payment_method_details?.card?.brand || '',
+                expiry: charge?.payment_method_details?.card?.exp_month && charge?.payment_method_details?.card?.exp_year
+                  ? `${charge.payment_method_details.card.exp_month}/${charge.payment_method_details.card.exp_year}`
+                  : ''
+              },
+              receiptUrl: charge?.receipt_url || '',
+              customer: {
+                name: charge?.billing_details?.name || '',
+                email: charge?.billing_details?.email || ''
+              },
+              items: [
+                {
+                  description: appointment.service || 'Consultation',
+                  quantity: 1,
+                  vat: '$0',
+                  total: transaction.amount
+                }
+              ],
+              subtotal: transaction.amount,
+              discount: '0%',
+              totalAmount: transaction.amount,
+              appointment: appointment._id,
+              transaction: transaction._id,
+              otherInfo: appointment.reason || '',
+              doctor: appointment.doctor,
+              patient: appointment.patient,
+              invoiceNo: invoiceNo
+            };
+            await InvoiceModel.create(invoiceData);
+            console.log('Invoice created for transaction (from session.completed):', transaction._id);
+
+            if (appointment.slot) {
+              const Slot = require('../models/Slot');
+              await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
+              console.log('Slot status updated to booked:', appointment.slot);
             }
+
+            appointment.status = 'pending';
+            await appointment.save();
+            console.log('Appointment status updated to pending:', appointment._id);
+          } catch (err) {
+            console.error('Error creating invoice (from session.completed):', err);
           }
         }
       }
@@ -453,5 +499,61 @@ exports.stripeWebhook = async (req, res, next) => {
       console.error('No transaction found for session:', session.id);
     }
   }
+
   res.status(200).json({ received: true });
+};
+
+
+// Fetch Stripe PaymentIntent details by ID
+exports.getStripePaymentDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const paymentIntent = await stripe.paymentIntents.retrieve(id, { expand: ['charges'] });
+    let latest_charge_details = null;
+    if (paymentIntent.latest_charge) {
+      try {
+        latest_charge_details = await stripe.charges.retrieve(paymentIntent.latest_charge);
+      } catch (e) {
+        latest_charge_details = null;
+      }
+    }
+    const charge = latest_charge_details;
+    const merged = {
+      id: paymentIntent.id,
+      amount: (paymentIntent.amount / 100).toFixed(2),
+      currency: paymentIntent.currency,
+      status: paymentIntent.status,
+      created: new Date(paymentIntent.created * 1000),
+      card: charge && charge.payment_method_details && charge.payment_method_details.card ? {
+        brand: charge.payment_method_details.card.brand,
+        last4: charge.payment_method_details.card.last4,
+        exp_month: charge.payment_method_details.card.exp_month,
+        exp_year: charge.payment_method_details.card.exp_year,
+        country: charge.payment_method_details.card.country
+      } : null,
+      customer: {
+        name: charge?.billing_details?.name || null,
+        email: charge?.billing_details?.email || null
+      },
+      receipt_url: charge?.receipt_url || null,
+      statement_descriptor: charge?.calculated_statement_descriptor || paymentIntent.statement_descriptor,
+      description: paymentIntent.description,
+      charge_id: charge?.id || null,
+      charge_status: charge?.status || null
+    };
+    res.json(merged);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Fetch Stripe Charge details by ID
+exports.getStripeChargeDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const charge = await stripe.charges.retrieve(id);
+    res.json(charge);
+  } catch (err) {
+    next(err);
+  }
 }; 

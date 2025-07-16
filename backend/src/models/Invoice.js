@@ -26,12 +26,19 @@ const invoiceSchema = new mongoose.Schema({
       total: Number
     }
   ],
+  customer: [
+    {
+    name : String,
+    email : String
+    }
+  ],
   subtotal: Number,
   discount: String,
   totalAmount: Number,
   appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
   transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' },
   otherInfo: String,
+  receiptUrl: String,
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
