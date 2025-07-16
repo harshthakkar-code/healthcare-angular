@@ -38,7 +38,7 @@
                     <td>
                       <h2 class="table-avatar">
                         <a  style="cursor: default;" class="avatar avatar-sm me-2">
-                          <img class="avatar-img rounded-circle" [src]="review.patient?.avatar || 'assets/img/patients/default.png'" alt="User Image">
+                          <img class="avatar-img rounded-circle" [src]="review.patient?.profileImgUrl || 'assets/admin/img/profiles/avatar-01.jpg'" alt="User Image">
                         </a>
                         <a  style="cursor: default;">{{review.patient?.name}}</a>
                       </h2>
@@ -46,7 +46,7 @@
                     <td>
                       <h2 class="table-avatar">
                         <a  style="cursor: default;" class="avatar avatar-sm me-2">
-                          <img class="avatar-img rounded-circle" [src]="review.doctor?.avatar || 'assets/img/doctors/default.png'" alt="User Image">
+                          <img class="avatar-img rounded-circle" [src]="review.doctor?.profileImgUrl || 'assets/admin/img/profiles/avatar-01.jpg'" alt="User Image">
                         </a>
                         <a  style="cursor: default;">{{review.doctor?.name}}</a>
                       </h2>

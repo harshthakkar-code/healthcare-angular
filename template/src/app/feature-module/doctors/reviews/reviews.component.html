@@ -23,7 +23,7 @@
                                 <div class="review-rate">
                                     <h5>Overall Rating</h5>
                                     <div class="star-rated">
-                                        <span>{{ avgRating ? (avgRating | number:'1.1-1') : '4.0' }}</span>
+                                        <span>{{ avgRating ? (avgRating | number:'1.1-1') : '0' }}</span>
                                         <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
                                             <i class="fa-solid fa-star" [class.filled]="i < avgRating"></i>
                                         </ng-container>

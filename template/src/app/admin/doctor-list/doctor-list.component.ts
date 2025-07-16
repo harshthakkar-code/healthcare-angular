@@ -152,4 +152,12 @@ export class DoctorListComponent {
   onStatusFilterChange() {
     this.fetchDoctors();
   }
+
+  getDoctorImage(data: any): string {
+    return data.img ;
+  }
+  onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/admin/img/profiles/avatar-01.jpg';
+  }
 }
+

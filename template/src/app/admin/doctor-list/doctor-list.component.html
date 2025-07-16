@@ -53,7 +53,7 @@
                     <tr>
                       <td>
                         <h2 class="table-avatar">
-                          <a  style="cursor: default;" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="data.img" alt="User Image"></a>
+                          <a  style="cursor: default;" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="getDoctorImage(data)" alt="User Image" (error)="onImgError($event)"></a>
                           <a  style="cursor: default;">{{data.doctorName}}</a>
                         </h2>
                       </td>
