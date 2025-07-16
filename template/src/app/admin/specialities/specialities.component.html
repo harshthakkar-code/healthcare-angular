@@ -39,7 +39,7 @@
                       <td>
                         <h2 class="table-avatar">
                           <a  style="cursor: default;" class="avatar avatar-sm me-2">
-                            <img class="avatar-img" [src]="specialityImageMap[data.name] || 'assets/img/specialities/default.svg'" alt="Speciality">
+                            <img [src]="getSpecialityImage(data)" alt="Speciality Image" />
                           </a>
                           <a  style="cursor: default;">{{data.name}}</a>
                         </h2>
@@ -69,7 +69,7 @@
 <!-- /Page Wrapper -->
 <!-- Add Modal -->
 <div class="modal fade" id="Add_Specialities_details" aria-hidden="true" role="dialog">
-  <div class="modal-dialog modal-dialog-centered" role="document" >
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Add Specialities</h5>
@@ -78,30 +78,43 @@
       <div class="modal-body">
         <form>
           <div class="row">
+            <!-- Speciality Name -->
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="specialities">Specialities</label>
                 <input type="text" class="form-control" [(ngModel)]="newSpecialityName" name="specialityName">
               </div>
             </div>
+
+            <!-- Image Upload with Preview and Remove -->
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="image">Image</label>
-                <input type="file"  class="form-control">
+                <input type="file" class="form-control" (change)="onAddImageSelected($event)" accept="image/*" />
+
+                <div *ngIf="uploadingAddImage" class="mt-2 text-info">Uploading...</div>
+
+                <div *ngIf="newSpecialityImage" class="mt-2">
+                  <img [src]="newSpecialityImage" alt="Preview" style="width: 50px; height: 50px; object-fit: cover;" />
+                  <a href="javascript:void(0);" class="ms-2 text-danger" (click)="removeAddImage()">Remove</a>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- Save Button -->
           <button type="button" class="btn btn-primary w-100" (click)="addSpeciality(newSpecialityName)">Save</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+
 <!-- /ADD Modal -->
 
 <!-- Edit Details Modal -->
 <div class="modal fade" id="edit_specialities_details" aria-hidden="true" role="dialog">
-  <div class="modal-dialog modal-dialog-centered" role="document" >
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Edit Specialities</h5>
@@ -110,24 +123,36 @@
       <div class="modal-body">
         <form>
           <div class="row">
+            <!-- Speciality Name -->
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="specialities">Specialities</label>
                 <input type="text" class="form-control" [(ngModel)]="editSpecialityName" name="editSpecialityName">
               </div>
             </div>
+
+            <!-- Image Upload with Preview and Remove -->
             <div class="col-12 col-sm-6">
               <div class="mb-3">
                 <label class="mb-2" for="image">Image</label>
-                <input type="file"  class="form-control">
+                <input type="file" class="form-control" (change)="onEditImageSelected($event)" accept="image/*" />
+
+                <div *ngIf="uploadingEditImage" class="mt-2 text-info">Uploading...</div>
+
+                <div *ngIf="editSpecialityImage" class="mt-2">
+                  <img [src]="editSpecialityImage" alt="Preview" style="width: 50px; height: 50px; object-fit: cover;" />
+                  <a href="javascript:void(0);" class="ms-2 text-danger" (click)="removeEditImage()">Remove</a>
+                </div>
               </div>
             </div>
-
           </div>
+
+          <!-- Save Button -->
           <button type="submit" class="btn btn-primary w-100" (click)="saveEditSpeciality()">Save</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+
 <!-- /Edit Details Modal -->

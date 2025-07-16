@@ -75,8 +75,14 @@
                         </div>
                     </div>
                     </ng-container>
-                                </div>
-                <div class="text-center my-3" *ngIf="canLoadMore">
+                    <app-empty-state
+                        *ngIf="doctorProfiles.length === 0 && !loading"
+                        [icon]="'fa-solid fa-heart'"
+                        [title]="'No Favourites'"
+                        [message]="'You have not added any favourite doctors yet.'">
+                    </app-empty-state>
+                </div>
+                <div class="text-center my-3" *ngIf="canLoadMore && doctorProfiles.length > 0">
                   <button class="btn btn-primary" (click)="loadMore()" [disabled]="loadingMore">
                     <span *ngIf="loadingMore">Loading...</span>
                     <span *ngIf="!loadingMore">Load More</span>

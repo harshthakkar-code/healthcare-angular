@@ -4,6 +4,7 @@ const User = require('../models/User');
 // Create a new favourite
 exports.createFavourite = async (req, res) => {
   try {
+    console.log(req.body)
     const favourite = new Favourite(req.body);
     await favourite.save();
     res.status(201).json(favourite);

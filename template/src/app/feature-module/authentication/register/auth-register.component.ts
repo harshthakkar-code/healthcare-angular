@@ -40,9 +40,15 @@ export class AuthRegisterComponent {
     if (!this.email.trim()) {
       this.emailError = 'Email is required';
       valid = false;
+    } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(this.email)) {
+      this.emailError = 'Invalid email format';
+      valid = false;
     }
     if (!this.phone.trim()) {
       this.phoneError = 'Phone is required';
+      valid = false;
+    } else if (!/^[0-9]{10,15}$/.test(this.phone.replace(/\D/g, ''))) {
+      this.phoneError = 'Invalid phone number';
       valid = false;
     }
     if (!this.password.trim()) {

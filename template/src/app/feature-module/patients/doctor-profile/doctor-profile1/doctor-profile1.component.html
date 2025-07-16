@@ -285,7 +285,7 @@
               <ng-template carouselSlide *ngFor="let slot of slots">
                 <div class="availability-date">
                   <div class="book-date">
-                    <h6>{{ slot.date | date:'EEE MMM yyyy' }}</h6>
+                    <h6>{{ slot.date | date:'mediumDate' }}</h6>
                     <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
                   </div>
                 </div>

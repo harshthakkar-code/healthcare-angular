@@ -14,7 +14,7 @@
                 <div class="dashboard-header">
                     <div class="header-back">
                         <a [routerLink] = "routes.patientAppointment" class="back-arrow"><i class="fa-solid fa-arrow-left"></i></a>
-                        <h3>Appointment Details</h3>
+                        <h3>Appointment Details1</h3>
                     </div>
                 </div>
                 <div class="appointment-details-wrap">
@@ -25,7 +25,7 @@
                             <li>
                                 <div class="patinet-information">
                                     <a href="javascript:void(0);">
-                                        <img [src]="appointment.doctor?.avatar || 'assets/img/doctors-dashboard/profile-02.jpg'" alt="User Image">
+                                        <img [src]="doctorProfile?.profileImgUrl || 'assets/img/doctors-dashboard/profile-02.jpg'" alt="User Image">
                                     </a>
                                     <div class="patient-info">
                                         <p>#{{ appointment._id?.slice(-6) }}</p>

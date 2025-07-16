@@ -89,8 +89,12 @@ export class DoctorSpecialitiesComponent implements OnInit {
   }
 
   addNewServiceRow() {
-    if (this.newSpecialization && Array.isArray(this.newSpecialization.services)) {
-      this.newSpecialization.services.push({ name: "", price: 0, about: '' });
+    if (
+      this.newSpecialization &&
+      Array.isArray(this.newSpecialization.services) &&
+      this.newSpecialization.services.length < this.serviceOptions.length
+    ) {
+      this.newSpecialization.services.push({ name: '', price: 0, about: '' });
     }
   }
 
@@ -153,6 +157,7 @@ export class DoctorSpecialitiesComponent implements OnInit {
   }
 
   addService(spec: Specialization) {
+    if (spec.services.length >= this.serviceOptions.length) return; // Prevent more than available services
     const newService = { name: '', price: 0, about: '' };
     this.specService.addService(spec._id!, newService).subscribe({
       next: () => this.loadSpecializations(),
@@ -204,7 +209,11 @@ export class DoctorSpecialitiesComponent implements OnInit {
     return true;
   }
 
-  isSpecialityAlreadyAdded(optionName: string): boolean {
-    return this.specializations.some(s => s.name === optionName);
+  isSpecialityAlreadyAdded(optionName: string, currentName?: string): boolean {
+    return this.specializations.some(s => s.name === optionName && s.name !== currentName);
+  }
+
+  isServiceAlreadySelected(option: string, services: any[], currentIndex: number): boolean {
+    return services.some((s, idx) => s.name === option && idx !== currentIndex);
   }
 }

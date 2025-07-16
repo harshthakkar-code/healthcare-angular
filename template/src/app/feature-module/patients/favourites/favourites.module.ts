@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FavouritesRoutingModule } from './favourites-routing.module';
 import { FavouritesComponent } from './favourites.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../feature-module.module';
+
 
 
 @NgModule({
@@ -13,7 +15,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     FavouritesRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class FavouritesModule { }

@@ -107,11 +107,17 @@ exports.getDoctorListWithReviews = async (req, res, next) => {
     if (city) query.city = { $regex: city, $options: 'i' };
     if (name) query.name = { $regex: name, $options: 'i' };
     let doctors = await User.find(query).select('-password');
+    // Get avgRating for all doctors in one aggregation
+    const doctorIds = doctors.map(doc => doc._id);
+    const avgRatingsAgg = await Review.aggregate([
+      { $match: { doctor: { $in: doctorIds } } },
+      { $group: { _id: '$doctor', avg: { $avg: '$rating' } } }
+    ]);
     // Attach reviews and avgRating
     doctors = await Promise.all(doctors.map(async doc => {
       const reviews = await Review.find({ doctor: doc._id });
-      const ratings = reviews.map(r => r.rating);
-      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+      const avgRatingObj = avgRatingsAgg.find(r => String(r._id) === String(doc._id));
+      const avgRating = avgRatingObj ? avgRatingObj.avg : null;
       return { ...doc.toObject(), reviews, avgRating };
     }));
     if (avgReview) {
@@ -155,11 +161,17 @@ exports.getDoctors = async (req, res, next) => {
     }
     const skip = (parseInt(page) - 1) * parseInt(limit);
     let doctors = await User.find(query).select('-password').skip(skip).limit(parseInt(limit)).sort(sort);
+    // Get avgRating for all doctors in one aggregation
+    const doctorIds = doctors.map(doc => doc._id);
+    const avgRatingsAgg = await Review.aggregate([
+      { $match: { doctor: { $in: doctorIds } } },
+      { $group: { _id: '$doctor', avg: { $avg: '$rating' } } }
+    ]);
     // Attach reviews, avgRating, and specializations
     doctors = await Promise.all(doctors.map(async doc => {
       const reviews = await Review.find({ doctor: doc._id });
-      const ratings = reviews.map(r => r.rating);
-      const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+      const avgRatingObj = avgRatingsAgg.find(r => String(r._id) === String(doc._id));
+      const avgRating = avgRatingObj ? avgRatingObj.avg : null;
       const allSpecs = await Specialization.find({ doctorId: doc._id });
       const specializations = allSpecs.map(s => s.name);
       return { ...doc.toObject(), reviews, avgRating, specializations };
@@ -438,9 +450,9 @@ exports.getFullDoctorData = async (req, res, next) => {
 
 exports.getDoctorContactInfo = async (req, res, next) => {
   try {
-    const doctor = await User.findById(req.params.doctorId).select('email phone');
+    const doctor = await User.findById(req.params.doctorId).select('email phone role profileImgUrl');
     if (!doctor || doctor.role !== 'doctor') return res.status(404).json({ message: 'Doctor not found' });
-    res.json({ email: doctor.email, phone: doctor.phone });
+    res.json({ email: doctor.email, phone: doctor.phone  , profileImgUrl: doctor.profileImgUrl});
   } catch (err) {
     next(err);
   }

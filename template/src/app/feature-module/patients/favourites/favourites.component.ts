@@ -52,13 +52,12 @@ export class FavouritesComponent implements OnInit {
         this.favourites = (res.data.data || res.data || []).filter((fav: any) => fav.doctorId);
         this.total = res.data.total || this.favourites.length;
         console.log(res.data.data)
-        // Fetch doctor profiles for each favourite using doctorId._id (DoctorProfile)
-        return Promise.all(this.favourites.map(fav =>
-          api.get(`/doctor/by-user/${fav.doctorId.user}`).then(docRes => ({
-            doctor: docRes.data,
-            favourite: fav
-          })).catch(() => null)
-        ));
+        // Use doctorId object directly
+        const newProfiles = this.favourites.map((fav: any) => ({
+          doctor: fav.doctorId,
+          favourite: fav
+        }));
+        return Promise.resolve(newProfiles);
       })
       .then(results => {
         const newProfiles = (results || []).filter(d => d && d.doctor);
@@ -68,9 +67,9 @@ export class FavouritesComponent implements OnInit {
           // Assign only relevant appointments to each doctor
           return newProfiles.map(profile => {
             if (!profile) return profile;
-            console.log(profile.doctor.user , allAppointments)
+            console.log(profile.doctor._id , allAppointments)
             const doctorAppointments = allAppointments.filter(
-              (appt: any) => String(appt.doctor) === String(profile.doctor.user)
+              (appt: any) => String(appt.doctor) === String(profile.doctor._id)
             );
             (profile as any).appointments = doctorAppointments;
             return profile;

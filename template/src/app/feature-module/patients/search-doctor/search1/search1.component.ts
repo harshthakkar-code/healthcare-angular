@@ -228,4 +228,11 @@ export class Search1Component implements OnInit{
     this.doctors = [];
     this.fetchDoctors();
   }
+
+  getDoctorImage(doctor: any): string {
+    return doctor.profileImgUrl || doctor.profileSettings?.profileImgUrl || doctor.profileImage || '';
+  }
+  onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/img/doctor-grid/doctor-grid-01.jpg';
+  }
 }

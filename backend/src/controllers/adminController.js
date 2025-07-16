@@ -3,6 +3,8 @@ const DoctorProfile = require('../models/DoctorProfile');
 const Appointment = require('../models/Appointment');
 const Transaction = require('../models/Transaction');
 const Patient = require('../models/PatientProfile')
+const Specialization = require('../models/Specialization');
+const Review = require('../models/Review');
 
 exports.dashboard = async (req, res, next) => {
   try {
@@ -70,27 +72,68 @@ exports.dashboard = async (req, res, next) => {
     // Top doctors by totalEarned (from transactions)
     const topDoctorsAgg = await Transaction.aggregate([
       { $match: { status: 'paid' } },
-      {
-        $group: {
-          _id: '$doctor',
-          totalEarned: { $sum: '$amount' }
-        }
-      },
+      { $group: { _id: '$doctor', totalEarned: { $sum: '$amount' } } },
       { $sort: { totalEarned: -1 } },
       { $limit: 5 }
     ]);
     const topDoctorIds = topDoctorsAgg.map(d => d._id);
-    const topDoctors = await User.find({ _id: { $in: topDoctorIds } }, 'name profileImgUrl').lean();
-    // Attach totalEarned to each doctor
-    const topDoctorsWithEarnings = topDoctors.map(doc => ({
+    let topDoctors = await User.find({ _id: { $in: topDoctorIds }, role: 'doctor' }, 'name profileImgUrl').lean();
+    topDoctors = topDoctors.map(doc => ({
       ...doc,
       totalEarned: topDoctorsAgg.find(d => String(d._id) === String(doc._id))?.totalEarned || 0
     }));
+    // If less than 5, fill with other doctors
+    if (topDoctors.length < 5) {
+      const fillDoctors = await User.find({
+        _id: { $nin: topDoctorIds },
+        role: 'doctor'
+      }, 'name profileImgUrl').sort({ createdAt: -1 }).limit(5 - topDoctors.length).lean();
+      topDoctors = topDoctors.concat(fillDoctors.map(doc => ({ ...doc, totalEarned: 0 })));
+    }
+
+    // Enhance topDoctors with speciality and reviews
+    for (let doc of topDoctors) {
+      // Get specialities (as a comma-separated string)
+      const specs = await Specialization.find({ doctorId: doc._id });
+      doc.speciality = specs.map(s => s.name).join(', ');
+      // Get reviews count
+      doc.reviews = await Review.countDocuments({ doctor: doc._id });
+    }
+
+    // Top patients by totalSpent (from transactions)
+    const topPatientsAgg = await Transaction.aggregate([
+      { $match: { status: 'paid' } },
+      { $group: { _id: '$patient', totalSpent: { $sum: '$amount' } } },
+      { $sort: { totalSpent: -1 } },
+      { $limit: 5 }
+    ]);
+    const topPatientIds = topPatientsAgg.map(p => p._id);
+    let topPatients = await User.find({ _id: { $in: topPatientIds }, role: 'patient' }, 'name profileImgUrl phone').lean();
+    topPatients = topPatients.map(pat => ({
+      ...pat,
+      totalSpent: topPatientsAgg.find(p => String(p._id) === String(pat._id))?.totalSpent || 0
+    }));
+    // If less than 5, fill with other patients
+    if (topPatients.length < 5) {
+      const fillPatients = await User.find({
+        _id: { $nin: topPatientIds },
+        role: 'patient'
+      }, 'name profileImgUrl phone').sort({ createdAt: -1 }).limit(5 - topPatients.length).lean();
+      topPatients = topPatients.concat(fillPatients.map(pat => ({ ...pat, totalSpent: 0 })));
+    }
+    
+    // Enhance topPatients with phone and lastVisit
+    for (let pat of topPatients) {
+      // Phone is already in User model
+      // Get last visit (latest appointment date)
+      const lastAppt = await Appointment.findOne({ patient: pat._id }).sort({ date: -1 });
+      pat.lastVisit = lastAppt ? lastAppt.date : null;
+    }
     
     // Recent appointments
     const recentAppointments = await Appointment.find()
-      .populate('doctor', 'name')
-      .populate('patient', 'name')
+      .populate('doctor', 'name profileImgUrl')
+      .populate('patient', 'name profileImgUrl')
       .sort({ createdAt: -1 })
       .limit(5);
     
@@ -116,7 +159,8 @@ exports.dashboard = async (req, res, next) => {
       revenue,
       revenueChartData,
       growthChartData,
-      topDoctors: topDoctorsWithEarnings,
+      topDoctors,
+      topPatients,
       recentAppointments
     });
   } catch (err) { 

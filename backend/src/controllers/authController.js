@@ -25,23 +25,24 @@ exports.register = async (req, res, next) => {
       return res.status(409).json({ message: 'This email is already registered. Please use a different email.' });
     }
 
-    // 3. For doctor, validate extra fields and files
+    // 3. For doctor, validate extra fields and Body
     let profileImage, certFile, photoID, employmentProof;
+    profileImage = req.body.profileImage || undefined; 
     if (role === 'doctor') {
       if (!clinicAddress || !city || !state || !pincode || !weight || !height || !age || !blood) {
         return res.status(400).json({ message: 'Please fill all doctor profile fields.' });
       }
-      const files = req.files || {};
-      // if (!files.profileImage || !files.certFile || !files.photoID || !files.employmentProof) {
-      //   return res.status(400).json({ message: 'All required files (profile image, certificate, photo ID, employment proof) must be uploaded.' });
+      const Body = req.body;
+      // if (!Body.profileImage || !Body.qualiCertificate || !Body.photoId || !Body.clinicalEmployment) {
+      //   return res.status(400).json({ message: 'All required Body (profile image, certificate, photo ID, employment proof) must be uploaded.' });
       // }
-      profileImage = files.profileImage ? files.profileImage[0].filename : undefined;
-      certFile = files.certFile ? files.certFile[0].filename : undefined;
-      photoID = files.photoID ? files.photoID[0].filename : undefined;
-      employmentProof = files.employmentProof ? files.employmentProof[0].filename : undefined;
+      profileImage = Body.profileImage ? Body.profileImage : undefined;
+      qualiCertificate = Body.qualiCertificate ? Body.qualiCertificate : undefined;
+      photoId = Body.photoId ? Body.photoId : undefined;
+      clinicalEmployment = Body.clinicalEmployment ? Body.clinicalEmployment : undefined;
     }
 
-    // 4. Create user (store all fields and files in User)
+    // 4. Create user (store all fields and Body in User)
     const user = new User({
       name,
       email,
@@ -64,8 +65,11 @@ exports.register = async (req, res, next) => {
       profileImage,
       profileImgUrl: profileImage,
       certFile,
-      photoID,
-      employmentProof
+      photoId,
+      employmentProof,
+      qualiCertificate,
+      clinicalEmployment,
+      photoId,
     });
     await user.save();
 

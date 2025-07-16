@@ -28,7 +28,7 @@ export type ChartOptions = {
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
-    standalone: false
+    standalone: false,
 })
 export class DashboardComponent implements OnInit {
   public routes = routes;
@@ -164,12 +164,24 @@ export class DashboardComponent implements OnInit {
         if (dashboardData.topDoctors) {
           this.doctorList = dashboardData.topDoctors.map((doctor: any, index: number) => ({
             id: index + 1,
-            doctorName: doctor.doctorName,
-            speciality: doctor.speciality || 'General',
+            doctorName: doctor.name,
+            speciality: doctor.speciality || '-',
             earned: doctor.totalEarned?.toString() || '0',
-            avgRating: 4.5, // Default rating, can be enhanced later
-            reviewCount: doctor.appointmentCount || 0,
-            img: 'assets/admin/img/doctors/doctor-thumb-01.jpg'
+            avgRating: doctor.avgRating ?? 4.5, // Use real avgRating if available
+            reviewCount: doctor.reviews || 0,
+            img: doctor.profileImgUrl || 'assets/admin/img/doctors/doctor-thumb-01.jpg',
+          }));
+        }
+
+        // Update top patients list
+        if (dashboardData.topPatients) {
+          this.patientList = dashboardData.topPatients.map((patient: any, index: number) => ({
+            id: index + 1,
+            patientName: patient.name,
+            phone: patient.phone || '-',
+            lastVisit: patient.lastVisit ? this.formatDate(patient.lastVisit) : '-',
+            paid: patient.totalSpent?.toString() || '0',
+            img: patient.profileImgUrl || 'assets/admin/img/patients/patient1.jpg',
           }));
         }
 
@@ -182,9 +194,11 @@ export class DashboardComponent implements OnInit {
             patientName: appointment.patient?.name || appointment.name || '',
             appointmentTime: appointment.time || '',
             appointmentDate: appointment.date || '',
-            amount: appointment.totalPrice?.toString() || '',
+            totalPrice: appointment.price || '',
             isStatus: appointment.status === 'accepted',
             appointmentId: appointment._id,
+            doctorImg: appointment.doctor.profileImgUrl || 'assets/admin/img/patients/patient1.jpg',
+            patientImg: appointment.patient.profileImgUrl || 'assets/admin/img/patients/patient1.jpg',
           }));
         }
 
@@ -230,5 +244,15 @@ export class DashboardComponent implements OnInit {
         appointment.isStatus = !appointment.isStatus;
       }
     });
+  }
+
+  // Helper function to format date as dd-MM-yyyy
+  private formatDate(dateStr: string): string {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   }
 }

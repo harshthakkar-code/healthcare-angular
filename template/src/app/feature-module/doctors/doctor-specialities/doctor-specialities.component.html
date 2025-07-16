@@ -28,7 +28,7 @@
                     <div class="form-wrap">
                       <label class="col-form-label" for="speciality">Speciality <span class="text-danger">*</span></label>
                       <mat-select class="custom-mat-select" [(ngModel)]="newSpecialization.name" #specialityName="ngModel" name="specialityName" required>
-                        <mat-option *ngFor="let option of specialityOptions || []" [value]="option.name" [disabled]="isSpecialityAlreadyAdded(option.name)">
+                        <mat-option *ngFor="let option of specialityOptions || []" [value]="option.name" [disabled]="isSpecialityAlreadyAdded(option.name, newSpecialization.name)">
                           {{ option.name }}
                         </mat-option>
                       </mat-select>
@@ -36,12 +36,16 @@
                     </div>
                   </div>
                 </div>
-                <div *ngFor="let service of newSpecialization.services; let i = index" class="row service-cont">
+                <div *ngFor="let service of newSpecialization.services || []; let i = index" class="row service-cont">
                   <div class="col-md-3">
                     <div class="form-wrap">
                       <label class="col-form-label" for="service">Service <span class="text-danger">*</span></label>
                       <mat-select class="custom-mat-select" [(ngModel)]="service.name" #serviceName="ngModel" name="serviceName{{i}}" required>
-                        <mat-option *ngFor="let option of serviceOptions" [value]="option">{{ option }}</mat-option>
+                        <mat-option *ngFor="let option of serviceOptions"
+                                    [value]="option"
+                                    [disabled]="isServiceAlreadySelected(option, newSpecialization?.services || [], i)">
+                          {{ option }}
+                        </mat-option>
                       </mat-select>
                       <div *ngIf="serviceName.invalid && (serviceName.touched || attemptedSave)" class="text-danger small">Service is required.</div>
                     </div>
@@ -69,7 +73,11 @@
               </div>
               <div *ngIf="error" class="text-danger small">{{ error }} Add atleast One service.</div>
               <div class="text-end">
-                <a href="javascript:void(0);" class="add-serv more-item mb-0" (click)="addNewServiceRow()">Add New Service</a>
+                <a *ngIf="(newSpecialization?.services?.length || 0) < serviceOptions.length"
+                   href="javascript:void(0);" class="add-serv more-item mb-0"
+                   (click)="addNewServiceRow()">
+                   Add New Service
+                </a>
               </div>
             </div>
           </div>
@@ -96,7 +104,9 @@
                         <div class="form-wrap">
                           <label class="col-form-label" for="speciality">Speciality <span class="text-danger">*</span></label>
                           <mat-select class="custom-mat-select" [(ngModel)]="spec.name" #editSpecialityName="ngModel" name="editSpecialityName{{i}}" placeholder="Select" (ngModelChange)="onEditField(spec)" required>
-                            <mat-option *ngFor="let option of specialityOptions" [value]="option">{{ option }}</mat-option>
+                            <mat-option *ngFor="let option of specialityOptions" [value]="option.name" [disabled]="isSpecialityAlreadyAdded(option.name, spec.name)">
+                              {{ option.name }}
+                            </mat-option>
                           </mat-select>
                           <div *ngIf="spec.editMode && editSpecialityName.invalid && (editSpecialityName.touched || editSpecialityName.dirty)" class="text-danger small">Speciality is required.</div>
                         </div>
@@ -107,7 +117,7 @@
                         <div class="form-wrap">
                           <label class="col-form-label" for="service">Service <span class="text-danger">*</span></label>
                           <mat-select class="custom-mat-select" [(ngModel)]="service.name" #editServiceName="ngModel" name="editServiceName{{i}}_{{j}}" placeholder="Select Service" (ngModelChange)="onEditField(spec)" required>
-                            <mat-option *ngFor="let option of serviceOptions" [value]="option">{{ option }}</mat-option>
+                            <mat-option *ngFor="let option of serviceOptions" [value]="option" [disabled]="isServiceAlreadySelected(option, spec.services, j)">{{ option }}</mat-option>
                           </mat-select>
                           <div *ngIf="spec.editMode && editServiceName.invalid && (editServiceName.touched || editServiceName.dirty)" class="text-danger small">Service is required.</div>
                         </div>
@@ -134,7 +144,7 @@
                     </div>
                   </div>
                   <div class="text-end">
-                    <a href="javascript:void(0);" class="add-serv more-item mb-0" (click)="addService(spec)">Add New Service</a>
+                    <a *ngIf="spec.services.length < serviceOptions.length" href="javascript:void(0);" class="add-serv more-item mb-0" (click)="addService(spec)">Add New Service</a>
                   </div>
                 </div>
                 <div *ngIf="spec.editMode" class="modal-btn text-end mt-4">

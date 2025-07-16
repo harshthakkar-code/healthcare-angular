@@ -3,11 +3,12 @@ const SpecialityOption = require('../models/SpecialityOption');
 // Create a new speciality option
 exports.createSpecialityOption = async (req, res, next) => {
   try {
-    const { name, description } = req.body;
+    const { name, description , image } = req.body;
     if (!name) return res.status(400).json({ message: 'Name is required' });
     const specialityOption = new SpecialityOption({
       name,
       description,
+      image,
       createdBy: req.user._id
     });
     await specialityOption.save();
@@ -33,10 +34,10 @@ exports.getSpecialityOptions = async (req, res, next) => {
 // Update a speciality option
 exports.updateSpecialityOption = async (req, res, next) => {
   try {
-    const { name, description } = req.body;
+    const { name, description , image } = req.body;
     const option = await SpecialityOption.findByIdAndUpdate(
       req.params.id,
-      { name, description },
+      { name, description , image },
       { new: true }
     );
     if (!option) return res.status(404).json({ message: 'Speciality option not found' });

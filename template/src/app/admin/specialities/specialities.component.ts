@@ -4,37 +4,39 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { PaginationService, tablePageSize } from 'src/app/shared/custom-pagination/pagination.service';
 import { DataService } from 'src/app/shared/data/data.service';
-import { pageSelection, apiResultFormat, specialities } from 'src/app/shared/models/models';
+import { pageSelection, specialities } from 'src/app/shared/models/models';
 import { routes } from 'src/app/shared/routes/routes';
 import api from 'src/app/shared/api/axios';
+import { uploadImage } from 'src/app/shared/api/image-upload';
 
 @Component({
-    selector: 'app-specialities',
-    templateUrl: './specialities.component.html',
-    styleUrls: ['./specialities.component.scss'],
-    standalone: false
+  selector: 'app-specialities',
+  templateUrl: './specialities.component.html',
+  styleUrls: ['./specialities.component.scss'],
+  standalone: false
 })
 export class SpecialitiesComponent implements OnInit {
   public routes = routes;
   public tableData: Array<specialities> = [];
 
-  // pagination variables
-  public serialNumberArray: Array<number> = [];
-  public totalData = 0;
+  serialNumberArray: Array<number> = [];
+  totalData = 0;
   showFilter = false;
   dataSource!: MatTableDataSource<specialities>;
-  public searchDataValue = '';
-  // pagination variables end
+  searchDataValue = '';
 
   specialityOptions: any[] = [];
   loadingOptions = false;
   errorOptions = '';
   newSpecialityName: string = '';
+  newSpecialityImage: string = '';
   editSpecialityId: string | null = null;
   editSpecialityName: string = '';
-  deleteSpecialityId: string | null = null;
-  newSpecialityImage: string = '';
   editSpecialityImage: string = '';
+  deleteSpecialityId: string | null = null;
+
+  uploadingAddImage = false;
+  uploadingEditImage = false;
 
   specialityImageMap: { [key: string]: string } = {
     'Urology': 'assets/img/specialities/speciality-01.svg',
@@ -42,7 +44,6 @@ export class SpecialitiesComponent implements OnInit {
     'Orthopedic': 'assets/img/specialities/speciality-03.svg',
     'Cardiologist': 'assets/img/specialities/speciality-04.svg',
     'Dentist': 'assets/img/specialities/speciality-05.svg',
-    // Add more as needed
   };
 
   private _deleteListener: any;
@@ -111,7 +112,7 @@ export class SpecialitiesComponent implements OnInit {
           ...item
         }));
         this.totalData = data.totalData;
-        this.serialNumberArray = this.tableData.map((_, idx) => idx + 1); // Ensure serialNumberArray is updated
+        this.serialNumberArray = this.tableData.map((_, idx) => idx + 1);
         this.loadingOptions = false;
         this.pagination.calculatePageSize.next({
           totalData: this.totalData,
@@ -137,7 +138,7 @@ export class SpecialitiesComponent implements OnInit {
   addSpeciality(name: string) {
     api.post('/speciality-options', { name, image: this.newSpecialityImage })
       .then(() => {
-        this.fetchSpecialityOptions(1, this.pageSize); // Go to first page after add
+        this.fetchSpecialityOptions(1, this.pageSize);
         (window as any).$ && (window as any).$('#Add_Specialities_details').modal('hide');
         this.newSpecialityName = '';
         this.newSpecialityImage = '';
@@ -152,14 +153,16 @@ export class SpecialitiesComponent implements OnInit {
 
   saveEditSpeciality() {
     if (!this.editSpecialityId) return;
-    api.put(`/speciality-options/${this.editSpecialityId}`, { name: this.editSpecialityName, image: this.editSpecialityImage })
-      .then(() => {
-        this.fetchSpecialityOptions(this.currentPage, this.pageSize);
-        (window as any).$ && (window as any).$('#edit_specialities_details').modal('hide');
-        this.editSpecialityId = null;
-        this.editSpecialityName = '';
-        this.editSpecialityImage = '';
-      });
+    api.put(`/speciality-options/${this.editSpecialityId}`, {
+      name: this.editSpecialityName,
+      image: this.editSpecialityImage
+    }).then(() => {
+      this.fetchSpecialityOptions(this.currentPage, this.pageSize);
+      (window as any).$ && (window as any).$('#edit_specialities_details').modal('hide');
+      this.editSpecialityId = null;
+      this.editSpecialityName = '';
+      this.editSpecialityImage = '';
+    });
   }
 
   openDeleteModal(speciality: any) {
@@ -181,15 +184,63 @@ export class SpecialitiesComponent implements OnInit {
 
   public sortData(sort: Sort) {
     const data = this.tableData.slice();
-
     if (!sort.active || sort.direction === '') {
       this.tableData = data;
     } else {
       this.tableData = data.sort((a, b) => {
-        const aValue = (a as never)[sort.active];
-        const bValue = (b as never)[sort.active];
+        const aValue = (a as any)[sort.active];
+        const bValue = (b as any)[sort.active];
         return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
       });
     }
+  }
+
+  // Image upload & remove for Add Modal
+  async onAddImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploadingAddImage = true;
+    try {
+      this.newSpecialityImage = await uploadImage(file);
+    } catch (err) {
+      console.error('Add image upload failed:', err);
+    } finally {
+      this.uploadingAddImage = false;
+    }
+  }
+
+  removeAddImage() {
+    this.newSpecialityImage = '';
+  }
+
+  // Image upload & remove for Edit Modal
+  async onEditImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploadingEditImage = true;
+    try {
+      this.editSpecialityImage = await uploadImage(file);
+    } catch (err) {
+      console.error('Edit image upload failed:', err);
+    } finally {
+      this.uploadingEditImage = false;
+    }
+  }
+
+  removeEditImage() {
+    this.editSpecialityImage = '';
+  }
+
+  getSpecialityImage(speciality: any): string {
+    if (speciality.image) {
+      return speciality.image;
+    }
+    // Case-insensitive lookup
+    const name = (speciality.name || '').toLowerCase();
+    const foundKey = Object.keys(this.specialityImageMap).find(key => key.toLowerCase() === name);
+    if (foundKey) {
+      return this.specialityImageMap[foundKey];
+    }
+    return 'assets/admin/img/patients/patient1.jpg';
   }
 }
