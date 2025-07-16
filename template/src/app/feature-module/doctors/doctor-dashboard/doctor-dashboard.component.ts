@@ -307,6 +307,42 @@ export class DoctorDashboardComponent {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
   }
 
+  get latestAppointments() {
+    if (!this.appointments) return [];
+    // Helper to get a Date object from appointment's date and time
+    const getDateTime = (a: any) => {
+      if (!a.date) return new Date(0); // very old date
+      if (a.time) {
+        let timeStr = a.time.split('-')[0].trim(); // take start time
+        // Normalize time to 24h format if possible
+        // If time is in 'hh:mm AM/PM' format, parse accordingly
+        let datePart = a.date.length > 10 ? a.date.slice(0, 10) : a.date;
+        let dateTimeStr = datePart + 'T' + timeStr;
+        let d = new Date(dateTimeStr);
+        if (isNaN(d.getTime())) {
+          // Try with space instead of T
+          dateTimeStr = datePart + ' ' + timeStr;
+          d = new Date(dateTimeStr);
+        }
+        if (isNaN(d.getTime())) {
+          // Try appending ':00' for seconds
+          dateTimeStr = datePart + 'T' + timeStr + ':00';
+          d = new Date(dateTimeStr);
+        }
+        if (isNaN(d.getTime())) {
+          // Fallback to just date
+          d = new Date(datePart);
+        }
+        return d;
+      } else {
+        return new Date(a.date);
+      }
+    };
+    // Sort by date+time descending (future first)
+    const sorted = [...this.appointments].sort((a, b) => getDateTime(b).getTime() - getDateTime(a).getTime());
+    return sorted.slice(0, 5);
+  }
+
   async fetchDashboardInvoices() {
     try {
       const doctorId = this.getDoctorIdFromLocalStorage();

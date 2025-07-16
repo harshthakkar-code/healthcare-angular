@@ -98,7 +98,7 @@
                                 <li>
                                     <div class="patinet-information">
                                         <a href="javascript:void(0);">
-                                            <img [src]="apt.patient?.profileImage || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
+                                            <img [src]="apt.patient?.profileImage || apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                         </a>
                                         <div class="patient-info">
                                             <p>#{{ apt._id?.slice(-6) }}</p>

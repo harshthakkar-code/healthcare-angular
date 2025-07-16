@@ -139,7 +139,7 @@
 										</div>
 										<div class="card-footer">
 											<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between">
-												<a href="javascript:void(0);" class="btn btn-md btn-dark inline-flex align-items-center rounded-pill">
+												<a href="/index" class="btn btn-md btn-dark inline-flex align-items-center rounded-pill">
 													<i class="isax isax-arrow-left-2 me-1"></i>
 													Back
 												</a>
@@ -534,6 +534,7 @@
 															<div class="mb-3">
 																<label class="form-label">Select Patient</label><span class="text-danger"> *</span>
 																<mat-select class="custom-mat-select select" placeholder="Select Patient" [(ngModel)]="selectedDependant" name="selectedDependant" required #selectedDependantRef="ngModel">
+																	<mat-option [value]="'self'">Myself</mat-option>
 																	<mat-option *ngFor="let dep of dependants" [value]="dep._id">
 																		{{ dep.name }} ({{ dep.relation }})
 																	</mat-option>

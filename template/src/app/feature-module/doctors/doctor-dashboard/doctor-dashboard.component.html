@@ -92,7 +92,7 @@
                       <tr *ngIf="!appointments || appointments.length === 0">
                         <td colspan="100%" class="text-center">NO APPOINTMENT AVAILABLE</td>
                       </tr>
-                      <tr *ngFor="let appt of appointments">
+                      <tr *ngFor="let appt of latestAppointments">
                         <td>
                           <div class="patient-info-profile">
                             <a class="table-avatar">
@@ -102,7 +102,7 @@
                               <span>#{{ appt._id?.slice(-6) }}</span>
                               <h5>
                                 <a>{{ appt.patient?.name || 'Unknown' }}</a>
-                              </h5>
+                              </h5> 
                             </div>
                           </div>
                         </td>

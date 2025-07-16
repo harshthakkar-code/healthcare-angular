@@ -35,7 +35,7 @@
                             </div>
                         </li>
                         <li class="appointment-info">
-                            <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
+                            <p><i class="isax isax-clock5"></i>{{ apt.date | date:'mediumDate' }} {{ apt.time }}</p>
                             <p class="md-text">{{ apt.specialty || apt.service || apt.symptoms || 'General Visit' }}</p>
                         </li>
                         <li class="appointment-type">

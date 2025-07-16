@@ -188,7 +188,7 @@
                       <a href="javascript:void(0);" class="cal-plus-icon"><i class="isax isax-hospital5"></i></a>
                     </div>
                     <div class="date-time">
-                      <p><i class="isax isax-clock5"></i>{{ apt.date }} {{ apt.time }}</p>
+                      <p><i class="isax isax-clock5"></i>{{ apt.date | date: "mediumDate" }} {{ apt.time }}</p>
                     </div>
                     <div class="card-btns gap-3">
                       <a [routerLink]="routes.chat" class="btn btn-gray btn-md"><i class="isax isax-messages-25"></i>Chat Now</a>
@@ -423,7 +423,7 @@
                 <div *ngFor="let d of dashboardDependants" class="doctor-fav-list">
                   <div class="doctor-info-profile">
                     <a href="javascript:void(0);" class="table-avatar">
-                      <img [src]="d.profileImage || 'assets/img/patients/patient-20.jpg'" alt="Img">
+                      <img [src]="d.profileImage || d.profileImgUrl || 'assets/img/patients/patient-20.jpg'" alt="Img">
                     </a>
                     <div class="doctor-name-info">
                       <h5><a href="javascript:void(0);">{{ d.name }}</a></h5>

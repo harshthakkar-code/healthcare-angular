@@ -41,7 +41,7 @@ export class BookingComponent implements OnInit {
   afternoonSlots: any[] = [];
   eveningSlots: any[] = [];
   dependants: any[] = [];
-  selectedDependant: string | null = null;
+  selectedDependant: string | null = "self";
   firstName: string = '';
   lastName: string = '';
   phone: string = '';
