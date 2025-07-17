@@ -159,10 +159,12 @@ export class Search1Component implements OnInit{
           doc.statusClass = 'bg-danger-light';
         }
       });
+      // Only include approved doctors
+      const approvedDoctors = newDoctors.filter((doc: any) => doc.isApproved == "true");
       if (this.page === 1) {
-        this.doctors = newDoctors;
+        this.doctors = approvedDoctors;
       } else {
-        this.doctors = [...this.doctors, ...newDoctors];
+        this.doctors = [...this.doctors, ...approvedDoctors];
       }
       this.loading = false;
     } catch {

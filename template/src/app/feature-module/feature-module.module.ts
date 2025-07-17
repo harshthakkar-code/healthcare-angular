@@ -6,6 +6,8 @@ import { FeatureModuleRoutingModule } from './feature-module-routing.module';
 import { FeatureModuleComponent } from './feature-module.component';
 import { HeaderComponent } from './common/header/header.component';
 import { FooterComponent } from './common/footer/footer.component';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,7 @@ import { FooterComponent } from './common/footer/footer.component';
     EmptyStateComponent
   ],
   imports: [
-    CommonModule,
+    CommonModule,FormsModule,SharedModule,
     FeatureModuleRoutingModule
   ],
   exports: [

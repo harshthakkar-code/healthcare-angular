@@ -74,6 +74,10 @@ export class LoginComponent implements OnInit {
         if (!this.email || !this.otp) return;
         this.dataService.loginWithOtp(this.email, this.otp).subscribe({
           next: (response) => {
+            if (response.user.role == 'doctor' && response.user.isApproved == 'false') {
+              this.errorMessage = 'Your profile is rejected by admin, so you cannot login to your profile.';
+              return;
+            }
             this.authService.setAuth(response.token, response.user);
             this.navigateByRole(response.user.role);
           },
@@ -91,6 +95,10 @@ export class LoginComponent implements OnInit {
           email: this.email,
           password: this.password
         });
+        if (response.data.user.role == 'doctor' && response.data.user.isApproved == 'false') {
+          this.errorMessage = 'Your profile is rejected by admin, so you cannot login to your profile.';
+          return;
+        }
         this.authService.setAuth(response.data.token, response.data.user);
         this.navigateByRole(response.data.user.role);
       } catch (error: any) {
@@ -111,6 +119,10 @@ export class LoginComponent implements OnInit {
     const token = response.credential;
     this.dataService.loginWithGoogle(token).subscribe({
       next: (res) => {
+        if (res.user.role == 'doctor' && res.user.isApproved == 'false') {
+          this.googleError = 'Your profile is rejected by admin, so you cannot login to your profile.';
+          return;
+        }
         this.authService.setAuth(res.token, res.user);
         this.navigateByRole(res.user.role);
       },
@@ -122,8 +134,8 @@ export class LoginComponent implements OnInit {
 
   navigateByRole(role: string) {
     if (role === 'doctor') {
-      // this.router.navigate(['/doctors/doctor-dashboard']);
-      this.router.navigate([this.routes.index]);
+      this.router.navigate(['/doctors/doctor-dashboard']);
+      // this.router.navigate([this.routes.index]);
     } else if (role === 'patient') {
       // this.router.navigate(['/patients/patient-dashboard']);
       this.router.navigate([this.routes.index]);

@@ -394,4 +394,13 @@ export class DoctorDashboardComponent {
     if (!id) return '';
     return id.slice(0, 6) + '..';
   }
+
+  get isProfilePending(): boolean {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.isApproved === 'pending';
+    } catch {
+      return false;
+    }
+  }
 }

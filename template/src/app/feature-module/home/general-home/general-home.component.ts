@@ -74,7 +74,7 @@ export class GeneralHomeComponent implements OnInit {
           order: 'desc'
         }
       });
-      this.featuredDoctors = res.data.data || [];
+      this.featuredDoctors = (res.data.data || []).filter((doc: any) => doc.isApproved = 'true');
       // Compute max service price for each doctor
       this.featuredDoctors.forEach((doc: any) => {
         let prices: number[] = [];

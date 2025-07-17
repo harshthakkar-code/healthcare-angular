@@ -1,12 +1,70 @@
 
-@if (page !== 'consultation' && page !== 'patient-details' && page !== 'payment' && page !== 'signup' && page !==
-  'pharmacy-index' && base!=='index') {
 
-  <header [hidden]="last==='booking' || last==='booking-popup' || last === 'booking-success-one' 
-  || page==='login-email' || page === 'doctor-signup' || page==='signup-success' 
-  || page==='patient-signup' || page==='login-email-otp' || page==='login-phone' 
-  || page==='email-otp' || page==='login-phone-otp' || page==='mobile-otp' || page==='forgot-password2'" 
-  class="header header-custom header-fixed inner-header relative">
+<div class="header-topbar">
+    <div class="container">
+      <div class="topbar-info">
+        <div class="d-flex align-items-center gap-3 header-info">
+          <p><i class="isax isax-message-text5 me-1"></i>info&#64;example.com</p>
+          <p><i class="isax isax-call5 me-1"></i>+1 66589 14556</p>
+        </div>
+        <ul>
+          <li class="header-theme">
+            <a href="javascript:void(0);" id="dark-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : isdark}" (click)="darkMode()" (click)="sidebar.changeThemeColor('dark-mode')">
+              <i class="isax isax-sun-1"></i>
+            </a>
+            <a href="javascript:void(0);" id="light-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : islight}" (click)="darkMode()" (click)="sidebar.changeThemeColor('light-mode')">
+              <i class="isax isax-moon"></i>
+            </a>
+          </li>
+          <li class="d-inline-flex align-items-center drop-header">
+            <div class="dropdown dropdown-country me-3">
+              <a href="javascript:void(0);" class="d-inline-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">
+              </a>
+              <ul class="dropdown-menu p-2 mt-2">
+                <li>
+                  <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                    <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">ENG
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                    <img src="assets/img/flags/arab-flag.svg" class="me-2" alt="flag">ARA
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                    <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRA
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="dropdown dropdown-amt">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                USD
+              </a>
+              <ul class="dropdown-menu p-2 mt-2">
+                <li><a class="dropdown-item rounded" href="javascript:void(0);">USD</a></li>
+                <li><a class="dropdown-item rounded" href="javascript:void(0);">YEN</a></li>
+                <li><a class="dropdown-item rounded" href="javascript:void(0);">EURO</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="social-header">
+            <div class="social-icon">
+              <a href="javascript:void(0);"><i class="fa-brands fa-facebook"></i></a>
+              <a href="javascript:void(0);"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="javascript:void(0);"><i class="fa-brands fa-instagram"></i></a>
+              <a href="javascript:void(0);"><i class="fa-brands fa-linkedin"></i></a>
+              <a href="javascript:void(0);"><i class="fa-brands fa-pinterest"></i></a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <header class="header header-custom header-fixed inner-header relative" [ngClass]="{'fixed && pharmacy-header': isFixed}">
     <div class="container">
       <nav class="navbar navbar-expand-lg header-nav">
         <div class="navbar-header">
@@ -17,12 +75,12 @@
               <span></span>
             </span>
           </a>
-          <a [routerLink]="routes.home1" class="navbar-brand logo">
+          <a href="/index" class="navbar-brand logo">
             <img src="assets/img/logo.svg" class="img-fluid" alt="Logo" />
           </a>
         </div>
         <div class="header-menu">
-        <div class="main-menu-wrapper">
+          <div class="main-menu-wrapper">
           <div class="menu-header">
             <a [routerLink]="routes.adminLogin" class="menu-logo">
               <img src="assets/img/logo.svg" class="img-fluid" alt="Logo" />
@@ -31,418 +89,48 @@
               <i class="fas fa-times"></i></a>
             </div>
             <ul class="main-nav">
-              @for (mainMenus of header; track mainMenus) {
-                @if (mainMenus.separateRoute === false) {
-          <li class="has-submenu" [class.active]="base === mainMenus.base" [ngClass]="{
-                  megamenu: mainMenus.tittle === 'Home'
-                }">
-                    <a href="javascript:void(0);" (click)="mainMenus.showAsTab = !mainMenus.showAsTab">{{ mainMenus.tittle
-                      }} <i class="fas fa-chevron-down"></i></a>
-            <ul class="submenu" [ngClass]="{
-                    'd-block': mainMenus.showAsTab === true,
-                    'mega-submenu': mainMenus.tittle === 'Home'
-                  }">
-                        @for (menu of mainMenus.menu; track menu) {
-                          @if (
-                            menu.hasSubRoute === false &&
-                            mainMenus.tittle !== 'Home'
-                            ) {
-                            @if (page !== 'appointments' && page !== 'settings') {
-                              <li routerLinkActive="active">
-                                @if (menu.openInNewTab === false) {
-                                  <a [routerLink]="menu.route">{{ menu.menuValue }}</a>
-                                }
-                                @if (menu.openInNewTab === true) {
-                                  <a [target]="'_blank'" [routerLink]="menu.route">{{ menu.menuValue }}</a>
-                                }
-                              </li>
-                            }
-                            @if (page === 'appointments' || page === 'settings') {
-                              <li [class.active]="page === menu.page">
-                                @if (menu.openInNewTab === false) {
-                                  <a [routerLink]="menu.route">{{ menu.menuValue }}</a>
-                                }
-                                @if (menu.openInNewTab === true) {
-                                  <a [target]="'_blank'" [routerLink]="menu.route">{{ menu.menuValue }}</a>
-                                }
-                              </li>
-                            }
-                          }
-                          @if (menu.hasSubRoute === true) {
-                            <li class="has-submenu" routerLinkActive="active">
-                              <a (click)="menu.showSubRoute = !menu.showSubRoute" [routerLink]="menu.route">{{ menu.menuValue
-                              }}</a>
-                <ul class="submenu" [ngClass]="{
-                            'd-block': menu.showSubRoute === true
-                          }">
-                                @for (subMenu of menu.subMenus; track subMenu) {
-                                  @if (mainMenus.tittle !== 'Home') {
-                                    <li routerLinkActive="active">
-                                      <a [routerLink]="subMenu.route">{{
-                                        subMenu.menuValue
-                                      }}</a>
-                                    </li>
-                                  }
-                                }
-                              </ul>
-                            </li>
-                          }
-                          @if (menu.menuValue === 'General Home 1') {
-                            <li>
-                              <div class="megamenu-wrapper">
-                                <div class="row">
-                                  @for (menu of mainMenus.menu; track menu) {
-                                    <div class="col-lg-2">
-                                      <div class="single-demo" routerLinkActive="active">
-                                        <div class="demo-img">
-                                          <a [routerLink]="menu.route" class="inner-demo-img"><img [src]="menu.img" class="img-fluid"
-                                          alt="img" /></a>
-                                        </div>
-                                        <div class="demo-info">
-                                          <a class="inner-demo-img" [routerLink]="menu.route">{{
-                                            menu.menuValue
-                                          }}</a>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  }
-                                </div>
-                              </div>
-                            </li>
-                          }
-                        }
-                      </ul>
-                    </li>
-                  }
-                }
-                @if (base !== 'doctors' && base !== 'patients' && base !== 'pharmacy' || last === 'pharmacy-register' || last
-                  === 'map-grid' || last === 'map-list' && page !== 'invoices' || last === 'doctor-register') {
-                  @if (page !== 'invoices' && page !== 'call') {
-                    <li class="searchbar">
-                      <a href="javascript:void(0);" (click)="toggleSearch()"><i class="feather icon-search"></i></a>
-                      <div class="togglesearch" [ngClass]="searchField ? 'd-block' : 'd-none'">
-                        <form>
-                          <div class="input-group">
-                            <input type="text" class="form-control" />
-                            <button type="button" class="btn" (click)="navigation()" (keydown)="navigation()"
-                            tabindex="1">Search</button>
-                          </div>
-                        </form>
-                      </div>
-                    </li>
-                  }
-                  
-                }
-              </ul>
+              <li>
+                <a [routerLink]="'/pages/about-us'">About Us</a>
+              </li>
+              <li>
+                <a [routerLink]="'/pages/contact-us'">Contact Us</a>
+              </li>
+            </ul>
             </div>
- 
-            @if (base === 'patients' ||base === 'doctors' || base === 'pharmacy' || last === 'voice-call' || last === 'video-call' || page==='invoices' || base === 'blog') {
-              <ul [hidden]="last==='booking1' || last === 'booking2' || base==='blog' || base === 'pharmacy'" class="nav header-navbar-rht">
-                <!-- Cart -->
-                @if (last !== 'add-dependent' && last !== 'edit-dependent' && last !== 'pharmacy-register') {
-                    <li class="searchbar">
-                      <a href="javascript:void(0);" (click)="openSearch()"><i class="feather-search"></i></a>
-                      <div class="togglesearch" [ngStyle]="{'display':isSearch?'block':'none'}">
-                        <form>
-                          <div class="input-group">
-                            <input type="text" class="form-control">
-                            <button type="submit" class="btn" (click)="navigate()">Search</button>
-                          </div>
-                        </form>
-                      </div>
-                    </li>
-                    <li class="header-theme noti-nav">
-                      <a href="javascript:void(0);" id="dark-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : isdark}" (click)="darkMode()" (click)="sidebar.changeThemeColor('dark-mode')">
-                        <i class="isax isax-sun-1"></i>
-                      </a>
-                      <a href="javascript:void(0);" id="light-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : islight}" (click)="darkMode()" (click)="sidebar.changeThemeColor('light-mode')">
-                        <i class="isax isax-moon"></i>
-                      </a>
-                    </li>
-                  <!-- Notifications -->
-								<li class="nav-item dropdown noti-nav me-3 pe-0">
-									<a href="javascript:void(0);" class="dropdown-toggle active-dot active-dot-danger nav-link p-0" data-bs-toggle="dropdown">
-										<i class="isax isax-notification-bing"></i>
-									</a>
-									<div class="dropdown-menu notifications dropdown-menu-end ">
-										<div class="topnav-dropdown-header">
-											<span class="notification-title">Notifications</span>
-										</div>
-										<div class="noti-content">
-											<ul class="notification-list">
-												<li class="notification-message">
-													<a href="javascript:void(0);">
-														<div class="notify-block d-flex">
-															<span class="avatar">
-																<img class="avatar-img" alt="Ruby perin" src="assets/img/clients/client-01.jpg">
-															</span>
-															<div class="media-body">
-																<h6>Travis Tremble <span class="notification-time">18.30 PM</span></h6>
-																<p class="noti-details">Sent a amount of $210 for his Appointment  <span class="noti-title">Dr.Ruby perin </span></p>
-															</div>
-														</div>
-													</a>
-												</li>
-												<li class="notification-message">
-													<a href="javascript:void(0);">
-														<div class="notify-block d-flex">
-															<span class="avatar">
-																<img class="avatar-img" alt="Hendry Watt" src="assets/img/clients/client-02.jpg">
-															</span>
-															<div class="media-body">
-																<h6>Travis Tremble <span class="notification-time">12 Min Ago</span></h6>
-																<p class="noti-details"> has booked her appointment to  <span class="noti-title">Dr. Hendry Watt</span></p>
-															</div>
-														</div>
-													</a>
-												</li>
-												<li class="notification-message">
-													<a href="javascript:void(0);">
-														<div class="notify-block d-flex">
-															<div class="avatar">
-																<img class="avatar-img" alt="Maria Dyen" src="assets/img/clients/client-03.jpg">
-															</div>
-															<div class="media-body">
-																<h6>Travis Tremble <span class="notification-time">6 Min Ago</span></h6>
-																<p class="noti-details"> Sent a amount  $210 for his Appointment   <span class="noti-title">Dr.Maria Dyen</span></p>
-															</div>
-														</div>
-													</a>
-												</li>
-												<li class="notification-message">
-													<a href="javascript:void(0);">
-														<div class="notify-block d-flex">
-															<div class="avatar avatar-sm">
-																<img class="avatar-img" alt="client-image" src="assets/img/clients/client-04.jpg">
-																
-															</div>
-															<div class="media-body">
-																<h6>Travis Tremble <span class="notification-time">8.30 AM</span></h6>
-																<p class="noti-details"> Send a message to his doctor</p>
-															</div>
-														</div>
-													</a>
-												</li>
-											</ul>
-										</div>
-									</div>
-								</li>
-								<!-- /Notifications -->
-
-								<!-- Messages -->
-								<li class="nav-item noti-nav me-3 pe-0">
-									<a [routerLink]="routes.chat" class="dropdown-toggle nav-link active-dot active-dot-success p-0">
-										<i class="isax isax-message-2"></i>
-									</a>
-								</li>
-								<!-- /Messages -->
-
-								<!-- Cart -->
-								<li class="nav-item dropdown noti-nav view-cart-header me-3 pe-0">
-									<a href="javascript:void(0);" class="dropdown-toggle nav-link active-dot active-dot-purple p-0 position-relative" data-bs-toggle="dropdown">
-										<i class="isax isax-shopping-cart"></i>
-									</a>
-									<div class="dropdown-menu notifications dropdown-menu-end">
-										<div class="shopping-cart">
-										<ul class="shopping-cart-items list-unstyled">
-											<li class="clearfix">
-												<div class="close-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-												<a [routerLink]="routes.productDescription"><img class="avatar-img rounded" src="assets/img/products/product.jpg" alt="User Image"></a>
-												<a [routerLink]="routes.productDescription" class="item-name">Benzaxapine Croplex</a>
-												<span class="item-price">$849.99</span>
-												<span class="item-quantity">Quantity: 01</span>
-											</li>
-
-											<li class="clearfix">
-												<div class="close-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-												<a [routerLink]="routes.productDescription"><img class="avatar-img rounded" src="assets/img/products/product1.jpg" alt="User Image"></a>
-												<a [routerLink]="routes.productDescription" class="item-name">Ombinazol Bonibamol</a>
-												<span class="item-price">$1,249.99</span>
-												<span class="item-quantity">Quantity: 01</span>
-											</li>
-
-											<li class="clearfix">
-												<div class="close-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-												<a [routerLink]="routes.productDescription"><img class="avatar-img rounded" src="assets/img/products/product2.jpg" alt="User Image"></a>
-												<a [routerLink]="routes.productDescription" class="item-name">Dantotate Dantodazole</a>
-												<span class="item-price">$129.99</span>
-												<span class="item-quantity">Quantity: 01</span>
-											</li>
-										</ul>
-										<div class="booking-summary pt-3">
-											<div class="booking-item-wrap">
-												<ul class="booking-date">
-													<li>Subtotal <span>$5,877.00</span></li>
-													<li>Shipping <span>$25.00</span></li>
-													<li>Tax <span>$0.00</span></li>
-													<li>Total <span>$5.2555</span></li>
-												</ul>
-												<div class="booking-total">
-													<ul class="booking-total-list text-align">
-														<li>
-															<div class="clinic-booking pt-3">
-																<a class="apt-btn" [routerLink]="routes.cart">View Cart</a>
-															</div>
-														</li>
-														<li>
-															<div class="clinic-booking pt-3">
-																<a class="apt-btn" [routerLink]="routes.productCheckout">Checkout</a>
-															</div>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										</div>
-									</div>
-								</li>
-								<!-- /Cart -->
-
-								<!-- User Menu -->
-								<li class="nav-item dropdown has-arrow logged-item">
-									<a href="javascript:void(0);" class="nav-link ps-0" data-bs-toggle="dropdown">
-										<span class="user-img">
-											<img [hidden]="base === 'doctors'" class="rounded-circle" src="assets/img/doctors-dashboard/profile-06.jpg" width="31" alt="Darren Elder">
-                      <img *ngIf="base==='doctors'" class="rounded-circle" width="31" alt="client-image" src="assets/img/doctors-dashboard/doctor-profile-img.jpg">
-										</span>
-									</a>
-									<div class="dropdown-menu dropdown-menu-end">
-										<div class="user-header">
-											<div class="avatar avatar-sm">
-												<img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image" class="avatar-img rounded-circle">
-											</div>
-											<div class="user-text">
-												<h6>Hendrita Hayes</h6>
-												<p class="text-muted mb-0">Patient</p>
-											</div>
-										</div>
-										<a class="dropdown-item" [routerLink]="routes.patientDashboard">Dashboard</a>
-										<a class="dropdown-item" [routerLink]="routes.profileSettings">Profile Settings</a>
-										<a class="dropdown-item" [routerLink]="routes.loginEmail">Logout</a>
-									</div>
-								</li>
-								<!-- /User Menu -->
-                }
-              </ul>
-            }
-            @if (last === 'booking1' || last === 'booking2' || base === 'authentication' || base === 'blog' || base === 'pharmacy' || base==='pages'){
-              <ul [hidden]="page==='call' || page==='invoices'" class="nav header-navbar-rht">
-								<li class="searchbar">
-									<a href="javascript:void(0);" (click)="openSearch()"><i class="feather-search"></i></a>
-									<div class="togglesearch" [ngStyle]="{'display':isSearch?'block':'none'}">
-										<form>
-											<div class="input-group">
-												<input type="text" class="form-control">
-												<button type="submit" class="btn" (click)="navigate()">Search</button>
-											</div>
-										</form>
-									</div>
-								</li>
-								<li [hidden]="page==='forgot-password'" class="header-theme noti-nav">
-									<a href="javascript:void(0);" id="dark-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : isdark}" (click)="darkMode()" (click)="sidebar.changeThemeColor('dark-mode')">
-										<i class="isax isax-sun-1"></i>
-									</a>
-									<a href="javascript:void(0);" id="light-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : islight}" (click)="darkMode()" (click)="sidebar.changeThemeColor('light-mode')">
-										<i class="isax isax-moon"></i>
-									</a>
-								</li>
-								<li>
-									<a [routerLink]="routes.userLogin" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill"><i class="isax isax-lock-1 me-1"></i>Sign Up</a>
-								</li>
-								<li>
-									<a [routerLink]="routes.register" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-										<i class="isax isax-user-tick me-1"></i>Register
-									</a>
-								</li>
-							</ul>
-            }
-          </div>
+            <ul class="nav header-navbar-rht">
+              <li class="searchbar" *ngIf="!isDoctor">
+                <a href="javascript:void(0);" (click)="openSearch()"><i class="feather-search"></i></a>
+                <div class="togglesearch" [ngStyle]="{'display':isSearch?'block':'none'}">
+                  <form (ngSubmit)="onSearchSubmit($event)">
+                    <div class="input-group">
+                      <input type="text" class="form-control" [(ngModel)]="searchValue" name="searchValue">
+                      <button type="submit" class="btn">Search</button>
+                    </div>
+                  </form>
+                </div>
+              </li>
+              <li *ngIf="!isLoggedIn()">
+                <a [routerLink]="routes.userLogin" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill"><i class="isax isax-lock-1 me-1"></i>Sign Up</a>
+              </li>
+              <li *ngIf="!isLoggedIn()">
+                <a [routerLink]="routes.register" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
+                  <i class="isax isax-user-tick me-1"></i>Register
+                </a>
+              </li>
+              <li *ngIf="isLoggedIn()" class="d-flex align-items-center">
+                <span class="me-2">{{ getUserName() }}</span>
+                <ng-container *ngIf="getUserImage(); else initialsAvatar">
+                  <img [src]="getUserImage()" alt="User" class="rounded-circle me-2" style="width:32px; height:32px; object-fit:cover; cursor:pointer;" (click)="goToDashboard()">
+                </ng-container>
+                <ng-template #initialsAvatar>
+                  <span class="rounded-circle me-2 d-inline-flex align-items-center justify-content-center bg-secondary text-white" style="width:32px; height:32px; font-weight:bold; font-size:1rem; cursor:pointer;" (click)="goToDashboard()">
+                    {{ getUserInitials() }}
+                  </span>
+                </ng-template>
+                <button class="btn btn-md btn-outline-secondary rounded-pill" (click)="logout()">Logout</button>
+              </li>
+            </ul>
+            </div>
           </nav>
         </div>
       </header>
-    }
-
- 
-      <header *ngIf="last==='booking-success-one' || (base==='patients'&&(page==='consultation' || page==='payment')) || page === 'patient-details'" class="header login-header-info">
-        <nav class="navbar navbar-expand-lg header-nav">
-          <div class="navbar-header">
-            <a (click)="toggleSidebar()" id="mobile_btn" href="javascript:void(0);">
-              <span class="bar-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </a>
-            <a [routerLink]="routes.home1" class="navbar-brand logo">
-              <img src="assets/img/logo.png" class="img-fluid" alt="Logo">
-            </a>
-          </div>
-          <div class="main-menu-wrapper">
-            <div class="menu-header">
-              <a [routerLink]="routes.home1" class="menu-logo">
-                <img src="assets/img/logo.png" class="img-fluid" alt="Logo">
-              </a>
-              <a id="menu_close" (click)="hideSidebar()" class="menu-close" href="javascript:void(0);">
-                <i class="fas fa-times"></i>
-              </a>
-            </div>
-            <ul class="main-nav">
-              <li>
-                <a [routerLink]="routes.faq">FAQ</a>
-              </li>
-              <li>
-                <a [routerLink]="routes.loginEmail">Login</a>
-              </li>
-              <li class="flag-dropdown-hide">
-                <div class="flag-dropdown">
-                  <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)" role="button"
-                    aria-expanded="false">
-                    <img src="assets/img/flags/flag-01.png" alt="flag-image" height="20" class="flag-img">
-                    <span>English</span>
-                  </a>
-                  <div class="dropdown-menu">
-                    <a href="javascript:void(0);" class="dropdown-item">
-                      <img src="assets/img/flags/flag-01.png" alt="flag-image" height="16"> English
-                    </a>
-                    <a href="javascript:void(0);" class="dropdown-item">
-                      <img src="assets/img/flags/flag-02.png" alt="flag-image" height="16"> French
-                    </a>
-                    <a href="javascript:void(0);" class="dropdown-item">
-                      <img src="assets/img/flags/flag-03.png" alt="flag-image" height="16"> Spanish
-                    </a>
-                    <a href="javascript:void(0);" class="dropdown-item">
-                      <img src="assets/img/flags/flag-05.png" alt="flag-image" height="16"> German
-                    </a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <ul class="nav header-navbar-rht">
-            <li class="nav-item dropdown">
-              <div class="flag-dropdown">
-                <a class="dropdown-toggle nav-link" data-bs-toggle="dropdown" href="javascript:void(0)" role="button"
-                  aria-expanded="false">
-                  <img src="assets/img/flags/flag-01.png" alt="flag-image" height="20" class="flag-img"> <span>English</span>
-                </a>
-                <div class="dropdown-menu">
-                  <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="assets/img/flags/flag-01.png" alt="flag-image" height="16"> English
-                  </a>
-                  <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="assets/img/flags/flag-02.png" alt="flag-image" height="16"> French
-                  </a>
-                  <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="assets/img/flags/flag-03.png" alt="flag-image" height="16"> Spanish
-                  </a>
-                  <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="assets/img/flags/flag-05.png" alt="flag-image" height="16"> German
-                  </a>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </nav>
-      </header>
- 
-

@@ -1,5 +1,8 @@
 <app-doctor-breadcrumb></app-doctor-breadcrumb>
 <!-- Page Content -->
+<div *ngIf="isProfilePending" class="alert alert-warning text-center" style="margin-top: 10px; width: 75%; margin-left: auto; margin-right: auto;">
+  Your doctor profile is not approved yet. Please wait for admin approval.
+</div>
 <div class="content">
   <div class="container">
     <div class="row">
@@ -233,11 +236,11 @@
                   <div class="d-flex recent-patient-grid-boxes">
                     <ng-container *ngFor="let patient of recentPatients; let i = index">
                       <div class="recent-patient-grid">
-                        <a [routerLink]="routes.patientDetails" class="patient-img">
+                        <a Style = "cursor:default" class="patient-img">
                           <img [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'" alt="Img" />
                         </a>
                         <h5>
-                          <a [routerLink]="routes.patientDetails">{{ patient?.name || 'Unknown' }}</a>
+                          <a Style = "cursor:default">{{ patient?.name || 'Unknown' }}</a>
                         </h5>
                         <span>Patient ID : {{ formatPatientId(patient?._id || 'P000' + (i+1)) }}</span>
                         <div class="date-info">
@@ -247,11 +250,11 @@
                     </ng-container>
                     <ng-container *ngIf="recentPatients.length === 0">
                       <div class="recent-patient-grid">
-                        <a [routerLink]="routes.patientDetails" class="patient-img">
+                        <a Style = "cursor:default" class="patient-img">
                           <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img" />
                         </a>
                         <h5>
-                          <a [routerLink]="routes.patientDetails">No Recent Patient</a>
+                          <a Style = "cursor:default">No Recent Patient</a>
                         </h5>
                         <span>Patient ID : --</span>
                         <div class="date-info">

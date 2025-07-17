@@ -98,7 +98,8 @@ exports.login = async (req, res, next) => {
         name: user.name,
         role: user.role,
         profileImgUrl: user.profileImgUrl || null,
-        profileImage: user.profileImage || null
+        profileImage: user.profileImage || null,
+        isApproved: user.isApproved
       }
     });
   } catch (err) { next(err); }

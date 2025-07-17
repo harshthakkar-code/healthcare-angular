@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+  import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private userSubject = new BehaviorSubject<any>(this.getUserFromStorage());
+  user$ = this.userSubject.asObservable();
+
   constructor(private router: Router) {}
+
+  private getUserFromStorage() {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
   setAuth(token: string, user: any) {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
@@ -20,6 +30,7 @@ export class AuthService {
     } else if (user.role === 'pharmacy') {
       localStorage.setItem('authenticated-pharmacy', 'true');
     }
+    this.userSubject.next(user); // Emit user change
   }
 
   isAuthenticated(role: string): boolean {
@@ -41,6 +52,7 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
+    this.userSubject.next(null); // Emit user change
     this.router.navigate(['/index']);
   }
 } 

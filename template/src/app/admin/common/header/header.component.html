@@ -108,21 +108,21 @@
         <!-- User Menu -->
         <li class="nav-item dropdown has-arrow">
             <a href="javascript:void(0)" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                <span class="user-img"><img class="rounded-circle" src="assets/admin/img/profiles/avatar-01.jpg" width="31" alt="Ryan Taylor"></span>
+                <span class="user-img"><img class="rounded-circle" [src]="getDoctorImage()" (error)="onImgError($event)" width="31"></span>
             </a>
             <div class="dropdown-menu">
                 <div class="user-header">
                     <div class="avatar avatar-sm">
-                        <img src="assets/admin/img/profiles/avatar-01.jpg" alt="User Image" class="avatar-img rounded-circle">
+                        <img [src]="getDoctorImage()" (error)="onImgError($event)" alt="User Image" class="avatar-img rounded-circle">
                     </div>
                     <div class="user-text">
-                        <h6>Ryan Taylor</h6>
+                        <h6>{{ getUserName() }}</h6>
                         <p class="text-muted mb-0">Administrator</p>
                     </div>
                 </div>
                 <a class="dropdown-item" [routerLink] = "routes.adminProfile">My Profile</a>
                 <a class="dropdown-item" [routerLink] = "routes.adminSettings">Settings</a>
-                <a class="dropdown-item" [routerLink] = "routes.adminLogin">Logout</a>
+                <a class="dropdown-item" (click)="logout()">Logout</a>
             </div>
         </li>
         <!-- /User Menu -->

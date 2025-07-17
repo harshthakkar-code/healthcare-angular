@@ -1,33 +1,42 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Renderer2, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 import { CommonService } from 'src/app/shared/common/common.service';
 import { DataService } from 'src/app/shared/data/data.service';
 import { header } from 'src/app/shared/models/sidebar-model';
 import { routes } from 'src/app/shared/routes/routes';
 import { SidebarService } from 'src/app/shared/sidebar/sidebar.service';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
-    standalone: false
+  selector: 'app-header',
+  standalone: false,
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
+  user: any = null;
+  private userSub!: Subscription;
   public searchField  = false;
   public routes = routes;
   public header: header[];
   base = '';
   page = '';
   last = '';
+  isFixed = false;
   isSearch=false;
   isdark=true;
   islight=false;
+  isMenuOpened=false;
   themeColor = 'light-mode';
+  searchValue: string = '';
   constructor(
     private common: CommonService,
     private data: DataService,
+    private authService: AuthService,
     public sidebar: SidebarService,
     private router: Router,
+    private renderer: Renderer2
   ) {
     this.common.base.subscribe((res: string) => {
       this.base = res;
@@ -39,54 +48,101 @@ export class HeaderComponent {
       this.last = res;
     });
     this.header = this.data.header;
+    this.sidebar.themeColor.subscribe((res: string) => {
+      this.themeColor = res;
+    });
   }
+  
   public toggleSidebar(): void {
     this.sidebar.openSidebar();
+    this.isMenuOpened=true;
   }
   public hideSidebar(): void {
     this.sidebar.closeSidebar();
+    this.isMenuOpened=false;
+  }
+  closeOverlay() :void{
+    this.sidebar.closeSidebar();
+    this.isMenuOpened=false;
   }
   toggleSearch(){
     this.searchField = !this.searchField
   }
-  openSearch():void{
-    this.isSearch=!this.isSearch;
-  }
   public navigation() {
     this.router.navigate([routes.search1]);
   }
-
- @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-
-    const headerOne = document.querySelector('.header-one');
-    if (headerOne && scroll > 35) {
-      headerOne.classList.add('header-space');
-    } else if (headerOne) {
-      headerOne.classList.remove('header-space');
-    }
-
-    const headerTen = document.querySelector('.header-ten');
-    if (headerTen && scroll > 35) {
-      headerTen.classList.add('header-space');
-    } else if (headerTen) {
-      headerTen.classList.remove('header-space');
+  onSearchSubmit(event: Event) {
+    event.preventDefault();
+    if (this.searchValue && this.searchValue.trim()) {
+      this.router.navigate(['/patients/search-doctor/search1'], { queryParams: { q: this.searchValue.trim() } });
+      this.isSearch = false;
     }
   }
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    // Add a fixed class when the scroll position is greater than 50px
+    this.isFixed = window.pageYOffset > 50;
+  }
+  openSearch():void{
+    this.isSearch=!this.isSearch;
+  }
   ngOnInit(): void {
+    this.userSub = this.authService.user$.subscribe(user => {
+      this.user = user;
+    });
     const themeColor = localStorage.getItem('themeColor') || 'light-mode';
     this.sidebar.changeThemeColor(themeColor);
   }
+
+  ngOnDestroy(): void {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
+  }
+
   darkMode():void{
     this.isdark=!this.isdark;
     this.islight=!this.islight;
   }
-
-  onSubmit():void{
-    this.router.navigateByUrl('/search-doctor/search1');
-  }
   navigate():void{
     this.router.navigate([routes.search1]);
+  }
+  goToDashboard() {
+    const role = this.user?.role;
+    if (role === 'patient') {
+      this.router.navigate(['/patients/patient-dashboard']);
+    } else if (role === 'doctor') {
+      this.router.navigate(['/doctors/doctor-dashboard']);
+    } else if (role === 'admin') {
+      this.router.navigate(['/admin/dashboard']);
+    }
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.user;
+  }
+
+  getUserName(): string {
+    return this.user?.name || '';
+  }
+
+  getUserImage(): string | null {
+    return this.user?.profileImgUrl ? this.user.profileImgUrl : null;
+  }
+
+  getUserInitials(): string {
+    if (!this.user?.name) return '';
+    const names = this.user.name.trim().split(' ');
+    if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+  }
+
+  get isDoctor(): boolean {
+    return this.user?.role === 'doctor';
+  }
+
+  logout() {
+    this.authService.logout();
+    // this.user = null; // No longer needed, handled by observable
   }
 }
