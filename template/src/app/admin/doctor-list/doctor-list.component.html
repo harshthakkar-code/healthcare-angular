@@ -45,7 +45,8 @@
                     <th mat-sort-header="speciality">Speciality</th>
                     <th mat-sort-header="memberSince">Member Since</th>
                     <th mat-sort-header="earned">Earned</th>
-                    <th mat-sort-header="accountStatus">Account Status</th>
+                    <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -53,41 +54,51 @@
                     <tr>
                       <td>
                         <h2 class="table-avatar">
-                          <a  style="cursor: default;" class="avatar avatar-sm me-2"><img class="avatar-img rounded-circle" [src]="getDoctorImage(data)" alt="User Image" (error)="onImgError($event)"></a>
-                          <a  style="cursor: default;">{{data.doctorName}}</a>
+                          <a style="cursor: default;" class="avatar avatar-sm me-2">
+                            <img class="avatar-img rounded-circle" [src]="getDoctorImage(data)" alt="User Image" (error)="onImgError($event)">
+                          </a>
+                          <a style="cursor: default;">{{data.doctorName}}</a>
                         </h2>
                       </td>
                       <td>{{data.speciality}}</td>
                       <td>{{data.memberSince}} <br><small>{{data.time}}</small></td>
                       <td>{{data.earned}}</td>
                       <td>
-                        <ng-container [ngSwitch]="data.isApproved">
-                          <ng-container *ngSwitchCase="'pending'">
-                            <div class="status-row">
-                              <button type="button" class="text-success-icon btn btn-link p-0" (click)="approveDoctor(data)" [disabled]="isLoading">
-                                <i class="fa-solid fa-check"></i>
+                        <span [ngClass]="{
+                          'status-badge pending': data.isApproved === 'pending',
+                          'status-badge approved': data.isApproved === 'true',
+                          'status-badge rejected': data.isApproved === 'false'
+                        }">
+                          {{
+                            data.isApproved === 'pending' ? 'Pending' :
+                            data.isApproved === 'true' ? 'Approved' :
+                            data.isApproved === 'false' ? 'Rejected' : ''
+                          }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="action-center">
+                          <ng-container [ngSwitch]="data.isApproved">
+                            <ng-container *ngSwitchCase="'pending'">
+                              <button class="icon-btn text-success" (click)="approveDoctor(data)" [disabled]="isLoading" data-tooltip="Accept">
+                                <i class="fa fa-check"></i>
                               </button>
-                              <span class="status-badge pending">Pending</span>
-                            </div>
-                          </ng-container>
-                          <ng-container *ngSwitchCase="'true'">
-                            <div class="status-row">
-                              <button type="button" class="text-danger-icon btn btn-link p-0" (click)="rejectDoctor(data)" [disabled]="isLoading">
-                                <i class="fa-solid fa-xmark"></i>
+                              <button class="icon-btn text-danger" (click)="rejectDoctor(data)" [disabled]="isLoading" data-tooltip="Reject">
+                                <i class="fa fa-times"></i>
                               </button>
-                              <span class="status-badge approved">Approved</span>
-                            </div>
-                          </ng-container>
-                          <ng-container *ngSwitchCase="'false'">
-                            <div class="status-row">
-                              <button type="button" class="text-success-icon btn btn-link p-0" (click)="approveDoctor(data)" [disabled]="isLoading">
-                                <i class="fa-solid fa-check"></i>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'true'">
+                              <button class="icon-btn text-danger" (click)="rejectDoctor(data)" [disabled]="isLoading" data-tooltip="Reject">
+                                <i class="fa fa-times"></i>
                               </button>
-                              <span class="status-badge rejected">Rejected</span>
-                            </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'false'">
+                              <button class="icon-btn text-success" (click)="approveDoctor(data)" [disabled]="isLoading" data-tooltip="Accept">
+                                <i class="fa fa-check"></i>
+                              </button>
+                            </ng-container>
                           </ng-container>
-                        </ng-container>
-                        <span *ngIf="isLoading" class="ms-2"><i class="fa fa-spinner fa-spin"></i></span>
+                        </div>
                       </td>
                     </tr>
                   }
