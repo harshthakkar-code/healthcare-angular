@@ -36,10 +36,12 @@
                                         <label class="form-label">Create Password</label>
                                     </div>
                                     <div class="pass-group">
-                                        <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" name="password" [(ngModel)]="password" (ngModelChange)="passwordError = ''">
+                                        <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" name="password" [(ngModel)]="password" (keyup)="validatePassword()">
                                         <span class="toggle-password-sub" (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" [ngClass]=" togglePasswordClass ?  'feather-eye' : 'feather-eye-off'"></span>
                                     </div>
-                                    <div *ngIf="passwordError" class="text-danger small">{{ passwordError }}</div>
+                                    <div *ngIf="passwordError.length" class="text-danger small">
+                                      <div *ngFor="let err of passwordError">{{ err }}</div>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <button type="submit" class="btn btn-primary-gradient w-100">Sign Up</button>
