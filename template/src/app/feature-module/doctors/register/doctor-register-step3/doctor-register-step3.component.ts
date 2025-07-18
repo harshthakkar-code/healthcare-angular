@@ -55,7 +55,7 @@ export class DoctorRegisterStep3Component {
       const response = await api.post('/auth/register', payload);
       console.log('Registration API Success:', response.data);
       this.regService.clear();
-      this.router.navigate(['/authentication/login']);
+      this.router.navigate(['/authentication/register/registration-success']);
     } catch (error) {
       console.error('Registration API Error:', error);
     }

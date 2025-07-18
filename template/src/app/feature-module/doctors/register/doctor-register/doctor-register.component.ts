@@ -60,6 +60,7 @@ export class DoctorRegisterComponent implements AfterViewInit {
     register: '/register',
     doctorRegisterStep1: '/doctors/register/doctor-register-step1',
     userLogin: '/login',
+    registrationSuccess: '/doctors/register/registration-success',
   };
   iti: any;
 
@@ -140,7 +141,7 @@ export class DoctorRegisterComponent implements AfterViewInit {
       phone: this.phone,
       password: this.password
     });
-    this.router.navigate([this.routes.doctorRegisterStep1]);
+    this.router.navigate([this.routes.registrationSuccess]);
   }
 
   ngAfterViewInit(): void {
