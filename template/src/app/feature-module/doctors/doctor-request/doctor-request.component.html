@@ -63,6 +63,9 @@
                             </ul>
                         </li>
                     </ul>
+                    <div *ngIf="statusError[apt._id]" class="text-danger mt-2">
+                        {{ statusError[apt._id] }}
+                    </div>
                 </div>
                 <!-- /Dynamic Request List -->
                 <!-- <div class="row">

@@ -9,7 +9,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, role, phone, gender, clinicName, clinicAddress, address, address2, city, state, pincode, weight, height, age, blood } = req.body;
+    const { name, email, password, role, phone, gender, clinicName, clinicAddress, address, address2, city, state, pincode, weight, height, age, blood , isApproved} = req.body;
 
     // 1. Validate required fields
     if (!name || !email || !password || !role || !phone || !gender) {
@@ -50,7 +50,7 @@ exports.register = async (req, res, next) => {
       role,
       phone,
       gender,
-      isApproved: role === 'doctor' ? false : true,
+      isApproved,
       clinicName,
       clinicAddress,
       address,

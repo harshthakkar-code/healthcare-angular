@@ -246,9 +246,19 @@ exports.updateAppointmentStatus = async (req, res, next) => {
     if (status === 'completed') {
       const today = new Date();
       const apptDate = new Date(appointment.date);
-      // If appointment.date is only a date string (YYYY-MM-DD), this works
       if (today < apptDate.setHours(0,0,0,0)) {
         return res.status(400).json({ message: 'Cannot mark as completed before appointment date.' });
+      }
+    }
+
+    // Only allow rejecting if more than 24 hours before appointment date/time
+    if (status === 'rejected') {
+      const now = new Date();
+      const apptDate = new Date(appointment.date);
+      const diffMs = apptDate.getTime() - now.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      if (diffHours <= 24) {
+        return res.status(400).json({ message: 'Cannot reject appointment less than 24 hours before the appointment time.' });
       }
     }
     appointment.status = status;
