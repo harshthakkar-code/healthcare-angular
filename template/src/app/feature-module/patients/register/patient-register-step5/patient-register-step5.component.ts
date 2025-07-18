@@ -51,7 +51,7 @@ export class PatientRegisterStep5Component {
       const response = await api.post('/auth/register', payload);
       console.log('Registration successful:', response.data);
       this.patientRegService.clear();
-      this.router.navigate([this.routes.patientDashboard]);
+      this.router.navigate(['/authentication/register/registration-success']);
     } catch (error) {
       const err = error as any;
       console.error('Registration failed:', err.response?.data || err.message);

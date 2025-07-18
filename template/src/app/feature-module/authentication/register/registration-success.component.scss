@@ -1,0 +1,27 @@
+.success-outer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+}
+
+.success-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.success-container h2 {
+  color: #28a745;
+  margin-bottom: 16px;
+}
+
+.success-container p {
+  margin-bottom: 24px;
+  color: #333;
+} 
