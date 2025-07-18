@@ -9,7 +9,7 @@
                 <div class="doctor-widget">
                     <div class="doc-info-left">
                         <div class="doctor-img">
-                            <img [src]="profile?.profileImage ? 'assets/img/doctors/' + profile.profileImage : 'assets/img/doctors/doc-profile-02.jpg'" class="img-fluid" alt="User Image">
+                             <img [src]="getDoctorImage(profile)" class="img-fluid" alt="" (error)="onImgError($event)">
                         </div>
                         <div class="doc-info-cont">
                             <h4 class="doc-name">Dr.{{ profile?.name || 'Doctor Name' }}</h4>
@@ -398,17 +398,17 @@
                                     <div class="comment">
                                         <img class="avatar avatar-sm rounded-circle" alt="User Image" [src]="review?.patient?.profileImgUrl || 'assets/img/clients/client-13.jpg'">
                                         <div class="comment-body">
-                                            <div class="meta-data">
+                                            <div class="meta-data d-flex justify-content-between align-items-center">
                                                 <span class="comment-author">
                                                     {{ (review?.patient?.name?.length > 12) ? (review?.patient?.name | slice:0:12) + '...' : (review?.patient?.name || 'Anonymous') }}
                                                 </span>
-                                                <span class="comment-date">{{ timeAgo(review?.createdAt) }}</span>
                                                 <div class="review-count rating">
                                                     <ng-container *ngFor="let star of [1,2,3,4,5]">
                                                         <i class="fas fa-star" [ngClass]="{'filled': review?.rating >= star}"></i>
                                                     </ng-container>
                                                 </div>
                                             </div>
+                                            <span class="comment-date">{{ timeAgo(review?.createdAt) }}</span>
                                             <p class="recommended" *ngIf="review?.recommended"><i class="far fa-thumbs-up"></i> I recommend the doctor</p>
                                             <p class="comment-content">{{ review?.comment }}</p>
                                         </div>

@@ -132,6 +132,12 @@ export class DoctorProfile2Component implements OnInit {
     if (diffDay === 1) return 'Yesterday';
     return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
   }
+      getDoctorImage(doctor: any): string {
+    return doctor.profileImgUrl || doctor.profileSettings?.profileImgUrl || doctor.profileImage || '';
+  }
+  onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/img/doctors/doc-profile-02.jpg';
+  }
 
   async submitReview() {
     if (!this.newReview.rating || !this.newReview.comment || !this.profile?._id) return;

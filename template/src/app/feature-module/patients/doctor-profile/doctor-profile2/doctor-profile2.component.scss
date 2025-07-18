@@ -1,0 +1,44 @@
+.comment {
+  display: flex;
+  align-items: flex-start;
+}
+
+.avatar {
+  margin-right: 12px;
+}
+
+.comment-body {
+  width: 100%;
+}
+
+.meta-data {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50%;
+}
+
+.review-count.rating {
+  margin-left: 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// Optional: adjust spacing for the comment date if needed
+.comment-date {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
