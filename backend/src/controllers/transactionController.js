@@ -556,4 +556,39 @@ exports.getStripeChargeDetails = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+// Reusable refund function
+async function refundTransactionById(id) {
+  const transaction = await Transaction.findById(id);
+  if (!transaction) throw new Error('Transaction not found');
+  if (transaction.status !== 'paid') throw new Error('Only paid transactions can be refunded.');
+
+  const paymentIntentId = transaction.paymentIntentId;
+  if (!paymentIntentId) throw new Error('No paymentIntentId found for this transaction.');
+
+  const refund = await stripe.refunds.create({
+    payment_intent: paymentIntentId,
+    amount: Math.round(transaction.amount * 100),
+  });
+
+  transaction.status = 'refunded';
+  transaction.stripeStatus = 'refunded';
+  transaction.refundId = refund.id;
+  await transaction.save();
+  console.log(transaction)
+
+  // return { refund, transaction };
+  return { transaction };
+
+}
+
+exports.refundTransaction = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await refundTransactionById(id);
+    console.log(result)
+    res.json({ message: 'Refund processed', ...result });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 }; 

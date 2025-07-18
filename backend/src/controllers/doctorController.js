@@ -10,6 +10,7 @@ const Service = require('../models/Service');
 const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
+const { refundTransactionById } = require('./transactionController');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -262,6 +263,19 @@ exports.updateAppointmentStatus = async (req, res, next) => {
       if (diffHours <= 24) {
         return res.status(400).json({ message: 'Cannot reject appointment less than 24 hours before the appointment time.' });
       }
+      appointment.status = status;
+      await appointment.save();
+      // Refund logic
+      const transaction = await Transaction.findOne({ appointment: appointment._id, status: 'paid' });
+      if (transaction) {
+        try {
+          await refundTransactionById(transaction._id);
+        } catch (refundErr) {
+          console.error('Refund failed:', refundErr);
+          // Optionally: return res.status(500).json({ message: 'Refund failed', error: refundErr.message });
+        }
+      }
+      return res.json(appointment);
     }
     appointment.status = status;
     await appointment.save();

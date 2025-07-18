@@ -11,6 +11,7 @@ router.get('/user/:userId', auth, transactionController.getTransactionsByUser);
 router.get('/:id', auth, transactionController.getTransaction);
 router.put('/:id', auth, transactionController.updateTransaction);
 router.delete('/:id', auth, transactionController.deleteTransaction);
+router.post('/:id/refund', auth, transactionController.refundTransaction);
 
 // Stripe payment and webhook
 router.post('/stripe/pay', auth, transactionController.createStripePayment);
