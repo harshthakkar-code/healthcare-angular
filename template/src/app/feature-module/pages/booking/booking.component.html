@@ -289,10 +289,7 @@
 														<div class="col-lg-7">	
 															<div class="card booking-wizard-slots">
 																<div class="card-body">
-																	<!-- <div class="book-title">	
-																		<h6 class="fs-14 mb-2">Morning</h6>
-																	</div> -->
-																	<!-- Morning Slots -->
+																
 <div class="book-title">  
   <h6 class="fs-14 mb-2">Morning</h6>
 </div>
@@ -308,10 +305,10 @@
           (click)="onSlotSelected(slot)"
           [value]="slot._id"
           name="appointmentSlot"
+		  
         >
-        <span class="visit-rsn" style="min-width: 100px;">
+        <span class="visit-rsn" style="margin-right: 10px;">
           {{ slot.startTime }} 
-          <span *ngIf="slot.status === 'booked'">(Booked)</span>
         </span>
       </label>
     </div>
@@ -337,9 +334,8 @@
           [value]="slot._id"
           name="appointmentSlot"
         >
-        <span class="visit-rsn">
+        <span class="visit-rsn" style="margin-right: 10px;">
           {{ slot.startTime }}
-          <span *ngIf="slot.status === 'booked'">(Booked)</span>
         </span>
       </label>
     </div>
@@ -392,7 +388,7 @@
 																						[value]="slot._id"
 																						name="appointmentSlot"
 																					>
-																					<span class="visit-rsn">
+																					<span class="visit-rsn" style="margin-right: 10px;">
 																						{{ slot.startTime }} 
 																						 
 																					</span>

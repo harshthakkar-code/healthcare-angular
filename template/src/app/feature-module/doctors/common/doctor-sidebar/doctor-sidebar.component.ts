@@ -138,5 +138,9 @@ getSpecializationRows(): any[][] {
   get availabilityText(): string {
     return this.availability ? 'Available' : 'Unavailable';
   }
+
+  get pendingRequestDisplay(): string {
+    return this.pendingRequestCount > 9 ? '9+' : this.pendingRequestCount.toString();
+  }
 }
 

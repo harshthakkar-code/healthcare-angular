@@ -46,8 +46,8 @@
 						display: flex;
 						align-items: center;
 						justify-content: center;
-						height: 14px;
-						width: 14px;
+						height: 18px;
+						width: 18px;
 						@include transform(translateY(-50%));
 						@include rounded(40px);
 						position: absolute;
