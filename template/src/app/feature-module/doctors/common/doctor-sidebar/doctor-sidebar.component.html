@@ -73,7 +73,7 @@
                         <a [routerLink] = "routes.doctorRequest">
                             <i class="isax isax-clipboard-tick"></i>
                             <span>Requests</span>
-                            <small class="unread-msg">{{ pendingRequestCount }}</small>
+                            <span class="unread-msg">{{ pendingRequestDisplay }}</span>
                         </a>
                     </li>
                     <li [ngClass]="{'active': page === 'appointments'}">

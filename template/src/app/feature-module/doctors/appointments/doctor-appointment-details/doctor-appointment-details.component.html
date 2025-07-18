@@ -11,7 +11,7 @@
                 <div class="dashboard-header">
                     <div class="header-back">
                         <a [routerLink] = "routes.appointmentsListUser" class="back-arrow"><i class="fa-solid fa-arrow-left"></i></a>
-                        <h3>Appointment Details</h3>
+                        <h3>Appointment Details00</h3>
                     </div>
                 </div>
                 <div class="appointment-details-wrap">
@@ -49,16 +49,23 @@
                                     <span class="badge bg-grey me-2">{{ appointment.patientType || 'New Patient' }}</span>
                                     <span class="badge bg-yellow">{{ appointment.status || 'Upcoming' }}</span>
                                 </div>
-                                <div class="consult-fees">
+                                <!-- <div class="consult-fees">
                                     <h6>Consultation Fees : ${{ appointment.price || '-' }}</h6>
-                                </div>
+                                </div> -->
                                 <ul>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-comments"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><i class="fa-solid fa-xmark"></i></a>
-                                    </li>
+                                    <ng-container *ngIf="appointment.status === 'pending'; else acceptedOnly">
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="acceptAppointment()" title="Accept Appointment"><i class="fa-solid fa-check"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="rejectAppointment()" title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
+                                        </li>
+                                    </ng-container>
+                                    <ng-template #acceptedOnly>
+                                        <li *ngIf="appointment.status === 'accepted'">
+                                            <a href="javascript:void(0);" (click)="rejectAppointment()" title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
+                                        </li>
+                                    </ng-template>
                                 </ul>
                             </li>
                         </ul>
@@ -68,8 +75,8 @@
                                 <span>{{ appointment.date | date:'mediumDate' }} - {{ appointment.time }}</span>
                             </li>
                             <li>
-                                <h6>Clinic Location</h6>
-                                <span>{{ appointment.clinicName || '-' }}</span>
+                                <h6>Symptoms</h6>
+                                <span>{{ appointment.symptoms || '-' }}</span>
                             </li>
                             <li>
                                 <h6>Location</h6>
@@ -85,6 +92,7 @@
                                 </div>
                             </li>
                         </ul>
+                                <div *ngIf="errorMessage" class="text-danger small">{{ errorMessage }}</div>
                     </div>
                     <!-- /Appointment Detail Card -->
 
