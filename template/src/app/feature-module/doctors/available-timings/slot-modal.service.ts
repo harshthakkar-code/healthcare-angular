@@ -8,7 +8,7 @@ export class SlotModalService {
     startTime: '',
     endTime: '',
     duration: 30,
-    interval: 10,
+    // interval: 10,
     fees: 0,
     spaces: 1,
     day: 'Monday',
@@ -31,7 +31,7 @@ export class SlotModalService {
       startTime: '',
       endTime: '',
       duration: 30,
-      interval: 10,
+      // interval: 10,
       fees: 0,
       spaces: 1,
       day: 'Monday',
@@ -46,7 +46,7 @@ export class SlotModalService {
     startTime: '',
     endTime: '',
     duration: 30,
-    interval: 10,
+    // interval: 10,
     fees: 0,
     spaces: 1,
     day: 'Monday',
@@ -59,6 +59,7 @@ export class SlotModalService {
   slotUpdated$ = this.slotUpdatedSource.asObservable();
 
   emitSlotUpdated(slotData: any) {
+    console.log(slotData)
     this.slotUpdatedSource.next(slotData);
   }
 
@@ -68,7 +69,7 @@ export class SlotModalService {
       startTime: '',
       endTime: '',
       duration: 30,
-      interval: 10,
+      // interval: 10,
       fees: 0,
       spaces: 1,
       day: 'Monday',

@@ -63,15 +63,13 @@
                         <!-- <div class="text-muted small mb-2">{{ getDateForWeekday(selectedDay) }}</div> -->
                         <ul class="time-slots" *ngIf="hasAnySlotsForSelectedDay; else noSlots">
                           <!-- Pending slots (not yet saved) -->
-                          <li *ngFor="let slot of pendingSlotsForSelectedDay" style="opacity:0.6;">
+                          <li *ngFor="let slot of pendingSlotsForSelectedDay" style="opacity:0.6;" (click)="openEditSlotModal(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }} <span class="text-warning">(Pending)</span>
                           </li>
-                          <!-- Saved slots -->
-                          <li *ngFor="let slot of slotsByDay[selectedDay]" (click)="onSlotSelect(slot)">
+                          <!-- Saved slots (show as pending if isPending is true) -->
+                          <li *ngFor="let slot of slotsByDay[selectedDay]" style="cursor: pointer;" (click)="onSlotSelect(slot); openEditSlotModal(slot)">
                             <i class="isax isax-clock"></i>{{ formatTime12(slot.startTime) }}
-                            <button class="btn btn-link btn-sm p-0 ms-2" (click)="openEditSlotModal(slot); $event.stopPropagation();" title="Edit Slot">
-                              <i class="fa fa-edit"></i>
-                            </button>
+                            <span *ngIf="slot.isPending" class="text-warning">(Pending)</span>
                           </li>
                         </ul>
                         <ng-template #noSlots>
@@ -82,14 +80,15 @@
                   </div>
                 </div>
 
-                <div class="form-wrap">
+                <!-- Remove the appointment fees input and related logic from here -->
+                <!-- <div class="form-wrap">
                   <label class="col-form-label" for="Appointment Fees">Appointment Fees ($)</label>
                   <input type="number" class="form-control" [(ngModel)]="appointmentFees" />
-                </div>
+                </div> -->
                 <div *ngIf="updateError" class="text-danger mb-2" style="font-size: 14px;">{{ updateError }}</div>
-                <div class="modal-btn text-end mt-3">
-                  <button class="btn btn-primary prime-btn" (click)="saveAllSlots()" [disabled]="!pendingSlots.length || loading">Save Changes</button>
-                  <button class="btn btn-primary prime-btn ms-2" (click)="updateSlotFees()" [disabled]="!selectedSlotId || loading">Save Fee for Selected Slot</button>
+                <div class="modal-btn text-end mt-3 d-flex align-items-center justify-content-end">
+                  <div *ngIf="slotListError" class="text-danger small me-5">{{ slotListError }}</div>
+                  <button class="btn btn-primary prime-btn" (click)="saveAllSlots()" [disabled]="(!pendingSlots.length && !hasAnyEditedSavedSlots()) || loading">Save Changes</button>
                 </div>
               </div>
             </div>
@@ -163,10 +162,10 @@
                   </div>
                 </div>
 
-                <div class="form-wrap">
+                <!-- <div class="form-wrap">
                   <label class="col-form-label" for="Appointment Fees">Appointment Fees ($)</label>
                   <input type="number" class="form-control" [(ngModel)]="appointmentFees" />
-                </div>
+                </div> -->
                 <div *ngIf="updateError" class="text-danger mb-2">{{ updateError }}</div>
                 <div class="modal-btn text-end">
                   <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal"

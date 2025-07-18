@@ -59,6 +59,11 @@ export class ModalComponent implements OnInit {
   public time2 = [0];
   public time3 = [0];
   public hours = [0];
+  minutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  startHour = 9;
+  startMinute = 0;
+  editHour = 9;
+  editMinute = 0;
 
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptionsOne!: Partial<ChartOptions>;
@@ -71,7 +76,7 @@ export class ModalComponent implements OnInit {
     startTime: '',
     endTime: '',
     duration: 30,
-    interval: 0,
+    // interval: 0,
     fees: 0,
     spaces: 1,
     // Add more fields as needed
@@ -423,30 +428,21 @@ export class ModalComponent implements OnInit {
       startTime: this.slotModalService.slotForm.startTime,
       endTime: this.slotModalService.slotForm.endTime,
       duration: this.slotModalService.slotForm.duration,
-      interval: this.slotModalService.slotForm.interval,
+      // interval: this.slotModalService.slotForm.interval, // commented out
       fees: latestFees,
       spaces: this.slotModalService.slotForm.spaces,
       day: selectedDay,
       type: this.slotModalService.slotForm.type, // Ensure type is included
     };
-    // Check for overlap before emitting
-    try {
-      const res = await this.slotService.checkSlotOverlap(slotData).toPromise();
-      console.log(res)
-      if (res?.data?.overlap) {
-        this.savingSlot = false;
-        this.slotApiError = `Slot conflicts with: ${res.data.conflictTimes.join(', ')}`;
-        if (this.slotApiError) {
-          setTimeout(() => { this.slotApiError = ''; }, 3000);
-        }
-        // Do NOT close the modal
-        return;
-      }
-    } catch (err) {
+    // Gather all slots for overlap check (saved + pending)
+    const allSlots = [
+      ...(window as any).availableTimingsComponentRef?.slotsByDay?.[selectedDay] || [],
+      ...(window as any).availableTimingsComponentRef?.pendingSlots?.filter((s: any) => s.day === selectedDay && s.type === slotData.type) || []
+    ];
+    if (this.isSlotOverlapping(slotData, allSlots)) {
       this.savingSlot = false;
-      this.slotApiError = 'Error checking slot overlap.';
+      this.slotApiError = 'Slot overlaps with an existing slot.';
       setTimeout(() => { this.slotApiError = ''; }, 3000);
-      // Do NOT close the modal
       return;
     }
     // No overlap, emit slotData to parent
@@ -678,44 +674,37 @@ export class ModalComponent implements OnInit {
       startTime: this.slotModalService.editSlotForm.startTime,
       endTime: this.slotModalService.editSlotForm.endTime,
       duration: this.slotModalService.editSlotForm.duration,
-      interval: this.slotModalService.editSlotForm.interval,
+      // interval: this.slotModalService.editSlotForm.interval, // commented out
       fees: latestFees,
       spaces: this.slotModalService.editSlotForm.spaces,
       day: selectedDay,
       type: this.slotModalService.editSlotForm.type, // Ensure type is included
+      id: this.slotModalService.editSlotForm.id // include id for saved slots
     };
-    const slotId = this.slotModalService.editSlotForm.id;
-    // Check for overlap before updating
-    try {
-      const res = await this.slotService.checkSlotOverlap({ ...slotData, id: slotId }).toPromise();
-      if (res?.data?.overlap) {
-        this.savingEditSlot = false;
-        this.editSlotError = `Slot conflicts with: ${res.data.conflictTimes.join(', ')}`;
-        if (this.editSlotError) {
-          setTimeout(() => { this.editSlotError = ''; }, 3000);
-        }
-        return;
-      }
-    } catch (err) {
+    // Gather all slots for overlap check (saved + pending), exclude self if editing a pending slot
+    let allSlots = [
+      ...(window as any).availableTimingsComponentRef?.slotsByDay?.[selectedDay] || [],
+      ...(window as any).availableTimingsComponentRef?.pendingSlots?.filter((s: any) =>
+        s.day === selectedDay &&
+        s.type === slotData.type &&
+        // Exclude self by strict object reference if editing a pending slot
+        (s !== this.slotModalService.editSlotForm)
+      ) || []
+    ];
+    if (this.isSlotOverlapping(slotData, allSlots)) {
       this.savingEditSlot = false;
-      this.editSlotError = 'Error checking slot overlap.';
-      setTimeout(() => { this.editSlotError = ''; }, 3000);
+      this.slotApiError = 'Slot overlaps with an existing slot.';
+      setTimeout(() => { this.slotApiError = ''; }, 3000);
       return;
     }
-    // Call backend to update slot
-    try {
-      await this.slotService.updateSlot(slotId, slotData).toPromise();
-      this.savingEditSlot = false;
-      this.editSlotError = '';
-      this.slotModalService.emitSlotUpdated({ ...slotData, id: slotId });
-      this.slotModalService.resetEditForm();
-      const modal = document.getElementById('edit_slot');
-      if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
-    } catch (err: any) {
-      this.savingEditSlot = false;
-      this.editSlotError = err?.error?.error || 'Failed to update slot.';
-      setTimeout(() => { this.editSlotError = ''; }, 3000);
-    }
+    // Only emit the updated slot, do not call backend
+    this.slotModalService.emitSlotUpdated({ ...slotData });
+    // this.slotModalService.resetEditForm();
+    const modal = document.getElementById('edit_slot');
+    if (modal) (window as any).bootstrap?.Modal.getOrCreateInstance(modal).hide();
+    this.savingEditSlot = false;
+    this.editSlotError = '';
+    return;
   }
 
   onEditStartTimeChange() {
@@ -750,6 +739,43 @@ export class ModalComponent implements OnInit {
       this.editSlotError = 'Start time must be before end time.';
     } else {
       this.editSlotError = '';
+    }
+  }
+
+  onCustomTimeChange() {
+    this.slotModalService.slotForm.startTime =
+      `${this.startHour.toString().padStart(2, '0')}:${this.startMinute.toString().padStart(2, '0')}`;
+    this.onStartTimeChange();
+  }
+
+  onCustomEditTimeChange() {
+    this.slotModalService.editSlotForm.startTime =
+      `${this.editHour.toString().padStart(2, '0')}:${this.editMinute.toString().padStart(2, '0')}`;
+    this.onEditStartTimeChange();
+  }
+
+  // Helper to check for slot overlap
+  isSlotOverlapping(newSlot: any, allSlots: any[]): boolean {
+    const newStart = this.timeToMinutes(newSlot.startTime);
+    const newEnd = this.timeToMinutes(newSlot.endTime);
+    return allSlots.some(slot => {
+      if ((slot._id || slot.id) && (slot._id === newSlot._id || slot.id === newSlot.id)) return false;
+      if (slot.day !== newSlot.day || slot.type !== newSlot.type) return false;
+      const slotStart = this.timeToMinutes(slot.startTime);
+      const slotEnd = this.timeToMinutes(slot.endTime);
+      const overlap = newStart < slotEnd && newEnd > slotStart;
+      console.log(`Comparing new [${newSlot.startTime}-${newSlot.endTime}] (${newStart}-${newEnd}) with existing [${slot.startTime}-${slot.endTime}] (${slotStart}-${slotEnd}) => overlap: ${overlap}`);
+      return overlap;
+    });
+  }
+  timeToMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  onFeesInputChange() {
+    if (this.slotApiError && this.slotModalService.slotForm.fees > 0) {
+      this.slotApiError = '';
     }
   }
 }

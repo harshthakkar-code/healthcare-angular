@@ -1215,17 +1215,17 @@
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="start">Start Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.startTime" name="startTime" required (ngModelChange)="onStartTimeChange()">
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.startTime" name="startTime" required (ngModelChange)="onStartTimeChange()" step="300">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="end">End Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.endTime" name="endTime" required (ngModelChange)="validateSlotTimes()">
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.slotForm.endTime" name="endTime" required (ngModelChange)="validateSlotTimes()" [disabled]="true">
                   <div *ngIf="slotError" class="text-danger small mt-1">{{ slotError }}</div>
                 </div>
               </div>
-              <div class="col-md-6">
+              <!-- <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="appoinment">Appointment Intervals</label>
                   <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.slotForm.interval" name="duration">
@@ -1234,7 +1234,14 @@
                     <mat-option [value]="30">30 Minutes</mat-option>
                   </mat-select>
                 </div>
-              </div>
+              </div> -->
+               <!-- Add Slot Modal Fees Input -->
+          <div class="col-md-6">
+            <div class="form-wrap">
+              <label class="col-form-label" for="fees">Appointment Fees</label>
+              <input type="number" class="form-control" [(ngModel)]="slotModalService.slotForm.fees" name="fees" min="1" required (input)="onFeesInputChange()">
+            </div>
+          </div>
               <div class="col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="Durations">Appointment Durations</label>
@@ -1269,11 +1276,12 @@
               </div>
             </div>
           </div>
+         
         </div>
         <div class="modal-footer">
           <div class="modal-btn text-end">
             <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</a>
-            <button type="submit" class="btn btn-primary prime-btn" [disabled]="savingSlot">Save Changes</button>
+            <button type="submit" class="btn btn-primary prime-btn" [disabled]="savingSlot || !slotModalService.slotForm.fees || slotModalService.slotForm.fees <= 0">Save Changes</button>
           </div>
         </div>
       </form>
@@ -1281,6 +1289,100 @@
   </div>
 </div>
 <!-- /Add Slots -->
+
+<!-- Edit Slot Modal -->
+<div class="modal fade custom-modals" id="edit_slot">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Slot</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form (ngSubmit)="updateSlot()">
+        <div class="modal-body">
+          <div *ngIf="editSlotError" class="alert alert-danger" style="font-size: 14px;">
+            {{ editSlotError }}
+          </div>
+          <div class="timing-modal">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-wrap">
+                  <label class="col-form-label" for="editStart">Start Time</label>
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.editSlotForm.startTime" name="editStartTime" required (ngModelChange)="onEditStartTimeChange()" step="300">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-wrap">
+                  <label class="col-form-label" for="editEnd">End Time</label>
+                  <input type="time" class="form-control" [(ngModel)]="slotModalService.editSlotForm.endTime" name="editEndTime" required (ngModelChange)="validateEditSlotTimes()" [disabled]="true">
+                  <!-- <div *ngIf="editSlotError" class="text-danger small mt-1">{{ editSlotError }}</div> -->
+                </div>
+              </div>
+              <!-- <div class="col-md-6">
+                <div class="form-wrap">
+                  <label class="col-form-label" for="editAppoinment">Appointment Intervals</label>
+                  <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.editSlotForm.interval" name="editInterval">
+                    <mat-option [value]="10">10 Minutes</mat-option>
+                    <mat-option [value]="20">20 Minutes</mat-option>
+                    <mat-option [value]="30">30 Minutes</mat-option>
+                  </mat-select>
+                </div>
+              </div> -->
+               <!-- Edit Slot Modal Fees Input -->
+          <div class="col-md-6">
+            <div class="form-wrap">
+              <label class="col-form-label" for="editFees">Appointment Fees</label>
+              <input type="number" class="form-control" [(ngModel)]="slotModalService.editSlotForm.fees" name="editFees" min="1" required (input)="onFeesInputChange()">
+            </div>
+          </div>
+              <div class="col-md-6">
+                <div class="form-wrap">
+                  <label class="col-form-label" for="editDurations">Appointment Durations</label>
+                  <mat-select class="custom-mat-select" placeholder="30 Minutes" [(ngModel)]="slotModalService.editSlotForm.duration" name="editDuration" (selectionChange)="onEditDurationChange()">
+                    <mat-option [value]="15">15 Minutes</mat-option>
+                    <mat-option [value]="30">30 Minutes</mat-option>
+                    <mat-option [value]="45">45 Minutes</mat-option>
+                    <mat-option [value]="60">1 Hour</mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-wrap mb-0">
+                  <label class="col-form-label d-block" for="editAssign">Assign Appointment Spaces</label>
+                  <div class="custom-control form-check custom-control-inline">
+                    <input type="radio" id="editSpace1" name="editSpaces" class="form-check-input" [value]="1" [(ngModel)]="slotModalService.editSlotForm.spaces">
+                    <label class="form-check-label" for="editSpace1">Space 1</label>
+                  </div>
+                  <div class="custom-control form-check custom-control-inline">
+                    <input type="radio" id="editSpace2" name="editSpaces" class="form-check-input" [value]="2" [(ngModel)]="slotModalService.editSlotForm.spaces">
+                    <label class="form-check-label" for="editSpace2">Space 2</label>
+                  </div>
+                  <div class="custom-control form-check custom-control-inline">
+                    <input type="radio" id="editSpace3" name="editSpaces" class="form-check-input" [value]="3" [(ngModel)]="slotModalService.editSlotForm.spaces">
+                    <label class="form-check-label" for="editSpace3">Space 3</label>
+                  </div>
+                  <div class="custom-control form-check custom-control-inline">
+                    <input type="radio" id="editSpace4" name="editSpaces" class="form-check-input" [value]="4" [(ngModel)]="slotModalService.editSlotForm.spaces">
+                    <label class="form-check-label" for="editSpace4">Space 4</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="modal-btn text-end">
+            <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</a>
+            <button type="submit" class="btn btn-primary prime-btn" [disabled]="savingEditSlot || !slotModalService.editSlotForm.fees || slotModalService.editSlotForm.fees <= 0">Save Changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- /Edit Slot Modal -->
 
 <!-- Remove Slots -->
 <div class="modal fade info-modal" id="delete_slot">
@@ -3201,90 +3303,3 @@
 			</div>
 		</div>
         <!-- /Payment Request Moodal -->
-
-<!-- Edit Slot Modal -->
-<div class="modal fade custom-modals" id="edit_slot">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Slot</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <form (ngSubmit)="updateSlot()">
-        <div class="modal-body">
-          <div *ngIf="editSlotError" class="alert alert-danger" style="font-size: 14px;">
-            {{ editSlotError }}
-          </div>
-          <div class="timing-modal">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-wrap">
-                  <label class="col-form-label" for="editStart">Start Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.editSlotForm.startTime" name="editStartTime" required (ngModelChange)="onEditStartTimeChange()">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-wrap">
-                  <label class="col-form-label" for="editEnd">End Time</label>
-                  <input type="time" class="form-control" [(ngModel)]="slotModalService.editSlotForm.endTime" name="editEndTime" required (ngModelChange)="validateEditSlotTimes()">
-                  <!-- <div *ngIf="editSlotError" class="text-danger small mt-1">{{ editSlotError }}</div> -->
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-wrap">
-                  <label class="col-form-label" for="editAppoinment">Appointment Intervals</label>
-                  <mat-select class="custom-mat-select" placeholder="10 Minutes" [(ngModel)]="slotModalService.editSlotForm.interval" name="editInterval">
-                    <mat-option [value]="10">10 Minutes</mat-option>
-                    <mat-option [value]="20">20 Minutes</mat-option>
-                    <mat-option [value]="30">30 Minutes</mat-option>
-                  </mat-select>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-wrap">
-                  <label class="col-form-label" for="editDurations">Appointment Durations</label>
-                  <mat-select class="custom-mat-select" placeholder="30 Minutes" [(ngModel)]="slotModalService.editSlotForm.duration" name="editDuration" (selectionChange)="onEditDurationChange()">
-                    <mat-option [value]="15">15 Minutes</mat-option>
-                    <mat-option [value]="30">30 Minutes</mat-option>
-                    <mat-option [value]="45">45 Minutes</mat-option>
-                    <mat-option [value]="60">1 Hour</mat-option>
-                  </mat-select>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="form-wrap mb-0">
-                  <label class="col-form-label d-block" for="editAssign">Assign Appointment Spaces</label>
-                  <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="editSpace1" name="editSpaces" class="form-check-input" [value]="1" [(ngModel)]="slotModalService.editSlotForm.spaces">
-                    <label class="form-check-label" for="editSpace1">Space 1</label>
-                  </div>
-                  <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="editSpace2" name="editSpaces" class="form-check-input" [value]="2" [(ngModel)]="slotModalService.editSlotForm.spaces">
-                    <label class="form-check-label" for="editSpace2">Space 2</label>
-                  </div>
-                  <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="editSpace3" name="editSpaces" class="form-check-input" [value]="3" [(ngModel)]="slotModalService.editSlotForm.spaces">
-                    <label class="form-check-label" for="editSpace3">Space 3</label>
-                  </div>
-                  <div class="custom-control form-check custom-control-inline">
-                    <input type="radio" id="editSpace4" name="editSpaces" class="form-check-input" [value]="4" [(ngModel)]="slotModalService.editSlotForm.spaces">
-                    <label class="form-check-label" for="editSpace4">Space 4</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div class="modal-btn text-end">
-            <a href="javascript:void(0);" class="btn btn-gray" data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</a>
-            <button type="submit" class="btn btn-primary prime-btn" [disabled]="savingEditSlot">Save Changes</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- /Edit Slot Modal -->
