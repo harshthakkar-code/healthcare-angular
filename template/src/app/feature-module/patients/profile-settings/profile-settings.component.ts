@@ -49,7 +49,14 @@ export class ProfileSettingsComponent implements OnInit {
       .then(res => {
         this.profile = res.data;
         this.user = res.data.user;
-        this.profileForm.patchValue(this.profile); // Patch form values
+        // Split name into firstName and lastName
+        const [firstName, ...lastNameArr] = (this.profile.name || '').split(' ');
+        const lastName = lastNameArr.join(' ');
+        this.profileForm.patchValue({
+          ...this.profile,
+          firstName: firstName || '',
+          lastName: lastName || ''
+        });
         this.profileImgUrl = this.profile.profileImgUrl || '';
         this.loading = false;
       })
@@ -65,10 +72,26 @@ export class ProfileSettingsComponent implements OnInit {
       return;
     }
     this.loading = true;
-    api.put('/patient/profile', this.profileForm.value)
+    // Merge firstName and lastName into name
+    const formValue = this.profileForm.value;
+    const payload = {
+      ...formValue,
+      name: [formValue.firstName, formValue.lastName].filter(Boolean).join(' '),
+      profileImgUrl: this.profileImgUrl || ''
+    };
+    delete payload.firstName;
+    delete payload.lastName;
+    api.put('/patient/profile', payload)
       .then(res => {
         this.profile = res.data;
-        this.profileForm.patchValue(this.profile); // Keep form in sync
+        // Patch form with split name again
+        const [firstName, ...lastNameArr] = (this.profile.name || '').split(' ');
+        const lastName = lastNameArr.join(' ');
+        this.profileForm.patchValue({
+          ...this.profile,
+          firstName: firstName || '',
+          lastName: lastName || ''
+        });
         this.loading = false;
       })
       .catch((err) => {
@@ -83,10 +106,25 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   createProfile(data: any) {
-    api.post('/patient/profile', data)
+    // Merge firstName and lastName into name
+    const payload = {
+      ...data,
+      name: [data.firstName, data.lastName].filter(Boolean).join(' '),
+      profileImgUrl: this.profileImgUrl || ''
+    };
+    delete payload.firstName;
+    delete payload.lastName;
+    api.post('/patient/profile', payload)
       .then(res => {
         this.profile = res.data.profile;
-        this.profileForm.patchValue(this.profile);
+        // Patch form with split name again
+        const [firstName, ...lastNameArr] = (this.profile.name || '').split(' ');
+        const lastName = lastNameArr.join(' ');
+        this.profileForm.patchValue({
+          ...this.profile,
+          firstName: firstName || '',
+          lastName: lastName || ''
+        });
         this.loading = false;
         this.loadProfile();
       })
@@ -135,10 +173,14 @@ export class ProfileSettingsComponent implements OnInit {
       this.profileForm.markAllAsTouched();
       return;
     }
+    const formValue = this.profileForm.value;
     const payload = {
-      ...this.profileForm.value,
+      ...formValue,
+      name: [formValue.firstName, formValue.lastName].filter(Boolean).join(' '),
       profileImgUrl: this.profileImgUrl || ''
     };
+    delete payload.firstName;
+    delete payload.lastName;
     api.put('/patient/profile', payload).then(() => {
       // Optionally show success
     });

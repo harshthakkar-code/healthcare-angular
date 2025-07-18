@@ -76,8 +76,8 @@
               <div class="col-lg-4 col-md-6">
                 <div class="form-wrap">
                   <label class="col-form-label" for="firstname">First Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" formControlName="fullName">
-                  <div *ngIf="settingsForm.get('profileSettings.fullName')?.invalid && (settingsForm.get('profileSettings.fullName')?.touched || settingsForm.get('profileSettings.fullName')?.dirty)">
+                  <input type="text" class="form-control" formControlName="firstName">
+                  <div *ngIf="settingsForm.get('profileSettings.firstName')?.invalid && (settingsForm.get('profileSettings.firstName')?.touched || settingsForm.get('profileSettings.firstName')?.dirty)">
                     <small class="text-danger">First Name is required.</small>
                   </div>
                 </div>
@@ -179,6 +179,77 @@
             </div>
           </div>
         
+          <!-- Documents Section (after address) -->
+          <div class="setting-title">
+            <h6>Documents</h6>
+          </div>
+          <!-- Qualification Certificate Upload -->
+          <div class="setting-card">
+            <label class="form-label mb-2">Qualification Certificate</label>
+            <div class="change-avatar img-upload">
+              <div class="profile-img">
+                <img *ngIf="qualiCertificateUrl; else defaultQuali" [src]="qualiCertificateUrl" alt="Qualification Certificate" style="width: 80px; height: 80px; object-fit: cover;">
+                <ng-template #defaultQuali>
+                  <img src="assets/img/default-profile.png" alt="Qualification Certificate" style="width: 80px; height: 80px; object-fit: cover;">
+                </ng-template>
+              </div>
+              <div class="upload-img">
+                <div class="imgs-load d-flex align-items-center">
+                  <div class="change-photo">
+                    Upload New 
+                    <input type="file" class="upload" (change)="onQualiCertificateSelected($event)" accept="image/*">
+                  </div>
+                  <a href="javascript:void(0);" class="upload-remove" (click)="removeQualiCertificate()">Remove</a>
+                </div>
+                <p>Your Image should be below 4 MB, Accepted format jpg,png,svg</p>
+              </div>
+            </div>
+          </div>
+          <!-- Photo ID Upload -->
+          <div class="setting-card">
+            <label class="form-label mb-2">Photo ID</label>
+            <div class="change-avatar img-upload">
+              <div class="profile-img">
+                <img *ngIf="photoIdUrl; else defaultPhotoId" [src]="photoIdUrl" alt="Photo ID" style="width: 80px; height: 80px; object-fit: cover;">
+                <ng-template #defaultPhotoId>
+                  <img src="assets/img/default-profile.png" alt="Photo ID" style="width: 80px; height: 80px; object-fit: cover;">
+                </ng-template>
+              </div>
+              <div class="upload-img">
+                <div class="imgs-load d-flex align-items-center">
+                  <div class="change-photo">
+                    Upload New 
+                    <input type="file" class="upload" (change)="onPhotoIdSelected($event)" accept="image/*">
+                  </div>
+                  <a href="javascript:void(0);" class="upload-remove" (click)="removePhotoId()">Remove</a>
+                </div>
+                <p>Your Image should be below 4 MB, Accepted format jpg,png,svg</p>
+              </div>
+            </div>
+          </div>
+          <!-- Clinical Employment Upload -->
+          <div class="setting-card">
+            <label class="form-label mb-2">Clinical Employment</label>
+            <div class="change-avatar img-upload">
+              <div class="profile-img">
+                <img *ngIf="clinicalEmploymentUrl; else defaultClinical" [src]="clinicalEmploymentUrl" alt="Clinical Employment" style="width: 80px; height: 80px; object-fit: cover;">
+                <ng-template #defaultClinical>
+                  <img src="assets/img/default-profile.png" alt="Clinical Employment" style="width: 80px; height: 80px; object-fit: cover;">
+                </ng-template>
+              </div>
+              <div class="upload-img">
+                <div class="imgs-load d-flex align-items-center">
+                  <div class="change-photo">
+                    Upload New 
+                    <input type="file" class="upload" (change)="onClinicalEmploymentSelected($event)" accept="image/*">
+                  </div>
+                  <a href="javascript:void(0);" class="upload-remove" (click)="removeClinicalEmployment()">Remove</a>
+                </div>
+                <p>Your Image should be below 4 MB, Accepted format jpg,png,svg</p>
+              </div>
+            </div>
+          </div>
+
           <div class="modal-btn text-end">
             <a href="javascript:void(0);" class="btn btn-gray">Cancel</a>
             <button type="submit" class="btn btn-primary prime-btn" (click)="saveChanges()">Save Changes</button>
