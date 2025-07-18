@@ -65,6 +65,7 @@ exports.getSettingsByDoctor = async (req, res, next) => {
       awardsSettings
     } = user;
     res.json({
+      user,
       profileSettings,
       insuranceSettings,
       experienceSettings,

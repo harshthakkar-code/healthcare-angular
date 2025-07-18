@@ -86,9 +86,19 @@ export class DoctorProfileSettingsComponent implements OnInit {
     api.get('/auth/me').then((response: any) => {
       const user = response.data;
       console.log(user);
+      let firstName = '';
+      let lastName = '';
+      if (user.firstName && user.lastName) {
+        firstName = user.firstName;
+        lastName = user.lastName;
+      } else if (user.name) {
+        const [f, ...lArr] = user.name.split(' ');
+        firstName = f || '';
+        lastName = lArr.join(' ') || '';
+      }
       this.settingsForm.get('profileSettings')?.patchValue({
-        // firstName: user.firstName,
-        // lastName: user.lastName || '',
+        firstName,
+        lastName,
         displayName: user.displayName || '',
         designation: user.designation || '',
         phone: user.phone || '',
@@ -118,12 +128,14 @@ export class DoctorProfileSettingsComponent implements OnInit {
       this.qualiCertificateUrl = user.qualiCertificate || '';
       this.photoIdUrl = user.photoId || '';
       this.clinicalEmploymentUrl = user.clinicalEmployment || '';
+      this.profileImgUrl = user.profileImgUrl || ''
     });
   }
 
   ngOnInit() {
     this.doctorId = this.getDoctorId();
     this.fetchAndPatchUserFields();
+    console.log(this.doctorId)
     if (this.doctorId) {
       this.getDoctorSettings();
     }

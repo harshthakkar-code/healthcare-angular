@@ -134,6 +134,8 @@ exports.getDoctors = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date, availability, isApproved } = req.query;
     const query = { role: 'doctor' };
+    // Only show approved doctors
+    query.isApproved = 'true';
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
