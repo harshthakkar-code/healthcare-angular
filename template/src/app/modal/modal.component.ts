@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { routes } from 'src/app/shared/routes/routes';
 import {
   ChartComponent,
@@ -24,6 +24,9 @@ import { forkJoin } from 'rxjs';
 import { DependantService } from '../feature-module/patients/dependent/dependant.service';
 import { DependantEditService } from 'src/app/shared/data/dependant-edit.service';
 import { uploadImage } from 'src/app/shared/api/image-upload';
+import { InvoiceModalService } from '../feature-module/doctors/invoices/invoice-modal.service';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries | any;
@@ -51,7 +54,7 @@ export type ChartOptions = {
     styleUrls: ['./modal.component.scss'],
     standalone: false
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent implements OnInit, OnDestroy {
   public routes = routes;
   myDateValue!: Date;
   date = new Date();
@@ -102,13 +105,16 @@ export class ModalComponent implements OnInit {
   addDepProfileImgUrl = '';
 
   editDependant: any = {};
+  selectedInvoice: any = null;
+  private invoiceSub: any;
 
   constructor(
     private router:Router,
     private slotService: SlotService,
     public slotModalService: SlotModalService,
     private dependantService: DependantService,
-    private dependantEditService: DependantEditService
+    private dependantEditService: DependantEditService,
+    private invoiceModalService: InvoiceModalService
   ) {
     this.chartOptionsOne = {
       series: [
@@ -379,6 +385,12 @@ export class ModalComponent implements OnInit {
       }
       this.editDependant = dep || {};
     });
+    this.invoiceSub = this.invoiceModalService.invoice$.subscribe(invoice => {
+      this.selectedInvoice = invoice;
+    });
+  }
+  ngOnDestroy() {
+    if (this.invoiceSub) this.invoiceSub.unsubscribe();
   }
   onDateChange(newDate: Date) {
     console.log(newDate);
@@ -777,5 +789,19 @@ export class ModalComponent implements OnInit {
     if (this.slotApiError && this.slotModalService.slotForm.fees > 0) {
       this.slotApiError = '';
     }
+  }
+
+  downloadInvoicePDF() {
+    const element = document.getElementById('invoice-content');
+    if (!element) return;
+    html2canvas(element, { scale: 2 }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`invoice-${this.selectedInvoice?.invoiceNo || 'download'}.pdf`);
+    });
   }
 }

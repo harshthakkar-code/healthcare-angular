@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { routes } from 'src/app/shared/routes/routes';
 import { PatientInvoiceService } from './patient-invoice.service';
+import { InvoiceModalService } from '../../doctors/invoices/invoice-modal.service';
+
 
 @Component({
     selector: 'app-patient-invoice',
@@ -17,7 +19,7 @@ export class PatientInvoiceComponent implements OnInit {
   search = '';
   loading = false;
 
-  constructor(private patientInvoiceService: PatientInvoiceService) {}
+  constructor(private patientInvoiceService: PatientInvoiceService ,  private invoiceModalService: InvoiceModalService) {}
 
   ngOnInit() {
     this.fetchTransactions();
@@ -64,5 +66,15 @@ export class PatientInvoiceComponent implements OnInit {
 
   get totalPages(): number[] {
     return Array(Math.ceil(this.total / this.limit)).fill(0).map((x, i) => i + 1);
+  }
+  openInvoiceModal(invoiceId: string) {
+    this.patientInvoiceService.getInvoiceById(invoiceId).subscribe({
+      next: (res: any) => {
+        this.invoiceModalService.setInvoice(res.data);
+      },
+      error: () => {
+        this.invoiceModalService.setInvoice(null);
+      }
+    });
   }
 }

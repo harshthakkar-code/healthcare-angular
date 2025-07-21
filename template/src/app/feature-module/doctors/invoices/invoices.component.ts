@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { InvoicesService } from './invoices.service';
 import { routes } from 'src/app/shared/routes/routes';
+import { InvoiceModalService } from './invoice-modal.service';
 
 @Component({
   selector: 'app-invoices',
@@ -18,7 +19,7 @@ export class InvoicesComponent implements OnInit {
   search = '';
   loading = false;
 
-  constructor(private invoicesService: InvoicesService) {}
+  constructor(private invoicesService: InvoicesService, private invoiceModalService: InvoiceModalService) {}
 
   ngOnInit() {
     this.fetchTransactions();
@@ -33,7 +34,7 @@ export class InvoicesComponent implements OnInit {
       return;
     }
     this.invoicesService.getInvoicesByUserId(userId, { page: this.page, limit: this.limit, search: this.search }).subscribe({
-      next: (res) => {
+      next: (res:any) => {
         this.transactions = res.data.data || [];
         this.total = res.data.total || 0;
         this.loading = false;
@@ -74,5 +75,16 @@ export class InvoicesComponent implements OnInit {
     } catch {
       return null;
     }
+  }
+
+  openInvoiceModal(invoiceId: string) {
+    this.invoicesService.getInvoiceById(invoiceId).subscribe({
+      next: (res: any) => {
+        this.invoiceModalService.setInvoice(res.data);
+      },
+      error: () => {
+        this.invoiceModalService.setInvoice(null);
+      }
+    });
   }
 }

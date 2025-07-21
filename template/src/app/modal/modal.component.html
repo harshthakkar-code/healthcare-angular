@@ -2251,149 +2251,145 @@
   </div>
 </div>
 <!-- /Refund Request Modal-->
-		<!--View Invoice -->
-		<div class="modal fade custom-modals" id="invoice_view">
-			<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h3 class="modal-title">View Invoice</h3>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-							<i class="fa-solid fa-xmark"></i>
-						</button>
-					</div>				
-					<div class="modal-body pb-0">
-						<div class="prescribe-download">
-							<h5>21 Mar  2024</h5>
-							<ul>
-								<li><a href="javascript:void(0);" class="print-link"><i class="isax isax-printer5"></i></a></li>
-								<li><a href="javascript:void(0);" class="btn btn-md btn-primary-gradient rounded-pill">Download</a></li>
-							</ul>							
-						</div>
-						<div class="view-prescribe invoice-content mb-0">
-							<div class="invoice-item">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="invoice-logo">
-											<img src="assets/img/logo.png" alt="logo">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<p class="invoice-details">
-											<strong>Invoice No : </strong> #INV005<br>
-											<strong>Issued:</strong> 21 Mar 2024
-										</p>
-									</div>
-								</div>
-							</div>
-							
-							<!-- Invoice Item -->
-							<div class="invoice-item">
-								<div class="row">
-									<div class="col-md-4">
-										<div class="invoice-info">
-											<h6 class="customer-text">Billing From</h6>
-											<p class="invoice-details invoice-details-two">
-												Edalin Hendry <br>
-												806 Twin Willow Lane, <br>
-												Newyork, USA <br>
-											</p>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="invoice-info">
-											<h6 class="customer-text">Billing To</h6>
-											<p class="invoice-details invoice-details-two">
-												Richard Wilson <br>
-												299 Star Trek Drive<br>
-												Florida, 32405, USA<br>
-											</p>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="invoice-info invoice-info2">
-											<h6 class="customer-text">Payment Method</h6>
-											<p class="invoice-details">
-												Debit Card <br>
-												XXXXXXXXXXXX-2541<br>
-												HDFC Bank<br>
-											</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- /Invoice Item -->
-							
-							<!-- Invoice Item -->
-							<div class="invoice-item invoice-table-wrap">
-								<div class="row">
-									<div class="col-md-12">
-										<h6>Invoice Details</h6>
-										<div class="invoice-table">
-											<div class="table-responsive">
-												<table class="table table-bordered">
-													<thead>
-														<tr>
-															<th>Description</th>
-															<th>Quatity</th>
-															<th>VAT</th>
-															<th>Total</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td class="text-gray-9">General Consultation</td>
-															<td>1</td>
-															<td>$0</td>
-															<td>$150</td>
-														</tr>
-														<tr>
-															<td class="text-gray-9">Video Call</td>
-															<td>1</td>
-															<td>$0</td>
-															<td>$100</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6 col-xl-4 ms-auto">
-										<div class="table-responsive">
-											<table class="invoice-table-two table">
-												<tbody>
-												<tr>
-													<th>Subtotal:</th>
-													<td><span>$350</span></td>
-												</tr>
-												<tr>
-													<th>Discount:</th>
-													<td><span>-10%</span></td>
-												</tr>
-												<tr>
-													<th>Total Amount:</th>
-													<td><span>$315</span></td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- /Invoice Item -->
-							
-							<!-- Invoice Information -->
-							<div class="other-info mb-0">
-								<h6 class="mb-2">Other information</h6>
-								<p class="text-gray-9 mb-0">An account of the present illness, which includes the circumstances surrounding the onset of recent health changes and the chronology of subsequent events that have led the patient to seek medicine</p>
-							</div>
-							<!-- /Invoice Information -->
-							
-						</div>	
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /View Invoice -->	
+    <!--View Invoice -->
+    <div class="modal fade custom-modals" id="invoice_view">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">View Invoice</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="modal-body pb-0">
+            <div class="prescribe-download">
+              <h5>{{ selectedInvoice?.issuedDate | date: 'dd MMM yyyy' }}</h5>
+              <ul>
+                <li><a href="javascript:void(0);" class="print-link"><i class="isax isax-printer5"></i></a></li>
+                <li><a href="javascript:void(0);" class="btn btn-md btn-primary-gradient rounded-pill" (click)="downloadInvoicePDF()">Download</a></li>
+              </ul>
+            </div>
+            <div id="invoice-content">
+              <div class="view-prescribe invoice-content mb-0">
+                <div class="invoice-item">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="invoice-logo">
+                        <img src="assets/img/logo.png" alt="logo">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="invoice-details">
+                        <strong>Invoice No : </strong> {{ selectedInvoice?.invoiceNo }}<br>
+                        <strong>Issued:</strong> {{ selectedInvoice?.issuedDate | date: 'dd MMM yyyy' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+      
+                <!-- Invoice Item -->
+                <div class="invoice-item">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="invoice-info">
+                        <h6 class="customer-text">Billing From</h6>
+                        <p class="invoice-details invoice-details-two">
+                          {{ selectedInvoice?.billingFrom?.name }} <br>
+                          {{ selectedInvoice?.billingFrom?.address }} <br>
+                          {{ selectedInvoice?.billingFrom?.extra }} <br>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="invoice-info">
+                        <h6 class="customer-text">Billing To</h6>
+                        <p class="invoice-details invoice-details-two">
+                          {{ selectedInvoice?.billingTo?.name }} <br>
+                          {{ selectedInvoice?.billingTo?.address }} <br>
+                          {{ selectedInvoice?.billingTo?.extra }} <br>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="invoice-info invoice-info2">
+                        <h6 class="customer-text">Payment Method</h6>
+                        <p class="invoice-details">
+                          {{ selectedInvoice?.paymentMethod?.type }} <br>
+                          {{ selectedInvoice?.paymentMethod?.details }}<br>
+                          {{ selectedInvoice?.paymentMethod?.bank }}<br>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Invoice Item -->
+      
+                <!-- Invoice Item -->
+                <div class="invoice-item invoice-table-wrap">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h6>Invoice Details</h6>
+                      <div class="invoice-table">
+                        <div class="table-responsive">
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>VAT</th>
+                                <th>Total</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of selectedInvoice?.items">
+                                <td class="text-gray-9">{{ item.description }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.vat }}</td>
+                                <td>{{ item.total }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-xl-4 ms-auto">
+                      <div class="table-responsive">
+                        <table class="invoice-table-two table">
+                          <tbody>
+                            <tr>
+                              <th>Subtotal:</th>
+                              <td><span>{{ selectedInvoice?.subtotal }}</span></td>
+                            </tr>
+                            <tr>
+                              <th>Discount:</th>
+                              <td><span>{{ selectedInvoice?.discount }}</span></td>
+                            </tr>
+                            <tr>
+                              <th>Total Amount:</th>
+                              <td><span>{{ selectedInvoice?.totalAmount }}</span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Invoice Item -->
+      
+                <!-- Invoice Information -->
+                <div class="other-info mb-0">
+                  <h6 class="mb-2">Other information</h6>
+                  <p class="text-gray-9 mb-0">{{ selectedInvoice?.otherInfo }}</p>
+                </div>
+                <!-- /Invoice Information -->
+      
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /View Invoice -->
 
 
 <!--View Prescription -->
