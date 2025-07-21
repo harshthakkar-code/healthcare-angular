@@ -378,8 +378,17 @@ exports.stripeWebhook = async (req, res, next) => {
 
           if (appointment.slot) {
             const Slot = require('../models/Slot');
-            await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
-            console.log('Slot status updated to booked:', appointment.slot);
+            const slot = await Slot.findById(appointment.slot);
+            if (slot) {
+              // Decrement remainingSpaces by 1, but not below 0
+              slot.remainingSpaces = Math.max(0, (slot.remainingSpaces || 0) - 1);
+              // If remainingSpaces is 0, set status to 'booked', else 'available'
+              slot.status = slot.remainingSpaces === 0 ? 'booked' : 'available';
+              await slot.save();
+              console.log(`Slot updated: remainingSpaces=${slot.remainingSpaces}, status=${slot.status}`);
+            } else {
+              console.log('Slot not found:', appointment.slot);
+            }
           }
 
           appointment.status = 'pending';
@@ -483,8 +492,17 @@ exports.stripeWebhook = async (req, res, next) => {
 
             if (appointment.slot) {
               const Slot = require('../models/Slot');
-              await Slot.findByIdAndUpdate(appointment.slot, { status: 'booked' });
-              console.log('Slot status updated to booked:', appointment.slot);
+              const slot = await Slot.findById(appointment.slot);
+              if (slot) {
+                // Decrement remainingSpaces by 1, but not below 0
+                slot.remainingSpaces = Math.max(0, (slot.remainingSpaces || 0) - 1);
+                // If remainingSpaces is 0, set status to 'booked', else 'available'
+                slot.status = slot.remainingSpaces === 0 ? 'booked' : 'available';
+                await slot.save();
+                console.log(`Slot updated: remainingSpaces=${slot.remainingSpaces}, status=${slot.status}`);
+              } else {
+                console.log('Slot not found:', appointment.slot);
+              }
             }
 
             appointment.status = 'pending';
