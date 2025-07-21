@@ -141,7 +141,7 @@ export class DoctorRegisterComponent implements AfterViewInit {
       phone: this.phone,
       password: this.password
     });
-    this.router.navigate([this.routes.registrationSuccess]);
+    this.router.navigate([this.routes.doctorRegisterStep1]);
   }
 
   ngAfterViewInit(): void {
