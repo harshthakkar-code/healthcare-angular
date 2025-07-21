@@ -18,6 +18,7 @@ import {
   
 } from "ng-apexcharts";
 import api from 'src/app/shared/api/axios';
+import { InvoiceModalService } from 'src/app/feature-module/doctors/invoices/invoice-modal.service';
 
 
 export type ChartOptions = {
@@ -62,7 +63,8 @@ export class DoctorDashboardComponent {
   constructor(
     private data: DataService,
     private pagination: PaginationService,
-    private router: Router
+    private router: Router,
+    private invoiceModalService: InvoiceModalService
   ) {
     this.pagination.tablePageSize.subscribe((res: tablePageSize) => {
       if (this.router.url == this.routes.doctorDashboard) {
@@ -402,5 +404,13 @@ export class DoctorDashboardComponent {
     } catch {
       return false;
     }
+  }
+
+  openInvoiceModal(invoiceId: string) {
+    api.get(`/invoices/${invoiceId}`).then(res => {
+      this.invoiceModalService.setInvoice(res.data);
+    }).catch(() => {
+      this.invoiceModalService.setInvoice(null);
+    });
   }
 }

@@ -39,7 +39,7 @@ exports.createSlots = async (req, res) => {
       ]
     });
     if (overlapping) {
-      return res.status(409).json({ error: `Slot overlaps with existing slot(s) at: ${slotStartTime}-${slotEndTime}. Please select a different time.` });
+      return res.status(409).json({ error: `Slot Time overlaps with ${slotStartTime}-${slotEndTime}. Please select a different time.` });
     }
     // Create spaceAssignments array
     const spaceAssignments = Array.from({ length: spaces }, (_, i) => ({
@@ -116,7 +116,7 @@ exports.updateSlot = async (req, res) => {
       ]
     });
     if (overlapping) {
-      return res.status(409).json({ error: `Slot overlaps with existing slot(s) at: ${slotStartTime}-${slotEndTime}. Please select a different time.` });
+      return res.status(409).json({ error: `Slot Time overlaps with ${slotStartTime}-${slotEndTime}. Please select a different time.` });
     }
     // Update slot
     const prevSlot = await Slot.findById(slotId);

@@ -361,7 +361,9 @@
                           </td>
                           <td>
                             <div class="apponiment-view d-flex align-items-center">
-                              <a [routerLink]="routes.invoiceView"><i class="isax isax-eye4"></i></a>
+                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(invoice._id)">
+                                <i class="isax isax-eye4"></i>
+                              </a>
                             </div>
                           </td>
                         </tr>
