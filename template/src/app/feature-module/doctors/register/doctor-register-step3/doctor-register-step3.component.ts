@@ -60,4 +60,14 @@ export class DoctorRegisterStep3Component {
       console.error('Registration API Error:', error);
     }
   }
+
+  goToStep(step: number) {
+    if (step === 1) {
+      this.router.navigate(['/doctors/register/doctor-register-step1']);
+    } else if (step === 2) {
+      this.router.navigate(['/doctors/register/doctor-register-step2']);
+    } else if (step === 3) {
+      // Already on step 3
+    }
+  }
 }

@@ -12,9 +12,9 @@
                             </div>
                             <div class="step-list">
                                 <ul>
-                                    <li><a href="javascript:void(0)" class="active-done">1</a></li>
-                                    <li><a href="javascript:void(0)" class="active">2</a></li>
-                                    <li><a href="javascript:void(0)">3</a></li>
+                                    <li><a href="javascript:void(0)" [class.active-done]="true" (click)="goToStep(1)">1</a></li>
+                                    <li><a href="javascript:void(0)" [class.active]="true" (click)="goToStep(2)">2</a></li>
+                                    <li><a href="javascript:void(0)" (click)="goToStep(3)">3</a></li>
                                 </ul>
                             </div>
                             <form (ngSubmit)="nextStep()" #step2Form="ngForm">

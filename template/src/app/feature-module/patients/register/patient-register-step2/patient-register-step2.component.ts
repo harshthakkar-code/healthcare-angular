@@ -43,6 +43,21 @@ export class PatientRegisterStep2Component {
   bloodError = '';
   pregnancyTermError = '';
 
+  currentStep = 2;
+  goToStep(step: number) {
+    if (step === 1) {
+      this.router.navigate(['/patients/register/patient-register-step1']);
+    } else if (step === 2) {
+      // Already on step 2
+    } else if (step === 3) {
+      // this.router.navigate(['/patients/register/patient-register-step3']);
+    } else if (step === 4) {
+      // this.router.navigate(['/patients/register/patient-register-step4']);
+    } else if (step === 5) {
+      // this.router.navigate(['/patients/register/patient-register-step5']);
+    }
+  }
+
   constructor(private patientRegService: PatientRegistrationService, private router: Router) {
     const data = this.patientRegService.getAllData();
     this.gender = data['gender'] || '';

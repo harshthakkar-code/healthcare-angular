@@ -21,11 +21,26 @@ export class PatientRegisterStep5Component {
   state: string = '';
   cityError: string = '';
   stateError: string = '';
+  currentStep = 5;
 
   constructor(private patientRegService: PatientRegistrationService, private router: Router) {
     const data = this.patientRegService.getAllData();
     this.city = data['city'] || '';
     this.state = data['state'] || '';
+  }
+
+  goToStep(step: number) {
+    if (step === 1) {
+      this.router.navigate(['/patients/register/patient-register-step1']);
+    } else if (step === 2) {
+      this.router.navigate(['/patients/register/patient-register-step2']);
+    } else if (step === 3) {
+      this.router.navigate(['/patients/register/patient-register-step3']);
+    } else if (step === 4) {
+      this.router.navigate(['/patients/register/patient-register-step4']);
+    } else if (step === 5) {
+      // Already on step 5
+    }
   }
 
   async onComplete() {

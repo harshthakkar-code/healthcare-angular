@@ -24,6 +24,7 @@ export class PatientRegisterStep1Component {
   phone: string = '';
   password: string = '';
   profileImageError = '';
+  currentStep = 1;
 
   constructor(private router: Router, private regService: PatientRegistrationService) {
     const data = this.regService.getAllData();
@@ -76,5 +77,19 @@ export class PatientRegisterStep1Component {
     }
     this.regService.setStepData({ profileImage: this.profileImage });
     this.router.navigate(['/patients/register/patient-register-step2']);
+  }
+
+  goToStep(step: number) {
+    if (step === 1) {
+      // Already on step 1
+    } else if (step === 2) {
+      // this.router.navigate(['/patients/register/patient-register-step2']);
+    } else if (step === 3) {
+      // this.router.navigate(['/patients/register/patient-register-step3']);
+    } else if (step === 4) {
+      // this.router.navigate(['/patients/register/patient-register-step4']);
+    } else if (step === 5) {
+      // this.router.navigate(['/patients/register/patient-register-step5']);
+    }
   }
 }
