@@ -11,6 +11,7 @@ const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
 const { refundTransactionById } = require('./transactionController');
+const PDFDocument = require('pdfkit');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -421,7 +422,7 @@ exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}; 
+};
 exports.getFullDoctorData = async (req, res, next) => {
   try {
     const doctorId = req.params.id;
@@ -493,5 +494,39 @@ exports.approveDoctor = async (req, res) => {
     res.json({ success: true, doctor });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getAppointmentPdf = async (req, res, next) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) return res.status(404).send('Appointment not found');
+
+    const doc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=booking-${appointment._id}.pdf`);
+    doc.pipe(res);
+
+    doc.fontSize(20).text('Booking Details', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Booking ID: ${appointment._id}`);
+    doc.text(`Name: ${appointment.name}`);
+    doc.text(`Doctor: ${appointment.doctorName}`);
+    doc.text(`Specialty: ${appointment.specialty}`);
+    doc.text(`Service: ${appointment.service}`);
+    doc.text(`Appointment Type: ${appointment.appointmentType}`);
+    doc.text(`Date: ${appointment.date}`);
+    doc.text(`Time: ${appointment.time}`);
+    doc.text(`Email: ${appointment.email}`);
+    doc.text(`Phone: ${appointment.phone}`);
+    doc.text(`Symptoms: ${appointment.symptoms}`);
+    doc.text(`Price: $${appointment.price}`);
+    doc.text(`Total Price: $${appointment.totalPrice}`);
+    if (appointment.attachmentUrl) {
+      doc.text(`Attachment: ${appointment.attachmentUrl}`);
+    }
+    doc.end();
+  } catch (err) {
+    next(err);
   }
 };

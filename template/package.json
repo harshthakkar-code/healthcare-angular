@@ -27,6 +27,7 @@
     "@twilio/conversations": "^2.6.2",
     "@types/aos": "^3.0.7",
     "@types/file-saver": "^2.0.7",
+    "angularx-qrcode": "^20.0.0",
     "aos": "^2.3.4",
     "apexcharts": "^4.7.0",
     "axios": "^1.10.0",

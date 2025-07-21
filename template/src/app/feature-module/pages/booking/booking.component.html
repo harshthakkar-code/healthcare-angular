@@ -87,7 +87,7 @@
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
 															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
-																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+																<img [src]="doctor?.profileImgUrl || 'assets/img/clients/client-15.jpg'" alt="">
 															</span>
 															<div>
 																<h4 class="mb-1">
@@ -159,7 +159,7 @@
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
 															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
-																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+																<img [src]="doctor?.profileImgUrl || 'assets/img/clients/client-15.jpg'" alt="">
 															</span>
 															<div>
 																<h4 class="mb-1">
@@ -221,7 +221,7 @@
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 mb-4 flex-wrap row-gap-2">
 															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
-																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+																<img [src]="doctor?.profileImgUrl || 'assets/img/clients/client-15.jpg'" alt="">
 															</span>
 															<div>
 																<h4 class="mb-1">
@@ -436,7 +436,7 @@
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 mb-4 flex-wrap row-gap-2">
 															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
-																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+																<img [src]="doctor?.profileImgUrl || 'assets/img/clients/client-15.jpg'" alt="">
 															</span>
 															<div>
 																<h4 class="mb-1">
@@ -600,7 +600,7 @@
 													<div class="card-body">
 														<div class="d-flex align-items-center flex-wrap rpw-gap-2 flex-wrap row-gap-2">
 															<span class="avatar avatar-xxxl avatar-rounded me-2 flex-shrink-0">
-																<img [src]="doctor?.avatar || 'assets/img/clients/client-15.jpg'" alt="">
+																<img [src]="doctor?.profileImgUrl || 'assets/img/clients/client-15.jpg'" alt="">
 															</span>
 															<div>
 																<h4 class="mb-1">
@@ -755,7 +755,9 @@
 															<div class="card-body pb-1">
 																<div class="d-flex align-items-center flex-wrap rpw-gap-2 justify-content-between mb-3">
 																	<h6>Booking Info</h6>
-																	<a href="javascript:void(0);" class="btn btn-light rounded-pill"><i class="isax isax-calendar me-1"></i>Reschedule</a>
+																	<a *ngIf="createdAppointment?.status !== 'rejected'" (click)="openRejectConfirm()" class="btn btn-light rounded-pill">
+  <i class="isax isax-close-circle me-1"></i>Reject Appointment
+</a>
 																</div>
 																<div class="row">
 																	<div class="col-md-6">
@@ -807,6 +809,11 @@
 																		</div>
 																	</div>
 																</div>
+																<div *ngIf="cancelMessage" class="mt-2">
+														<span [ngClass]="{'text-success': cancelMessage.includes('successfully'), 'text-danger': cancelMessage.includes('Failed')}">
+														  {{ cancelMessage }}
+														</span>
+													  </div>
 															</div>
 														</div>
 														<div class="card">
@@ -819,6 +826,7 @@
 															</div>
 														</div>
 													</div>
+													
 												</div>
 												<div class="col-lg-4 d-flex">
 													<div class="card flex-fill">
@@ -826,8 +834,10 @@
 															<div class="text-center">
 																<h6 class="fs-14 mb-2">Booking Number</h6>
 																<span class="booking-id-badge mb-3">{{ createdAppointment?._id || 'DCRA12565' }}</span>
-																<span class="d-block mb-3"><img src="assets/img/icons/payment-qr.svg" alt=""></span>
-																<p>Scan this QR Code to Download the details of Appointment</p>
+																<span class="d-block mb-3">
+                  <qrcode *ngIf="createdAppointment?._id" [qrdata]="bookingPdfUrl" [width]="180" [errorCorrectionLevel]="'M'"></qrcode>
+                </span>
+                <p>Scan this QR Code to Download the details of Appointment</p>
 															</div>
 															<div>
 																<a href="javascript:void(0);" class="btn w-100 mb-3 btn-md btn-dark prev_btns inline-flex align-items-center rounded-pill">
@@ -873,3 +883,22 @@
 </div>
 <!-- The rest of the booking wizard only shows if doctor is loaded -->
 <div *ngIf="!loadingDoctor && !errorDoctor">
+<!-- Confirmation Popup -->
+<div *ngIf="showRejectConfirm" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.4);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Are you sure?</h5>
+        <button type="button" class="btn-close" (click)="closeRejectConfirm()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Do you really want to reject this appointment?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeRejectConfirm()">No</button>
+        <button type="button" class="btn btn-danger" (click)="confirmRejectAppointment()">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Confirmation Popup -->
