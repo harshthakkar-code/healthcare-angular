@@ -12,6 +12,7 @@ const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
 const { refundTransactionById } = require('./transactionController');
 const PDFDocument = require('pdfkit');
+const stripe = require('../utils/stripe');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -266,6 +267,14 @@ exports.updateAppointmentStatus = async (req, res, next) => {
       }
       appointment.status = status;
       await appointment.save();
+      // Increase slot availability if appointment is rejected
+      if (appointment.slot) {
+        const Slot = require('../models/Slot');
+        await Slot.findByIdAndUpdate(
+          appointment.slot,
+          { $inc: { remainingSpaces: 1 } }
+        );
+      }
       // Refund logic
       const transaction = await Transaction.findOne({ appointment: appointment._id, status: 'paid' });
       if (transaction) {
@@ -526,6 +535,62 @@ exports.getAppointmentPdf = async (req, res, next) => {
       doc.text(`Attachment: ${appointment.attachmentUrl}`);
     }
     doc.end();
+  } catch (err) {
+    next(err);
+  }
+};
+exports.stripeOnboard = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'doctor') {
+      return res.status(403).json({ message: 'Only doctors can onboard with Stripe.' });
+    }
+    let accountId = user.stripeAccountId;
+    console.log('Stripe Account ID:', accountId);
+    if (!accountId) {
+      // Create a new Stripe account for the doctor
+      const account = await stripe.accounts.create({
+        type: 'express',
+        email: user.email,
+        business_type: 'individual',
+        capabilities: {
+          transfers: { requested: true },
+          card_payments: { requested: true }
+        },
+      });
+      console.log('Created Stripe account:', account);
+      accountId = account.id;
+      user.stripeAccountId = accountId;
+      await user.save();
+    }
+    // Create an onboarding link
+    const origin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:4200';
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId,
+      refresh_url: `${origin}/doctors/doctor-payment?refresh=1`,
+      return_url: `${origin}/doctors/doctor-payment?onboarded=1`,
+      type: 'account_onboarding',
+    });
+    res.json({ url: accountLink.url });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Stripe Connect Status: Get Stripe connection status for doctor
+exports.stripeStatus = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'doctor') {
+      return res.status(403).json({ message: 'Only doctors can check Stripe status.' });
+    }
+    if (!user.stripeAccountId) {
+      return res.json({ connected: false, details: null });
+    }
+    const account = await stripe.accounts.retrieve(user.stripeAccountId);
+    res.json({ connected: account.charges_enabled, details: account });
   } catch (err) {
     next(err);
   }

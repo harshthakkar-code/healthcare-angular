@@ -42,6 +42,10 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
   pendingSlotEditIndex: number | null = null;
   private pendingSlotOriginalKey: { startTime: string, day: string, type: string } | null = null;
   slotListError: string | null = null;
+  public specializations: any[] = [];
+  public isSpecializationMissing: boolean = false;
+  public isStripeConnected: boolean = false;
+  public stripeLoading: boolean = false;
 
   constructor(
     private renderer: Renderer2,
@@ -70,6 +74,8 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     this.doctorId = this.getDoctorIdFromLocalStorage();
     console.log('ngOnInit doctorId:', this.doctorId);
     if (this.doctorId) {
+      this.getSpecializations(); // Fetch specializations
+      this.checkStripeStatus(); // Check Stripe connection
       api.get(`/doctor/public/profile/${this.doctorId}`).then(response => {
         const profile = response.data;
         console.log(profile)
@@ -223,7 +229,30 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     this.renderer.removeClass(document.body, 'available-timings-img-select');
   }
 
+  getSpecializations() {
+    const doctorId = this.doctorId;
+    if (!doctorId) return;
+    api.get(`/specialization?doctorId=${doctorId}`).then((res: any) => {
+      this.specializations = res.data || [];
+      this.isSpecializationMissing = this.specializations.length === 0;
+    });
+  }
+
+  checkStripeStatus() {
+    this.stripeLoading = true;
+    api.get('/doctor/stripe/status')
+      .then(res => {
+        this.isStripeConnected = !!res.data.connected;
+        this.stripeLoading = false;
+      })
+      .catch(() => {
+        this.isStripeConnected = false;
+        this.stripeLoading = false;
+      });
+  }
+
   openAddSlotModal(type: 'general' | 'clinic' = 'general') {
+    if (this.isSpecializationMissing || !this.isStripeConnected) return;
     this.slotModalService.slotForm.day = this.selectedDay;
     this.slotModalService.slotForm.type = type;
     this.slotModalService.slotForm.fees = 50; // Set default value

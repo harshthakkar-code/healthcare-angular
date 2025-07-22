@@ -194,10 +194,18 @@ exports.getTransactionsByUser = async (req, res, next) => {
 exports.createStripePayment = async (req, res, next) => {
   try {
     const { appointment, doctor, patient, amount, currency = 'usd', paymentDate, ...rest } = req.body;
-    // Create PaymentIntent
+    // Fetch the doctor user to get stripeAccountId
+    const doctorUser = await User.findById(doctor);
+    if (!doctorUser || !doctorUser.stripeAccountId) {
+      return res.status(400).json({ message: 'Doctor is not connected to Stripe.' });
+    }
+    // Create PaymentIntent with destination to doctor's Stripe account
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Stripe expects cents
       currency,
+      transfer_data: {
+        destination: doctorUser.stripeAccountId
+      },
       metadata: {
         appointment,
         doctor,
@@ -226,14 +234,11 @@ exports.createStripePayment = async (req, res, next) => {
 exports.createStripeCheckoutSession = async (req, res, next) => {
   try {
     const { appointment, doctor, patient, amount, successUrl, cancelUrl } = req.body;
-    console.log('Creating Stripe Checkout Session with:', {
-      appointment,
-      doctor,
-      patient,
-      amount,
-      successUrl,
-      cancelUrl
-    });
+    // Fetch the doctor user to get stripeAccountId
+    const doctorUser = await User.findById(doctor);
+    if (!doctorUser || !doctorUser.stripeAccountId) {
+      return res.status(400).json({ message: 'Doctor is not connected to Stripe.' });
+    }
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
@@ -249,6 +254,11 @@ exports.createStripeCheckoutSession = async (req, res, next) => {
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
+      payment_intent_data: {
+        transfer_data: {
+          destination: doctorUser.stripeAccountId
+        }
+      },
       metadata: {
         appointment,
         doctor,
@@ -325,8 +335,8 @@ exports.stripeWebhook = async (req, res, next) => {
             console.log('Invoice already exists for transaction:', transaction._id);
             return res.status(200).json({ received: true });
           }
-          // Use unique invoice number
-          const invoiceNo = `#INV${Date.now()}`;
+          // Use Stripe charge.id or paymentIntent.id as invoice number
+          const invoiceNo = paymentIntent?.id || charge?.id ||  `#INV${Date.now()}`;
           const invoiceData = {
             issuedDate: new Date(),
             billingFrom: {
@@ -437,8 +447,8 @@ exports.stripeWebhook = async (req, res, next) => {
           console.log('Invoice already exists for transaction:', transaction._id);
           return res.status(200).json({ received: true });
         }
-        // Use unique invoice number
-        const invoiceNo = `#INV${Date.now()}`;
+        // Use Stripe charge.id or paymentIntent.id as invoice number
+        const invoiceNo = paymentIntent?.id || charge?.id ||  `#INV${Date.now()}`;
         const appointment = await Appointment.findById(transaction.appointment).populate('doctor patient');
         if (appointment) {
           try {

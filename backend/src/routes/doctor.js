@@ -28,5 +28,7 @@ router.get('/appointments/patient/:patientId', doctorController.getAppointmentsB
 router.get('/patients-with-appointments', doctorController.getPatientsWithAppointments);
 router.put('/change-password', doctorController.changePassword);
 router.put('/admin/:doctorId/approve', role('admin'), doctorController.approveDoctor);
+router.post('/stripe/onboard', doctorController.stripeOnboard);
+router.get('/stripe/status', doctorController.stripeStatus);
 
 module.exports = router; 

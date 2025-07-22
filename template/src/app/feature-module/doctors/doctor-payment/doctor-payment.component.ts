@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import api from 'src/app/shared/api/axios';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-doctor-payment',
@@ -23,16 +24,35 @@ export class DoctorPaymentComponent implements OnInit {
   paginatedPayouts: any[] = [];
   searchText: string = '';
   filteredPayouts: any[] = [];
+  stripeConnected: boolean | null = null;
+  stripeStatusDetails: any = null;
+  stripeLoading = false;
+  transactions: any[] = [];
+constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    this.doctorId = this.getDoctorId();
-    if (!this.doctorId) {
-      this.error = 'Error: Doctor ID not found. Please log in again.';
-      this.loading = false;
-      return;
+    this.checkStripeStatus();
+  this.route.queryParams.subscribe(params => {
+    if (params['onboarded'] === '1') {
+      // Clean up query params from URL
+      this.router.navigate([], { queryParams: {}, replaceUrl: true });
     }
-    this.fetchPayouts();
+    if (params['refresh'] === '1') {
+      // Automatically request a new onboarding link
+      this.startStripeOnboarding();
+      // Clean up query params from URL
+      this.router.navigate([], { queryParams: {}, replaceUrl: true });
+    }
+  });
+
+  this.doctorId = this.getDoctorId();
+  if (!this.doctorId) {
+    this.error = 'Error: Doctor ID not found. Please log in again.';
+    this.loading = false;
+    return;
   }
+  this.fetchPayouts();
+}
 
   getDoctorId(): string | null {
     try {
@@ -45,14 +65,10 @@ export class DoctorPaymentComponent implements OnInit {
 
   fetchPayouts(): void {
     this.loading = true;
-    api.get(`/payouts`, {
-      params: {
-        doctor: this.doctorId
-      }
-    })
+    api.get(`/transactions/user/${this.doctorId}?role=doctor`)
       .then(res => {
-        this.payouts = res.data;
-        this.searchPayouts();
+        this.payouts = res.data.data || [];
+        console.log('Fetched payouts:', this.payouts);
         this.loading = false;
       })
       .catch(() => {
@@ -132,5 +148,31 @@ export class DoctorPaymentComponent implements OnInit {
 
   onSearchChange(): void {
     this.searchPayouts();
+  }
+
+  checkStripeStatus(): void {
+    this.stripeLoading = true;
+    api.get('/doctor/stripe/status')
+      .then(res => {
+        this.stripeConnected = res.data.connected;
+        this.stripeStatusDetails = res.data.details;
+        this.stripeLoading = false;
+      })
+      .catch(() => {
+        this.stripeConnected = false;
+        this.stripeLoading = false;
+      });
+  }
+
+  startStripeOnboarding(): void {
+    this.stripeLoading = true;
+    api.post('/doctor/stripe/onboard')
+      .then(res => {
+        window.location.href = res.data.url;
+      })
+      .catch(() => {
+        this.error = 'Failed to start Stripe onboarding.';
+        this.stripeLoading = false;
+      });
   }
 }

@@ -1,5 +1,17 @@
 <app-doctor-breadcrumb></app-doctor-breadcrumb>
 
+<div *ngIf="!isStripeConnected || isSpecializationMissing" class="alert alert-warning text-center" style="margin-top: 10px; width: 75%; margin-left: auto; margin-right: auto;">
+  <ng-container *ngIf="!isStripeConnected && isSpecializationMissing">
+    You must add at least one specialization <b>and</b> connect your Stripe account before adding available slots.
+  </ng-container>
+  <ng-container *ngIf="!isStripeConnected && !isSpecializationMissing">
+    You must connect your Stripe account before adding available slots.
+  </ng-container>
+  <ng-container *ngIf="isSpecializationMissing && isStripeConnected">
+    You must add at least one specialization to your profile before adding available slots.
+  </ng-container>
+</div>
+
 <div class="content doctor-content">
   <div class="container">
 
@@ -52,7 +64,10 @@
                         </h5>
                         <ul>
                           <li>
-                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal('general')">Add Slots</a>
+                            <a href="javascript:void(0);" class="add-slot" 
+                               [class.disabled]="isSpecializationMissing || !isStripeConnected"
+                               [attr.aria-disabled]="(isSpecializationMissing || !isStripeConnected) ? true : null"
+                               (click)="!(isSpecializationMissing || !isStripeConnected) && openAddSlotModal('general')">Add Slots</a>
                           </li>
                           <li>
                             <a href="javascript:void(0);" class="del-slot" (click)="hasAnySlotsForSelectedDay && deleteAllGeneralSlotsForSelectedDay()" [class.disabled]="!hasAnySlotsForSelectedDay" [attr.aria-disabled]="!hasAnySlotsForSelectedDay ? true : null">Delete All</a>
@@ -138,7 +153,10 @@
                         </h5>
                         <ul>
                           <li>
-                            <a href="javascript:void(0);" class="add-slot" (click)="openAddSlotModal('clinic')">Add Slots</a>
+                            <a href="javascript:void(0);" class="add-slot" 
+                               [class.disabled]="isSpecializationMissing || !isStripeConnected"
+                               [attr.aria-disabled]="(isSpecializationMissing || !isStripeConnected) ? true : null"
+                               (click)="!(isSpecializationMissing || !isStripeConnected) && openAddSlotModal('clinic')">Add Slots</a>
                           </li>
                           <li>
                             <a href="javascript:void(0);" class="del-slot" (click)="deleteAllClinicSlotsForSelectedDay()">Delete All</a>
