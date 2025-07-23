@@ -25,12 +25,36 @@
                                     <input type="email" class="form-control" [(ngModel)]="email" name="email" (ngModelChange)="emailError = ''">
                                     <div *ngIf="emailError" class="text-danger small">{{ emailError }}</div>
                                 </div>
-                                <div class="mb-3 custom-tel">
+                                <!-- <div class="mb-3 custom-tel">
                                     <label class="form-label">Phone</label>
                                     <div></div>
                                     <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123" [(ngModel)]="phone" name="phone" (ngModelChange)="phoneError = ''"/>
                                     <div *ngIf="phoneError" class="text-danger small">{{ phoneError }}</div>
-                                </div>
+                                </div> -->
+                                
+  <div class="mb-3 custom-tel">
+  <label class="form-label">Phone</label>
+  <div class="d-flex gap-2 align-items-center">
+    <select class="form-select" style="width: 30%;" [(ngModel)]="selectedCountry" name="country" (ngModelChange)="phoneError = ''">
+      <option *ngFor="let country of countryOptions" [value]="country.iso2" style="width: 150px;">
+        +{{ country.dialCode }} ({{ country.name }})
+      </option>
+    </select>
+    <input
+      id="phone"
+      type="tel"
+      class="form-control pass-input"
+      placeholder="Enter phone number"
+      [(ngModel)]="phone"
+      name="phone"
+      (ngModelChange)="phoneError = ''"
+    />
+  </div>
+  <div *ngIf="phoneError" class="text-danger small">{{ phoneError }}</div>
+</div>
+
+
+
                                 <div class="mb-3">
                                     <div class="form-group-flex">
                                         <label class="form-label">Create Password</label>

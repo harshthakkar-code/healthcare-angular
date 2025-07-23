@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { getCountries, getCountryCallingCode, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { routes } from 'src/app/shared/routes/routes';
-import intlTelInput from 'intl-tel-input';
 import { PatientRegistrationService } from 'src/app/feature-module/patients/register/patient-registration.service';
 import { DataService } from 'src/app/shared/data/data.service';
 import { environment } from 'src/environments/environment';
@@ -43,25 +43,41 @@ function loadIntlTelInputUtilsScript(url: string): Promise<void> {
 }
 
 @Component({
-    selector: 'app-auth-register',
-    templateUrl: './auth-register.component.html',
+  selector: 'app-auth-register',
+  templateUrl: './auth-register.component.html',
     styleUrls: ['./auth-register.component.scss'],
     standalone: false
 })
-export class AuthRegisterComponent {
+export class AuthRegisterComponent implements OnInit {
   public routes = routes;
   name: string = '';
   email: string = '';
   phone: string = '';
   password: string = '';
   gender: string = '';
+  selectedCountry: any = 'IN'; // default
+  countryOptions: { name: string; iso2: any; dialCode: string }[] = [];
+
   nameError = '';
   emailError = '';
   phoneError = '';
   registerError = '';
   passwordError: string[] = [];
-  iti: any;
+  // iti: any;
+
   constructor(private router: Router, private patientRegistrationService: PatientRegistrationService,private authService: AuthService , private dataService: DataService) {}
+
+  ngOnInit(): void {
+    // Load all countries with dial code
+    this.countryOptions = getCountries().map((iso2: any) => {
+      const dialCode = getCountryCallingCode(iso2);
+      return {
+        name: new Intl.DisplayNames(['en'], { type: 'region' }).of(iso2) || iso2,
+        iso2,
+        dialCode
+      };
+    }).sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   public togglePasswordClass = false;
   public googleClientId = environment.GOOGLE_CLIENT_ID;
@@ -69,26 +85,56 @@ export class AuthRegisterComponent {
   togglePassword() {
     this.togglePasswordClass = !this.togglePasswordClass;
   }
+
   validatePassword() {
-    const passwordErrors = [];
+    const errors: string[] = [];
     if (!this.password.trim()) {
-      passwordErrors.push('Password is required');
+      errors.push('Password is required');
     } else {
-      if (this.password.length < 8) {
-        passwordErrors.push('Password must be at least 8 characters');
-      }
-      if (!/[A-Z]/.test(this.password)) {
-        passwordErrors.push('Password must include at least one uppercase letter');
-      }
-      if (!/[0-9]/.test(this.password)) {
-        passwordErrors.push('Password must include at least one number');
-      }
-      if (!/[!@#$%^&*(),.?":{}|<>_\-+=;'/\\\[\]`~]/.test(this.password)) {
-        passwordErrors.push('Password must include at least one symbol');
-      }
+      if (this.password.length < 8) errors.push('Password must be at least 8 characters');
+      if (!/[A-Z]/.test(this.password)) errors.push('Include one uppercase letter');
+      if (!/[0-9]/.test(this.password)) errors.push('Include one number');
+      if (!/[!@#$%^&*(),.?":{}|<>_\-+=;'/\\[\]`~]/.test(this.password)) errors.push('Include one symbol');
     }
-    this.passwordError = passwordErrors;
+    this.passwordError = errors;
   }
+
+  validateEmail(): boolean {
+    if (!this.email.trim()) {
+      this.emailError = 'Email is required';
+      return false;
+    } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(this.email)) {
+      this.emailError = 'Invalid email format';
+      return false;
+    }
+    this.emailError = '';
+    return true;
+  }
+
+  validateName(): boolean {
+    if (!this.name.trim()) {
+      this.nameError = 'Name is required';
+      return false;
+    }
+    this.nameError = '';
+    return true;
+  }
+
+  validatePhone(): any | undefined {
+    const dialCode = getCountryCallingCode(this.selectedCountry);
+    const nationalOnly = this.phone.replace(/\D/g, '');
+    const full = `+${dialCode}${nationalOnly}`;
+    const parsed = parsePhoneNumberFromString(full, this.selectedCountry);
+
+    if (!parsed || !parsed.isValid()) {
+      this.phoneError = 'Invalid phone number for selected country';
+      return undefined;
+    }
+
+    this.phoneError = '';
+    return `${dialCode}-${parsed.nationalNumber}`;
+  }
+
   public navigation() {
     this.nameError = '';
     this.emailError = '';
@@ -96,61 +142,41 @@ export class AuthRegisterComponent {
     this.passwordError = [];
 
     let valid = true;
-    if (!this.name.trim()) {
-      this.nameError = 'Name is required';
-      valid = false;
-    }
-    if (!this.email.trim()) {
-      this.emailError = 'Email is required';
-      valid = false;
-    } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(this.email)) {
-      this.emailError = 'Invalid email format';
-      valid = false;
-    }
-    if (!this.phone.trim()) {
-      this.phoneError = 'Phone is required';
-      valid = false;
-    } else if (!/^[0-9]{10,15}$/.test(this.phone.replace(/\D/g, ''))) {
-      this.phoneError = 'Invalid phone number';
-        valid = false;
-      }
 
-    
+    if (!this.validateName()) valid = false;
+    if (!this.validateEmail()) valid = false;
+
+    const formattedPhone = this.validatePhone();
+    if (!formattedPhone) valid = false;
+
     this.validatePassword();
-    if (this.passwordError.length > 0) {
-      valid = false;
-    }
-    if (!valid) {
-      return;
-    }
+    if (this.passwordError.length > 0) valid = false;
 
-    // Combine country code and phone number
-    let combinedPhone = this.phone;
-if (this.iti) {
-  combinedPhone = this.iti.getNumber(); // This gives +91xxxxxxxxxx
-}
-
+    if (!valid) return;
 
     this.patientRegistrationService.setStepData({
       name: this.name,
       email: this.email,
-      phone: combinedPhone,
+      phone: formattedPhone, // ✅ "91-9985699655"
       password: this.password,
       gender: this.gender ? this.gender.toLowerCase() : ''
     });
+
     this.router.navigateByUrl('/patients/register/patient-register-step1');
   }
+
+  
 ngAfterViewInit(): void {
   // 1. Setup intlTelInput
-  const input = document.querySelector('#phone') as HTMLInputElement;
-  this.iti = intlTelInput(input, {
-    initialCountry: 'us',
-    preferredCountries: ['us', 'gb', 'in'],
-    utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js'
-  } as any);
-  input.addEventListener('input', () => {
-    input.value = input.value.replace(/[^0-9+()-\s]/g, '');
-  });
+  // const input = document.querySelector('#phone') as HTMLInputElement;
+  // this.iti = intlTelInput(input, {
+  //   initialCountry: 'us',
+  //   preferredCountries: ['us', 'gb', 'in'],
+  //   utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js'
+  // } as any);
+  // input.addEventListener('input', () => {
+  //   input.value = input.value.replace(/[^0-9+()-\s]/g, '');
+  // });
 
   // 2. Setup Google Sign-In handler
   (window as any).handlePatientGoogleRegister = (response: any) => {
