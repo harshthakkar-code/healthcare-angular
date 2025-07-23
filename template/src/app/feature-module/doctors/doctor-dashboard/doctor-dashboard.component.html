@@ -1,14 +1,16 @@
 <app-doctor-breadcrumb></app-doctor-breadcrumb>
 <!-- Page Content -->
-<div *ngIf="isProfilePending" class="alert alert-warning text-center" style="margin-top: 10px; width: 75%; margin-left: auto; margin-right: auto;">
-  Your doctor profile is not approved yet. Please wait for admin approval.
+<div *ngIf="warningMessage" class="alert alert-warning text-center"
+  style="margin-top: 10px; width: 75%; margin-left: auto; margin-right: auto;">
+  {{ warningMessage }}
 </div>
+
+
+
 <div class="content">
   <div class="container">
     <div class="row">
-      <app-doctor-sidebar
-        class="col-md-5 col-lg-4 col-xl-3"
-      ></app-doctor-sidebar>
+      <app-doctor-sidebar class="col-md-5 col-lg-4 col-xl-3"></app-doctor-sidebar>
 
       <div class="col-lg-8 col-xl-9">
         <div class="row">
@@ -24,9 +26,7 @@
                   > -->
                 </div>
                 <div class="dashboard-widget-icon">
-                  <span class="dash-icon-box"
-                    ><i class="fa-solid fa-user-injured"></i
-                  ></span>
+                  <span class="dash-icon-box"><i class="fa-solid fa-user-injured"></i></span>
                 </div>
               </div>
               <div class="dashboard-widget-box">
@@ -39,9 +39,7 @@
                   > -->
                 </div>
                 <div class="dashboard-widget-icon">
-                  <span class="dash-icon-box"
-                    ><i class="fa-solid fa-user-clock"></i
-                  ></span>
+                  <span class="dash-icon-box"><i class="fa-solid fa-user-clock"></i></span>
                 </div>
               </div>
               <div class="dashboard-widget-box">
@@ -54,9 +52,7 @@
                   > -->
                 </div>
                 <div class="dashboard-widget-icon">
-                  <span class="dash-icon-box"
-                    ><i class="fa-solid fa-calendar-days"></i
-                  ></span>
+                  <span class="dash-icon-box"><i class="fa-solid fa-calendar-days"></i></span>
                 </div>
               </div>
             </div>
@@ -99,13 +95,14 @@
                         <td>
                           <div class="patient-info-profile">
                             <a class="table-avatar">
-                              <img [src]="appt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
+                              <img [src]="appt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
+                                alt="Img" />
                             </a>
                             <div class="patient-name-info">
                               <span>#{{ appt._id?.slice(-6) }}</span>
                               <h5>
                                 <a>{{ appt.patient?.name || 'Unknown' }}</a>
-                              </h5> 
+                              </h5>
                             </div>
                           </div>
                         </td>
@@ -118,10 +115,12 @@
                         <td>
                           <div class="apponiment-actions d-flex align-items-center">
                             <ng-container *ngIf="appt.status === 'pending'; else statusBadge">
-                              <button type="button" class="text-success-icon me-2 btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'accepted')">
+                              <button type="button" class="text-success-icon me-2 btn btn-link p-0"
+                                (click)="updateAppointmentStatus(appt, 'accepted')">
                                 <i class="fa-solid fa-check"></i>
                               </button>
-                              <button type="button" class="text-danger-icon btn btn-link p-0" (click)="updateAppointmentStatus(appt, 'rejected')">
+                              <button type="button" class="text-danger-icon btn btn-link p-0"
+                                (click)="updateAppointmentStatus(appt, 'rejected')">
                                 <i class="fa-solid fa-xmark"></i>
                               </button>
                             </ng-container>
@@ -152,71 +151,37 @@
                 </div>
                 <div class="dashboard-card-body">
                   <div class="chart-tab">
-                    <ul
-                      class="nav nav-pills product-licence-tab"
-                      id="pills-tab2"
-                      role="tablist"
-                    >
+                    <ul class="nav nav-pills product-licence-tab" id="pills-tab2" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <button
-                          class="nav-link active"
-                          id="pills-revenue-tab"
-                          data-bs-toggle="pill"
-                          data-bs-target="#pills-revenue"
-                          type="button"
-                          role="tab"
-                          aria-controls="pills-revenue"
-                          aria-selected="false"
-                        >
+                        <button class="nav-link active" id="pills-revenue-tab" data-bs-toggle="pill"
+                          data-bs-target="#pills-revenue" type="button" role="tab" aria-controls="pills-revenue"
+                          aria-selected="false">
                           Revenue
                         </button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button
-                          class="nav-link"
-                          id="pills-appointment-tab"
-                          data-bs-toggle="pill"
-                          data-bs-target="#pills-appointment"
-                          type="button"
-                          role="tab"
-                          aria-controls="pills-appointment"
-                          aria-selected="true"
-                        >
+                        <button class="nav-link" id="pills-appointment-tab" data-bs-toggle="pill"
+                          data-bs-target="#pills-appointment" type="button" role="tab" aria-controls="pills-appointment"
+                          aria-selected="true">
                           Appointments
                         </button>
                       </li>
                     </ul>
                     <div class="tab-content w-100" id="v-pills-tabContent">
-                      <div
-                        class="tab-pane fade show active"
-                        id="pills-revenue"
-                        role="tabpanel"
-                        aria-labelledby="pills-revenue-tab"
-                      >
+                      <div class="tab-pane fade show active" id="pills-revenue" role="tabpanel"
+                        aria-labelledby="pills-revenue-tab">
                         <div id="revenue-chart">
-                          <apx-chart
-                            [series]="chartOptions1.series"
-                            [chart]="chartOptions1.chart"
-                            [dataLabels]="chartOptions1.dataLabels"
-                            [plotOptions]="chartOptions1.plotOptions"
-                            [xaxis]="chartOptions1.xaxis"
-                          ></apx-chart>
+                          <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
+                            [dataLabels]="chartOptions1.dataLabels" [plotOptions]="chartOptions1.plotOptions"
+                            [xaxis]="chartOptions1.xaxis"></apx-chart>
                         </div>
                       </div>
-                      <div
-                        class="tab-pane fade"
-                        id="pills-appointment"
-                        role="tabpanel"
-                        aria-labelledby="pills-appointment-tab"
-                      >
+                      <div class="tab-pane fade" id="pills-appointment" role="tabpanel"
+                        aria-labelledby="pills-appointment-tab">
                         <div id="appointment-chart">
-                          <apx-chart
-                            [series]="chartOptions2.series"
-                            [chart]="chartOptions2.chart"
-                            [dataLabels]="chartOptions2.dataLabels"
-                            [plotOptions]="chartOptions2.plotOptions"
-                            [xaxis]="chartOptions2.xaxis"
-                          ></apx-chart>
+                          <apx-chart [series]="chartOptions2.series" [chart]="chartOptions2.chart"
+                            [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
+                            [xaxis]="chartOptions2.xaxis"></apx-chart>
                         </div>
                       </div>
                     </div>
@@ -236,11 +201,13 @@
                   <div class="d-flex recent-patient-grid-boxes">
                     <ng-container *ngFor="let patient of recentPatients; let i = index">
                       <div class="recent-patient-grid">
-                        <a Style = "cursor:default" class="patient-img">
-                          <img [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'" alt="Img" />
+                        <a Style="cursor:default" class="patient-img">
+                          <img
+                            [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'"
+                            alt="Img" />
                         </a>
                         <h5>
-                          <a Style = "cursor:default">{{ patient?.name || 'Unknown' }}</a>
+                          <a Style="cursor:default">{{ patient?.name || 'Unknown' }}</a>
                         </h5>
                         <span>Patient ID : {{ formatPatientId(patient?._id || 'P000' + (i+1)) }}</span>
                         <div class="date-info">
@@ -250,11 +217,11 @@
                     </ng-container>
                     <ng-container *ngIf="recentPatients.length === 0">
                       <div class="recent-patient-grid">
-                        <a Style = "cursor:default" class="patient-img">
+                        <a Style="cursor:default" class="patient-img">
                           <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="Img" />
                         </a>
                         <h5>
-                          <a Style = "cursor:default">No Recent Patient</a>
+                          <a Style="cursor:default">No Recent Patient</a>
                         </h5>
                         <span>Patient ID : --</span>
                         <div class="date-info">
@@ -276,7 +243,9 @@
                 <ng-container *ngIf="upcomingAppointment; else noUpcoming">
                   <div class="upcoming-patient-info">
                     <div class="info-details">
-                      <span class="img-avatar"><img [src]="upcomingAppointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img"></span>
+                      <span class="img-avatar"><img
+                          [src]="upcomingAppointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
+                          alt="Img"></span>
                       <div class="name-info">
                         <span>#{{ upcomingAppointment._id?.slice(-6) }}</span>
                         <h6>{{ upcomingAppointment.patient?.name || 'Unknown' }}</h6>
@@ -337,20 +306,23 @@
                           <td>
                             <div class="patient-info-profile">
                               <a [routerLink]="routes.invoice" class="table-avatar">
-                                <img [src]="invoice.appointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="Img" />
+                                <img
+                                  [src]="invoice.appointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
+                                  alt="Img" />
                               </a>
                               <div class="patient-name-info">
                                 <h5>
-                                  <a [routerLink]="routes.invoice">{{ invoice.appointment.patient?.name || invoice.patientName || 'Unknown' }}</a>
+                                  <a [routerLink]="routes.invoice">{{ invoice.appointment.patient?.name ||
+                                    invoice.patientName || 'Unknown' }}</a>
                                 </h5>
-                                <span>#{{  invoice?.invoiceNo?.slice(-6) || invoice.appointmentId  }}</span>
+                                <span>#{{ invoice?.invoiceNo?.slice(-6) || invoice.appointmentId }}</span>
                               </div>
                             </div>
                           </td>
                           <td>
                             <div class="appointment-date-created">
                               <span class="paid-text">Paid On</span>
-                              <h6>{{  (invoice.issuedDate | date:'dd MMM yyyy') }}</h6>
+                              <h6>{{ (invoice.issuedDate | date:'dd MMM yyyy') }}</h6>
                             </div>
                           </td>
                           <td>
@@ -361,7 +333,8 @@
                           </td>
                           <td>
                             <div class="apponiment-view d-flex align-items-center">
-                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(invoice._id)">
+                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view"
+                                (click)="openInvoiceModal(invoice._id)">
                                 <i class="isax isax-eye4"></i>
                               </a>
                             </div>
@@ -397,10 +370,8 @@
 
                             <div class="table-noti-message">
                               <h6>
-                                <a href="javascript:void(0);"
-                                  >Booking Confirmed on
-                                  <span> 21 Mar 2024 </span> 10:30 AM</a
-                                >
+                                <a href="javascript:void(0);">Booking Confirmed on
+                                  <span> 21 Mar 2024 </span> 10:30 AM</a>
                               </h6>
                               <span class="message-time">Just Now</span>
                             </div>
@@ -416,8 +387,7 @@
 
                             <div class="table-noti-message">
                               <h6>
-                                <a href="javascript:void(0);"
-                                  >You have a <span> New </span> Review for your
+                                <a href="javascript:void(0);">You have a <span> New </span> Review for your
                                   Appointment
                                 </a>
                               </h6>
@@ -435,8 +405,7 @@
 
                             <div class="table-noti-message">
                               <h6>
-                                <a href="javascript:void(0);"
-                                  >You have Appointment with
+                                <a href="javascript:void(0);">You have Appointment with
                                   <span> Ahmed </span> by 01:20 PM
                                 </a>
                               </h6>
@@ -454,8 +423,7 @@
 
                             <div class="table-noti-message">
                               <h6>
-                                <a href="javascript:void(0);"
-                                  >Sent an amount of <span> $200 </span> for an
+                                <a href="javascript:void(0);">Sent an amount of <span> $200 </span> for an
                                   Appointment by 01:20 PM
                                 </a>
                               </h6>
@@ -473,8 +441,7 @@
 
                             <div class="table-noti-message">
                               <h6>
-                                <a href="javascript:void(0);"
-                                  >You have a <span> New </span> Review for your
+                                <a href="javascript:void(0);">You have a <span> New </span> Review for your
                                   Appointment
                                 </a>
                               </h6>
@@ -501,10 +468,7 @@
                   <div class="clinic-head">
                     <div class="clinic-info">
                       <span class="clinic-img">
-                        <img
-                          src="assets/img/doctors-dashboard/clinic-02.jpg"
-                          alt="Img"
-                        />
+                        <img src="assets/img/doctors-dashboard/clinic-02.jpg" alt="Img" />
                       </span>
                       <h6>Sofi's Clinic</h6>
                     </div>
@@ -532,10 +496,7 @@
                   <div class="clinic-head">
                     <div class="clinic-info">
                       <span class="clinic-img">
-                        <img
-                          src="assets/img/doctors-dashboard/clinic-01.jpg"
-                          alt="Img"
-                        />
+                        <img src="assets/img/doctors-dashboard/clinic-01.jpg" alt="Img" />
                       </span>
                       <h6>The Family Dentistry Clinic</h6>
                     </div>

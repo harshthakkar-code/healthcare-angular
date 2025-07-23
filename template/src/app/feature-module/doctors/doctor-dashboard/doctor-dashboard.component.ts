@@ -59,6 +59,12 @@ export class DoctorDashboardComponent {
   public appointmentsToday: number = 0;
   public appointments: any[] = [];
   public invoices: any[] = [];
+  doctorId: string | null | undefined;
+  specializations: any;
+  isSpecializationMissing: boolean | undefined;
+  stripeLoading: boolean | undefined;
+  isStripeConnected: boolean | undefined;
+  warningMessage: string | null = null;
 
   constructor(
     private data: DataService,
@@ -82,7 +88,7 @@ export class DoctorDashboardComponent {
       series: [
         {
           name: "High",
-          data: [50,40,15,45,35,48,65]
+          data: [50, 40, 15, 45, 35, 48, 65]
         }
       ],
       chart: {
@@ -98,28 +104,28 @@ export class DoctorDashboardComponent {
           horizontal: false,
           columnWidth: '50%',
           endingShape: 'rounded',
-          borderRadius: 7, 
+          borderRadius: 7,
         }
       },
       dataLabels: {
         enabled: false
       },
       xaxis: {
-        categories: ['M','T', 'W', 'T','F','S','S'],
-    },
+        categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      },
     };
     this.chartOptions2 = {
       series: [
         {
           name: "High",
-          data: [40,20,30,60,90,40,110]
+          data: [40, 20, 30, 60, 90, 40, 110]
         }
       ],
       chart: {
         type: "bar",
         height: 220,
         stacked: true,
-        endingShape: 'rounded',  
+        endingShape: 'rounded',
         toolbar: {
           show: false,
         }
@@ -129,22 +135,32 @@ export class DoctorDashboardComponent {
           horizontal: false,
           columnWidth: '50%',
           endingShape: 'rounded',
-          borderRadius: 7, 
+          borderRadius: 7,
         }
       },
       dataLabels: {
         enabled: false
       },
       xaxis: {
-        categories: ['M','T', 'W', 'T','F','S','S'],
-    },
-    
+        categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      },
+
     };
   }
 
   ngOnInit(): void {
     this.fetchDoctorStats();
     this.fetchDashboardInvoices();
+    this.doctorId = this.getDoctorIdFromLocalStorage();
+    if (this.doctorId) {
+      Promise.all([
+        this.getSpecializations(),
+        this.checkStripeStatus()
+      ]).then(() => {
+        this.buildWarningMessage();
+      });
+    }
+
   }
 
   getDoctorIdFromLocalStorage(): string | null {
@@ -155,6 +171,41 @@ export class DoctorDashboardComponent {
       return null;
     }
   }
+
+  getSpecializations(): Promise<void> {
+    return new Promise((resolve) => {
+      const doctorId = this.doctorId;
+      if (!doctorId) return resolve();
+      api.get(`/specialization?doctorId=${doctorId}`).then((res: any) => {
+        this.specializations = res.data || [];
+        this.isSpecializationMissing = this.specializations.length === 0;
+        resolve();
+      }).catch(() => {
+        this.isSpecializationMissing = true;
+        resolve();
+      });
+    });
+  }
+
+
+  checkStripeStatus(): Promise<void> {
+    return new Promise((resolve) => {
+      this.stripeLoading = true;
+      api.get('/doctor/stripe/status')
+        .then(res => {
+          this.isStripeConnected = !!res.data.connected;
+          resolve();
+        })
+        .catch(() => {
+          this.isStripeConnected = false;
+          resolve();
+        })
+        .finally(() => {
+          this.stripeLoading = false;
+        });
+    });
+  }
+
 
   updateAppointmentChart() {
     // Get the last 7 days (including today)
@@ -175,7 +226,7 @@ export class DoctorDashboardComponent {
   }
 
   async fetchDoctorStats() {
-    const doctorId = this.getDoctorIdFromLocalStorage();
+    const doctorId = this.doctorId;
     if (!doctorId) return;
     try {
       const res = await api.get(`/doctor/appointments/doctor/${doctorId}`);
@@ -275,7 +326,7 @@ export class DoctorDashboardComponent {
   }
   public sortData2(sort: Sort) {
     const data = this.tableData2.slice();
-  
+
     if (!sort.active || sort.direction === '') {
       this.tableData2 = data;
     } else {
@@ -347,7 +398,7 @@ export class DoctorDashboardComponent {
 
   async fetchDashboardInvoices() {
     try {
-      const doctorId = this.getDoctorIdFromLocalStorage();
+      const doctorId = this.doctorId;
       if (!doctorId) {
         this.invoices = [];
         return;
@@ -412,5 +463,28 @@ export class DoctorDashboardComponent {
     }).catch(() => {
       this.invoiceModalService.setInvoice(null);
     });
+  }
+
+  buildWarningMessage(): void {
+    const messages: string[] = [];
+
+    if (this.isProfilePending) {
+      messages.push('wait for admin approval of your doctor profile');
+    }
+    if (this.isSpecializationMissing) {
+      messages.push('add at least one specialization');
+    }
+    if (!this.isStripeConnected) {
+      messages.push('connect your Stripe account');
+    }
+
+    if (messages.length > 0) {
+      const last = messages.pop();
+      this.warningMessage = messages.length
+        ? `You must ${messages.join(', ')} and ${last}.`
+        : `You must ${last}.`;
+    } else {
+      this.warningMessage = null;
+    }
   }
 }

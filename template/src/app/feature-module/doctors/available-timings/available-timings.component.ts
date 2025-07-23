@@ -398,51 +398,80 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // New method to save all pending slots after checking overlap
   async saveAllSlots() {
     if (!this.pendingSlots.length && !this.hasAnyEditedSavedSlots()) return;
     this.loading = true;
     try {
       const failedPending: any[] = [];
-      // Try to create all pending slots
+  
+      // Validate and create all pending slots
       for (const slot of this.pendingSlots) {
+        const allSlotsForType = slot.type === 'clinic'
+          ? [...(this.clinicSlotsByDay[slot.day] || [])]
+          : [...(this.slotsByDay[slot.day] || [])];
+  
+        const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, allSlotsForType);
+        if (overlap && overlappingSlot) {
+          slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+          failedPending.push(slot);
+          continue;
+        }
+  
         try {
           await this.slotService.createSlots(slot).toPromise();
-          // Success: do not add to failedPending
         } catch (err: any) {
           slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
-          failedPending.push(slot); // Keep as pending with error
+          failedPending.push(slot);
         }
       }
-      // Try to update all edited saved slots
+  
+      // Update saved slots that are edited (marked as isPending)
       for (const day of this.daysOfWeek) {
+        // General slots
         for (const slot of this.slotsByDay[day] || []) {
           if (slot.isPending && (slot.id || slot._id)) {
-            try {
-              await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
-              slot.isPending = false; // Success: clear pending
-              slot.error = undefined;
-            } catch (err: any) {
-              slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
-              // Failure: keep isPending true
+            const otherSlots = (this.slotsByDay[day] || []).filter(
+              s => (s.id || s._id) !== (slot.id || slot._id)
+            );
+            const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+            if (overlap && overlappingSlot) {
+              slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+              continue;
             }
-          }
-        }
-        for (const slot of this.clinicSlotsByDay[day] || []) {
-          if (slot.isPending && (slot.id || slot._id)) {
             try {
               await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
               slot.isPending = false;
               slot.error = undefined;
             } catch (err: any) {
               slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
-              // Failure: keep isPending true
+            }
+          }
+        }
+  
+        // Clinic slots
+        for (const slot of this.clinicSlotsByDay[day] || []) {
+          if (slot.isPending && (slot.id || slot._id)) {
+            const otherSlots = (this.clinicSlotsByDay[day] || []).filter(
+              s => (s.id || s._id) !== (slot.id || slot._id)
+            );
+            const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+            if (overlap && overlappingSlot) {
+              slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+              continue;
+            }
+            try {
+              await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
+              slot.isPending = false;
+              slot.error = undefined;
+            } catch (err: any) {
+              slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
             }
           }
         }
       }
-      this.pendingSlots = failedPending; // Only failed ones remain
-      // Show the first error (if any) for 3 seconds
+  
+      this.pendingSlots = failedPending;
+  
       const firstErrorSlot = failedPending.find(slot => slot.error);
       if (firstErrorSlot && firstErrorSlot.error) {
         this.slotListError = firstErrorSlot.error;
@@ -450,14 +479,13 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
       } else {
         this.slotListError = null;
       }
+  
       this.fetchSlots();
-      this.fetchClinicSlots();
+      // this.fetchClinicSlots();
       this.updateError = null;
-    } catch (err : any) {
-      this.updateError = err?.error?.error  || err?.response?.data?.error || 'Failed to save slot';
-      if (this.updateError) {
-        setTimeout(() => { this.updateError = ''; }, 3000);
-      }
+    } catch (err: any) {
+      this.updateError = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
+      setTimeout(() => { this.updateError = ''; }, 3000);
     }
     this.loading = false;
   }
@@ -526,3 +554,41 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     return false;
   }
 }
+
+// Utility functions (must be outside the class)
+function toMinutes(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function normalizeDate(date: string): string {
+  return date.length > 10 ? date.slice(0, 10) : date;
+}
+
+function isSlotOverlapping(
+  newSlot: { startTime: string, endTime: string, date: string, type: string, id?: any, _id?: any },
+  existingSlots: Array<{ startTime: string, endTime: string, date: string, type: string, id?: any, _id?: any }>,
+  excludeId?: any
+): { overlap: boolean; slot?: any } {
+  const newStart = toMinutes(newSlot.startTime);
+  const newEnd = toMinutes(newSlot.endTime);
+  const newDate = normalizeDate(newSlot.date);
+
+  for (const slot of existingSlots) {
+    const slotStart = toMinutes(slot.startTime);
+    const slotEnd = toMinutes(slot.endTime);
+    const slotDate = normalizeDate(slot.date);
+    const isSameType = slot.type === newSlot.type;
+    const isSameDate = slotDate === newDate;
+    const isNotExcluded = excludeId ? (slot.id || slot._id) !== excludeId : true;
+
+    const isOverlap = slotStart < newEnd && slotEnd > newStart;
+
+    if (isSameDate && isSameType && isNotExcluded && isOverlap) {
+      return { overlap: true, slot };
+    }
+  }
+
+  return { overlap: false };
+}
+

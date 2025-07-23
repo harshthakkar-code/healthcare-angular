@@ -3,6 +3,9 @@ const Appointment = require('../models/Appointment');
 const User = require('../models/User'); // Add this import if not present
 const stripe = require('../utils/stripe');
 const Invoice = require('../models/Invoice');
+const Payout = require('../models/Payout');
+const moment = require('moment');
+
 
 exports.createTransaction = async (req, res, next) => {
   try {
@@ -620,3 +623,114 @@ exports.refundTransaction = async (req, res, next) => {
     res.status(400).json({ message: err.message });
   }
 }; 
+
+
+exports.getPayoutsForConnectedAccount = async (req, res, next) => {
+  try {
+    const { doctorId } = req.params;
+    const doctor = await User.findById(doctorId);
+    if (!doctor?.stripeAccountId) {
+      return res.status(400).json({ message: 'Doctor is not connected to Stripe.' });
+    }
+
+    const payouts = await stripe.payouts.list(
+      { limit: 50 },
+      { stripeAccount: doctor.stripeAccountId }
+    );
+
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: doctor.stripeAccountId,
+    });
+    const pendingAmount = balance.pending?.reduce((sum, item) => sum + item.amount, 0) || 0;
+    const availableAmount = balance.available?.reduce((sum, item) => sum + item.amount, 0) || 0;
+    const formattedPending = pendingAmount / 100;
+    const formattedAvailable = availableAmount / 100;
+
+
+    const payoutMap = {};
+    for (const payout of payouts.data) {
+      const dateStr = moment.unix(payout.arrival_date).format('YYYY-MM-DD');
+      if (!payoutMap[dateStr]) payoutMap[dateStr] = [];
+      payoutMap[dateStr].push(payout);
+    }
+
+    const syncResults = [];
+    const startDate = moment().subtract(6, 'days');
+    const endDate = moment();
+
+    for (let d = startDate.clone(); d.isSameOrBefore(endDate); d.add(1, 'day')) {
+      const dateStr = d.format('YYYY-MM-DD');
+      const payoutsForDay = payoutMap[dateStr] || [];
+
+      const totalAmount = payoutsForDay.reduce((sum, p) => sum + p.amount / 100, 0);
+
+      // ✅ Skip creation if no payouts (amount is 0)
+      if (totalAmount === 0) continue;
+
+      const existing = await Payout.findOne({
+        doctor: doctor._id,
+        paymentDate: {
+          $gte: d.startOf('day').toDate(),
+          $lte: d.endOf('day').toDate(),
+        }
+      });
+
+      const rawStatus = payoutsForDay.find(p => p.status === 'paid') ? 'paid'
+        : payoutsForDay.find(p => ['pending', 'in_transit'].includes(p.status)) ? 'in_transit'
+          : payoutsForDay.find(p => p.status === 'failed') ? 'failed'
+            : 'none';
+
+      const mapStripeStatusToInternal = {
+        pending: 'pending',
+        in_transit: 'processing',
+        paid: 'completed',
+        failed: 'failed',
+        canceled: 'failed',
+        none: 'pending'
+      };
+
+      const payoutData = {
+        doctor: doctor._id,
+        amount: totalAmount,
+        paymentMethod: 'stripe',
+        status: mapStripeStatusToInternal[rawStatus] || 'pending',
+        paymentDate: d.toDate(),
+        transactionId: payoutsForDay.map(p => p.id).join(',') || `none-${dateStr}`,
+        notes: payoutsForDay.map(p => p.description).filter(Boolean).join(', ') || 'No payouts for this day',
+        timesteps: {
+          requested: payoutsForDay[0] ? new Date(payoutsForDay[0].created * 1000) : undefined,
+          processed: rawStatus === 'in_transit' ? new Date(payoutsForDay[0].arrival_date * 1000) : undefined,
+          completed: rawStatus === 'paid' ? new Date(payoutsForDay[0].arrival_date * 1000) : undefined,
+          failed: rawStatus === 'failed' ? new Date(payoutsForDay[0].arrival_date * 1000) : undefined,
+        }
+      };
+
+      let syncedPayout;
+      if (existing) {
+        syncedPayout = await Payout.findByIdAndUpdate(existing._id, payoutData, { new: true });
+      } else {
+        syncedPayout = await new Payout(payoutData).save();
+      }
+
+      syncResults.push(syncedPayout);
+    }
+
+    const account = await stripe.accounts.retrieve(doctor.stripeAccountId);
+
+    res.json({
+      synced: syncResults.length,
+      payoutsInserted: syncResults,
+      settings: {
+        payoutSchedule: account.settings?.payouts?.schedule,
+        statementDescriptor: account.settings?.payouts?.statement_descriptor,
+        externalAccounts: account.external_accounts?.data || [],
+      },
+      stripeBalance: {
+        pending: formattedPending,
+        available: formattedAvailable
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
