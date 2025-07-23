@@ -19,5 +19,6 @@ router.post('/stripe/checkout', auth, transactionController.createStripeCheckout
 // router.post('/stripe/webhook', express.raw({type: 'application/json'}), transactionController.stripeWebhook);
 router.get('/stripe/payment/:id', transactionController.getStripePaymentDetails);
 router.get('/stripe/charge/:id', transactionController.getStripeChargeDetails);
+router.get('/stripe/payouts/:doctorId', auth, role('admin', 'doctor'), transactionController.getPayoutsForConnectedAccount);
 
 module.exports = router; 

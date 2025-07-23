@@ -228,14 +228,33 @@ exports.googleLogin = async (req, res, next) => {
   try {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: 'No Google token provided.' });
+
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const payload = ticket.getPayload();
     const email = payload.email;
+    const name = payload.name || '';
+    const profileImage = payload.picture || null;
+
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'Email not registered.' });
+
+    if (!user) {
+      // Return limited info so UI can patch name/email
+      return res.status(200).json({
+        message: 'Email not registered',
+        isNewUser: true,
+        user: {
+          name,
+          email,
+          profileImage,
+        }
+      });
+    }
+
+    // User exists, login and return token
     const jwt = generateToken(user);
     res.json({
       token: jwt,
@@ -251,6 +270,7 @@ exports.googleLogin = async (req, res, next) => {
     res.status(401).json({ message: 'Google login failed.' });
   }
 };
+
 
 // Cascade delete user, profile, and all related data
 exports.deleteUserCascade = async (req, res) => {

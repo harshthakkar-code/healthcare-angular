@@ -3,7 +3,7 @@
 <div class="content doctor-content">
     <div class="container">
         <div class="row">
-            
+
             <app-doctor-sidebar class="col-md-5 col-lg-4 col-xl-3"></app-doctor-sidebar>
 
             <!-- Payouts -->
@@ -47,12 +47,27 @@
 
                 <div class="search-header" *ngIf="paginatedPayouts.length > 0 || loading">
                     <div class="search-field">
-                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchText" (ngModelChange)="onSearchChange()">
+                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchText"
+                            (ngModelChange)="onSearchChange()">
                         <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                     </div>
                 </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 p-3 text-center">
+                            <h5 class="text-muted">Pending Balance</h5>
+                            <h3 class="text-warning">${{ stripeBalance.pending }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 p-3 text-center">
+                            <h5 class="text-muted">Available Balance</h5>
+                            <h3 class="text-success">${{ stripeBalance.available }}</h3>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="custom-table" *ngIf="payouts.length > 0 || loading">
+                <div class="custom-table" *ngIf="paginatedPayouts.length > 0 || loading">
                     <div class="table-responsive">
                         <table class="table table-center mb-0">
                             <thead>
@@ -64,15 +79,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let tx of payouts">
+                                <tr *ngFor="let tx of paginatedPayouts">
                                     <!-- <td>{{ tx._id }}</td> -->
-                                    <td>{{ tx.appointment?.date | date: 'dd MMM yyyy' }}</td>
+                                    <td>{{ tx.paymentDate | date: 'dd MMM yyyy' }}</td>
                                     <td>{{ tx.paymentMethod}} stripe</td>
                                     <!-- <td>{{ tx.appointment?.createdAt | date: 'dd MMM yyyy' }}</td> -->
                                     <td>${{ tx.amount }}</td>
-                                     <td>
+                                    <td>
                                         <span class="badge" style="border-radius: 10px; width: 85px;" [ngClass]="{
-                                            'badge-green status-badge': tx.status === 'paid',
+                                            'badge-green status-badge': tx.status === 'completed',
                                             'badge-warning status-badge': tx.status === 'pending',
                                             'badge-danger status-badge': tx.status === 'failed',
                                             'badge-info status-badge': tx.status === 'refunded'
@@ -84,27 +99,25 @@
                     </div>
                 </div>
 
-                <app-empty-state *ngIf="!loading && payouts.length === 0"
-                [title]="'No Payouts'"
-                [message]="'There are no payouts to show.'"
-                ></app-empty-state>
+                <app-empty-state *ngIf="!loading && paginatedPayouts.length === 0" [title]="'No Payouts'"
+                    [message]="'There are no payouts to show.'"></app-empty-state>
 
                 <!-- Pagination -->
                 <div class="pagination dashboard-pagination" *ngIf="paginatedPayouts.length > 0">
                     <ul>
                         <li [class.disabled]="currentPage === 1">
-                            <a href="javascript:void(0);" class="page-link" (click)="prevPage()"><i class="fa-solid fa-chevron-left"></i></a>
+                            <a href="javascript:void(0);" class="page-link" (click)="prevPage()"><i
+                                    class="fa-solid fa-chevron-left"></i></a>
                         </li>
                         <li *ngFor="let page of paginationPages">
-                            <a href="javascript:void(0);" class="page-link"
-                               [class.active]="page === currentPage"
-                               [class.disabled]="page === '...'"
-                               (click)="onPageClick(page)">
+                            <a href="javascript:void(0);" class="page-link" [class.active]="page === currentPage"
+                                [class.disabled]="page === '...'" (click)="onPageClick(page)">
                                 {{ page }}
                             </a>
                         </li>
                         <li [class.disabled]="currentPage === totalPages">
-                            <a href="javascript:void(0);" class="page-link" (click)="nextPage()"><i class="fa-solid fa-chevron-right"></i></a>
+                            <a href="javascript:void(0);" class="page-link" (click)="nextPage()"><i
+                                    class="fa-solid fa-chevron-right"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -115,5 +128,5 @@
 
         </div>
     </div>
-</div>		
+</div>
 <!-- /Page Content -->
