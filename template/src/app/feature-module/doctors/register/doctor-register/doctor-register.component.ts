@@ -1,9 +1,13 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import {
+  getCountries,
+  getCountryCallingCode,
+  parsePhoneNumberFromString,
+} from 'libphonenumber-js';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorRegistrationService } from '../doctor-registration.service';
-import intlTelInput from 'intl-tel-input';
 import { DataService } from 'src/app/shared/data/data.service';
 import { environment } from 'src/environments/environment';
 import { routes } from 'src/app/shared/routes/routes';
@@ -50,7 +54,7 @@ function loadIntlTelInputUtilsScript(url: string): Promise<void> {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './doctor-register.component.html',
-  styleUrls: ['./doctor-register.component.scss']
+  styleUrls: ['./doctor-register.component.scss'],
 })
 export class DoctorRegisterComponent implements AfterViewInit {
   name = '';
@@ -63,19 +67,25 @@ export class DoctorRegisterComponent implements AfterViewInit {
   phoneError = '';
   registerError = '';
   passwordError: string[] = [];
+  selectedCountry: any = 'IN'; // default
+  countryOptions: { name: string; iso2: any; dialCode: string }[] = [];
   routes = {
     register: '/register',
     doctorRegisterStep1: '/doctors/register/doctor-register-step1',
     userLogin: '/login',
     registrationSuccess: '/doctors/register/registration-success',
-    index: ''
+    index: '',
   };
   iti: any;
   public googleClientId = environment.GOOGLE_CLIENT_ID;
   public routes1 = routes;
-  
 
-  constructor(private router: Router,private authService: AuthService, private regService: DoctorRegistrationService , private dataService: DataService) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private regService: DoctorRegistrationService,
+    private dataService: DataService
+  ) {
     // Load data if present
     const data = this.regService.getAllData();
     this.name = data.name || '';
@@ -97,7 +107,9 @@ export class DoctorRegisterComponent implements AfterViewInit {
         passwordErrors.push('Password must be at least 8 characters');
       }
       if (!/[A-Z]/.test(this.password)) {
-        passwordErrors.push('Password must include at least one uppercase letter');
+        passwordErrors.push(
+          'Password must include at least one uppercase letter'
+        );
       }
       if (!/[0-9]/.test(this.password)) {
         passwordErrors.push('Password must include at least one number');
@@ -107,6 +119,21 @@ export class DoctorRegisterComponent implements AfterViewInit {
       }
     }
     this.passwordError = passwordErrors;
+  }
+
+  validatePhone(): any | undefined {
+    const dialCode = getCountryCallingCode(this.selectedCountry);
+    const nationalOnly = this.phone.replace(/\D/g, '');
+    const full = `+${dialCode}${nationalOnly}`;
+    const parsed = parsePhoneNumberFromString(full, this.selectedCountry);
+
+    if (!parsed || !parsed.isValid()) {
+      this.phoneError = 'Invalid phone number for selected country';
+      return undefined;
+    }
+
+    this.phoneError = '';
+    return `${dialCode}-${parsed.nationalNumber}`;
   }
 
   navigation() {
@@ -125,17 +152,16 @@ export class DoctorRegisterComponent implements AfterViewInit {
     if (!this.email.trim()) {
       this.emailError = 'Email is required';
       valid = false;
-    } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(this.email)) {
+    } else if (
+      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(this.email)
+    ) {
       this.emailError = 'Invalid email format';
       valid = false;
     }
-    if (!this.phone.trim()) {
-      this.phoneError = 'Phone is required';
-      valid = false;
-    } else if (!/^[0-9]{10,15}$/.test(this.phone.replace(/\D/g, ''))) {
-      this.phoneError = 'Invalid phone number';
-      valid = false;
-    }
+
+    const formattedPhone = this.validatePhone();
+    if (!formattedPhone) valid = false;
+
     this.validatePassword();
     if (this.passwordError.length > 0) {
       valid = false;
@@ -149,84 +175,87 @@ export class DoctorRegisterComponent implements AfterViewInit {
     this.regService.setStepData({
       name: this.name,
       email: this.email,
-      phone: this.phone,
-      password: this.password
+      phone: formattedPhone,
+      password: this.password,
     });
     this.router.navigate([this.routes.doctorRegisterStep1]);
   }
 
-ngAfterViewInit(): void {
-  // 1. Setup intlTelInput
-  const input = document.querySelector('#phone') as HTMLInputElement;
-  intlTelInput(input, {
-    initialCountry: 'us',
-    preferredCountries: ['us', 'gb', 'in'],
-    utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js'
-  } as any);
-  input.addEventListener('input', () => {
-    input.value = input.value.replace(/[^0-9+()-\s]/g, '');
-  });
+  ngAfterViewInit(): void {
+    // Load all countries with dial code
+    this.countryOptions = getCountries()
+      .map((iso2: any) => {
+        const dialCode = getCountryCallingCode(iso2);
+        return {
+          name:
+            new Intl.DisplayNames(['en'], { type: 'region' }).of(iso2) || iso2,
+          iso2,
+          dialCode,
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-  // 2. Setup Google Sign-In
-  (window as any).handleDoctorGoogleRegister = (response: any) => {
-    const credential = response.credential;
-    this.dataService.loginWithGoogle(credential).subscribe({
-      next: (res: any) => {
-        // Case: Existing registered user -> login
-        if (res.token && res.user) {
-          this.authService.setAuth(res.token, res.user);
-          this.navigateByRole(res.user.role);
-        }
-        // Case: New user -> Prefill form and stay on current step
-        else if (res.isNewUser && res.user) {
-          this.name = res.user.name || '';
-          this.email = res.user.email || '';
-          this.registerError = res.message || 'Email not registered, please continue registration.';
+    // 2. Setup Google Sign-In
+    (window as any).handleDoctorGoogleRegister = (response: any) => {
+      const credential = response.credential;
+      this.dataService.loginWithGoogle(credential).subscribe({
+        next: (res: any) => {
+          // Case: Existing registered user -> login
+          if (res.token && res.user) {
+            this.authService.setAuth(res.token, res.user);
+            this.navigateByRole(res.user.role);
+          }
+          // Case: New user -> Prefill form and stay on current step
+          else if (res.isNewUser && res.user) {
+            this.name = res.user.name || '';
+            this.email = res.user.email || '';
+            this.registerError =
+              res.message ||
+              'Email not registered, please continue registration.';
 
-          // Optional: store Google image or flag if needed
-          this.regService.setStepData({
-            name: this.name,
-            email: this.email,
-            profileImage: res.user.profileImage || '',
-            // fromGoogle: true
-          });
+            // Optional: store Google image or flag if needed
+            this.regService.setStepData({
+              name: this.name,
+              email: this.email,
+              profileImage: res.user.profileImage || '',
+              // fromGoogle: true
+            });
 
+            setTimeout(() => {
+              this.registerError = '';
+            }, 3000);
+          }
+        },
+        error: (err: any) => {
+          console.error('Google login error', err);
+          this.registerError = err.error?.message || 'Google login failed';
           setTimeout(() => {
             this.registerError = '';
           }, 3000);
+        },
+      });
+    };
+
+    // 3. Render Google Sign-In button
+    setTimeout(() => {
+      google.accounts.id.initialize({
+        client_id: this.googleClientId,
+        callback: (window as any).handleDoctorGoogleRegister,
+        ux_mode: 'popup',
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById('googleRegisterBtn')!,
+        {
+          theme: 'outline',
+          size: 'large',
+          type: 'standard',
+          text: 'continue_with',
+          shape: 'rectangular',
         }
-      },
-      error: (err: any) => {
-        console.error('Google login error', err);
-        this.registerError = err.error?.message || 'Google login failed';
-        setTimeout(() => {
-          this.registerError = '';
-        }, 3000);
-      }
-    });
-  };
-
-  // 3. Render Google Sign-In button
-  setTimeout(() => {
-    google.accounts.id.initialize({
-      client_id: this.googleClientId,
-      callback: (window as any).handleDoctorGoogleRegister,
-      ux_mode: 'popup',
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById("googleRegisterBtn")!,
-      {
-        theme: "outline",
-        size: "large",
-        type: "standard",
-        text: "continue_with",
-        shape: "rectangular"
-      }
-    );
-  }, 0);
-}
-
+      );
+    }, 0);
+  }
 
   navigateByRole(role: string) {
     if (role === 'doctor') {

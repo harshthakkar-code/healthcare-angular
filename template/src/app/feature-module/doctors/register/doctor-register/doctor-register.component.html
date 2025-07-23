@@ -1,14 +1,14 @@
 <div class="content top-space">
     <div class="container-fluid">
-        
+
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                            
+
                 <!-- Login Tab Content -->
                 <div class="account-content">
                     <div class="row align-items-center justify-content-center">
                         <div class="col-md-7 col-lg-6 login-left">
-                            <img src="assets/img/login-banner.png" class="img-fluid" alt="Doccure Login">    
+                            <img src="assets/img/login-banner.png" class="img-fluid" alt="Doccure Login">
                         </div>
                         <div class="col-md-12 col-lg-6 login-right">
                             <div class="login-header">
@@ -17,30 +17,48 @@
                             <form (ngSubmit)="navigation()" #registerForm="ngForm">
                                 <div class="mb-3">
                                     <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" [(ngModel)]="name" (ngModelChange)="nameError = ''">
+                                    <input type="text" class="form-control" name="name" [(ngModel)]="name"
+                                        (ngModelChange)="nameError = ''">
                                     <div *ngIf="nameError" class="text-danger small">{{ nameError }}</div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" [(ngModel)]="email" (ngModelChange)="emailError = ''">
+                                    <input type="email" class="form-control" name="email" [(ngModel)]="email"
+                                        (ngModelChange)="emailError = ''">
                                     <div *ngIf="emailError" class="text-danger small">{{ emailError }}</div>
                                 </div>
+
                                 <div class="mb-3 custom-tel">
                                     <label class="form-label">Phone</label>
-                                    <div></div>
-                                    <input id="phone" type="tel" class="form-control pass-input" placeholder="(201) 555-0123" [(ngModel)]="phone" name="phone" (ngModelChange)="phoneError = ''"/>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <select class="form-select" style="width: 30%;" [(ngModel)]="selectedCountry"
+                                            name="country" (ngModelChange)="phoneError = ''">
+                                            <option *ngFor="let country of countryOptions" [value]="country.iso2"
+                                                style="width: 150px;">
+                                                +{{ country.dialCode }} ({{ country.name }})
+                                            </option>
+                                        </select>
+                                        <input id="phone" type="tel" class="form-control pass-input"
+                                            placeholder="Enter phone number" [(ngModel)]="phone" name="phone"
+                                            (ngModelChange)="phoneError = ''" />
+                                    </div>
                                     <div *ngIf="phoneError" class="text-danger small">{{ phoneError }}</div>
                                 </div>
+
                                 <div class="mb-3">
                                     <div class="form-group-flex">
                                         <label class="form-label">Create Password</label>
                                     </div>
                                     <div class="pass-group">
-                                        <input [type]=" togglePasswordClass ? 'text' : 'password'" class="form-control pass-input" name="password" [(ngModel)]="password" (keyup)="validatePassword()">
-                                        <span class="toggle-password-sub" (click)="togglePassword()" (keydown)="togglePassword()" tabindex="1" [ngClass]=" togglePasswordClass ?  'feather-eye' : 'feather-eye-off'"></span>
+                                        <input [type]=" togglePasswordClass ? 'text' : 'password'"
+                                            class="form-control pass-input" name="password" [(ngModel)]="password"
+                                            (keyup)="validatePassword()">
+                                        <span class="toggle-password-sub" (click)="togglePassword()"
+                                            (keydown)="togglePassword()" tabindex="1"
+                                            [ngClass]=" togglePasswordClass ?  'feather-eye' : 'feather-eye-off'"></span>
                                     </div>
                                     <div *ngIf="passwordError.length" class="text-danger small">
-                                      <div *ngFor="let err of passwordError">{{ err }}</div>
+                                        <div *ngFor="let err of passwordError">{{ err }}</div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -51,15 +69,16 @@
                                     <span class="span-or">or</span>
                                 </div>
                                 <div class="social-login-btn">
-                                        <div id="googleRegisterBtn" class="mb-3"></div>
+                                    <div id="googleRegisterBtn" class="mb-3"></div>
 
                                     <a href="javascript:void(0);" class="btn w-100">
-                                        <img src="assets/img/icons/facebook-icon.svg" alt="fb-icon">Sign in With Facebook
+                                        <img src="assets/img/icons/facebook-icon.svg" alt="fb-icon">Sign in With
+                                        Facebook
                                     </a>
                                 </div>
-                                  <div *ngIf="registerError" class="text-danger small">
-                                      <div>{{ registerError }}</div>
-                                    </div>
+                                <div *ngIf="registerError" class="text-danger small">
+                                    <div>{{ registerError }}</div>
+                                </div>
                                 <div class="account-signup">
                                     <p>Already have account? <a [routerLink]="routes.userLogin">Sign In</a></p>
                                 </div>
@@ -68,10 +87,10 @@
                     </div>
                 </div>
                 <!-- /Login Tab Content -->
-                    
+
             </div>
         </div>
 
     </div>
 
-</div>    
+</div>
