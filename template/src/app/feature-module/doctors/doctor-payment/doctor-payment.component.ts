@@ -3,10 +3,10 @@ import api from 'src/app/shared/api/axios';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-    selector: 'app-doctor-payment',
-    templateUrl: './doctor-payment.component.html',
-    styleUrl: './doctor-payment.component.scss',
-    standalone: false
+  selector: 'app-doctor-payment',
+  templateUrl: './doctor-payment.component.html',
+  styleUrl: './doctor-payment.component.scss',
+  standalone: false
 })
 export class DoctorPaymentComponent implements OnInit {
   activeBox: number = 2;
@@ -28,31 +28,31 @@ export class DoctorPaymentComponent implements OnInit {
   stripeStatusDetails: any = null;
   stripeLoading = false;
   transactions: any[] = [];
-constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.checkStripeStatus();
-  this.route.queryParams.subscribe(params => {
-    if (params['onboarded'] === '1') {
-      // Clean up query params from URL
-      this.router.navigate([], { queryParams: {}, replaceUrl: true });
-    }
-    if (params['refresh'] === '1') {
-      // Automatically request a new onboarding link
-      this.startStripeOnboarding();
-      // Clean up query params from URL
-      this.router.navigate([], { queryParams: {}, replaceUrl: true });
-    }
-  });
+    this.route.queryParams.subscribe(params => {
+      if (params['onboarded'] === '1') {
+        // Clean up query params from URL
+        this.router.navigate([], { queryParams: {}, replaceUrl: true });
+      }
+      if (params['refresh'] === '1') {
+        // Automatically request a new onboarding link
+        this.startStripeOnboarding();
+        // Clean up query params from URL
+        this.router.navigate([], { queryParams: {}, replaceUrl: true });
+      }
+    });
 
-  this.doctorId = this.getDoctorId();
-  if (!this.doctorId) {
-    this.error = 'Error: Doctor ID not found. Please log in again.';
-    this.loading = false;
-    return;
+    this.doctorId = this.getDoctorId();
+    if (!this.doctorId) {
+      this.error = 'Error: Doctor ID not found. Please log in again.';
+      this.loading = false;
+      return;
+    }
+    this.fetchPayouts();
   }
-  this.fetchPayouts();
-}
 
   getDoctorId(): string | null {
     try {
@@ -76,32 +76,53 @@ constructor(private route: ActivatedRoute, private router: Router) {}
   //       this.error = 'Failed to load payouts.';
   //     });
   // }
- 
- stripeBalance = {
-  pending: 0,
-  available: 0
-};
 
-fetchPayouts(): void {
-  this.loading = true;
-  api.get(`/transactions/stripe/payouts/${this.doctorId}`)
-    .then(res => {
-      this.payouts = res.data.payoutsInserted || [];
-      this.searchPayouts();
+  stripeBalance = {
+    pending: 0,
+    available: 0
+  };
 
-      // 🟡 Store stripe balance values
-      if (res.data.stripeBalance) {
-        this.stripeBalance.pending = res.data.stripeBalance.pending || 0;
-        this.stripeBalance.available = res.data.stripeBalance.available || 0;
-      }
+  // fetchPayouts(): void {
+  //   this.loading = true;
+  //   api.get(`/transactions/stripe/payouts/${this.doctorId}`)
+  //     .then(res => {
+  //       this.payouts = res.data.payoutsInserted || [];
+  //       this.searchPayouts();
 
-      this.loading = false;
-    })
-    .catch(() => {
-      this.loading = false;
-      this.error = 'Failed to load payouts.';
-    });
-}
+  //       // 🟡 Store stripe balance values
+  //       if (res.data.stripeBalance) {
+  //         this.stripeBalance.pending = res.data.stripeBalance.pending || 0;
+  //         this.stripeBalance.available = res.data.stripeBalance.available || 0;
+  //       }
+
+  //       this.loading = false;
+  //     })
+  //     .catch(() => {
+  //       this.loading = false;
+  //       this.error = 'Failed to load payouts.';
+  //     });
+  // }
+  fetchPayouts(): void {
+    this.loading = true;
+
+    api.get(`/transactions/stripe/info/payouts/${this.doctorId}`)
+      .then(res => {
+        this.searchPayouts();
+
+        // 🟡 Store stripe balance values
+        if (res.data.stripeBalance) {
+          this.stripeBalance.pending = res.data.stripeBalance.pending || 0;
+          this.stripeBalance.available = res.data.stripeBalance.available || 0;
+        }
+
+        this.loading = false;
+      })
+      .catch(() => {
+        this.loading = false;
+        this.error = 'Failed to load payouts.';
+      });
+  }
+
 
   searchPayouts(): void {
     const search = this.searchText.trim().toLowerCase();
@@ -169,7 +190,7 @@ fetchPayouts(): void {
   }
 
   toggleActive(boxNumber: number): void {
-    this.activeBox = boxNumber; 
+    this.activeBox = boxNumber;
   }
 
   onSearchChange(): void {

@@ -21,9 +21,9 @@
                                 <h3 class="my-4">Your Location</h3>
                                 <div class="mb-3">
                                     <label class="form-label">City</label>
-                                    <input type="text" class="form-control" name="city" [(ngModel)]="city" (ngModelChange)="cityError = ''">
+                                    <input type="text" class="form-control" name="city" [(ngModel)]="city" (ngModelChange)="cityError = ''" #cityInput />
                                     <div *ngIf="cityError" class="text-danger small">{{ cityError }}</div>
-                                </div>
+                                    </div>
                                 <div class="mb-3">
                                     <label class="form-label">State</label>
                                     <input type="text" class="form-control" name="state" [(ngModel)]="state" (ngModelChange)="stateError = ''">

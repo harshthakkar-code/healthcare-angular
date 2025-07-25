@@ -6,6 +6,7 @@ import api from 'src/app/shared/api/axios';
 import { debounceTime, Subject } from 'rxjs';
 import { DoctorSearchFilters } from '../../common/breadcrumb-search/breadcrumb-search.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 @Component({
     selector: 'app-search1',
     templateUrl: './search1.component.html',
@@ -35,7 +36,8 @@ export class Search1Component implements OnInit{
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
   }
 
@@ -237,4 +239,12 @@ export class Search1Component implements OnInit{
   onImgError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/img/doctor-grid/doctor-grid-01.jpg';
   }
+  goToBooking(doctorId: string) {
+  if (this.authService.isAuthenticated('patient') || this.authService.isAuthenticated('doctor') || this.authService.isAuthenticated('admin')) {
+    this.router.navigate(['/pages/booking', doctorId]);
+  } else {
+    // alert('Please log in to book an appointment.');
+    this.router.navigate(['/authentication/login']);
+  }
+ }
 }

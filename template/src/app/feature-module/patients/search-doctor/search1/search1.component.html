@@ -145,7 +145,7 @@
                                     <p class="mb-1">Consultation Fees</p>
                                         <h3 class="text-orange">{{ doctor.maxServicePrice ? ('$' + doctor.maxServicePrice) : '$0' }}</h3>
                                 </div>
-                                <a *ngIf="userRole !== 'doctor'" [routerLink]="[routes.booking, doctor._id]" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
+                                <a *ngIf="userRole !== 'doctor'" (click)="goToBooking(doctor._id)" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>
                                     Book Now
                                 </a>

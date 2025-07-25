@@ -24,14 +24,14 @@
                                 <h3 class="my-4">Your Location</h3>
                                 <div class="mb-3">
                                     <label for="city" class="mb-2">City</label>
-                                    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="city" required>
+                                    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="city" required #cityInput />
                                     <div *ngIf="cityError" class="text-danger small">{{ cityError }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="state" class="mb-2">State</label>
-                                    <input type="text" class="form-control" id="state" name="state" [(ngModel)]="state" required>
-                                    <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
-                                </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="state" class="mb-2">State</label>
+                                        <input type="text" class="form-control" id="state" name="state" [(ngModel)]="state" required>
+                                        <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
+                                    </div>
                                 
                                 <div class="mt-5">
                                     <button type="button" (click)="onComplete()" class="btn btn-primary w-100 btn-lg login-btn step5_submit">Submit</button>

@@ -20,5 +20,6 @@ router.post('/stripe/checkout', auth, transactionController.createStripeCheckout
 router.get('/stripe/payment/:id', transactionController.getStripePaymentDetails);
 router.get('/stripe/charge/:id', transactionController.getStripeChargeDetails);
 router.get('/stripe/payouts/:doctorId', auth, role('admin', 'doctor'), transactionController.getPayoutsForConnectedAccount);
+router.get('/stripe/info/:type/:id', auth, role('admin', 'doctor'), transactionController.getStripeInfo);
 
 module.exports = router; 
