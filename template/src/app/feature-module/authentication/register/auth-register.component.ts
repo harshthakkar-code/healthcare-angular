@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/shared/auth/auth.service';
 
 declare const google: any;
+declare const FB: any;
 
 @Component({
   selector: 'app-auth-register',
@@ -44,6 +45,14 @@ export class AuthRegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+     FB.init({
+    // appId: '1203689977478567',
+    appId: environment.FACEBOOK_APP_ID,
+    cookie: true,
+    xfbml: true,
+    version: 'v19.0' // Or latest
+  });
+
     // Load all countries with dial code
     this.countryOptions = getCountries()
       .map((iso2: any) => {
@@ -210,6 +219,57 @@ export class AuthRegisterComponent implements OnInit {
       );
     }, 0);
   }
+
+
+loginWithFacebook() {
+  FB.login((response: any) => {
+    console.log('FB login response:', response);
+
+    if (response.authResponse) {
+      const accessToken = response.authResponse.accessToken;
+      console.log('Facebook Access Token:', accessToken);
+
+      this.dataService.loginWithFacebook(accessToken).subscribe({
+        next: (res: any) => {
+          if (res.token && res.user) {
+            // ✅ Auto-login for existing user
+            this.authService.setAuth(res.token, res.user);
+            this.navigateByRole(res.user.role);
+          } else if (res.isNewUser && res.user) {
+            // ✅ Prefill registration for new user
+            this.name = res.user.name || '';
+            this.email = res.user.email || '';
+            this.registerError = res.message || 'Email not registered, please complete registration.';
+
+            this.patientRegistrationService.setStepData({
+              name: this.name,
+              email: this.email,
+              profileImage: res.user.profileImage || '',
+              fromFacebook: true
+            });
+
+            setTimeout(() => {
+              this.registerError = '';
+            }, 3000);
+          }
+        },
+        error: (err: any) => {
+          console.error('Facebook login error', err);
+          this.registerError = err.error?.message || 'Facebook login failed';
+          setTimeout(() => {
+            this.registerError = '';
+          }, 3000);
+        }
+      });
+
+    } else {
+      console.error('User cancelled Facebook login or did not authorize.');
+    }
+  }, { scope: 'email' });
+}
+
+
+
   navigateByRole(role: string) {
     if (role === 'doctor') {
       this.router.navigate(['/doctors/doctor-dashboard']);

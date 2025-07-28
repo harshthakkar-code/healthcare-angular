@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, updateMe, requestOtp, loginOtp, forgotPasswordRequest, forgotPasswordVerify, resetPassword, googleLogin, deleteUserCascade } = require('../controllers/authController');
+const { register, login, getMe, updateMe, requestOtp, loginOtp, forgotPasswordRequest, forgotPasswordVerify, resetPassword, googleLogin, deleteUserCascade, facebookLogin } = require('../controllers/authController');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
+
+
+router.post('/facebook/token', facebookLogin);
 
 router.post('/register', upload.fields([
   { name: 'profileImage', maxCount: 1 },

@@ -6,6 +6,8 @@ const sendMail = require('../utils/sendMail');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const axios = require('axios');
+
 
 exports.register = async (req, res, next) => {
   try {
@@ -271,6 +273,53 @@ exports.googleLogin = async (req, res, next) => {
   }
 };
 
+
+exports.facebookLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: 'No Facebook token provided.' });
+
+    console.log('Incoming FB token:', token); 
+
+    const fbUrl = `https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=${token}`;
+    const response = await axios.get(fbUrl);
+
+    console.log('Facebook Graph API response:', response.data); 
+
+    const { email, name, picture } = response.data;
+    if (!email) return res.status(400).json({ message: 'Email not available from Facebook.' });
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(200).json({
+        message: 'Email not registered',
+        isNewUser: true,
+        user: {
+          name,
+          email,
+          profileImage: picture?.data?.url || null,
+        }
+      });
+    }
+
+    const jwt = generateToken(user);
+    res.json({
+      token: jwt,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        profileImgUrl: user.profileImgUrl || null,
+        profileImage: user.profileImage || null
+      }
+    });
+
+  } catch (err) {
+    console.error('Facebook Login Error:', err.response?.data || err.message);
+    res.status(401).json({ message: 'Facebook login failed.' });
+  }
+};
 
 // Cascade delete user, profile, and all related data
 exports.deleteUserCascade = async (req, res) => {

@@ -12,8 +12,12 @@ import { DataService } from 'src/app/shared/data/data.service';
 import { environment } from 'src/environments/environment';
 import { routes } from 'src/app/shared/routes/routes';
 import { AuthService } from 'src/app/shared/auth/auth.service';
+import api from 'src/app/shared/api/axios'; // <-- import your axios instance
+
 
 declare const google: any;
+declare const FB: any;
+
 
 function loadIntlTelInputUtilsScript(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -256,6 +260,55 @@ export class DoctorRegisterComponent implements AfterViewInit {
       );
     }, 0);
   }
+
+
+  loginWithFacebook() {
+  FB.login((response: any) => {
+    console.log('FB login response:', response);
+
+    if (response.authResponse) {
+      const accessToken = response.authResponse.accessToken;
+      console.log('Facebook Access Token:', accessToken);
+
+      this.dataService.loginWithFacebook(accessToken).subscribe({
+        next: (res: any) => {
+          if (res.token && res.user) {
+            // ✅ Auto-login for existing user
+            this.authService.setAuth(res.token, res.user);
+            this.navigateByRole(res.user.role);
+          } else if (res.isNewUser && res.user) {
+            // ✅ Prefill registration for new user
+            this.name = res.user.name || '';
+            this.email = res.user.email || '';
+            this.registerError = res.message || 'Email not registered, please complete registration.';
+
+            this.regService.setStepData({
+              name: this.name,
+              email: this.email,
+              profileImage: res.user.profileImage || '',
+              // fromFacebook: true
+            });
+
+            setTimeout(() => {
+              this.registerError = '';
+            }, 3000);
+          }
+        },
+        error: (err: any) => {
+          console.error('Facebook login error', err);
+          this.registerError = err.error?.message || 'Facebook login failed';
+          setTimeout(() => {
+            this.registerError = '';
+          }, 3000);
+        }
+      });
+
+    } else {
+      console.error('User cancelled Facebook login or did not authorize.');
+    }
+  }, { scope: 'email' });
+}
+
 
   navigateByRole(role: string) {
     if (role === 'doctor') {

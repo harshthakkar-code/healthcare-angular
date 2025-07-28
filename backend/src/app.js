@@ -2,7 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const passport = require('passport');
+
 dotenv.config();
+
+require('./config/passport');
+
 
 const app = express();
 app.use(cors());
@@ -12,6 +17,18 @@ app.post('/api/transactions/stripe/webhook', express.raw({ type: 'application/js
 
 // ✅ Now apply express.json() globally for other routes
 app.use(express.json());
+
+
+// // ✅ Required for passport login sessions (even if you're not using sessions later)
+// app.use(session({
+//   secret: 'secret',
+//   resave: false,
+//   saveUninitialized: false
+// }));
+
+// // ✅ Initialize passport and session
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // All other routes
 app.use('/api/auth', require('./routes/auth'));

@@ -2211,6 +2211,10 @@ export class DataService {
     return this.http.post<any>(`${environment.API_URL}/auth/google`, { token });
   }
 
+  public loginWithFacebook(token: string) {
+    return this.http.post<any>(`${environment.API_URL}/auth/facebook/token`, { token });
+  }
+
   public updateDoctorStatus(doctorId: string, isApproved: string) {
     return from(
       api.put(`/admin/doctor-status/${doctorId}`, { isApproved })

@@ -71,10 +71,13 @@
                                 <div class="social-login-btn">
                                     <div id="googleRegisterBtn" class="mb-3"></div>
 
-                                    <a href="javascript:void(0);" class="btn w-100">
+                                    <!-- <a href="javascript:void(0);" class="btn w-100">
                                         <img src="assets/img/icons/facebook-icon.svg" alt="fb-icon">Sign in With
                                         Facebook
-                                    </a>
+                                    </a> -->
+
+                                                                       <button class="btn w-100" (click)="loginWithFacebook()">Login with Facebook</button>
+
                                 </div>
                                 <div *ngIf="registerError" class="text-danger small">
                                     <div>{{ registerError }}</div>
