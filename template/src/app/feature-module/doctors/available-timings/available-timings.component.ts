@@ -255,7 +255,7 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     if (this.isSpecializationMissing || !this.isStripeConnected) return;
     this.slotModalService.slotForm.day = this.selectedDay;
     this.slotModalService.slotForm.type = type;
-    this.slotModalService.slotForm.fees = 50; // Set default value
+    this.slotModalService.slotForm.fees = 0; // Set default value
     if (type === 'clinic') {
       this.slotModalService.slotForm.clinicName = this.selectedClinic?.name || '';
     } else {
@@ -398,99 +398,209 @@ export class AvailableTimingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async saveAllSlots() {
-    if (!this.pendingSlots.length && !this.hasAnyEditedSavedSlots()) return;
-    this.loading = true;
-    try {
-      const failedPending: any[] = [];
+  // async saveAllSlots() {
+  //   if (!this.pendingSlots.length && !this.hasAnyEditedSavedSlots()) return;
+  //   this.loading = true;
+  //   try {
+  //     const failedPending: any[] = [];
   
-      // Validate and create all pending slots
-      for (const slot of this.pendingSlots) {
-        const allSlotsForType = slot.type === 'clinic'
-          ? [...(this.clinicSlotsByDay[slot.day] || [])]
-          : [...(this.slotsByDay[slot.day] || [])];
+  //     // Validate and create all pending slots
+  //     for (const slot of this.pendingSlots) {
+  //       const allSlotsForType = slot.type === 'clinic'
+  //         ? [...(this.clinicSlotsByDay[slot.day] || [])]
+  //         : [...(this.slotsByDay[slot.day] || [])];
   
-        const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, allSlotsForType);
-        if (overlap && overlappingSlot) {
-          slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
-          failedPending.push(slot);
-          continue;
-        }
+  //       const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, allSlotsForType);
+  //       if (overlap && overlappingSlot) {
+  //         slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+  //         failedPending.push(slot);
+  //         continue;
+  //       }
   
-        try {
-          await this.slotService.createSlots(slot).toPromise();
-        } catch (err: any) {
-          slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
-          failedPending.push(slot);
-        }
-      }
+  //       try {
+  //         await this.slotService.createSlots(slot).toPromise();
+  //       } catch (err: any) {
+  //         slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
+  //         failedPending.push(slot);
+  //       }
+  //     }
   
-      // Update saved slots that are edited (marked as isPending)
-      for (const day of this.daysOfWeek) {
-        // General slots
-        for (const slot of this.slotsByDay[day] || []) {
-          if (slot.isPending && (slot.id || slot._id)) {
-            const otherSlots = (this.slotsByDay[day] || []).filter(
-              s => (s.id || s._id) !== (slot.id || slot._id)
-            );
-            const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
-            if (overlap && overlappingSlot) {
-              slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
-              continue;
-            }
-            try {
-              await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
-              slot.isPending = false;
-              slot.error = undefined;
-            } catch (err: any) {
-              slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
-            }
-          }
-        }
+  //     // Update saved slots that are edited (marked as isPending)
+  //     for (const day of this.daysOfWeek) {
+  //       // General slots
+  //       for (const slot of this.slotsByDay[day] || []) {
+  //         if (slot.isPending && (slot.id || slot._id)) {
+  //           const otherSlots = (this.slotsByDay[day] || []).filter(
+  //             s => (s.id || s._id) !== (slot.id || slot._id)
+  //           );
+  //           const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+  //           if (overlap && overlappingSlot) {
+  //             slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+  //             continue;
+  //           }
+  //           try {
+  //             await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
+  //             slot.isPending = false;
+  //             slot.error = undefined;
+  //           } catch (err: any) {
+  //             slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
+  //           }
+  //         }
+  //       }
   
-        // Clinic slots
-        for (const slot of this.clinicSlotsByDay[day] || []) {
-          if (slot.isPending && (slot.id || slot._id)) {
-            const otherSlots = (this.clinicSlotsByDay[day] || []).filter(
-              s => (s.id || s._id) !== (slot.id || slot._id)
-            );
-            const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
-            if (overlap && overlappingSlot) {
-              slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
-              continue;
-            }
-            try {
-              await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
-              slot.isPending = false;
-              slot.error = undefined;
-            } catch (err: any) {
-              slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
-            }
-          }
-        }
-      }
+  //       // Clinic slots
+  //       // for (const slot of this.clinicSlotsByDay[day] || []) {
+  //       //   if (slot.isPending && (slot.id || slot._id)) {
+  //       //     const otherSlots = (this.clinicSlotsByDay[day] || []).filter(
+  //       //       s => (s.id || s._id) !== (slot.id || slot._id)
+  //       //     );
+  //       //     const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+  //       //     if (overlap && overlappingSlot) {
+  //       //       slot.error = `Slot Time overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+  //       //       continue;
+  //       //     }
+  //       //     try {
+  //       //       await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
+  //       //       slot.isPending = false;
+  //       //       slot.error = undefined;
+  //       //     } catch (err: any) {
+  //       //       slot.error = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
+  //       //     }
+  //       //   }
+  //       // }
+  //     }
   
-      this.pendingSlots = failedPending;
+  //     this.pendingSlots = failedPending;
   
-      const firstErrorSlot = failedPending.find(slot => slot.error);
-      if (firstErrorSlot && firstErrorSlot.error) {
-        this.slotListError = firstErrorSlot.error;
-        setTimeout(() => { this.slotListError = null; }, 3000);
-      } else {
-        this.slotListError = null;
-      }
+  //     const firstErrorSlot = failedPending.find(slot => slot.error);
+  //     if (firstErrorSlot && firstErrorSlot.error) {
+  //       this.slotListError = firstErrorSlot.error;
+  //       setTimeout(() => { this.slotListError = null; }, 3000);
+  //     } else {
+  //       this.slotListError = null;
+  //     }
   
-      this.fetchSlots();
-      // this.fetchClinicSlots();
-      this.updateError = null;
-    } catch (err: any) {
-      this.updateError = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
-      setTimeout(() => { this.updateError = ''; }, 3000);
-    }
-    this.loading = false;
-  }
+  //     this.fetchSlots();
+  //     // this.fetchClinicSlots();
+  //     this.updateError = null;
+  //   } catch (err: any) {
+  //     this.updateError = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
+  //     setTimeout(() => { this.updateError = ''; }, 3000);
+  //   }
+  //   this.loading = false;
+  // }
 
   // Helper to deduplicate slots by startTime, day, and type
+  
+  async saveAllSlots() {
+  if (!this.pendingSlots.length && !this.hasAnyEditedSavedSlots()) return;
+  this.loading = true;
+  const failedPending: any[] = [];
+  let firstErrorMessage: string | null = null;
+
+  try {
+    // Create new (pending) slots
+    for (const slot of this.pendingSlots) {
+      const allSlotsForType = slot.type === 'clinic'
+        ? [...(this.clinicSlotsByDay[slot.day] || [])]
+        : [...(this.slotsByDay[slot.day] || [])];
+
+      const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, allSlotsForType);
+      if (overlap && overlappingSlot) {
+        const errorMsg = `Slot overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+        slot.error = errorMsg;
+        firstErrorMessage ||= errorMsg;
+        failedPending.push(slot);
+        continue;
+      }
+
+      try {
+        await this.slotService.createSlots(slot).toPromise();
+      } catch (err: any) {
+        const errorMsg = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
+        slot.error = errorMsg;
+        firstErrorMessage ||= errorMsg;
+        failedPending.push(slot);
+      }
+    }
+
+    // Update edited saved slots
+    for (const day of this.daysOfWeek) {
+      for (const slot of this.slotsByDay[day] || []) {
+        if (slot.isPending && (slot.id || slot._id)) {
+          const otherSlots = (this.slotsByDay[day] || []).filter(
+            s => (s.id || s._id) !== (slot.id || slot._id)
+          );
+          const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+
+          if (overlap && overlappingSlot) {
+            const errorMsg = `Slot overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+            slot.error = errorMsg;
+            firstErrorMessage ||= errorMsg;
+            continue;
+          }
+
+          try {
+            await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
+            slot.isPending = false;
+            slot.error = undefined;
+          } catch (err: any) {
+            const errorMsg = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
+            slot.error = errorMsg;
+            firstErrorMessage ||= errorMsg;
+          }
+        }
+      }
+
+      for (const slot of this.clinicSlotsByDay[day] || []) {
+        if (slot.isPending && (slot.id || slot._id)) {
+          const otherSlots = (this.clinicSlotsByDay[day] || []).filter(
+            s => (s.id || s._id) !== (slot.id || slot._id)
+          );
+          const { overlap, slot: overlappingSlot } = isSlotOverlapping(slot, otherSlots, slot.id || slot._id);
+
+          if (overlap && overlappingSlot) {
+            const errorMsg = `Slot overlaps with ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+            slot.error = errorMsg;
+            firstErrorMessage ||= errorMsg;
+            continue;
+          }
+
+          try {
+            await this.slotService.updateSlot(slot.id || slot._id, slot).toPromise();
+            slot.isPending = false;
+            slot.error = undefined;
+          } catch (err: any) {
+            const errorMsg = err?.error?.error || err?.response?.data?.error || 'Failed to update slot';
+            slot.error = errorMsg;
+            firstErrorMessage ||= errorMsg;
+          }
+        }
+      }
+    }
+
+    this.pendingSlots = failedPending;
+
+    this.slotListError = firstErrorMessage;
+    if (this.slotListError) {
+      setTimeout(() => (this.slotListError = null), 15000);
+    }
+
+    // Only fetch slots if no errors
+    if (this.pendingSlots.length === 0 && !this.hasAnyEditedSavedSlots()) {
+      this.fetchSlots();
+      // this.fetchClinicSlots();
+    }
+
+    this.updateError = null;
+  } catch (err: any) {
+    this.updateError = err?.error?.error || err?.response?.data?.error || 'Failed to save slot';
+    setTimeout(() => (this.updateError = null), 3000);
+  }
+
+  this.loading = false;
+}
+
   deduplicateSlots(slots: any[]): any[] {
     return slots.filter((slot, index, self) =>
       index === self.findIndex(
