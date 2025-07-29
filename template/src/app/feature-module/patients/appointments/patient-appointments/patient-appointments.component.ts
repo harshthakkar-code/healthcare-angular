@@ -29,6 +29,8 @@ export class PatientAppointmentsComponent implements OnInit {
   upcomingTotalPages = 1;
 
   searchTerm: string = '';
+  patientId: string | null | undefined;
+  attendErrorMessage: { [appointmentId: string]: string } = {};
 
   constructor() {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
@@ -37,6 +39,16 @@ export class PatientAppointmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchAppointments();
+    this.patientId = this.fetchPatientId();
+  }
+
+    fetchPatientId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || user._id || null;
+    } catch {
+      return null;
+    }
   }
 
   fetchAppointments(): void {
@@ -234,4 +246,77 @@ export class PatientAppointmentsComponent implements OnInit {
   min(a: number, b: number): number {
     return Math.min(a, b);
   }
+  canAttendAppointment(appointment: any): boolean {
+  if (!appointment?.date || !appointment?.time) return false;
+
+  const [startTimeStr, endTimeStr] = appointment.time.split(' - ');
+  const date = new Date(appointment.date);
+
+  // Parse start time
+  const parseTime = (timeStr: string): Date => {
+    const [hoursStr, minutesStrWithSuffix] = timeStr.trim().split(':');
+    const isPM = minutesStrWithSuffix.toLowerCase().includes('pm');
+    const minutesStr = minutesStrWithSuffix.toLowerCase().replace(/(am|pm)/g, '').trim();
+
+    let hours = parseInt(hoursStr);
+    const minutes = parseInt(minutesStr);
+
+    if (isPM && hours < 12) hours += 12;
+    if (!isPM && hours === 12) hours = 0;
+
+    const fullDate = new Date(date);
+    fullDate.setHours(hours, minutes, 0, 0);
+    return fullDate;
+  };
+
+  const startTime = parseTime(startTimeStr);
+  const endTime = parseTime(endTimeStr);
+
+  // Calculate 5 minutes before start
+  const accessStartTime = new Date(startTime);
+  accessStartTime.setMinutes(accessStartTime.getMinutes() - 5);
+
+  const now = new Date();
+
+  return now >= accessStartTime && now <= endTime;
+}
+isAttendAllowed(appointment: any): boolean {
+  if (!appointment?.date || !appointment?.time || !appointment.time.includes(' - ')) return false;
+
+  const [startTimeStr, endTimeStr] = appointment.time.split(' - ');
+  const appointmentDate = new Date(appointment.date);
+
+  const [startHour, startMinute] = startTimeStr.split(':').map(Number);
+  const [endHour, endMinute] = endTimeStr.split(':').map(Number);
+
+  if (
+    isNaN(startHour) || isNaN(startMinute) ||
+    isNaN(endHour) || isNaN(endMinute)
+  ) return false;
+
+  const startTime = new Date(appointmentDate);
+  startTime.setHours(startHour, startMinute, 0, 0);
+
+  const endTime = new Date(appointmentDate);
+  endTime.setHours(endHour, endMinute, 0, 0);
+
+  const accessStart = new Date(startTime);
+  accessStart.setMinutes(accessStart.getMinutes() - 5);
+
+  const now = new Date();
+  return now >= accessStart && now <= endTime;
+}
+
+
+handleAttendClick(apt: any) {
+  const isAllowed = this.isAttendAllowed(apt);
+
+  if (!isAllowed) {
+    const [start, end] = apt.time?.split(' - ');
+    this.attendErrorMessage[apt._id] = `You can only join from 5 minutes before (${start}) until the meeting ends at ${end}.`;
+  } else {
+    this.attendErrorMessage[apt._id] = '';
+  }
+}
+
 }

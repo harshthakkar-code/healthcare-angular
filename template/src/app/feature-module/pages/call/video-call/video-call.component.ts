@@ -1,14 +1,29 @@
-import { Component, ElementRef, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  OnDestroy,
+  AfterViewInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/shared/video.service';
 import { routes } from 'src/app/shared/routes/routes';
-import { Room, RemoteTrack, RemoteVideoTrack } from 'twilio-video';
+import {
+  Room,
+  RemoteTrack,
+  RemoteVideoTrack,
+  RemoteAudioTrack,
+  LocalTrackPublication,
+  RemoteTrackPublication,
+  LocalVideoTrack,
+  LocalAudioTrack
+} from 'twilio-video';
 
 @Component({
   selector: 'app-video-call',
   templateUrl: './video-call.component.html',
   styleUrls: ['./video-call.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class VideoCallComponent implements AfterViewInit, OnDestroy {
   public routes = routes;
@@ -26,84 +41,109 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
   constructor(private videoService: VideoService, private route: ActivatedRoute) {}
 
   ngAfterViewInit() {
-    // Get doctorId and patientId from query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const doctorId = params['doctorId'];
       const patientId = params['patientId'];
-    
-      // Always sort IDs to make roomName consistent for both doctor & patient
+
       const ids = [doctorId, patientId].sort();
       this.roomName = `room-${ids[0]}-${ids[1]}`;
-    
-      // Get logged-in user ID (identity)
+
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       this.identity = user?.id || user?._id || 'guest-' + Date.now();
-    
+
       this.startCall();
     });
-    
   }
 
   async startCall() {
-    this.videoService.getToken(this.identity, this.roomName).subscribe(async token => {
+    this.videoService.getToken(this.identity, this.roomName).subscribe(async (token) => {
       this.room = await this.videoService.joinRoom(token, this.roomName);
-      // Attach local video
-      this.room.localParticipant.videoTracks.forEach(publication => {
-        const track = publication.track;
-        if (track && typeof track.attach === 'function') {
-          this.localVideo.nativeElement.appendChild(track.attach());
+
+      // Attach local tracks
+      this.room.localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
+        // const track = publication.track as LocalVideoTrack;
+        // if (track) {
+        //   this.localVideo.nativeElement.appendChild(track.attach());
+        // }
+        const track = publication.track as LocalVideoTrack;
+if (track) {
+  const videoEl = track.attach();
+  videoEl.style.width = '100%';
+  videoEl.style.height = '100%';
+  videoEl.style.objectFit = 'contain'; // ✅ Avoid zooming
+  videoEl.style.backgroundColor = 'black'; // Optional
+  this.localVideo.nativeElement.appendChild(videoEl);
+}
+
+      });
+
+      this.room.localParticipant.audioTracks.forEach((publication: LocalTrackPublication) => {
+        const track = publication.track as LocalAudioTrack;
+        if (track) {
+          document.body.appendChild(track.attach());
         }
       });
-      // Attach remote video
-      this.room.on('participantConnected', participant => {
-        participant.tracks.forEach(publication => {
-          const track = publication.track;
-          if (track && track.kind === 'video' && typeof track.attach === 'function') {
-            this.remoteVideo.nativeElement.appendChild(track.attach());
+
+      const attachTrack = (track: RemoteTrack) => {
+        if (track.kind === 'video') {
+          this.remoteVideo.nativeElement.appendChild((track as RemoteVideoTrack).attach());
+        } else if (track.kind === 'audio') {
+          document.body.appendChild((track as RemoteAudioTrack).attach());
+        }
+      };
+
+      const handleParticipant = (participant: any) => {
+        participant.tracks.forEach((publication: RemoteTrackPublication) => {
+          if (publication.isSubscribed && publication.track) {
+            attachTrack(publication.track);
           }
         });
+
         participant.on('trackSubscribed', (track: RemoteTrack) => {
-          if (track.kind === 'video' && typeof (track as RemoteVideoTrack).attach === 'function') {
-            this.remoteVideo.nativeElement.appendChild((track as RemoteVideoTrack).attach());
-          }
+          attachTrack(track);
         });
-      });
+      };
+
       // Attach already connected participants
-      this.room.participants.forEach(participant => {
-        participant.tracks.forEach(publication => {
-          const track = publication.track;
-          if (track && track.kind === 'video' && typeof track.attach === 'function') {
-            this.remoteVideo.nativeElement.appendChild(track.attach());
-          }
-        });
-        participant.on('trackSubscribed', (track: RemoteTrack) => {
-          if (track.kind === 'video' && typeof (track as RemoteVideoTrack).attach === 'function') {
-            this.remoteVideo.nativeElement.appendChild((track as RemoteVideoTrack).attach());
-          }
-        });
-      });
+      this.room.participants.forEach(handleParticipant);
+
+      // Listen for new participants
+      this.room.on('participantConnected', handleParticipant);
     });
   }
 
   changeMicIcon() {
     this.micIcon = !this.micIcon;
-    // TODO: Mute/unmute local audio track
+    this.room?.localParticipant.audioTracks.forEach((publication: LocalTrackPublication) => {
+      const track = publication.track as LocalAudioTrack;
+      if (track) {
+        this.micIcon ? track.enable() : track.disable();
+      }
+    });
   }
+
   changeVideoIcon() {
     this.videoIcon = !this.videoIcon;
-    // TODO: Enable/disable local video track
+    this.room?.localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
+      const track = publication.track as LocalVideoTrack;
+      if (track) {
+        this.videoIcon ? track.enable() : track.disable();
+      }
+    });
   }
+
   fullscreen() {
-    if(!document.fullscreenElement) {
+    if (!document.fullscreenElement) {
       this.elem.requestFullscreen();
-    }
-    else {
+    } else {
       document.exitFullscreen();
     }
   }
+
   leaveRoom() {
     this.room?.disconnect();
   }
+
   ngOnDestroy() {
     this.leaveRoom();
   }

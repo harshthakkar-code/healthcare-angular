@@ -59,14 +59,15 @@
                             
                             <!-- Call Contents -->
                             <div class="call-contents">
-                                <div class="call-content-wrap">
-                                    <div class="user-video">
-                                        <div #remoteVideo class="remote-video"></div>
-                                    </div>
-                                    <div class="my-video">
-                                        <div #localVideo class="local-video"></div>
-                                    </div>
-                                </div>
+                                <div class="user-video">
+  <div #remoteVideo class="remote-video"></div>
+
+  <!-- Local video inside remote container, fixed to bottom-right -->
+  <div class="my-video-overlay">
+    <div #localVideo class="local-video-mini"></div>
+  </div>
+</div>
+
                             </div>
                             <!-- Call Contents -->
                             
