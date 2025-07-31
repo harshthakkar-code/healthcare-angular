@@ -64,12 +64,32 @@
                             <!-- Call Contents -->
                             <div class="call-contents">
                                 <div class="user-video">
-                                    <div #remoteVideo class="remote-video"></div>
+                                    <!-- Wrap both video + fallback together -->
+                                    <div class="remote-video-wrapper position-relative">
+                                        <div #remoteVideo class="remote-video"></div>
+                            
+                                        <!-- Fallback overlay outside video container so it survives .innerHTML = '' -->
+                                        <div class="remote-fallback" *ngIf="!remoteVideoActive">
+                                            <img [src]="showUser?.profileImgUrl" alt="User Image" class="fallback-avatar" />
+                                            <h4 class="fallback-name">{{ showUser?.name }}</h4>
+                                        </div>
+                                    </div>
+                            
                             
                                     <!-- Local video inside remote container, fixed to bottom-right -->
                                     <div class="my-video-overlay">
-                                        <div #localVideo class="local-video-mini"></div>
+                                        <div class="local-video-wrapper position-relative">
+                                            <div #localVideo class="local-video-mini"></div>
+                            
+                                            <!-- Local Fallback overlay -->
+                                            <div class="local-fallback-mini" *ngIf="!localVideoActive">
+                                                <img [src]="currentUser?.profileImgUrl || 'assets/img/patients/patient1.jpg'" alt="My Image"
+                                                    class="fallback-avatar-mini" />
+                                                <h4 class="fallback-name-mini">{{ currentUser?.name || 'You' }}</h4>
+                                            </div>
+                                        </div>
                                     </div>
+                            
                                 </div>
                             
                             </div>

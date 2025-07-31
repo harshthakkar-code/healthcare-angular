@@ -16,7 +16,8 @@ import {
   LocalTrackPublication,
   RemoteTrackPublication,
   LocalVideoTrack,
-  LocalAudioTrack
+  LocalAudioTrack,
+  createLocalVideoTrack
 } from 'twilio-video';
 
 @Component({
@@ -38,6 +39,8 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
   identity: string = '';
   roomName: string = '';
   currentUser: any;
+  remoteVideoActive = true;
+  localVideoActive = true;
   showUser: { name: string; profileImgUrl: string; } | undefined;
 
   constructor(private videoService: VideoService, private route: ActivatedRoute) {}
@@ -104,12 +107,24 @@ if (track) {
       });
 
       const attachTrack = (track: RemoteTrack) => {
-        if (track.kind === 'video') {
-          this.remoteVideo.nativeElement.appendChild((track as RemoteVideoTrack).attach());
-        } else if (track.kind === 'audio') {
-          document.body.appendChild((track as RemoteAudioTrack).attach());
-        }
-      };
+  if (track.kind === 'video') {
+        this.remoteVideoActive = true; // mark as active
+
+    const videoElement = (track as RemoteVideoTrack).attach();
+    videoElement.style.width = '100%';
+    videoElement.style.height = '100%';
+    videoElement.style.objectFit = 'contain';
+    videoElement.style.backgroundColor = 'black';
+
+    // ✅ Clear old video nodes before appending
+    this.remoteVideo.nativeElement.innerHTML = '';
+
+    this.remoteVideo.nativeElement.appendChild(videoElement);
+  } else if (track.kind === 'audio') {
+    document.body.appendChild((track as RemoteAudioTrack).attach());
+  }
+};
+
 
       const handleParticipant = (participant: any) => {
         participant.tracks.forEach((publication: RemoteTrackPublication) => {
@@ -118,9 +133,22 @@ if (track) {
           }
         });
 
-        participant.on('trackSubscribed', (track: RemoteTrack) => {
-          attachTrack(track);
-        });
+       participant.on('trackSubscribed', (track: RemoteTrack) => {
+    if (track.kind === 'video') {
+      this.remoteVideoActive = true; // show video
+    }
+    attachTrack(track);
+  });
+
+
+        participant.on('trackUnsubscribed', (track: RemoteTrack) => {
+  if (track.kind === 'video') {
+    track.detach().forEach(el => el.remove());
+    this.remoteVideo.nativeElement.innerHTML = ''; // Clean container
+          this.remoteVideoActive = false; // show fallback
+
+  }
+});
       };
 
       // Attach already connected participants
@@ -141,15 +169,51 @@ if (track) {
     });
   }
 
-  changeVideoIcon() {
-    this.videoIcon = !this.videoIcon;
-    this.room?.localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
+changeVideoIcon() {
+  this.videoIcon = !this.videoIcon;
+
+  if (!this.room) return;
+
+  const localParticipant = this.room.localParticipant;
+
+  if (!this.videoIcon) {
+    // 🔴 Stop and unpublish existing track
+    localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
       const track = publication.track as LocalVideoTrack;
       if (track) {
-        this.videoIcon ? track.enable() : track.disable();
+        track.stop();
+        localParticipant.unpublishTrack(track);
+        // Remove video element from DOM
+        track.detach().forEach(el => el.remove());
       }
     });
+
+    // ✅ Clean up the container to remove black boxes
+    this.localVideo.nativeElement.innerHTML = '';
+    this.localVideoActive = false;
+
+  } else {
+    // 🟢 Create and publish a new track
+    createLocalVideoTrack().then(newTrack => {
+      localParticipant.publishTrack(newTrack);
+
+      // Clear old previews to avoid stacking
+      this.localVideo.nativeElement.innerHTML = '';
+      this.localVideoActive = true;
+
+      const videoElement = newTrack.attach();
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
+      videoElement.style.objectFit = 'contain';
+      videoElement.style.backgroundColor = 'black';
+
+      this.localVideo.nativeElement.appendChild(videoElement);
+    }).catch(err => {
+      console.error('Error recreating video track:', err);
+    });
   }
+}
+
 
   fullscreen() {
     if (!document.fullscreenElement) {
