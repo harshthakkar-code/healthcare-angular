@@ -13,6 +13,7 @@ export class DoctorAppointmentDetailsComponent implements OnInit {
   public routes = routes;
   appointment: any;
   recentAppointments: any[] = [];
+  errorMessage: string = '';
 
   constructor(private route: ActivatedRoute) {}
 
@@ -28,6 +29,32 @@ export class DoctorAppointmentDetailsComponent implements OnInit {
           });
         }
       });
+    }
+  }
+
+  async rejectAppointment() {
+    if (!this.appointment?._id) return;
+    try {
+      const response = await api.put(`/doctor/appointments/${this.appointment._id}/status`, {
+        status: 'rejected'
+      });
+      this.appointment = response.data;
+      this.errorMessage = '';
+    } catch (error: any) {
+      this.errorMessage = error?.response?.data?.message || 'Failed to reject appointment';
+    }
+  }
+
+  async acceptAppointment() {
+    if (!this.appointment?._id) return;
+    try {
+      const response = await api.put(`/doctor/appointments/${this.appointment._id}/status`, {
+        status: 'accepted'
+      });
+      this.appointment = response.data;
+      this.errorMessage = '';
+    } catch (error: any) {
+      this.errorMessage = error?.response?.data?.message || 'Failed to accept appointment';
     }
   }
 }

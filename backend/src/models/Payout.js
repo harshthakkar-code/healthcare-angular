@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 const payoutSchema = new mongoose.Schema({
-  doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'DoctorProfile', required: true },
-  patient: { type: mongoose.Schema.Types.ObjectId, ref: 'PatientProfile', required: true },
+  doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   amount: { type: Number, required: true },
   paymentMethod: { type: String, required: true }, // e.g., 'stripe', 'paypal'
   status: { type: String, enum: ['pending', 'processing', 'completed', 'failed'], default: 'pending' },

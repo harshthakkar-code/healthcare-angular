@@ -13,19 +13,22 @@ router.get('/public/profile/:doctorId', doctorController.getDoctorProfileAndSpec
 router.post('/appointments', doctorController.createAppointment);
 router.get('/public/contact/:doctorId', doctorController.getDoctorContactInfo);
 router.get('/appointments/:id', doctorController.getAppointmentById);
+router.get('/appointments/:id/pdf', doctorController.getAppointmentPdf);
+router.put('/appointments/:id/status', doctorController.updateAppointmentStatus);
 router.use(auth, role('doctor', 'admin'));
+router.put('/appointments/:id', doctorController.updateAppointment);
 router.get('/profile', doctorController.getProfile);
 router.put('/profile', doctorController.updateProfile);
 router.post('/schedule', doctorController.createSchedule);
 router.get('/appointments', doctorController.getAppointments);
-router.put('/appointments/:id', doctorController.updateAppointment);
 router.get('/earnings', doctorController.getEarnings);
 router.get('/appointments/doctor/:doctorId', doctorController.getAppointmentsByDoctor);
 router.get('/appointments/all', doctorController.getAllAppointments);
 router.get('/appointments/patient/:patientId', doctorController.getAppointmentsByPatient);
-router.put('/appointments/:id/status', doctorController.updateAppointmentStatus);
 router.get('/patients-with-appointments', doctorController.getPatientsWithAppointments);
 router.put('/change-password', doctorController.changePassword);
 router.put('/admin/:doctorId/approve', role('admin'), doctorController.approveDoctor);
+router.post('/stripe/onboard', doctorController.stripeOnboard);
+router.get('/stripe/status', doctorController.stripeStatus);
 
 module.exports = router; 

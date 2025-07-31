@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema({
   clinicsSettings: [{ type: Object }],
   businessSettings: [{ type: Object }],
   awardsSettings: [{ type: Object }],
+  stripeAccountId: { type: String },
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

@@ -42,6 +42,9 @@ export class DoctorProfileSettingsComponent implements OnInit {
 
   profileImgUrl: string = '';
   uploading: boolean = false;
+  qualiCertificateUrl: string = '';
+  photoIdUrl: string = '';
+  clinicalEmploymentUrl: string = '';
 
   getDoctorId(): string | null {
     try {
@@ -55,7 +58,7 @@ export class DoctorProfileSettingsComponent implements OnInit {
   constructor(private fb: FormBuilder, private http: HttpClient, private dialog: MatDialog) {
     this.settingsForm = this.fb.group({
       profileSettings: this.fb.group({
-        fullName: ['', Validators.required],
+        firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         displayName: ['', Validators.required],
         designation: ['', Validators.required],
@@ -83,9 +86,19 @@ export class DoctorProfileSettingsComponent implements OnInit {
     api.get('/auth/me').then((response: any) => {
       const user = response.data;
       console.log(user);
+      let firstName = '';
+      let lastName = '';
+      if (user.firstName && user.lastName) {
+        firstName = user.firstName;
+        lastName = user.lastName;
+      } else if (user.name) {
+        const [f, ...lArr] = user.name.split(' ');
+        firstName = f || '';
+        lastName = lArr.join(' ') || '';
+      }
       this.settingsForm.get('profileSettings')?.patchValue({
-        fullName: user.fullName || user.name || '',
-        lastName: user.lastName || '',
+        firstName,
+        lastName,
         displayName: user.displayName || '',
         designation: user.designation || '',
         phone: user.phone || '',
@@ -112,12 +125,17 @@ export class DoctorProfileSettingsComponent implements OnInit {
           }));
         }
       }
+      this.qualiCertificateUrl = user.qualiCertificate || '';
+      this.photoIdUrl = user.photoId || '';
+      this.clinicalEmploymentUrl = user.clinicalEmployment || '';
+      this.profileImgUrl = user.profileImgUrl || ''
     });
   }
 
   ngOnInit() {
     this.doctorId = this.getDoctorId();
     this.fetchAndPatchUserFields();
+    console.log(this.doctorId)
     if (this.doctorId) {
       this.getDoctorSettings();
     }
@@ -129,9 +147,15 @@ export class DoctorProfileSettingsComponent implements OnInit {
       .then((response) => {
         const data = response.data;
         if (data && Array.isArray(data.profileSettings) && data.profileSettings.length > 0) {
-          const profile = data.profileSettings[0];
-          this.knownLanguages = Array.isArray(profile.knownLanguages) ? profile.knownLanguages : [];
-          this.settingsForm.get('profileSettings.knownLanguages')?.setValue(this.knownLanguages);
+          const profile = data.profileSettings[0] || {};
+          const [firstName, ...lastNameArr] = (profile.name || '').split(' ');
+          const lastName = lastNameArr.join(' ');
+          console.log(firstName , lastName , profile.name)
+          this.settingsForm.get('profileSettings')?.patchValue({
+            ...profile,
+            firstName: firstName || '',
+            lastName: lastName || ''
+          });
 
           // Patch memberships dynamically
           const membershipsArray = this.membershipsFormArray;
@@ -156,6 +180,9 @@ export class DoctorProfileSettingsComponent implements OnInit {
 
           // Set profile image URL for preview
           this.profileImgUrl = profile.profileImgUrl || '';
+          this.qualiCertificateUrl = profile.qualiCertificate || '';
+          this.photoIdUrl = profile.photoId || '';
+          this.clinicalEmploymentUrl = profile.clinicalEmployment || '';
         }
       })
       .catch((err) => {
@@ -196,10 +223,16 @@ export class DoctorProfileSettingsComponent implements OnInit {
     // Ensure image URL and time are included
     const profileSettings = {
       ...profileSettingsForm,
+      name: [profileSettingsForm.firstName, profileSettingsForm.lastName].filter(Boolean).join(' '),
       memberships,
       profileImgUrl: this.profileImgUrl || '',
-      profileImgUpdatedAt: this.profileImgUrl ? new Date().toISOString() : profileSettingsForm.profileImgUpdatedAt
+      profileImgUpdatedAt: this.profileImgUrl ? new Date().toISOString() : profileSettingsForm.profileImgUpdatedAt,
+      qualiCertificate: this.qualiCertificateUrl || '',
+      photoId: this.photoIdUrl || '',
+      clinicalEmployment: this.clinicalEmploymentUrl || ''
     };
+    delete profileSettings.firstName;
+    delete profileSettings.lastName;
     const payload = {
       doctorId: this.doctorId,
       ...this.settingsForm.value,
@@ -245,10 +278,10 @@ export class DoctorProfileSettingsComponent implements OnInit {
       title: ['', Validators.required],
       aboutMembership: ['']
     });
-    group.markAsTouched(); 
+    group.markAsTouched();
     this.membershipsFormArray.push(group);
   }
-  
+
   async dltMembershipsFunc(index: number) {
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
       data: { message: 'Are you sure you want to delete this membership?' }
@@ -317,4 +350,66 @@ export class DoctorProfileSettingsComponent implements OnInit {
         // Optionally show error
       });
   }
+
+  async onQualiCertificateSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.qualiCertificateUrl = imageUrl;
+      this.uploading = false;
+      // this.patchDoctorProfileField('qualiCertificate', imageUrl);
+    } catch (err) {
+      this.uploading = false;
+    }
+  }
+  removeQualiCertificate() {
+    this.qualiCertificateUrl = '';
+    // this.patchDoctorProfileField('qualiCertificate', '');
+  }
+
+  async onPhotoIdSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.photoIdUrl = imageUrl;
+      this.uploading = false;
+      // this.patchDoctorProfileField('photoId', imageUrl);
+    } catch (err) {
+      this.uploading = false;
+    }
+  }
+  removePhotoId() {
+    this.photoIdUrl = '';
+    // this.patchDoctorProfileField('photoId', '');
+  }
+
+  async onClinicalEmploymentSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.uploading = true;
+    try {
+      const imageUrl = await uploadImage(file);
+      this.clinicalEmploymentUrl = imageUrl;
+      this.uploading = false;
+      // this.patchDoctorProfileField('clinicalEmployment', imageUrl);
+    } catch (err) {
+      this.uploading = false;
+    }
+  }
+  removeClinicalEmployment() {
+    this.clinicalEmploymentUrl = '';
+    // this.patchDoctorProfileField('clinicalEmployment', '');
+  }
+
+  // patchDoctorProfileField(field: string, value: string) {
+  //   const payload: any = {};
+  //   payload[field] = value;
+  //   api.post(this.apiUrl, payload).then(() => {
+  //     // Optionally show success
+  //   });
+  // }
 }

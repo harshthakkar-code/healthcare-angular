@@ -2,15 +2,26 @@ const Payout = require('../models/Payout');
 const DoctorProfile = require('../models/DoctorProfile');
 
 // Create a new payout
+// Create or update payout (upsert logic)
 exports.createPayout = async (req, res, next) => {
   try {
-    const payout = new Payout(req.body);
-    await payout.save();
-    res.status(201).json(payout);
+    const { transactionId } = req.body;
+    if (!transactionId) {
+      return res.status(400).json({ message: 'transactionId is required to prevent duplicates.' });
+    }
+
+    const updatedPayout = await Payout.findOneAndUpdate(
+      { transactionId },            
+      { $set: req.body },          
+      { new: true, upsert: true }
+    );
+
+    res.status(201).json(updatedPayout);
   } catch (err) {
     next(err);
   }
 };
+
 
 // Get all payouts
 exports.getPayouts = async (req, res, next) => {

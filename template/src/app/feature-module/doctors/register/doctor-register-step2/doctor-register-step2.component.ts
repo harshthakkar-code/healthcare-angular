@@ -103,6 +103,16 @@ export class DoctorRegisterStep2Component {
     this[field] = '';
   }
 
+  goToStep(step: number) {
+    if (step === 1) {
+      this.router.navigate(['/doctors/register/doctor-register-step1']);
+    } else if (step === 2) {
+      // this.router.navigate(['/doctors/register/doctor-register-step2'])
+    } else if (step === 3) {
+      // this.router.navigate(['/doctors/register/doctor-register-step3']);
+    }
+  }
+
   nextStep() {
     console.log('Next step called');
     // Reset errors

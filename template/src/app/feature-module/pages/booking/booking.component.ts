@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import api from 'src/app/shared/api/axios';
 import { formatDate } from '@angular/common';
 import { uploadImage } from 'src/app/shared/api/image-upload';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 declare var Stripe: any;
 
@@ -68,6 +69,8 @@ export class BookingComponent implements OnInit {
   stripeLoading = false;
   stripeError: string = '';
   paymentResult: 'success' | 'cancel' | null = null;
+  cancelMessage: string = '';
+  showRejectConfirm: boolean = false;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -434,5 +437,34 @@ export class BookingComponent implements OnInit {
     } catch (err) {
       this.createdAppointment = null;
     }
+  }
+
+  get bookingPdfUrl(): string {
+    if (!this.createdAppointment?._id) return '';
+    // Adjust the base URL as needed for your deployment
+    return `${window.location.origin.replace(/\/template.*/, '')}/api/doctor/appointments/${this.createdAppointment._id}/pdf`;
+  }
+
+  async cancelAppointment() {
+    if (!this.createdAppointment?._id) return;
+    this.cancelMessage = '';
+    try {
+      const res = await api.put(`/doctor/appointments/${this.createdAppointment._id}/status`, { status: 'rejected' });
+      this.createdAppointment.status = 'rejected';
+      this.cancelMessage = 'Appointment rejected successfully.';
+    } catch (err) {
+      this.cancelMessage = 'Failed to reject appointment.';
+    }
+  }
+
+  openRejectConfirm() {
+    this.showRejectConfirm = true;
+  }
+  closeRejectConfirm() {
+    this.showRejectConfirm = false;
+  }
+  async confirmRejectAppointment() {
+    await this.cancelAppointment();
+    this.closeRejectConfirm();
   }
 }

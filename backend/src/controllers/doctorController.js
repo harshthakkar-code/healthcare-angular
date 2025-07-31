@@ -10,6 +10,9 @@ const Service = require('../models/Service');
 const Slot = require('../models/Slot');
 const SocialMedia = require('../models/SocialMedia');
 const Transaction = require('../models/Transaction');
+const { refundTransactionById } = require('./transactionController');
+const PDFDocument = require('pdfkit');
+const stripe = require('../utils/stripe');
 
 
 exports.getProfile = async (req, res, next) => {
@@ -134,6 +137,8 @@ exports.getDoctors = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, search = '', specialization, sort = 'name', city, date, availability, isApproved } = req.query;
     const query = { role: 'doctor' };
+    // Only show approved doctors
+    // query.isApproved = 'true';
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -246,10 +251,41 @@ exports.updateAppointmentStatus = async (req, res, next) => {
     if (status === 'completed') {
       const today = new Date();
       const apptDate = new Date(appointment.date);
-      // If appointment.date is only a date string (YYYY-MM-DD), this works
       if (today < apptDate.setHours(0,0,0,0)) {
         return res.status(400).json({ message: 'Cannot mark as completed before appointment date.' });
       }
+    }
+
+    // Only allow rejecting if more than 24 hours before appointment date/time
+    if (status === 'rejected') {
+      const now = new Date();
+      const apptDate = new Date(appointment.date);
+      const diffMs = apptDate.getTime() - now.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      if (diffHours <= 24) {
+        return res.status(400).json({ message: 'Cannot reject appointment less than 24 hours before the appointment time.' });
+      }
+      appointment.status = status;
+      await appointment.save();
+      // Increase slot availability if appointment is rejected
+      if (appointment.slot) {
+        const Slot = require('../models/Slot');
+        await Slot.findByIdAndUpdate(
+          appointment.slot,
+          { $inc: { remainingSpaces: 1 } }
+        );
+      }
+      // Refund logic
+      const transaction = await Transaction.findOne({ appointment: appointment._id, status: 'paid' });
+      if (transaction) {
+        try {
+          await refundTransactionById(transaction._id);
+        } catch (refundErr) {
+          console.error('Refund failed:', refundErr);
+          // Optionally: return res.status(500).json({ message: 'Refund failed', error: refundErr.message });
+        }
+      }
+      return res.json(appointment);
     }
     appointment.status = status;
     await appointment.save();
@@ -395,7 +431,7 @@ exports.getDoctorProfileAndSpecialization = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}; 
+};
 exports.getFullDoctorData = async (req, res, next) => {
   try {
     const doctorId = req.params.id;
@@ -467,5 +503,95 @@ exports.approveDoctor = async (req, res) => {
     res.json({ success: true, doctor });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getAppointmentPdf = async (req, res, next) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) return res.status(404).send('Appointment not found');
+
+    const doc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=booking-${appointment._id}.pdf`);
+    doc.pipe(res);
+
+    doc.fontSize(20).text('Booking Details', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Booking ID: ${appointment._id}`);
+    doc.text(`Name: ${appointment.name}`);
+    doc.text(`Doctor: ${appointment.doctorName}`);
+    doc.text(`Specialty: ${appointment.specialty}`);
+    doc.text(`Service: ${appointment.service}`);
+    doc.text(`Appointment Type: ${appointment.appointmentType}`);
+    doc.text(`Date: ${appointment.date}`);
+    doc.text(`Time: ${appointment.time}`);
+    doc.text(`Email: ${appointment.email}`);
+    doc.text(`Phone: ${appointment.phone}`);
+    doc.text(`Symptoms: ${appointment.symptoms}`);
+    doc.text(`Price: $${appointment.price}`);
+    doc.text(`Total Price: $${appointment.totalPrice}`);
+    if (appointment.attachmentUrl) {
+      doc.text(`Attachment: ${appointment.attachmentUrl}`);
+    }
+    doc.end();
+  } catch (err) {
+    next(err);
+  }
+};
+exports.stripeOnboard = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'doctor') {
+      return res.status(403).json({ message: 'Only doctors can onboard with Stripe.' });
+    }
+    let accountId = user.stripeAccountId;
+    console.log('Stripe Account ID:', accountId);
+    if (!accountId) {
+      // Create a new Stripe account for the doctor
+      const account = await stripe.accounts.create({
+        type: 'express',
+        email: user.email,
+        business_type: 'individual',
+        capabilities: {
+          transfers: { requested: true },
+          card_payments: { requested: true }
+        },
+      });
+      console.log('Created Stripe account:', account);
+      accountId = account.id;
+      user.stripeAccountId = accountId;
+      await user.save();
+    }
+    // Create an onboarding link
+    const origin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:4200';
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId,
+      refresh_url: `${origin}/doctors/doctor-payment?refresh=1`,
+      return_url: `${origin}/doctors/doctor-payment?onboarded=1`,
+      type: 'account_onboarding',
+    });
+    res.json({ url: accountLink.url });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Stripe Connect Status: Get Stripe connection status for doctor
+exports.stripeStatus = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'doctor') {
+      return res.status(403).json({ message: 'Only doctors can check Stripe status.' });
+    }
+    if (!user.stripeAccountId) {
+      return res.json({ connected: false, details: null });
+    }
+    const account = await stripe.accounts.retrieve(user.stripeAccountId);
+    res.json({ connected: account.charges_enabled, details: account });
+  } catch (err) {
+    next(err);
   }
 };

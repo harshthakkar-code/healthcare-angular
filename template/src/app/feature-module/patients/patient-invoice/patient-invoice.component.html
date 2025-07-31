@@ -38,7 +38,7 @@
                               <tbody>
                                   <tr *ngFor="let t of transactions">
                                       <td>
-                                          <a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view">#{{ t.invoiceNo?.slice(0, 8) || 'Inv-2021' }}</a>
+                                          <a href="javascript:void(0);" class="link-primary" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">#{{ t.invoiceNo?.slice(0, 8) || 'Inv-2021' }}</a>
                                       </td>
                                       <td>
                                           <h2 class="table-avatar">
@@ -53,7 +53,7 @@
                                       <td>${{ t.totalAmount }}</td>
                                       <td>
                                           <div class="action-item">
-                                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view">
+                                              <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">
                                                   <i class="isax isax-link-2"></i>
                                               </a>
                                               <a href="javascript:void(0);">

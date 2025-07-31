@@ -14,7 +14,7 @@ exports.upsertSettings = async (req, res, next) => {
     if (Array.isArray(profileSettings) && profileSettings.length > 0) {
       const p = profileSettings[0];
       sharedUpdate = {
-        name: p.fullName,
+        name: p.name,
         lastName: p.lastName,
         displayName: p.displayName,
         designation: p.designation,
@@ -22,7 +22,10 @@ exports.upsertSettings = async (req, res, next) => {
         email: p.email,
         knownLanguages: p.knownLanguages,
         memberships: p.memberships,
-        profileImgUrl: p.profileImgUrl
+        profileImgUrl: p.profileImgUrl,
+        qualiCertificate: p.qualiCertificate,
+        photoId: p.photoId,
+        clinicalEmployment: p.clinicalEmployment
       };
     }
 
@@ -62,6 +65,7 @@ exports.getSettingsByDoctor = async (req, res, next) => {
       awardsSettings
     } = user;
     res.json({
+      user,
       profileSettings,
       insuranceSettings,
       experienceSettings,

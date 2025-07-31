@@ -12,4 +12,8 @@ export class InvoicesService {
     // Call the doctor invoices endpoint
     return from(api.get(`/invoices/doctor/${userId}`, { params }));
   }
+
+  getInvoiceById(id: string): Observable<any> {
+    return from(api.get(`/invoices/${id}`));
+  }
 } 

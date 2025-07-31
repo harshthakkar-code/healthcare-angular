@@ -1,0 +1,39 @@
+.stripe-box {
+  position: relative;
+}
+
+.stripe-status-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 2px solid #28a745; // default green
+}
+
+.stripe-status-dot.connected {
+  border-color: #28a745;
+}
+
+.stripe-status-dot.not-connected {
+  border-color: #dc3545;
+}
+
+.stripe-status-dot .fa-check {
+  color: #28a745;
+  font-size: 1rem;
+}
+
+.stripe-status-dot .fa-xmark {
+  color: #dc3545;
+  font-size: 1rem;
+}
+
+// Remove old .stripe-status-icon styles if present
+.stripe-status-icon { display: none !important; }

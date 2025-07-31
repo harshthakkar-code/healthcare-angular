@@ -11,6 +11,7 @@ router.get('/user/:userId', auth, transactionController.getTransactionsByUser);
 router.get('/:id', auth, transactionController.getTransaction);
 router.put('/:id', auth, transactionController.updateTransaction);
 router.delete('/:id', auth, transactionController.deleteTransaction);
+router.post('/:id/refund', auth, transactionController.refundTransaction);
 
 // Stripe payment and webhook
 router.post('/stripe/pay', auth, transactionController.createStripePayment);
@@ -18,5 +19,7 @@ router.post('/stripe/checkout', auth, transactionController.createStripeCheckout
 // router.post('/stripe/webhook', express.raw({type: 'application/json'}), transactionController.stripeWebhook);
 router.get('/stripe/payment/:id', transactionController.getStripePaymentDetails);
 router.get('/stripe/charge/:id', transactionController.getStripeChargeDetails);
+router.get('/stripe/payouts/:doctorId', auth, role('admin', 'doctor'), transactionController.getPayoutsForConnectedAccount);
+router.get('/stripe/info/:type/:id', auth, role('admin', 'doctor'), transactionController.getStripeInfo);
 
 module.exports = router; 

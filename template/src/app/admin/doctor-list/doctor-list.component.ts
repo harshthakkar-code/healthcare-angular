@@ -14,7 +14,7 @@ import api from 'src/app/shared/api/axios';
     styleUrls: ['./doctor-list.component.scss'],
     standalone: false
 })
-export class DoctorListComponent {
+export class DoctorListComponent implements OnInit {
   public routes = routes;
   public tableData: Array<doctorList> = [];
   initChecked = false;
@@ -29,6 +29,45 @@ export class DoctorListComponent {
   public searchDataValue = '';
   // pagination variables end
   statusFilter: string = '';
+  showStatusConfirm = false;
+  statusAction: 'approve' | 'reject' | null = null;
+  selectedDoctor: any = null;
+  statusActionTime: Date | null = null;
+
+  openStatusConfirm(doctor: any, action: 'approve' | 'reject') {
+    this.selectedDoctor = doctor;
+    this.statusAction = action;
+    this.statusActionTime = new Date();
+    this.showStatusConfirm = true;
+  }
+
+  closeStatusConfirm() {
+    this.showStatusConfirm = false;
+    this.selectedDoctor = null;
+    this.statusAction = null;
+    this.statusActionTime = null;
+  }
+
+  async confirmStatusAction() {
+    console.log(this.selectedDoctor)
+    if (!this.selectedDoctor || !this.statusAction) {
+      this.closeStatusConfirm();
+      return;
+    }
+    this.isLoading = true;
+    try {
+      if (this.statusAction === 'approve') {
+        await api.put(`/doctor/admin/${this.selectedDoctor.userId}/approve`, { isApproved: 'true' });
+      } else if (this.statusAction === 'reject') {
+        await api.put(`/doctor/admin/${this.selectedDoctor.userId}/approve`, { isApproved: 'false' });
+      }
+      this.fetchDoctors(); // Refresh the list
+    } catch (err) {
+      // Optionally show an error message
+    }
+    this.isLoading = false;
+    this.closeStatusConfirm();
+  }
 
   constructor(
     private data: DataService,
@@ -41,6 +80,10 @@ export class DoctorListComponent {
         this.pageSize = res.pageSize;
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.fetchDoctors();
   }
 
   private getTableData(pageOption: pageSelection): void {

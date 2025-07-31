@@ -80,20 +80,20 @@
                         <div class="action-center">
                           <ng-container [ngSwitch]="data.isApproved">
                             <ng-container *ngSwitchCase="'pending'">
-                              <button class="icon-btn text-success" (click)="approveDoctor(data)" [disabled]="isLoading" data-tooltip="Accept">
+                              <button class="icon-btn text-success" (click)="openStatusConfirm(data, 'approve')" [disabled]="isLoading" data-tooltip="Accept">
                                 <i class="fa fa-check"></i>
                               </button>
-                              <button class="icon-btn text-danger" (click)="rejectDoctor(data)" [disabled]="isLoading" data-tooltip="Reject">
+                              <button class="icon-btn text-danger" (click)="openStatusConfirm(data, 'reject')" [disabled]="isLoading" data-tooltip="Reject">
                                 <i class="fa fa-times"></i>
                               </button>
                             </ng-container>
                             <ng-container *ngSwitchCase="'true'">
-                              <button class="icon-btn text-danger" (click)="rejectDoctor(data)" [disabled]="isLoading" data-tooltip="Reject">
+                              <button class="icon-btn text-danger" (click)="openStatusConfirm(data, 'reject')" [disabled]="isLoading" data-tooltip="Reject">
                                 <i class="fa fa-times"></i>
                               </button>
                             </ng-container>
                             <ng-container *ngSwitchCase="'false'">
-                              <button class="icon-btn text-success" (click)="approveDoctor(data)" [disabled]="isLoading" data-tooltip="Accept">
+                              <button class="icon-btn text-success" (click)="openStatusConfirm(data, 'approve')" [disabled]="isLoading" data-tooltip="Accept">
                                 <i class="fa fa-check"></i>
                               </button>
                             </ng-container>
@@ -110,6 +110,34 @@
         </div>
       </div>
     </div>
+
+    <!-- Approve/Reject Confirmation Modal -->
+    <div *ngIf="showStatusConfirm" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.4);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Are you sure?</h5>
+            <button type="button" class="btn-close" (click)="closeStatusConfirm()"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p>
+              {{ statusAction === 'approve'
+                ? 'Do you really want to approve this doctor?'
+                : 'Do you really want to reject this doctor?' }}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeStatusConfirm()">No</button>
+            <button type="button"
+                    [ngClass]="statusAction === 'approve' ? 'btn btn-success' : 'btn btn-danger'"
+                    (click)="confirmStatusAction()">
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Approve/Reject Confirmation Modal -->
 
   </div>
 </div>

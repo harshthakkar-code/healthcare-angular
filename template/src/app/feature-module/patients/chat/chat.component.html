@@ -25,8 +25,7 @@
                                         <div class="user-chat-search">
                                             <span class="form-control-feedback"><i
                                                     class="fa-solid fa-magnifying-glass"></i></span>
-                                            <input type="text" name="chat-search" placeholder="Search"
-                                                class="form-control">
+                                            <input type="text" [(ngModel)]="searchTerm" name="searchTerm" class="form-control" placeholder="Search Chats">
                                         </div>
                                     </form>
                                     <!-- /Chat Search -->
@@ -35,7 +34,7 @@
                             <!-- /Left Chat Title -->
 
                             <!-- Top Online Contacts -->
-                            <div class="top-online-contacts">
+                            <!-- <div class="top-online-contacts">
                                 <div class="fav-title">
                                     <h6>Online Now</h6>
                                     <a href="javascript:void(0);">View All</a>
@@ -96,7 +95,7 @@
                                         </div>
                                     </ng-template>
                                 </owl-carousel-o>
-                            </div>
+                            </div> -->
                             <!-- /Top Online Contacts -->
 
                             <div class="sidebar-body chat-body" id="chatsidebar">
@@ -104,80 +103,39 @@
                                 <!-- Left Chat Title -->
                                 <div class="d-flex justify-content-between align-items-center ps-0 pe-0">
                                     <div class="fav-title pin-chat">
-                                        <h6>Pinned Chat</h6>
+                                        <h6>Recent Chat</h6>
                                     </div>
                                 </div>
                                 <!-- /Left Chat Title -->
 
+                                <!-- Sidebar doctor list (dynamic, original UI structure) -->
                                 <ul class="user-list">
-                                    <li class="user-list-item">
-                                        <a href="javascript:void(0);">
+                                    <li class="user-list-item" *ngFor="let doctor of filteredDoctors">
+                                        <a href="javascript:void(0);" (click)="startConversationWithDoctor(doctor)">
                                             <div class="avatar avatar-online">
-                                                <img src="assets/img/doctors-dashboard/profile-01.jpg" alt="image">
+                                                <img [src]="doctor.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="image">
                                             </div>
                                             <div class="users-list-body">
                                                 <div>
-                                                    <h5>Adrian Marshall</h5>
-                                                    <p>Have you called them?</p>
+                                                    <h5>{{ doctor.name }}</h5>
+                                                    <p>Last Booking: {{ doctor.lastBooking | date:'dd MMM yyyy' }}</p>
                                                 </div>
                                                 <div class="last-chat-time">
-                                                    <small class="text-muted">Just Now</small>
-                                                    <div class="chat-pin">
-                                                        <i class="fa-solid fa-thumbtack me-2"></i>
-                                                        <i class="fa-solid fa-check-double green-check"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="user-list-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar ">
-                                                <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg"
-                                                    alt="image">
-                                            </div>
-                                            <div class="users-list-body">
-                                                <div>
-                                                    <h5>Dr Joseph Boyd</h5>
-                                                    <p><i class="isax isax-video5 me-1"></i>Video</p>
-                                                </div>
-                                                <div class="last-chat-time">
-                                                    <small class="text-muted">Yesterday</small>
-                                                    <div class="chat-pin">
-                                                        <i class="fa-solid fa-thumbtack"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="user-list-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar avatar-online">
-                                                <img src="assets/img/doctors-dashboard/profile-04.jpg" alt="image">
-                                            </div>
-                                            <div class="users-list-body">
-                                                <div>
-                                                    <h5>Catherine Gracey</h5>
-                                                    <p><i class="fa-solid fa-file-lines me-1"></i>Prescription.doc</p>
-                                                </div>
-                                                <div class="last-chat-time">
-                                                    <small class="text-muted">10:20 PM</small>
-                                                    <div class="chat-pin">
-                                                        <i class="fa-solid fa-thumbtack me-2"></i>
-                                                        <i class="fa-solid fa-check-double green-check"></i>
-                                                    </div>
+                                                    <small class="text-muted">{{ doctor.lastBooking | date:'shortTime' }}</small>
                                                 </div>
                                             </div>
                                         </a>
                                     </li>
                                 </ul>
+                                <div *ngIf="filteredDoctors.length === 0" class="text-center text-muted">No user found for the name.</div>
+
                                 <!-- Left Chat Title -->
-                                <div class="d-flex justify-content-between align-items-center ps-0 pe-0">
+                                <!-- <div class="d-flex justify-content-between align-items-center ps-0 pe-0">
                                     <div class="fav-title pin-chat">
                                         <h6>Recent Chat</h6>
                                     </div>
-                                </div>
-                                <!-- /Left Chat Title -->
+                                </div> -->
+                                <!-- /Left Chat Title
                                 <ul class="user-list">
                                     <li class="user-list-item">
                                         <a href="javascript:void(0);">
@@ -318,7 +276,7 @@
                                             </div>
                                         </a>
                                     </li>
-                                </ul>
+                                </ul> -->
                             </div>
 
                         </div>
@@ -332,6 +290,7 @@
                 <div class="chat chat-messages" id="middle">
                     <div class="slimscroll">
                         <div class="chat-inner-header">
+                            <!-- Chat header with selected doctor info (dynamic, original UI structure) -->
                             <div class="chat-header">
                                 <div class="user-details">
                                     <div class="d-lg-none">
@@ -345,12 +304,12 @@
                                         </ul>
                                     </div>
                                     <figure class="avatar ms-1 avatar-online">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="image">
+                                        <img [src]="selectedDoctor?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="image">
                                     </figure>
                                     <div class="mt-1">
-                                        <h5>Anderea Kearns</h5>
+                                        <h5>{{ selectedDoctor?.name || 'Select a doctor' }}</h5>
                                         <small class="last-seen">
-                                            Online
+                                            Last Booking: {{ selectedDoctor?.lastBooking ? (selectedDoctor.lastBooking | date:'dd MMM yyyy, hh:mm a') : '--' }}
                                         </small>
                                     </div>
                                 </div>
@@ -409,488 +368,34 @@
                                 <!-- /Chat Search -->
                             </div>
                         </div>
+                        <!-- Chat messages (dynamic, original UI structure) -->
                         <div class="chat-body">
                             <div class="messages">
-                                <div class="chats">
+                                <div *ngIf="messages.length === 0" class="text-center text-muted">No messages to display.</div>
+                                <div *ngFor="let msg of messages" class="chats" [ngClass]="msg.author === currentUserId ? 'chats-right' : ''">
                                     <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
+                                        <img [src]="msg.author === currentUserId ? currentUserProfileImg : (selectedDoctor?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg')" class="dreams_chat" alt="image">
                                     </div>
                                     <div class="chat-content">
-                                        <div class="chat-profile-name">
-                                            <h6>Andrea Kearns<span>8:16 PM</span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="message-content">
-                                            <a href="javascript:void(0);">Hello Doctor, </a> could you tell a diet plan
-                                            that suits for me?
-                                            <div class="emoj-group">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
+                                            {{ msg.body }}
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="chat-line">
-                                    <span class="chat-date">Today, March 25</span>
-                                </div>
-                                <div class="chats chats-right">
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name text-end justify-content-end">
-                                            <h6>Edalin Hendry<span>9:45 AM <i
-                                                        class="fa-solid fa-check-double green-check"></i></span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content ">
-                                            <div class="emoj-group rig-emoji-group">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="chat-voice-group">
-                                                <ul>
-                                                    <li><a href="javascript:void(0);"><span><img
-                                                                    src="assets/img/icons/play-01.svg"
-                                                                    alt="image"></span></a></li>
-                                                    <li><img src="assets/img/icons/voice.svg" alt="image"></li>
-                                                    <li>0:05</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg"
-                                            class="dreams_chat" alt="image">
-                                    </div>
-                                </div>
-                                <div class="chats">
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
-                                    </div>
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name">
-                                            <h6>Andrea Kearns<span>9:47 AM</span><span class="check-star"><i
-                                                        class="bx bxs-star"></i></span></h6>
-                                            <div class="chat-action-btns ms-2">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content award-link chat-award-link">
-                                            <a href="javascript:void(0);"
-                                                class="mb-1">https://www.youtube.com/watch?v=GCmL3mS0Psk</a>
-                                            <img src="assets/img/sending-img.jpg" alt="img">
-                                            <div class="emoj-group">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="chats chats-right">
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name text-end justify-content-end">
-                                            <h6>Edalin Hendry<span>9:50 AM <i
-                                                        class="fa-solid fa-check-double green-check"></i></span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content fancy-msg-box">
-                                            <div class="emoj-group wrap-emoji-group ">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="download-col">
-                                                <ul class="nav mb-0">
-                                                    <li>
-                                                        <div class="image-download-col">
-                                                            <a href="assets/img/media/media-02.jpg"
-                                                                data-fancybox="gallery" class="fancybox">
-                                                                <img src="assets/img/media/media-02.jpg" alt="Img">
-                                                            </a>
 
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="image-download-col ">
-                                                            <a href="assets/img/media/media-03.jpg"
-                                                                data-fancybox="gallery" class="fancybox">
-                                                                <img src="assets/img/media/media-03.jpg" alt="Img">
-                                                            </a>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="image-download-col image-not-download">
-                                                            <a href="assets/img/media/media-01.jpg"
-                                                                data-fancybox="gallery" class="fancybox">
-                                                                <img src="assets/img/media/media-01.jpg" alt="Img">
-                                                                <span>10+</span>
-                                                            </a>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/doctor-profile-img.jpg"
-                                            class="dreams_chat" alt="image">
-                                    </div>
-                                </div>
-
-                                <div class="chats">
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
-                                    </div>
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name">
-                                            <h6>Andrea Kearns<span>8:16 PM</span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content review-files">
-                                            <div class="file-download d-flex align-items-center mb-0">
-                                                <div
-                                                    class="file-type d-flex align-items-center justify-content-center me-2">
-                                                    <i class="fa-solid fa-location-dot"></i>
-                                                </div>
-                                                <div class="file-details">
-                                                    <span class="file-name">My Location</span>
-                                                    <ul>
-                                                        <li><a href="javascript:void(0);">Download</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="emoj-group">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="like-chat-grp">
-                                            <ul>
-                                                <li class="like-chat"><a href="javascript:void(0);">2<img
-                                                            src="assets/img/icons/like.svg" alt="Icon"></a></li>
-                                                <li class="comment-chat"><a href="javascript:void(0);">2<img
-                                                            src="assets/img/icons/heart.svg" alt="Icon"></a></li>
-                                            </ul>
+                                        <div class="chat-profile-name" [ngClass]="msg.author === currentUserId ? 'text-end justify-content-end' : ''">
+                                            <h6>
+                                                <span>{{ msg.dateCreated ? (msg.dateCreated | date:'shortTime') : '' }}</span>
+                                            </h6>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="chats">
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
-                                    </div>
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name">
-                                            <h6>Andrea Kearns<span>8:16 PM</span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content">
-                                            Thank you for your support
-                                            <div class="emoj-group">
-                                                <ul>
-                                                    <li class="emoj-action"><a href="javascript:void(0);"><i
-                                                                class="fa-regular fa-face-smile"></i></a>
-                                                        <div class="emoj-group-list">
-                                                            <ul>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-01.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-02.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-03.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-04.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li><a href="javascript:void(0);"><img
-                                                                            src="assets/img/icons/emoj-icon-05.svg"
-                                                                            alt="Icon"></a></li>
-                                                                <li class="add-emoj"><a href="javascript:void(0);"><i
-                                                                            class="bx bx-plus"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="javascript:void(0);" data-bs-toggle="modal"
-                                                            data-bs-target="#forward-message"><i
-                                                                class="fa-solid fa-share"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="chats">
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
-                                    </div>
-                                    <div class="chat-content chat-cont-type">
-                                        <div class="chat-profile-name chat-type-wrapper">
-                                            <p>Andrea Kearns Typing...</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="chats forward-chat-msg">
-                                    <div class="chat-avatar">
-                                        <img src="assets/img/doctors-dashboard/profile-06.jpg" class="dreams_chat"
-                                            alt="image">
-                                    </div>
-                                    <div class="chat-content">
-                                        <div class="chat-profile-name">
-                                            <h6>Andrea Kearns<span>8:16 PM</span></h6>
-                                            <div class="chat-action-btns ms-3">
-                                                <div class="chat-action-col">
-                                                    <a class="#" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                        <i class="fa-solid fa-ellipsis"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu chat-drop-menu dropdown-menu-end">
-                                                        <a href="javascript:void(0);"
-                                                            class="dropdown-item message-info-left">Message Info
-                                                        </a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Reply</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">React</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Forward</a>
-                                                        <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="message-content">
-                                            Thank you for your support
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
+                        <!-- Chat input form (original UI structure) -->
+                       
                     </div>
                     <div class="chat-footer">
-                        <form>
+                        <form (ngSubmit)="sendMessage()">
                             <div class="smile-foot">
                                 <div class="chat-action-btns">
                                     <div class="chat-action-col">
@@ -915,8 +420,7 @@
                                 </div>
                             </div>
                             <div class="smile-foot emoj-action-foot">
-                                <a href="javascript:void(0);" class="action-circle"><i
-                                        class="fa-regular fa-face-smile"></i></a>
+                                <a href="javascript:void(0);" class="action-circle"><i class="fa-regular fa-face-smile"></i></a>
                                 <div class="emoj-group-list-foot down-emoji-circle">
                                     <ul>
                                         <li><a href="javascript:void(0);"><img src="assets/img/icons/emoj-icon-01.svg"
@@ -935,16 +439,18 @@
                                 </div>
                             </div>
                             <div class="smile-foot">
-                                <a href="javascript:void(0);" class="action-circle"><i
-                                        class="isax isax-microphone-2"></i></a>
+                                <a href="javascript:void(0);" class="action-circle"><i class="fa-solid fa-microphone"></i></a>
                             </div>
-                            <input type="text" class="form-control chat_form" placeholder="Type your message here...">
+                            <input [(ngModel)]="newMessage" name="newMessage" placeholder="Type a message..." class="form-control" [disabled]="!canChatNow">
                             <div class="form-buttons">
-                                <button class="btn send-btn" type="submit">
-                                    <i class="isax isax-send-25"></i>
+                                <button class="btn send-btn" type="submit" [disabled]="!canChatNow">
+                                    <i class="fa-solid fa-paper-plane"></i>
                                 </button>
                             </div>
                         </form>
+                        <div *ngIf="!canChatNow && selectedDoctor" class="alert alert-warning mt-2">
+                            You can only chat during your appointment time.
+                        </div>
                     </div>
                 </div>
                 <!-- /Chat -->

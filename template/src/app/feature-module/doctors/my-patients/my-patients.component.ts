@@ -80,8 +80,8 @@ export class MyPatientsComponent implements OnInit {
     this.inactivePatients = [];
     this.patients.forEach(patient => {
       const lastBooking = new Date(patient.lastBooking);
-      const diffYears = (now.getTime() - lastBooking.getTime()) / (1000 * 60 * 60 * 24 * 365);
-      if (diffYears > 1) {
+      const diffMonths = (now.getTime() - lastBooking.getTime()) / (1000 * 60 * 60 * 24 * 30.44); // average month
+      if (diffMonths > 6) {
         this.inactivePatients.push(patient);
       } else {
         this.activePatients.push(patient);

@@ -13,34 +13,34 @@
                             </div>
                             <div class="step-list">
                                 <ul>
-                                    <li><a href="javascript:void(0)" class="active-done">1</a></li>
-                                    <li><a href="javascript:void(0)" class="active-done">2</a></li>
-                                    <li><a href="javascript:void(0)" class="active-done">3</a></li>
-                                    <li><a href="javascript:void(0)" class="active-done">4</a></li>
-                                    <li><a href="javascript:void(0)" class="active">5</a></li>
+                                    <li><a href="javascript:void(0)" [class.active-done]="currentStep > 1" (click)="goToStep(1)">1</a></li>
+                                    <li><a href="javascript:void(0)" [class.active-done]="currentStep > 2" (click)="goToStep(2)">2</a></li>
+                                    <li><a href="javascript:void(0)" [class.active-done]="currentStep > 3" (click)="goToStep(3)">3</a></li>
+                                    <li><a href="javascript:void(0)" [class.active-done]="currentStep > 4" (click)="goToStep(4)">4</a></li>
+                                    <li><a href="javascript:void(0)" [class.active]="currentStep === 5" (click)="goToStep(5)">5</a></li>
                                 </ul>
                             </div>
                             <form method="post">
                                 <h3 class="my-4">Your Location</h3>
                                 <div class="mb-3">
                                     <label for="city" class="mb-2">City</label>
-                                    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="city" required>
+                                    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="city" required #cityInput />
                                     <div *ngIf="cityError" class="text-danger small">{{ cityError }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="state" class="mb-2">State</label>
-                                    <input type="text" class="form-control" id="state" name="state" [(ngModel)]="state" required>
-                                    <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
-                                </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="state" class="mb-2">State</label>
+                                        <input type="text" class="form-control" id="state" name="state" [(ngModel)]="state" required>
+                                        <div *ngIf="stateError" class="text-danger small">{{ stateError }}</div>
+                                    </div>
                                 
                                 <div class="mt-5">
-                                    <button type="button" (click)="onComplete()" class="btn btn-primary w-100 btn-lg login-btn step5_submit">continue </button>
+                                    <button type="button" (click)="onComplete()" class="btn btn-primary w-100 btn-lg login-btn step5_submit">Submit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="login-bottom-copyright">
-                        <span>© 2023 Doccure. All rights reserved.</span>
+                        <span>© 2025 Doccure. All rights reserved.</span>
                     </div>
                 </div>
             </div>

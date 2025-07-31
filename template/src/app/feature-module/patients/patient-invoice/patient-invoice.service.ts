@@ -7,4 +7,7 @@ export class PatientInvoiceService {
   getTransactions(patientId: string, params: {  page?: number; limit?: number; search?: string }): Observable<any> {
     return from(api.get(`/invoices/patient/${patientId}`, { params }));
   }
+  getInvoiceById(id: string): Observable<any> {
+    return from(api.get(`/invoices/${id}`));
+  }
 } 

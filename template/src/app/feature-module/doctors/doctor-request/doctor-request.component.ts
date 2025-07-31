@@ -13,6 +13,7 @@ export class DoctorRequestComponent implements OnInit {
   appointments: any[] = [];
   loading = true;
   statusLoading: { [id: string]: boolean } = {};
+  statusError: { [id: string]: string } = {};
   doctorId: string | null = null;
   error: string | null = null;
 
@@ -50,13 +51,18 @@ export class DoctorRequestComponent implements OnInit {
 
   handleStatus(id: string, status: string): void {
     this.statusLoading[id] = true;
+    this.statusError[id] = '';
     api.put(`/doctor/appointments/${id}/status`, { status })
       .then(() => {
         this.appointments = this.appointments.filter(a => a._id !== id);
         this.statusLoading[id] = false;
       })
-      .catch(() => {
+      .catch((err) => {
         this.statusLoading[id] = false;
+        this.statusError[id] = err?.response?.data?.message || 'Failed to update appointment status.';
+        setTimeout(() => {
+          this.statusError[id] = '';
+        }, 3000);
       });
   }
 }

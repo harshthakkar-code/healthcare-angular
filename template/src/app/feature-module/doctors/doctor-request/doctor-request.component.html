@@ -22,13 +22,13 @@
                     <ul>
                         <li>
                             <div class="patinet-information">
-                                <a [routerLink]="routes.patientProfile">
+                                <a [routerLink]="['/doctors/appointments/doctor-appointment-details', apt._id]">
                                     <img [src]="apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
                                 </a>
                                 <div class="patient-info">
                                     <p>#{{ apt._id.slice(-6) }}</p>
                                     <h6>
-                                        <a [routerLink]="routes.patientProfile">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
+                                        <a [routerLink]="['/doctors/appointments/doctor-appointment-details', apt._id]">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
                                         <span *ngIf="apt.status === 'pending'" class="badge new-tag">New</span>
                                     </h6>
                                 </div>
@@ -63,6 +63,9 @@
                             </ul>
                         </li>
                     </ul>
+                    <div *ngIf="statusError[apt._id]" class="text-danger mt-2">
+                        {{ statusError[apt._id] }}
+                    </div>
                 </div>
                 <!-- /Dynamic Request List -->
                 <!-- <div class="row">

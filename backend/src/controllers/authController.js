@@ -6,10 +6,12 @@ const sendMail = require('../utils/sendMail');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const axios = require('axios');
+
 
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, role, phone, gender, clinicName, clinicAddress, address, address2, city, state, pincode, weight, height, age, blood } = req.body;
+    const { name, email, password, role, phone, gender, clinicName, clinicAddress, address, address2, city, state, pincode, weight, height, age, blood , isApproved} = req.body;
 
     // 1. Validate required fields
     if (!name || !email || !password || !role || !phone || !gender) {
@@ -50,7 +52,7 @@ exports.register = async (req, res, next) => {
       role,
       phone,
       gender,
-      isApproved: role === 'doctor' ? false : true,
+      isApproved,
       clinicName,
       clinicAddress,
       address,
@@ -239,14 +241,33 @@ exports.googleLogin = async (req, res, next) => {
   try {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: 'No Google token provided.' });
+
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const payload = ticket.getPayload();
     const email = payload.email;
+    const name = payload.name || '';
+    const profileImage = payload.picture || null;
+
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'Email not registered.' });
+
+    if (!user) {
+      // Return limited info so UI can patch name/email
+      return res.status(200).json({
+        message: 'Email not registered',
+        isNewUser: true,
+        user: {
+          name,
+          email,
+          profileImage,
+        }
+      });
+    }
+
+    // User exists, login and return token
     const jwt = generateToken(user);
     res.json({
       token: jwt,
@@ -260,6 +281,54 @@ exports.googleLogin = async (req, res, next) => {
     });
   } catch (err) {
     res.status(401).json({ message: 'Google login failed.' });
+  }
+};
+
+
+exports.facebookLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: 'No Facebook token provided.' });
+
+    console.log('Incoming FB token:', token); 
+
+    const fbUrl = `https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=${token}`;
+    const response = await axios.get(fbUrl);
+
+    console.log('Facebook Graph API response:', response.data); 
+
+    const { email, name, picture } = response.data;
+    if (!email) return res.status(400).json({ message: 'Email not available from Facebook.' });
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(200).json({
+        message: 'Email not registered',
+        isNewUser: true,
+        user: {
+          name,
+          email,
+          profileImage: picture?.data?.url || null,
+        }
+      });
+    }
+
+    const jwt = generateToken(user);
+    res.json({
+      token: jwt,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        profileImgUrl: user.profileImgUrl || null,
+        profileImage: user.profileImage || null
+      }
+    });
+
+  } catch (err) {
+    console.error('Facebook Login Error:', err.response?.data || err.message);
+    res.status(401).json({ message: 'Facebook login failed.' });
   }
 };
 
