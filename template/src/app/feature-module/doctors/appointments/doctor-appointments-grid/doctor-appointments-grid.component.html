@@ -264,7 +264,20 @@
                                                 </li>
                                             </ul>
                                             <div class="appointment-start">
-                                                <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a>
+                                        <button class="btn btn-md"
+                                            [ngClass]="isAttendAllowed(appointment) ? 'btn-primary-gradient' : 'btn-outline-secondary disabled'"
+                                            (click)="handleAttendClick(appointment)"
+                                            [routerLink]="isAttendAllowed(appointment) ? ['/pages/call/video-call'] : null"
+                                            [queryParams]="{ doctorId: doctorId, patientId: appointment.patient?._id }"
+                                            [attr.disabled]="!isAttendAllowed(appointment) ? true : null">
+                                            <i class="fa-solid fa-calendar-check me-1"></i>Start
+                                        </button>
+
+                                        <div class="text-danger mt-1 small" *ngIf="attendErrorMessage[appointment._id]">
+                                            {{ attendErrorMessage[appointment._id] }}
+                                        </div>
+
+                                                <!-- <a [routerLink] = "routes.doctorAppointmentStart" class="start-link">Start Now</a> -->
                                             </div>
                                         </li>
                                     </ul>

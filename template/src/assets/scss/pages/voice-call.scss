@@ -222,42 +222,77 @@
 		}
 	}
 }
+// .user-video {
+// 	overflow: $__auto;
+// 	z-index: 10;
+// 	padding: 15px;
+// 	@include position($__absolute, 0, 0, 0, 0);
+// 	img, video {
+// 		width: 100%;
+// 		max-width: $__full__width;
+// 		height: $__auto;
+// 		max-height: $__full__height;
+// 		display: $__block;
+// 		object-fit: cover;
+// 		@include margin-padding(0 $__auto, null);
+// 	}
+// }
+// .my-video {
+// 	z-index: 99;
+// 	position: absolute;
+// 	right: 40px;
+// 	bottom: 40px;
+// 	ul {
+// 		list-style: $__none;
+// 		@include margin-padding(0, 0);
+// 		li {
+// 			float: $__left;
+// 			width: 100px;
+// 			@include respond-below(custom1199) {
+// 				display: none;
+// 			}
+// 			img {
+// 				border: 1px solid $border-color;
+// 				@include rounded(10px);
+// 			}
+// 		}
+// 	}
+// }
+
 .user-video {
-	overflow: $__auto;
-	z-index: 10;
-	padding: 15px;
-	@include position($__absolute, 0, 0, 0, 0);
-	img, video {
-		width: 100%;
-		max-width: $__full__width;
-		height: $__auto;
-		max-height: $__full__height;
-		display: $__block;
-		object-fit: cover;
-		@include margin-padding(0 $__auto, null);
-	}
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; // 🛑 Prevent scroll
+  padding: 0;
+
+  .remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // ✅ Maintain aspect ratio, no scroll
+  }
+
+  .my-video-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 120px;
+    z-index: 10;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    .local-video-mini {
+      width: 100%;
+      height: 100%;
+      object-fit: cover !important; // ✅ Maintain aspect ratio
+	  
+    }
+  }
 }
-.my-video {
-	z-index: 99;
-	position: absolute;
-	right: 40px;
-	bottom: 40px;
-	ul {
-		list-style: $__none;
-		@include margin-padding(0, 0);
-		li {
-			float: $__left;
-			width: 100px;
-			@include respond-below(custom1199) {
-				display: none;
-			}
-			img {
-				border: 1px solid $border-color;
-				@include rounded(10px);
-			}
-		}
-	}
-}
+
 .end-call {
 	@include position($__absolute, 7px, 0, null, null);
 	@include respond-below(custom575) {
