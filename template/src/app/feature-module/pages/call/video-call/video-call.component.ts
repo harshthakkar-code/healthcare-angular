@@ -37,6 +37,8 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
   room?: Room;
   identity: string = '';
   roomName: string = '';
+  currentUser: any;
+  showUser: { name: string; profileImgUrl: string; } | undefined;
 
   constructor(private videoService: VideoService, private route: ActivatedRoute) {}
 
@@ -49,6 +51,23 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
       this.roomName = `room-${ids[0]}-${ids[1]}`;
 
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      this.currentUser = user;
+       const otherUserId = user.role === 'patient' ? doctorId : patientId;
+
+    // 🔹 Fetch other user's details (name & profileImage)
+    this.videoService.getUserById(otherUserId)
+      .then((res: any) => {
+        this.showUser = {
+          name: res.data?.name ?? res.name ?? 'Unknown',
+          profileImgUrl: res.data?.profileImgUrl ?? res.profileImgUrl ?? 'assets/img/patients/patient1.jpg',
+        };
+      })
+      .catch(() => {
+        this.showUser = {
+          name: 'Unknown',
+          profileImgUrl: 'assets/img/patients/patient1.jpg'
+        };
+      });
       this.identity = user?.id || user?._id || 'guest-' + Date.now();
 
       this.startCall();
@@ -143,6 +162,12 @@ if (track) {
   leaveRoom() {
     this.room?.disconnect();
   }
+
+  endCall() {
+  this.leaveRoom();
+  window.history.back(); 
+}
+
 
   ngOnDestroy() {
     this.leaveRoom();

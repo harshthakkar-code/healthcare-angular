@@ -111,6 +111,17 @@ exports.getMe = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+exports.getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).select('name profileImgUrl firstName');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 exports.updateMe = async (req, res, next) => {
   try {
     const userId = req.user._id;

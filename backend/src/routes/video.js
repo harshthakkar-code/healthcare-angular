@@ -5,6 +5,7 @@ const twilio = require('twilio');
 const { TWILIO_ACCOUNT_SID, TWILIO_API_KEY, TWILIO_API_SECRET } = process.env;
 
 router.post('/token', (req, res) => {
+  
   const { identity, room } = req.body;
   console.log('Received body:', req.body);
   if (!identity || !room) {

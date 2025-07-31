@@ -15,4 +15,7 @@ export class VideoService {
   joinRoom(token: string, roomName: string, options: Partial<ConnectOptions> = {}): Promise<Room> {
     return connect(token, { name: roomName, ...options });
   }
+  getUserById(userId: string) {
+  return api.get(`/auth/user/${userId}`); // auth header is auto-attached if setup in interceptor
+}
 } 
