@@ -17,7 +17,7 @@ import {
   RemoteTrackPublication,
   LocalVideoTrack,
   LocalAudioTrack,
-  createLocalVideoTrack
+  createLocalVideoTrack,
 } from 'twilio-video';
 
 @Component({
@@ -41,9 +41,12 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
   currentUser: any;
   remoteVideoActive = true;
   localVideoActive = true;
-  showUser: { name: string; profileImgUrl: string; } | undefined;
+  showUser: { name: string; profileImgUrl: string } | undefined;
 
-  constructor(private videoService: VideoService, private route: ActivatedRoute) {}
+  constructor(
+    private videoService: VideoService,
+    private route: ActivatedRoute
+  ) {}
 
   ngAfterViewInit() {
     this.route.queryParams.subscribe((params) => {
@@ -55,22 +58,26 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
 
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       this.currentUser = user;
-       const otherUserId = user.role === 'patient' ? doctorId : patientId;
+      const otherUserId = user.role === 'patient' ? doctorId : patientId;
 
-    // 🔹 Fetch other user's details (name & profileImage)
-    this.videoService.getUserById(otherUserId)
-      .then((res: any) => {
-        this.showUser = {
-          name: res.data?.name ?? res.name ?? 'Unknown',
-          profileImgUrl: res.data?.profileImgUrl ?? res.profileImgUrl ?? 'assets/img/patients/patient1.jpg',
-        };
-      })
-      .catch(() => {
-        this.showUser = {
-          name: 'Unknown',
-          profileImgUrl: 'assets/img/patients/patient1.jpg'
-        };
-      });
+      // 🔹 Fetch other user's details (name & profileImage)
+      this.videoService
+        .getUserById(otherUserId)
+        .then((res: any) => {
+          this.showUser = {
+            name: res.data?.name ?? res.name ?? 'Unknown',
+            profileImgUrl:
+              res.data?.profileImgUrl ??
+              res.profileImgUrl ??
+              'assets/img/patients/patient1.jpg',
+          };
+        })
+        .catch(() => {
+          this.showUser = {
+            name: 'Unknown',
+            profileImgUrl: 'assets/img/patients/patient1.jpg',
+          };
+        });
       this.identity = user?.id || user?._id || 'guest-' + Date.now();
 
       this.startCall();
@@ -78,142 +85,148 @@ export class VideoCallComponent implements AfterViewInit, OnDestroy {
   }
 
   async startCall() {
-    this.videoService.getToken(this.identity, this.roomName).subscribe(async (token) => {
-      this.room = await this.videoService.joinRoom(token, this.roomName);
+    this.videoService
+      .getToken(this.identity, this.roomName)
+      .subscribe(async (token) => {
+        this.room = await this.videoService.joinRoom(token, this.roomName);
 
-      // Attach local tracks
-      this.room.localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
-        // const track = publication.track as LocalVideoTrack;
-        // if (track) {
-        //   this.localVideo.nativeElement.appendChild(track.attach());
-        // }
-        const track = publication.track as LocalVideoTrack;
-if (track) {
-  const videoEl = track.attach();
-  videoEl.style.width = '100%';
-  videoEl.style.height = '100%';
-  videoEl.style.objectFit = 'contain'; // ✅ Avoid zooming
-  videoEl.style.backgroundColor = 'black'; // Optional
-  this.localVideo.nativeElement.appendChild(videoEl);
-}
-
-      });
-
-      this.room.localParticipant.audioTracks.forEach((publication: LocalTrackPublication) => {
-        const track = publication.track as LocalAudioTrack;
-        if (track) {
-          document.body.appendChild(track.attach());
-        }
-      });
-
-      const attachTrack = (track: RemoteTrack) => {
-  if (track.kind === 'video') {
-        this.remoteVideoActive = true; // mark as active
-
-    const videoElement = (track as RemoteVideoTrack).attach();
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
-    videoElement.style.objectFit = 'contain';
-    videoElement.style.backgroundColor = 'black';
-
-    // ✅ Clear old video nodes before appending
-    this.remoteVideo.nativeElement.innerHTML = '';
-
-    this.remoteVideo.nativeElement.appendChild(videoElement);
-  } else if (track.kind === 'audio') {
-    document.body.appendChild((track as RemoteAudioTrack).attach());
-  }
-};
-
-
-      const handleParticipant = (participant: any) => {
-        participant.tracks.forEach((publication: RemoteTrackPublication) => {
-          if (publication.isSubscribed && publication.track) {
-            attachTrack(publication.track);
+        // Attach local tracks
+        this.room.localParticipant.videoTracks.forEach(
+          (publication: LocalTrackPublication) => {
+            // const track = publication.track as LocalVideoTrack;
+            // if (track) {
+            //   this.localVideo.nativeElement.appendChild(track.attach());
+            // }
+            const track = publication.track as LocalVideoTrack;
+            if (track) {
+              const videoEl = track.attach();
+              videoEl.style.width = '100%';
+              videoEl.style.height = '100%';
+              videoEl.style.objectFit = 'contain'; // ✅ Avoid zooming
+              videoEl.style.backgroundColor = 'black'; // Optional
+              this.localVideo.nativeElement.appendChild(videoEl);
+            }
           }
-        });
+        );
 
-       participant.on('trackSubscribed', (track: RemoteTrack) => {
-    if (track.kind === 'video') {
-      this.remoteVideoActive = true; // show video
-    }
-    attachTrack(track);
-  });
+        this.room.localParticipant.audioTracks.forEach(
+          (publication: LocalTrackPublication) => {
+            const track = publication.track as LocalAudioTrack;
+            if (track) {
+              document.body.appendChild(track.attach());
+            }
+          }
+        );
 
+        const attachTrack = (track: RemoteTrack) => {
+          if (track.kind === 'video') {
+            this.remoteVideoActive = true; // mark as active
 
-        participant.on('trackUnsubscribed', (track: RemoteTrack) => {
-  if (track.kind === 'video') {
-    track.detach().forEach(el => el.remove());
-    this.remoteVideo.nativeElement.innerHTML = ''; // Clean container
-          this.remoteVideoActive = false; // show fallback
+            const videoElement = (track as RemoteVideoTrack).attach();
+            videoElement.style.width = '100%';
+            videoElement.style.height = '100%';
+            videoElement.style.objectFit = 'contain';
+            videoElement.style.backgroundColor = 'black';
 
-  }
-});
-      };
+            // ✅ Clear old video nodes before appending
+            this.remoteVideo.nativeElement.innerHTML = '';
 
-      // Attach already connected participants
-      this.room.participants.forEach(handleParticipant);
+            this.remoteVideo.nativeElement.appendChild(videoElement);
+          } else if (track.kind === 'audio') {
+            document.body.appendChild((track as RemoteAudioTrack).attach());
+          }
+        };
 
-      // Listen for new participants
-      this.room.on('participantConnected', handleParticipant);
-    });
+        const handleParticipant = (participant: any) => {
+          participant.tracks.forEach((publication: RemoteTrackPublication) => {
+            if (publication.isSubscribed && publication.track) {
+              attachTrack(publication.track);
+            }
+          });
+
+          participant.on('trackSubscribed', (track: RemoteTrack) => {
+            if (track.kind === 'video') {
+              this.remoteVideoActive = true; // show video
+            }
+            attachTrack(track);
+          });
+
+          participant.on('trackUnsubscribed', (track: RemoteTrack) => {
+            if (track.kind === 'video') {
+              track.detach().forEach((el) => el.remove());
+              this.remoteVideo.nativeElement.innerHTML = ''; // Clean container
+              this.remoteVideoActive = false; // show fallback
+            }
+          });
+        };
+
+        // Attach already connected participants
+        this.room.participants.forEach(handleParticipant);
+
+        // Listen for new participants
+        this.room.on('participantConnected', handleParticipant);
+      });
   }
 
   changeMicIcon() {
     this.micIcon = !this.micIcon;
-    this.room?.localParticipant.audioTracks.forEach((publication: LocalTrackPublication) => {
-      const track = publication.track as LocalAudioTrack;
-      if (track) {
-        this.micIcon ? track.enable() : track.disable();
+    this.room?.localParticipant.audioTracks.forEach(
+      (publication: LocalTrackPublication) => {
+        const track = publication.track as LocalAudioTrack;
+        if (track) {
+          this.micIcon ? track.enable() : track.disable();
+        }
       }
-    });
+    );
   }
 
-changeVideoIcon() {
-  this.videoIcon = !this.videoIcon;
+  changeVideoIcon() {
+    this.videoIcon = !this.videoIcon;
 
-  if (!this.room) return;
+    if (!this.room) return;
 
-  const localParticipant = this.room.localParticipant;
+    const localParticipant = this.room.localParticipant;
 
-  if (!this.videoIcon) {
-    // 🔴 Stop and unpublish existing track
-    localParticipant.videoTracks.forEach((publication: LocalTrackPublication) => {
-      const track = publication.track as LocalVideoTrack;
-      if (track) {
-        track.stop();
-        localParticipant.unpublishTrack(track);
-        // Remove video element from DOM
-        track.detach().forEach(el => el.remove());
-      }
-    });
+    if (!this.videoIcon) {
+      // 🔴 Stop and unpublish existing track
+      localParticipant.videoTracks.forEach(
+        (publication: LocalTrackPublication) => {
+          const track = publication.track as LocalVideoTrack;
+          if (track) {
+            track.stop();
+            localParticipant.unpublishTrack(track);
+            // Remove video element from DOM
+            track.detach().forEach((el) => el.remove());
+          }
+        }
+      );
 
-    // ✅ Clean up the container to remove black boxes
-    this.localVideo.nativeElement.innerHTML = '';
-    this.localVideoActive = false;
-
-  } else {
-    // 🟢 Create and publish a new track
-    createLocalVideoTrack().then((newTrack: any) => {
-      localParticipant.publishTrack(newTrack);
-
-      // Clear old previews to avoid stacking
+      // ✅ Clean up the container to remove black boxes
       this.localVideo.nativeElement.innerHTML = '';
-      this.localVideoActive = true;
+      this.localVideoActive = false;
+    } else {
+      // 🟢 Create and publish a new track
+      createLocalVideoTrack()
+        .then((newTrack: any) => {
+          localParticipant.publishTrack(newTrack);
 
-      const videoElement = newTrack.attach();
-      videoElement.style.width = '100%';
-      videoElement.style.height = '100%';
-      videoElement.style.objectFit = 'contain';
-      videoElement.style.backgroundColor = 'black';
+          // Clear old previews to avoid stacking
+          this.localVideo.nativeElement.innerHTML = '';
+          this.localVideoActive = true;
 
-      this.localVideo.nativeElement.appendChild(videoElement);
-    }).catch((err: any) => {
-      console.error('Error recreating video track:', err);
-    });
+          const videoElement = newTrack.attach();
+          videoElement.style.width = '100%';
+          videoElement.style.height = '100%';
+          videoElement.style.objectFit = 'contain';
+          videoElement.style.backgroundColor = 'black';
+
+          this.localVideo.nativeElement.appendChild(videoElement);
+        })
+        .catch((err: any) => {
+          console.error('Error recreating video track:', err);
+        });
+    }
   }
-}
-
 
   fullscreen() {
     if (!document.fullscreenElement) {
@@ -228,10 +241,9 @@ changeVideoIcon() {
   }
 
   endCall() {
-  this.leaveRoom();
-  window.history.back(); 
-}
-
+    this.leaveRoom();
+    window.history.back();
+  }
 
   ngOnDestroy() {
     this.leaveRoom();

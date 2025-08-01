@@ -226,7 +226,7 @@ export class DoctorDashboardComponent {
   }
 
   async fetchDoctorStats() {
-    const doctorId = this.doctorId;
+    const doctorId = this.getDoctorIdFromLocalStorage();
     if (!doctorId) return;
     try {
       const res = await api.get(`/doctor/appointments/doctor/${doctorId}`);
@@ -398,7 +398,7 @@ export class DoctorDashboardComponent {
 
   async fetchDashboardInvoices() {
     try {
-      const doctorId = this.doctorId;
+      const doctorId = this.getDoctorIdFromLocalStorage();
       if (!doctorId) {
         this.invoices = [];
         return;

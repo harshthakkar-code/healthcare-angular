@@ -51,6 +51,7 @@ export class DoctorAwardsSettingsComponent implements OnInit {
     api.get(`/doctor-settings/${this.doctorId}`)
       .then((response) => {
         const data = response.data;
+        console.log(data,"data");
         const awardsArr = Array.isArray(data.awardsSettings)
           ? data.awardsSettings
           : Array.isArray(data)
@@ -60,7 +61,7 @@ export class DoctorAwardsSettingsComponent implements OnInit {
         awardsArr.forEach((award: any) => {
           this.awardsArray.push(this.fb.group({
             awardName: [award.awardName || '', Validators.required],
-            year: [award.year || '', Validators.required],
+            year: [award.year ? new Date(award.year) : '', Validators.required],
             description: [award.description || '', Validators.required]
           }));
         });
