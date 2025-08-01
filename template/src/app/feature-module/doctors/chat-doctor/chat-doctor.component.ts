@@ -108,36 +108,50 @@ export class ChatDoctorComponent implements OnInit {
     }
   }
 
-  checkChatWindow(appointment: any) {
-    if (
-      !appointment ||
-      !appointment.date ||
-      !appointment.time
-      // Optionally add appointmentType check here
-    ) {
-      this.canChatNow = false;
-      return;
-    }
-    const dateStr = appointment.date; // e.g., "2025-07-21T00:00:00.000Z"
-    const [startTime, endTime] = appointment.time.split('-').map((t: string) => t.trim()); // e.g., "15:15", "15:45"
-    const today = new Date();
+checkChatWindow(appointments: any[]) {
+  this.canChatNow = false;
 
-    // Parse the appointment date
+  if (!Array.isArray(appointments) || appointments.length === 0) {
+    console.log('No valid appointments for chat.');
+    return;
+  }
+
+  const now = new Date();
+
+  for (const appointment of appointments) {
+    if (!appointment.date || !appointment.time) continue;
+
+    const dateStr = appointment.date;
+    const [startTime, endTime] = appointment.time.split('-').map((t: string) => t.trim());
+
+    // Convert UTC date to local date (remove timezone effect)
     const apptDate = new Date(dateStr);
+    const localApptDate = new Date(
+      apptDate.getUTCFullYear(),
+      apptDate.getUTCMonth(),
+      apptDate.getUTCDate()
+    );
 
-    // Parse start time
     const [startHour, startMin] = startTime.split(':').map(Number);
-    const apptStart = new Date(apptDate);
+    const apptStart = new Date(localApptDate);
     apptStart.setHours(startHour, startMin, 0, 0);
 
-    // Parse end time
     const [endHour, endMin] = endTime.split(':').map(Number);
-    const apptEnd = new Date(apptDate);
+    const apptEnd = new Date(localApptDate);
     apptEnd.setHours(endHour, endMin, 0, 0);
 
-    // Check if now is within the window
-    this.canChatNow = today >= apptStart && today <= apptEnd;
+    console.log(`Checking appointment slot from ${apptStart} to ${apptEnd}...`);
+
+    if (now >= apptStart && now <= apptEnd) {
+      this.canChatNow = true;
+      console.log('✅ Doctor can chat now with patient.');
+      return;
+    }
   }
+
+  console.log('❌ No valid appointment for current time.');
+}
+
 
   async startConversationWithPatient(patient: any) {
     this.selectedPatient = patient;
@@ -157,7 +171,7 @@ export class ChatDoctorComponent implements OnInit {
         await this.selectConversation(conversation);
       }
       // Find the relevant appointment for chat restriction
-      const relevantAppointment = this.appointments.find(
+      const relevantAppointments = this.appointments.filter(
         apt =>
           apt.patient &&
           apt.patient._id === patient._id &&
@@ -165,7 +179,7 @@ export class ChatDoctorComponent implements OnInit {
           apt.appointmentType &&
           apt.appointmentType.trim().toLowerCase() === 'chat'
       );
-      this.checkChatWindow(relevantAppointment);
+      this.checkChatWindow(relevantAppointments);
     } catch (err) {
       console.error('Failed to create/get conversation:', err);
     }

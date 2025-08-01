@@ -74,36 +74,56 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  checkChatWindow(appointment: any) {
-    if (
-      !appointment ||
-      !appointment.date ||
-      !appointment.time
-      // Optionally add appointmentType check here
-    ) {
-      this.canChatNow = false;
-      return;
-    }
-    const dateStr = appointment.date; // e.g., "2025-07-21T00:00:00.000Z"
-    const [startTime, endTime] = appointment.time.split('-').map((t: string) => t.trim()); // e.g., "15:15", "15:45"
-    const today = new Date();
+checkChatWindow(appointments: any[]) {
+  this.canChatNow = false;
 
-    // Parse the appointment date
+  if (!Array.isArray(appointments) || appointments.length === 0) {
+    console.log('No valid appointments for chat.');
+    return;
+  }
+
+  const now = new Date();
+
+  for (const appointment of appointments) {
+    if (!appointment.date || !appointment.time) continue;
+
+    const dateStr = appointment.date;
+    const [startTime, endTime] = appointment.time.split('-').map((t: string) => t.trim());
+
+    // Convert UTC date to local date
     const apptDate = new Date(dateStr);
+    const localApptDate = new Date(
+      apptDate.getUTCFullYear(),
+      apptDate.getUTCMonth(),
+      apptDate.getUTCDate()
+    );
 
-    // Parse start time
+    // Build full start time
     const [startHour, startMin] = startTime.split(':').map(Number);
-    const apptStart = new Date(apptDate);
+    const apptStart = new Date(localApptDate);
     apptStart.setHours(startHour, startMin, 0, 0);
 
-    // Parse end time
+    // Build full end time
     const [endHour, endMin] = endTime.split(':').map(Number);
-    const apptEnd = new Date(apptDate);
+    const apptEnd = new Date(localApptDate);
     apptEnd.setHours(endHour, endMin, 0, 0);
 
-    // Check if now is within the window
-    this.canChatNow = today >= apptStart && today <= apptEnd;
+    console.log('Checking appointment window:');
+    console.log('Start:', apptStart);
+    console.log('End:', apptEnd);
+    console.log('Now:', now);
+
+    // If current time is within this appointment window
+    if (now >= apptStart && now <= apptEnd) {
+      this.canChatNow = true;
+      console.log('✅ Chat is allowed for this appointment.');
+      return; // No need to check others
+    }
   }
+
+  console.log('❌ No valid appointment found for current time.');
+}
+
 
   async startConversationWithDoctor(doctor: any) {
     this.selectedDoctor = doctor;
@@ -121,14 +141,15 @@ export class ChatComponent implements OnInit {
         await this.selectConversation(conversation);
       }
       // Find the relevant appointment for chat restriction
-      const relevantAppointment = this.appointments.find(
+      const relevantAppointment = this.appointments.filter(
         apt =>
           apt.doctor &&
           apt.doctor._id === doctor._id &&
           (apt.status === 'accepted' || apt.status === 'completed') &&
           apt.appointmentType &&
-          apt.appointmentType.trim().toLowerCase() === 'chat'
+          apt.appointmentType.trim().toLowerCase() == 'chat'
       );
+      console.log('Relevant appointment:', relevantAppointment);
       this.checkChatWindow(relevantAppointment);
     } catch (err) {
       console.error('Failed to create/get conversation:', err);
