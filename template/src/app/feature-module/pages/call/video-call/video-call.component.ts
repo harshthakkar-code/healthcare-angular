@@ -194,7 +194,7 @@ changeVideoIcon() {
 
   } else {
     // 🟢 Create and publish a new track
-    createLocalVideoTrack().then(newTrack => {
+    createLocalVideoTrack().then((newTrack: any) => {
       localParticipant.publishTrack(newTrack);
 
       // Clear old previews to avoid stacking
@@ -208,7 +208,7 @@ changeVideoIcon() {
       videoElement.style.backgroundColor = 'black';
 
       this.localVideo.nativeElement.appendChild(videoElement);
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error('Error recreating video track:', err);
     });
   }
