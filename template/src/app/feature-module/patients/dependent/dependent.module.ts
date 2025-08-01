@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DependentRoutingModule } from './dependent-routing.module';
 import { DependentComponent } from './dependent.component';
-
+import { FeatureModuleModule } from '../../feature-module.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +11,8 @@ import { DependentComponent } from './dependent.component';
   ],
   imports: [
     CommonModule,
-    DependentRoutingModule
+    DependentRoutingModule,
+    FeatureModuleModule
   ]
 })
 export class DependentModule { }

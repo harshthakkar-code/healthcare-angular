@@ -36,19 +36,27 @@
         <!-- Depeendent Item -->
         <div *ngFor="let d of dependants" class="dependent-wrap">
           <div class="dependent-info">
-              <div class="patinet-information">
-                <a [routerLink] = "routes.patientProfile">
-                  <img [src]="d.profileImgUrl || 'assets/img/dependent/dependent-01.jpg'" >
-                </a>
-                <div class="patient-info">
-                  <h5>{{ d.name }}</h5>
-                  <ul>
-                    <li>{{ d.relation }}</li>
-                    <li>{{ d.gender }}</li>
-                    <li>{{ d.dob | date:'y MMM d' }}</li>
-                  </ul>
-                </div>
+            <div class="patinet-information">
+              <a [routerLink]="routes.patientProfile">
+                <ng-container *ngIf="d?.profileImgUrl; else avatarFallback">
+                  <img [src]="d.profileImgUrl" alt="User Image">
+                </ng-container>
+        
+                <ng-template #avatarFallback>
+                  <app-avatar [name]="d?.name" [size]="40" [gap]="10" [marginRight]="10">
+                  </app-avatar>
+                </ng-template>
+              </a>
+        
+              <div class="patient-info">
+                <h5>{{ d.name }}</h5>
+                <ul>
+                  <li>{{ d.relation }}</li>
+                  <li>{{ d.gender }}</li>
+                  <li>{{ d.dob | date:'y MMM d' }}</li>
+                </ul>
               </div>
+            </div>
             <div class="blood-info">
               <p>Blood Group</p>
               <h6>{{ d.bloodGroup }}</h6>
@@ -56,10 +64,12 @@
           </div>
           <div class="dependent-status">
             <div class="status-toggle">
-              <input type="checkbox" [id]="'status_' + d._id" class="check" [checked]="d.status === 'active'" (change)="onStatusToggle(d)">                  
+              <input type="checkbox" [id]="'status_' + d._id" class="check" [checked]="d.status === 'active'"
+                (change)="onStatusToggle(d)">
               <label [for]="'status_' + d._id" class="checktoggle">checkbox</label>
             </div>
-            <a href="javascript:void(0);" class="edit-icon me-2" (click)="onEditDependant(d)"><i class="isax isax-edit-2"></i></a>
+            <a href="javascript:void(0);" class="edit-icon me-2" (click)="onEditDependant(d)"><i
+                class="isax isax-edit-2"></i></a>
             <a href="javascript:void(0);" class="edit-icon" (click)="onDeleteDependant(d)"><i class="isax isax-trash"></i></a>
           </div>
         </div>

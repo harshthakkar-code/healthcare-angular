@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DoctorProfile2RoutingModule } from './doctor-profile2-routing.module';
 import { DoctorProfile2Component } from './doctor-profile2.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../../feature-module.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     DoctorProfile2RoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class DoctorProfile2Module { }

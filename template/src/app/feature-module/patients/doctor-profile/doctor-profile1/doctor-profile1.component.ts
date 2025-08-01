@@ -249,9 +249,9 @@ export class DoctorProfile1Component implements OnInit {
     return 'Unknown';
   }
 
-    getDoctorImage(doctor: any): string {
-    return doctor.profileImgUrl || doctor.profileSettings?.profileImgUrl || doctor.profileImage || '';
-  }
+  //   getDoctorImage(doctor: any): string {
+  //   return doctor.profileImgUrl || doctor.profileSettings?.profileImgUrl || doctor.profileImage || '';
+  // }
   onImgError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/img/doctors/doc-profile-02.jpg';
   }

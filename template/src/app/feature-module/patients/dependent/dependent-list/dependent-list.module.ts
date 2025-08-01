@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DependentListRoutingModule } from './dependent-list-routing.module';
 import { DependentListComponent } from './dependent-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../../feature-module.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     DependentListRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class DependentListModule { }

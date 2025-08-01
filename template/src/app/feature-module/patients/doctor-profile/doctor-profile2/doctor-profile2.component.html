@@ -9,12 +9,24 @@
                 <div class="doctor-widget">
                     <div class="doc-info-left">
                         <div class="doctor-img">
-                             <img [src]="getDoctorImage(profile)" class="img-fluid" alt="" (error)="onImgError($event)">
+                            <ng-container
+                                *ngIf="profile?.profileImgUrl || profile?.profileSettings?.profileImgUrl || profile?.profileImage; else avatarFallback">
+                                <img [src]="profile.profileImgUrl || profile.profileSettings?.profileImgUrl || profile.profileImage"
+                                    class="img-fluid" alt="Doctor Image">
+                            </ng-container>
+                    
+                    
+                            <ng-template #avatarFallback>
+                                <app-avatar [name]="profile?.name" [size]="160" [gap]="10" [marginRight]="0">
+                                </app-avatar>
+                            </ng-template>
                         </div>
                         <div class="doc-info-cont">
                             <h4 class="doc-name">Dr.{{ profile?.name || 'Doctor Name' }}</h4>
                             <p class="doc-speciality">{{ settings?.educationSettings?.[0]?.degree || 'Degree' }}</p>
-                            <p class="doc-department"><img [src]="specializations?.[0]?.image || 'assets/img/specialities/specialities-05.png'" class="img-fluid" alt="Speciality">{{ specializations?.[0]?.name || 'Speciality' }}</p>
+                            <p class="doc-department"><img
+                                    [src]="specializations?.[0]?.image || 'assets/img/specialities/specialities-05.png'" class="img-fluid"
+                                    alt="Speciality">{{ specializations?.[0]?.name || 'Speciality' }}</p>
                             <div class="rating">
                                 <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
                                     <i class="fas fa-star" [ngClass]="(profile?.avgRating || 0) > i ? 'filled' : ''"></i>
@@ -22,30 +34,35 @@
                                 <span class="d-inline-block average-rating">({{ reviews.length || 0 }})</span>
                             </div>
                             <div class="clinic-details">
-                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i> {{ profile?.clinicAddress || profile?.address2 || 'No address available' }} - <a href="javascript:void(0);">Get Directions</a></p>
-                                
+                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i> {{ profile?.clinicAddress || profile?.address2
+                                    || 'No address available' }} - <a href="javascript:void(0);">Get Directions</a></p>
+                    
                                 <ul class="clinic-gallery">
                                     <lightgallery [settings]="settings" [onBeforeSlide]="onBeforeSlide">
-                                    <li data-src="assets/img/features/feature-01.jpg" data-responsive="assets/img/features/feature-01.jpg">
-                                        <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
-                                            <img alt="img" src="assets/img/features/feature-01.jpg">
-                                        </a>
-                                    </li>
-                                    <li data-src="assets/img/features/feature-02.jpg" data-responsive="assets/img/features/feature-02.jpg">
-                                        <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
-                                            <img alt="img" src="assets/img/features/feature-02.jpg">
-                                        </a>
-                                    </li>
-                                    <li data-src="assets/img/features/feature-03.jpg" data-responsive="assets/img/features/feature-03.jpg">
-                                        <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
-                                            <img alt="img" src="assets/img/features/feature-03.jpg">
-                                        </a>
-                                    </li>
-                                    <li data-src="assets/img/features/feature-04.jpg" data-responsive="assets/img/features/feature-04.jpg">
-                                        <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
-                                            <img alt="img" src="assets/img/features/feature-04.jpg">
-                                        </a>
-                                    </li>
+                                        <li data-src="assets/img/features/feature-01.jpg"
+                                            data-responsive="assets/img/features/feature-01.jpg">
+                                            <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
+                                                <img alt="img" src="assets/img/features/feature-01.jpg">
+                                            </a>
+                                        </li>
+                                        <li data-src="assets/img/features/feature-02.jpg"
+                                            data-responsive="assets/img/features/feature-02.jpg">
+                                            <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
+                                                <img alt="img" src="assets/img/features/feature-02.jpg">
+                                            </a>
+                                        </li>
+                                        <li data-src="assets/img/features/feature-03.jpg"
+                                            data-responsive="assets/img/features/feature-03.jpg">
+                                            <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
+                                                <img alt="img" src="assets/img/features/feature-03.jpg">
+                                            </a>
+                                        </li>
+                                        <li data-src="assets/img/features/feature-04.jpg"
+                                            data-responsive="assets/img/features/feature-04.jpg">
+                                            <a data-lg-size="480-475-480, 800-791-800, 1406-1390" class="gallery-item">
+                                                <img alt="img" src="assets/img/features/feature-04.jpg">
+                                            </a>
+                                        </li>
                                     </lightgallery>
                                 </ul>
                             </div>
@@ -396,12 +413,21 @@
                                 <!-- Comment List -->
                                 <li *ngFor="let review of paginatedReviews">
                                     <div class="comment">
-                                        <img class="avatar avatar-sm rounded-circle" alt="User Image" [src]="review?.patient?.profileImgUrl || 'assets/img/clients/client-13.jpg'">
+                                        <ng-container *ngIf="review?.patient?.profileImgUrl; else avatarFallback">
+                                            <img class="avatar avatar-sm rounded-circle" [src]="review.patient.profileImgUrl" alt="User Image">
+                                        </ng-container>
+                                
+                                        <ng-template #avatarFallback>
+                                            <app-avatar [name]="review?.patient?.name" [size]="32" [gap]="10" [marginRight]="0"
+                                                class="avatar avatar-sm rounded-circle">
+                                            </app-avatar>
+                                        </ng-template>
                                         <div class="comment-body">
                                             <div class="meta-data d-flex justify-content-between align-items-center">
                                                 <span class="comment-author">
-                                                    {{ (review?.patient?.name?.length > 12) ? (review?.patient?.name | slice:0:12) + '...' : (review?.patient?.name || 'Anonymous') }}
-                                                </span>
+                                                    {{ (review?.patient?.name?.length > 12) ? (review?.patient?.name | slice:0:12) + '...' :
+                                                    (review?.patient?.name || 'Anonymous') }}
+                                                    </span>
                                                 <div class="review-count rating">
                                                     <ng-container *ngFor="let star of [1,2,3,4,5]">
                                                         <i class="fas fa-star" [ngClass]="{'filled': review?.rating >= star}"></i>

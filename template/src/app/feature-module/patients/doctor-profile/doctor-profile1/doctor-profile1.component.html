@@ -8,24 +8,32 @@
         <div class="doctor-widget doctor-profile-two">
           <div class="doc-info-left">
             <div class="doctor-img">
-              <img [src]="getDoctorImage(profile)" class="img-fluid" alt="" (error)="onImgError($event)">
+              <ng-container
+                *ngIf="profile?.profileImgUrl || profile?.profileSettings?.profileImgUrl || profile?.profileImage; else avatarFallback">
+                <img [src]="profile.profileImgUrl || profile.profileSettings?.profileImgUrl || profile.profileImage"
+                  class="img-fluid" alt="Doctor Image">
+              </ng-container>
+            
+            
+              <ng-template #avatarFallback>
+                <app-avatar [name]="profile?.name" [size]="170" [gap]="10" [marginRight]="0">
+                </app-avatar>
+              </ng-template>
             </div>
+          
             <div class="doc-info-cont">
               <span class="badge doc-avail-badge" [ngClass]="availabilityBadgeClass">
-                <i class="fa-solid fa-circle" [ngClass]="dotClass"></i>{{ availabilityText }}              </span>
+                <i class="fa-solid fa-circle" [ngClass]="dotClass"></i>{{ availabilityText }} </span>
               <h4 class="doc-name">
                 Dr.{{ profile?.name || 'Doctor Name' }}
-                <img src="assets/img/icons/badge-check.svg" alt="Img" /><span
-                  class="badge doctor-role-badge"
-                  ><i class="fa-solid fa-circle"></i>{{ specializations?.[0]?.name || '' }}</span
-                >
+                <img src="assets/img/icons/badge-check.svg" alt="Img" /><span class="badge doctor-role-badge"><i
+                    class="fa-solid fa-circle"></i>{{ specializations?.[0]?.name || '' }}</span>
               </h4>
               <p>{{ settings?.educationSettings?.[0]?.institution || 'Institution' }}</p>
               <p>Speaks : {{ settings?.profileSettings?.[0]?.knownLanguages || 'English' }}</p>
               <p class="address-detail">
-                <span class="loc-icon"
-                  ><i class="feather-map-pin"></i></span
-                >{{ profile?.clinicAddress || profile?.address2 || 'No address available' }}
+                <span class="loc-icon"><i class="feather-map-pin"></i></span>{{ profile?.clinicAddress || profile?.address2 || 'No
+                address available' }}
                 <span class="view-text">( View Location )</span>
               </p>
             </div>
@@ -450,8 +458,16 @@
               <div class="user-info-review">
                 <div class="reviewer-img">
                   <a href="javascript:void(0);" class="avatar-img">
-                    <img [src]="review?.patient?.profileImgUrl || 'assets/img/clients/client-13.jpg'" alt="Img" />
+                    <ng-container *ngIf="review?.patient?.profileImgUrl; else avatarFallback">
+                      <img [src]="review.patient.profileImgUrl" alt="Img" />
+                    </ng-container>
+                
+                    <ng-template #avatarFallback>
+                      <app-avatar [name]="review?.patient?.name" [size]="40" [gap]="10" [marginRight]="10">
+                      </app-avatar>
+                    </ng-template>
                   </a>
+                
                   <div class="review-star">
                     <a href="javascript:void(0);">{{ review?.patient?.name || 'Anonymous' }}</a>
                     <div class="rating">

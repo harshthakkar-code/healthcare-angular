@@ -32,8 +32,16 @@
                                 </a>
                                 <div class="doc-img">
                                     <a [routerLink]="[routes.doctorProfile2, doc.doctor._id]">
-                                        <img class="img-fluid" alt="User Image" [src]="doc.doctor.profileImgUrl || 'assets/img/doctors/doctor-thumb-21.jpg'">
+                                        <ng-container *ngIf="doc?.doctor?.profileImgUrl; else avatarFallback">
+                                            <img class="img-fluid" alt="User Image" [src]="doc.doctor.profileImgUrl">
+                                        </ng-container>
+                                
+                                        <ng-template #avatarFallback>
+                                            <app-avatar [name]="doc?.doctor?.name" [size]="80" [gap]="10" [marginRight]="0" class="img-fluid">
+                                            </app-avatar>
+                                        </ng-template>
                                     </a>
+                                
                                 </div>
                                 <div class="pro-content">
                                     <h3 class="title">
