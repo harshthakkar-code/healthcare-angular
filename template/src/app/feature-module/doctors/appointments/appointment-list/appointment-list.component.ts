@@ -62,15 +62,30 @@ export class AppointmentListComponent implements OnInit {
       });
   }
 
-  get upcomingAppointments() {
-    return this.allAppointments.filter(a => {
-      const statusMatch =  a.status === 'accepted';
-      const nameMatch = this.searchTerm ? (a.patient?.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) || a.patient?.email?.toLowerCase().includes(this.searchTerm.toLowerCase())) : true;
-      const dateMatch = this.bsRangeValue && this.bsRangeValue.length === 2 ?
-        (new Date(a.date) >= new Date(this.bsRangeValue[0]) && new Date(a.date) <= new Date(this.bsRangeValue[1])) : true;
-      return statusMatch && nameMatch && dateMatch;
-    });
-  }
+ get upcomingAppointments() {
+  return this.allAppointments.filter(a => {
+    const statusMatch = a.status === 'accepted';
+    const nameMatch = this.searchTerm
+      ? (a.patient?.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+         a.patient?.email?.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      : true;
+
+    let dateMatch = true;
+    if (this.bsRangeValue && this.bsRangeValue.length === 2 && this.bsRangeValue[0] && this.bsRangeValue[1]) {
+      const aptDate = new Date(a.date);
+      const from = new Date(this.bsRangeValue[0]);
+      const to = new Date(this.bsRangeValue[1]);
+
+      // Normalize time to cover full day
+      from.setHours(0, 0, 0, 0);
+      to.setHours(23, 59, 59, 999);
+      dateMatch = aptDate >= from && aptDate <= to;
+    }
+
+    return statusMatch && nameMatch && dateMatch;
+  });
+}
+
   get cancelledAppointments() {
     return this.allAppointments.filter(a => {
       const statusMatch = a.status === 'cancelled' || a.status === 'rejected';
@@ -99,7 +114,7 @@ export class AppointmentListComponent implements OnInit {
   }
 
 isAttendAllowed(appointment: any): boolean {
-  if (!appointment?.date || !appointment?.time || !appointment.time.includes(' - ')) return false;
+  if (!appointment?.date || !appointment?.time || !appointment.time.includes(' - ') ||  appointment.appointmentType !== 'video') return false;
 
   const [startTimeStr, endTimeStr] = appointment.time.split(' - ');
   const appointmentDate = new Date(appointment.date);

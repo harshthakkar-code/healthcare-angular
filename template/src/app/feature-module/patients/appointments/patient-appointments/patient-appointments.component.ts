@@ -281,7 +281,8 @@ export class PatientAppointmentsComponent implements OnInit {
   return now >= accessStartTime && now <= endTime;
 }
 isAttendAllowed(appointment: any): boolean {
-  if (!appointment?.date || !appointment?.time || !appointment.time.includes(' - ')) return false;
+  if (!appointment?.date || !appointment?.time || !appointment.time.includes(' - ') || appointment.appointmentType !== 'video'
+) return false;
 
   const [startTimeStr, endTimeStr] = appointment.time.split(' - ');
   const appointmentDate = new Date(appointment.date);
