@@ -11,11 +11,9 @@
                 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
                 <div *ngIf="loading">Loading...</div>
                 <!-- <div *ngIf="!loading && appointments.length === 0 && !error">No pending requests.</div> -->
-                <app-empty-state
-                  *ngIf="appointments.length === 0 && !loading && !error"
-                  [icon]="'fa-solid fa-calendar-check'"
-                  [title]="'No Requests'"
-                  [message]="'There are no requests to show.'">
+                <app-empty-state *ngIf="appointments.length === 0 && !loading && !error"
+                    [icon]="'fa-solid fa-calendar-check'" [title]="'No Requests'"
+                    [message]="'There are no requests to show.'">
                 </app-empty-state>
                 <!-- Dynamic Request List -->
                 <div *ngFor="let apt of appointments" class="appointment-wrap">
@@ -23,12 +21,22 @@
                         <li>
                             <div class="patinet-information">
                                 <a [routerLink]="['/doctors/appointments/doctor-appointment-details', apt._id]">
-                                    <img [src]="apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
+                                    <ng-container *ngIf="apt?.patient?.profileImgUrl1; else avatarFallback">
+                                        <img [src]="apt.patient.profileImgUrl" alt="User Image">
+                                    </ng-container>
+
+                                    <ng-template #avatarFallback>
+                                        <app-avatar [name]="apt?.patient?.name" [size]="40" [gap]="10"
+                                            [marginRight]="10">
+                                        </app-avatar>
+                                    </ng-template>
                                 </a>
+
                                 <div class="patient-info">
                                     <p>#{{ apt._id.slice(-6) }}</p>
                                     <h6>
-                                        <a [routerLink]="['/doctors/appointments/doctor-appointment-details', apt._id]">{{ apt.patient?.name || apt.name || 'Unknown' }}</a>
+                                        <a [routerLink]="['/doctors/appointments/doctor-appointment-details', apt._id]">{{
+                                            apt.patient?.name || apt.name || 'Unknown' }}</a>
                                         <span *ngIf="apt.status === 'pending'" class="badge new-tag">New</span>
                                     </h6>
                                 </div>
@@ -50,13 +58,15 @@
                         <li>
                             <ul class="request-action">
                                 <li>
-                                    <button class="accept-link" [disabled]="statusLoading[apt._id]" (click)="handleStatus(apt._id, 'accepted')">
+                                    <button class="accept-link" [disabled]="statusLoading[apt._id]"
+                                        (click)="handleStatus(apt._id, 'accepted')">
                                         <i class="fa-solid fa-check"></i> Accept
                                     </button>
                                 </li>
                                 <!-- <li class="divider"></li> -->
                                 <li>
-                                    <button class="reject-link" [disabled]="statusLoading[apt._id]" (click)="handleStatus(apt._id, 'rejected')">
+                                    <button class="reject-link" [disabled]="statusLoading[apt._id]"
+                                        (click)="handleStatus(apt._id, 'rejected')">
                                         <i class="fa-solid fa-xmark"></i> Reject
                                     </button>
                                 </li>

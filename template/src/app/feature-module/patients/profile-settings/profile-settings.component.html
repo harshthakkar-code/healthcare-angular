@@ -33,11 +33,17 @@
                                 <label class="form-label mb-2">Profile Photo</label>
                                 <div class="change-avatar img-upload">
                                     <div class="profile-img">
-                                        <img *ngIf="profileImgUrl; else defaultImg" [src]="profileImgUrl" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-                                        <ng-template #defaultImg>
-                                            <img src="assets/img/default-profile.png" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        <ng-container *ngIf="profileImgUrl; else avatarFallback">
+                                            <img [src]="profileImgUrl" alt="Profile Image"
+                                                style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        </ng-container>
+                                    
+                                        <ng-template #avatarFallback>
+                                            <app-avatar [name]="profile.name" [size]="80" [gap]="10" [marginRight]="0" style="border-radius: 50%;">
+                                            </app-avatar>
                                         </ng-template>
                                     </div>
+
                                     <div class="upload-img">
                                         <div class="imgs-load d-flex align-items-center">
                                             <div class="change-photo">

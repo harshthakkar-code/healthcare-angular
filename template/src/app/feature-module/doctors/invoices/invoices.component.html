@@ -1,98 +1,116 @@
-			
-            <app-doctor-breadcrumb></app-doctor-breadcrumb>
-            <!-- Page Content -->
-			<div class="content doctor-content">
-				<div class="container">
-					<div class="row">
-                        <app-doctor-sidebar
-                        class="col-md-5 col-lg-4 col-xl-3"
-                      ></app-doctor-sidebar>
+<app-doctor-breadcrumb></app-doctor-breadcrumb>
+<!-- Page Content -->
+<div class="content doctor-content">
+	<div class="container">
+		<div class="row">
+			<app-doctor-sidebar class="col-md-5 col-lg-4 col-xl-3"></app-doctor-sidebar>
 
-						<!-- Invoices -->
-						<div class="col-lg-8 col-xl-9">
+			<!-- Invoices -->
+			<div class="col-lg-8 col-xl-9">
 
-							<div class="dashboard-header">
-								<h3>Invoices</h3>
-							</div>
+				<div class="dashboard-header">
+					<h3>Invoices</h3>
+				</div>
 
-							<div class="search-header">
-									<div class="search-field">
-										<input type="text" class="form-control" placeholder="Search" [(ngModel)]="search" (keyup.enter)="onSearch(search)">
-										<span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-									</div>
-								</div>
-
-								<div class="custom-table">
-									<div class="table-responsive">
-										<table class="table table-center mb-0">
-											<thead>
-												<tr>
-													<th>ID</th>
-													<th>Patient</th>
-													<th>Appointment Date</th>
-													<th>Booked on</th>
-													<th>Amount</th>
-													<th>Action</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr *ngFor="let t of transactions">
-													<td>
-														<a href="javascript:void(0);" class="text-blue-600" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">#{{ t.invoiceNo?.slice(0, 8) || 'Inv-2021' }}</a>
-													</td>
-													<td>
-														<h2 class="table-avatar">
-															<a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-																<img class="avatar-img rounded-3" [src]="t.appointment?.patient?.profileImgUrl || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
-															</a>
-															<a [routerLink]="routes.doctorProfile1">{{ t.appointment?.patient?.name || '-' }}</a>
-														</h2>
-													</td>
-													<td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') : (t.appointment?.date || '-') }}</td>
-													<td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') : '-' }}</td>
-													<td>${{ t.totalAmount }}</td>
-													<td>
-														<div class="action-item">
-															<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">
-																<i class="isax isax-link-2"></i>
-															</a>
-															<a href="javascript:void(0);">
-																<i class="isax isax-printer5"></i>
-															</a>
-														</div>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-
-								<!-- Pagination -->
-								<div class="pagination dashboard-pagination">
-									<ul>
-										<li>
-											<a href="javascript:void(0);" class="page-link" [class.disabled]="page === 1" (click)="page > 1 && onPageChange(page - 1)"><i class="fa-solid fa-chevron-left"></i></a>
-										</li>
-										<li *ngFor="let p of totalPages" >
-											<a href="javascript:void(0);" class="page-link" [class.active]="page === p" (click)="onPageChange(p)">{{ p }}</a>
-										</li>
-										<li>
-											<a href="javascript:void(0);" class="page-link" [class.disabled]="page === totalPages.length" (click)="page < totalPages.length && onPageChange(page + 1)"><i class="fa-solid fa-chevron-right"></i></a>
-										</li>
-									</ul>
-								</div>
-								<!-- /Pagination -->
-
-								<app-empty-state
-								  *ngIf="transactions.length === 0 && !loading"
-								  [icon]="'fa-solid fa-calendar-check'"
-								  [title]="'No Invoices'"
-								  [message]="'There are no invoices to show.'">
-								</app-empty-state>
-						</div>
-						<!-- /Invoices -->
-
+				<div class="search-header">
+					<div class="search-field">
+						<input type="text" class="form-control" placeholder="Search" [(ngModel)]="search"
+							(keyup.enter)="onSearch(search)">
+						<span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
 					</div>
 				</div>
-			</div>		
-			<!-- /Page Content -->
+
+				<div class="custom-table">
+					<div class="table-responsive">
+						<table class="table table-center mb-0">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Patient</th>
+									<th>Appointment Date</th>
+									<th>Booked on</th>
+									<th>Amount</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let t of transactions">
+									<td>
+										<a href="javascript:void(0);" class="text-blue-600" data-bs-toggle="modal"
+											data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">#{{
+											t.invoiceNo?.slice(0, 8) || 'Inv-2021' }}</a>
+									</td>
+									<td>
+										<h2 class="table-avatar">
+											<a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
+												<ng-container
+													*ngIf="t?.appointment?.patient?.profileImgUrl; else avatarFallback">
+													<img class="avatar-img rounded-3"
+														[src]="t.appointment.patient.profileImgUrl" alt="User Image">
+												</ng-container>
+
+												<ng-template #avatarFallback>
+													<app-avatar [name]="t?.appointment?.patient?.name" [size]="40"
+														[gap]="10" [marginRight]="0" class="avatar-img rounded-3">
+													</app-avatar>
+												</ng-template>
+											</a>
+
+											<a [routerLink]="routes.doctorProfile1">{{ t.appointment?.patient?.name ||
+												'-' }}</a>
+										</h2>
+									</td>
+									<td>{{ t.appointment?.date ? (t.appointment.date | date:'dd MMM yyyy') :
+										(t.appointment?.date || '-') }}</td>
+									<td>{{ t.appointment?.createdAt ? (t.appointment.createdAt | date:'dd MMM yyyy') :
+										'-' }}</td>
+									<td>${{ t.totalAmount }}</td>
+									<td>
+										<div class="action-item">
+											<a href="javascript:void(0);" data-bs-toggle="modal"
+												data-bs-target="#invoice_view" (click)="openInvoiceModal(t._id)">
+												<i class="isax isax-link-2"></i>
+											</a>
+											<a href="javascript:void(0);">
+												<i class="isax isax-printer5"></i>
+											</a>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Pagination -->
+				<div class="pagination dashboard-pagination">
+					<ul>
+						<li>
+							<a href="javascript:void(0);" class="page-link" [class.disabled]="page === 1"
+								(click)="page > 1 && onPageChange(page - 1)"><i
+									class="fa-solid fa-chevron-left"></i></a>
+						</li>
+						<li *ngFor="let p of totalPages">
+							<a href="javascript:void(0);" class="page-link" [class.active]="page === p"
+								(click)="onPageChange(p)">{{ p }}</a>
+						</li>
+						<li>
+							<a href="javascript:void(0);" class="page-link"
+								[class.disabled]="page === totalPages.length"
+								(click)="page < totalPages.length && onPageChange(page + 1)"><i
+									class="fa-solid fa-chevron-right"></i></a>
+						</li>
+					</ul>
+				</div>
+				<!-- /Pagination -->
+
+				<app-empty-state *ngIf="transactions.length === 0 && !loading" [icon]="'fa-solid fa-calendar-check'"
+					[title]="'No Invoices'" [message]="'There are no invoices to show.'">
+				</app-empty-state>
+			</div>
+			<!-- /Invoices -->
+
+		</div>
+	</div>
+</div>
+<!-- /Page Content -->

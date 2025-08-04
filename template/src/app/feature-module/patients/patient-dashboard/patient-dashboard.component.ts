@@ -424,4 +424,26 @@ export class PatientDashboardComponent implements OnInit {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(0, 2);
   }
+
+  getDuration(timeRange: string): string {
+    if (!timeRange) return '0m';
+    const [start, end] = timeRange.split('-').map(t => t.trim());
+    if (!start || !end) return '0m';
+
+    const [startHour, startMinute] = start.split(':').map(Number);
+    const [endHour, endMinute] = end.split(':').map(Number);
+
+    if (
+      isNaN(startHour) || isNaN(startMinute) ||
+      isNaN(endHour) || isNaN(endMinute)
+    ) return '0m';
+
+    const startDate = new Date(0, 0, 0, startHour, startMinute);
+    const endDate = new Date(0, 0, 0, endHour, endMinute);
+
+    let diff = (endDate.getTime() - startDate.getTime()) / (1000 * 60); // minutes
+    if (diff < 0) diff += 24 * 60; // handle overnight
+
+    return `${diff} minutes`;
+  }
 }

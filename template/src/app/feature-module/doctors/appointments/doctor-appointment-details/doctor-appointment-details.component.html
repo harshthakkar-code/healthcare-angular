@@ -6,11 +6,12 @@
 
         <div class="row">
             <app-doctor-sidebar class="col-md-5 col-lg-4 col-xl-3"></app-doctor-sidebar>
-            
+
             <div class="col-lg-8 col-xl-9">
                 <div class="dashboard-header">
                     <div class="header-back">
-                        <a [routerLink] = "routes.appointmentsListUser" class="back-arrow"><i class="fa-solid fa-arrow-left"></i></a>
+                        <a [routerLink]="routes.appointmentsListUser" class="back-arrow"><i
+                                class="fa-solid fa-arrow-left"></i></a>
                         <h3>Appointment Details</h3>
                     </div>
                 </div>
@@ -22,15 +23,27 @@
                             <li>
                                 <div class="patinet-information">
                                     <a href="javascript:void(0);">
-                                        <img [src]="appointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-02.jpg'" alt="User Image">
+                                        <ng-container *ngIf="appointment?.patient?.profileImgUrl; else avatarFallback">
+                                            <img [src]="appointment.patient.profileImgUrl" alt="User Image">
+                                        </ng-container>
+
+                                        <ng-template #avatarFallback>
+                                            <app-avatar [name]="appointment?.patient?.name" [size]="140" [gap]="10"
+                                                [marginRight]="10">
+                                            </app-avatar>
+                                        </ng-template>
                                     </a>
+
                                     <div class="patient-info">
                                         <p>#{{ appointment._id?.slice(-6) }}</p>
-                                        <h6><a href="javascript:void(0);">{{ appointment.patient?.name || appointment.name || '-' }}</a></h6>
+                                        <h6><a href="javascript:void(0);">{{ appointment.patient?.name ||
+                                                appointment.name || '-' }}</a></h6>
                                         <div class="mail-info-patient">
                                             <ul>
-                                                <li><i class="fa-solid fa-envelope"></i>{{ appointment.patient?.email || appointment.email || '-' }}</li>
-                                                <li><i class="fa-solid fa-phone"></i>{{ appointment.patient?.phone || appointment.phone || '-' }}</li>
+                                                <li><i class="fa-solid fa-envelope"></i>{{ appointment.patient?.email ||
+                                                    appointment.email || '-' }}</li>
+                                                <li><i class="fa-solid fa-phone"></i>{{ appointment.patient?.phone ||
+                                                    appointment.phone || '-' }}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -40,13 +53,15 @@
                                 <div class="person-info">
                                     <p>Type of Appointment</p>
                                     <ul class="d-flex apponitment-types">
-                                        <li><i class="fa-solid text-green"></i>{{ appointment.appointmentType || '-' }}</li>
+                                        <li><i class="fa-solid text-green"></i>{{ appointment.appointmentType || '-' }}
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
                             <li class="appointment-action">
                                 <div class="detail-badge-info">
-                                    <span class="badge bg-grey me-2">{{ appointment.patientType || 'New Patient' }}</span>
+                                    <span class="badge bg-grey me-2">{{ appointment.patientType || 'New Patient'
+                                        }}</span>
                                     <span class="badge bg-yellow">{{ appointment.status || 'Upcoming' }}</span>
                                 </div>
                                 <!-- <div class="consult-fees">
@@ -55,15 +70,18 @@
                                 <ul>
                                     <ng-container *ngIf="appointment.status === 'pending'; else acceptedOnly">
                                         <li>
-                                            <a href="javascript:void(0);" (click)="acceptAppointment()" title="Accept Appointment"><i class="fa-solid fa-check"></i></a>
+                                            <a href="javascript:void(0);" (click)="acceptAppointment()"
+                                                title="Accept Appointment"><i class="fa-solid fa-check"></i></a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);" (click)="rejectAppointment()" title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
+                                            <a href="javascript:void(0);" (click)="rejectAppointment()"
+                                                title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
                                         </li>
                                     </ng-container>
                                     <ng-template #acceptedOnly>
                                         <li *ngIf="appointment.status === 'accepted'">
-                                            <a href="javascript:void(0);" (click)="rejectAppointment()" title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
+                                            <a href="javascript:void(0);" (click)="rejectAppointment()"
+                                                title="Reject Appointment"><i class="fa-solid fa-xmark"></i></a>
                                         </li>
                                     </ng-template>
                                 </ul>
@@ -88,15 +106,15 @@
                             </li>
                             <li>
                                 <div class="start-btn">
-                                    <a [routerLink] = "" class="btn btn-secondary">Start Session</a>
+                                    <a [routerLink]="" class="btn btn-secondary">Start Session</a>
                                 </div>
                             </li>
                         </ul>
-                                <div *ngIf="errorMessage" class="text-danger small">{{ errorMessage }}</div>
+                        <div *ngIf="errorMessage" class="text-danger small">{{ errorMessage }}</div>
                     </div>
                     <!-- /Appointment Detail Card -->
 
-                
+
 
                     <div class="recent-appointments" *ngIf="recentAppointments.length">
                         <h5 class="head-text">Recent Appointments</h5>
@@ -106,8 +124,17 @@
                                 <li>
                                     <div class="patinet-information">
                                         <a href="javascript:void(0);">
-                                            <img [src]="apt.patient?.profileImage || apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
+                                            <ng-container *ngIf="apt?.patient?.profileImgUrl; else avatarFallback">
+                                                <img [src]="apt.patient.profileImgUrl" alt="User Image">
+                                            </ng-container>
+
+                                            <ng-template #avatarFallback>
+                                                <app-avatar [name]="apt?.patient?.name" [size]="40" [gap]="10"
+                                                    [marginRight]="10">
+                                                </app-avatar>
+                                            </ng-template>
                                         </a>
+
                                         <div class="patient-info">
                                             <p>#{{ apt._id?.slice(-6) }}</p>
                                             <h6>{{ apt.patient?.name || apt.name || '-' }}</h6>
@@ -115,7 +142,8 @@
                                     </div>
                                 </li>
                                 <li class="appointment-info">
-                                    <p><i class="fa-solid fa-clock"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time }}</p>
+                                    <p><i class="fa-solid fa-clock"></i>{{ apt.date | date:'mediumDate' }} - {{ apt.time
+                                        }}</p>
                                     <ul class="d-flex apponitment-types">
                                         <li>{{ apt.specialty || 'General Visit' }}</li>
                                         <li>{{ apt.appointmentType || '-' }}</li>
@@ -123,14 +151,17 @@
                                 </li>
                                 <li class="mail-info-patient">
                                     <ul>
-                                        <li><i class="fa-solid fa-envelope"></i>{{ apt.patient?.email || apt.email || '-' }}</li>
-                                        <li><i class="fa-solid fa-phone"></i>{{ apt.patient?.phone || apt.phone || '-' }}</li>
+                                        <li><i class="fa-solid fa-envelope"></i>{{ apt.patient?.email || apt.email ||
+                                            '-' }}</li>
+                                        <li><i class="fa-solid fa-phone"></i>{{ apt.patient?.phone || apt.phone || '-'
+                                            }}</li>
                                     </ul>
                                 </li>
                                 <li class="appointment-action">
                                     <ul>
                                         <li>
-                                            <a [routerLink]="['../doctor-appointment-details', apt._id]"><i class="fa-solid fa-eye"></i></a>
+                                            <a [routerLink]="['../doctor-appointment-details', apt._id]"><i
+                                                    class="fa-solid fa-eye"></i></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -144,5 +175,5 @@
 
     </div>
 
-</div>		
+</div>
 <!-- /Page Content -->

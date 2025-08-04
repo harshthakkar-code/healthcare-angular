@@ -42,9 +42,18 @@
                                       </td>
                                       <td>
                                           <h2 class="table-avatar">
-                                              <a [routerLink]="[routes.doctorProfile2 , t?.appointment?.doctor?._id]" class="avatar avatar-sm me-2">
-                                                  <img class="avatar-img rounded-3" [src]="t.appointment?.doctor?.image || 'assets/img/doctors/doctor-thumb-01.jpg'" alt="User Image">
-                                              </a>
+                                            <a [routerLink]="[routes.doctorProfile2, t?.appointment?.doctor?._id]" class="avatar avatar-sm me-2">
+                                                <ng-container *ngIf="t?.appointment?.doctor?.profileImgUrl; else avatarFallback">
+                                                    <img class="avatar-img rounded-3" [src]="t.appointment.doctor.profileImgUrl" alt="User Image">
+                                                </ng-container>
+                                            
+                                                <ng-template #avatarFallback>
+                                                    <app-avatar [name]="t?.appointment?.doctor?.name" [size]="40" [gap]="10" [marginRight]="0"
+                                                        class="avatar-img rounded-3">
+                                                    </app-avatar>
+                                                </ng-template>
+                                            </a>
+
                                               <a [routerLink]="[routes.doctorProfile2 , t?.appointment?.doctor?._id]">{{ t.appointment?.doctor?.name || '-' }}</a>
                                           </h2>
                                       </td>

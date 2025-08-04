@@ -90,8 +90,8 @@ exports.getInvoicesByDoctor = async (req, res, next) => {
       .populate({
         path: 'appointment',
         populate: [
-          { path: 'doctor', select: 'name email' },
-          { path: 'patient', select: 'name email' }
+          { path: 'doctor', select: 'name email profileImgUrl' },
+          { path: 'patient', select: 'name email profileImgUrl' }
         ]
       });
     res.json({
@@ -127,8 +127,8 @@ exports.getInvoicesByPatient = async (req, res, next) => {
       .populate({
         path: 'appointment',
         populate: [
-          { path: 'doctor', select: 'name email' },
-          { path: 'patient', select: 'name email' }
+          { path: 'doctor', select: 'name email profileImgUrl' },
+          { path: 'patient', select: 'name email profileImgUrl' }
         ]
       });
     res.json({

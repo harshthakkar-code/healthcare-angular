@@ -95,9 +95,16 @@
                         <td>
                           <div class="patient-info-profile">
                             <a class="table-avatar">
-                              <img [src]="appt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                                alt="Img" />
+                              <ng-container *ngIf="appt?.patient?.profileImgUrl; else avatarFallback">
+                                <img [src]="appt.patient.profileImgUrl" alt="Img" />
+                              </ng-container>
+
+                              <ng-template #avatarFallback>
+                                <app-avatar [name]="appt?.patient?.name" [size]="40" [gap]="10" [marginRight]="0">
+                                </app-avatar>
+                              </ng-template>
                             </a>
+
                             <div class="patient-name-info">
                               <span>#{{ appt._id?.slice(-6) }}</span>
                               <h5>
@@ -201,11 +208,17 @@
                   <div class="d-flex recent-patient-grid-boxes">
                     <ng-container *ngFor="let patient of recentPatients; let i = index">
                       <div class="recent-patient-grid">
-                        <a Style="cursor:default" class="patient-img">
-                          <img
-                            [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-0' + (i+1) + '.jpg'"
-                            alt="Img" />
+                        <a style="cursor: default;" class="patient-img">
+                          <ng-container *ngIf="patient?.profileImgUrl; else avatarFallback">
+                            <img [src]="patient.profileImgUrl" alt="Img" />
+                          </ng-container>
+
+                          <ng-template #avatarFallback>
+                            <app-avatar [name]="patient?.name" [size]="40" [gap]="10" [marginRight]="0">
+                            </app-avatar>
+                          </ng-template>
                         </a>
+
                         <h5>
                           <a Style="cursor:default">{{ patient?.name || 'Unknown' }}</a>
                         </h5>
@@ -243,9 +256,18 @@
                 <ng-container *ngIf="upcomingAppointment; else noUpcoming">
                   <div class="upcoming-patient-info">
                     <div class="info-details">
-                      <span class="img-avatar"><img
-                          [src]="upcomingAppointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                          alt="Img"></span>
+                      <span class="img-avatar">
+                        <ng-container *ngIf="upcomingAppointment?.patient?.profileImgUrl; else avatarFallback">
+                          <img [src]="upcomingAppointment.patient.profileImgUrl" alt="Img">
+                        </ng-container>
+
+                        <ng-template #avatarFallback>
+                          <app-avatar [name]="upcomingAppointment?.patient?.name" [size]="40" [gap]="10"
+                            [marginRight]="0">
+                          </app-avatar>
+                        </ng-template>
+                      </span>
+
                       <div class="name-info">
                         <span>#{{ upcomingAppointment._id?.slice(-6) }}</span>
                         <h6>{{ upcomingAppointment.patient?.name || 'Unknown' }}</h6>
@@ -306,10 +328,17 @@
                           <td>
                             <div class="patient-info-profile">
                               <a [routerLink]="routes.invoice" class="table-avatar">
-                                <img
-                                  [src]="invoice.appointment.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                                  alt="Img" />
+                                <ng-container *ngIf="invoice?.appointment?.patient?.profileImgUrl; else avatarFallback">
+                                  <img [src]="invoice.appointment.patient.profileImgUrl" alt="Img" />
+                                </ng-container>
+
+                                <ng-template #avatarFallback>
+                                  <app-avatar [name]="invoice?.appointment?.patient?.name" [size]="40" [gap]="10"
+                                    [marginRight]="0">
+                                  </app-avatar>
+                                </ng-template>
                               </a>
+
                               <div class="patient-name-info">
                                 <h5>
                                   <a [routerLink]="routes.invoice">{{ invoice.appointment.patient?.name ||

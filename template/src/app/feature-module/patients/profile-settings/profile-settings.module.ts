@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileSettingsRoutingModule } from './profile-settings-routing.module';
 import { ProfileSettingsComponent } from './profile-settings.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FeatureModuleModule } from '../../feature-module.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ProfileSettingsRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class ProfileSettingsModule { }

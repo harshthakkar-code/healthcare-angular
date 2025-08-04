@@ -107,53 +107,79 @@
         <div class="row">
             <ng-container *ngIf="!loading && doctors.length; else noDoctors">
                 <div class="col-xxl-3 col-lg-4 col-md-6" *ngFor="let doctor of doctors">
-                <div class="card">
-                    <div class="card-img card-img-hover">
+                    <div class="card">
+                        <div class="card-img card-img-hover">
                             <a [routerLink]="[routes.doctorProfile1, doctor._id]">
-                                <img [src]="getDoctorImage(doctor)" alt="" (error)="onImgError($event)">
+                                <ng-container *ngIf="doctor?.profileImgUrl; else checkProfileSettings">
+                                    <img [src]="doctor.profileImgUrl" alt="Doctor Image">
+                                </ng-container>
+        
+                                <ng-template #checkProfileSettings>
+                                    <ng-container *ngIf="doctor?.profileSettings?.profileImgUrl; else checkProfileImage">
+                                        <img [src]="doctor.profileSettings.profileImgUrl" alt="Doctor Image">
+                                    </ng-container>
+                                </ng-template>
+        
+                                <ng-template #checkProfileImage>
+                                    <ng-container *ngIf="doctor?.profileImage; else avatarFallback">
+                                        <img [src]="doctor.profileImage" alt="Doctor Image">
+                                    </ng-container>
+                                </ng-template>
+        
+                                <ng-template #avatarFallback>
+                                    <app-avatar [name]="doctor?.name" [width]="290" [height]="190" [marginRight]="0">
+                                    </app-avatar>
+                                </ng-template>
                             </a>
-                        <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                                <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.ratingText }}</span>
-                            <a href="javascript:void(0)" class="fav-icon" (click)="toggleFavourite(doctor)">
-                                <i class="fa" [ngClass]="[
-                                    doctor.favourite && doctor.favourite.favourites ? 'fa-heart text-danger' : 'fa-heart '
-                                ]"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="d-flex active-bar align-items-center justify-content-between p-3">
-                            <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialityText }}</a>
-                            <span class="badge" [ngClass]="doctor.statusClass + ' d-inline-flex align-items-center'">
-                                <i class="fa-solid fa-circle fs-5 me-1"></i>
-                                {{ doctor.statusText }}
-                            </span>
-                        </div>
-                        <div class="p-3 pt-0">
-                            <div class="doctor-info-detail mb-3 pb-3">
-                                    <h3 class="mb-1">
-                                        <a [routerLink]="[routes.doctorProfile1, doctor._id]">{{ doctor.name || 'Doctor Name' }}</a>
-                                    </h3>
-                                <div class="d-flex align-items-center">
-                                        <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
-                                    <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
-                                        <span class="fs-14 fw-medium">{{ doctor.consultationTime || '30 Min' }}</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="mb-1">Consultation Fees</p>
-                                        <h3 class="text-orange">{{ doctor.maxServicePrice ? ('$' + doctor.maxServicePrice) : '$0' }}</h3>
-                                </div>
-                                <a *ngIf="userRole !== 'doctor'" (click)="goToBooking(doctor._id)" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
-                                    <i class="isax isax-calendar-1 me-2"></i>
-                                    Book Now
+        
+                            <div class="grid-overlay-item d-flex align-items-center justify-content-between">
+                                <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.ratingText
+                                    }}</span>
+                                <a href="javascript:void(0)" class="fav-icon" (click)="toggleFavourite(doctor)">
+                                    <i class="fa" [ngClass]="[
+                                            doctor.favourite && doctor.favourite.favourites ? 'fa-heart text-danger' : 'fa-heart '
+                                        ]"></i>
                                 </a>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="d-flex active-bar align-items-center justify-content-between p-3">
+                                <a href="javascript:void(0);" class="text-indigo fw-medium fs-14">{{ doctor.specialityText
+                                    }}</a>
+                                <span class="badge" [ngClass]="doctor.statusClass + ' d-inline-flex align-items-center'">
+                                    <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                    {{ doctor.statusText }}
+                                </span>
+                            </div>
+                            <div class="p-3 pt-0">
+                                <div class="doctor-info-detail mb-3 pb-3">
+                                    <h3 class="mb-1">
+                                        <a [routerLink]="[routes.doctorProfile1, doctor._id]">{{ doctor.name || 'Doctor Name'
+                                            }}</a>
+                                    </h3>
+                                    <div class="d-flex align-items-center">
+                                        <p class="d-flex align-items-center mb-0 fs-14"><i
+                                                class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
+                                        <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
+                                        <span class="fs-14 fw-medium">{{ doctor.consultationTime || '30 Min' }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="mb-1">Consultation Fees</p>
+                                        <h3 class="text-orange">{{ doctor.maxServicePrice ? ('$' + doctor.maxServicePrice) :
+                                            '$0' }}</h3>
+                                    </div>
+                                    <a *ngIf="userRole !== 'doctor'" (click)="goToBooking(doctor._id)"
+                                        class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
+                                        <i class="isax isax-calendar-1 me-2"></i>
+                                        Book Now
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </ng-container>
             <ng-template #noDoctors>
                 <div class="col-12" *ngIf="!loading && !doctors.length">
@@ -164,13 +190,13 @@
                 </div>
             </ng-template>
             <!-- <div class="col-md-12">
-                <div class="text-center mb-4">
-                    <a [routerLink]="routes.loginEmail" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
-                        <i class="isax isax-d-cube-scan5 me-2"></i>
-                        Load More 425 Doctors
-                    </a>
-                </div>
-            </div> -->
+                        <div class="text-center mb-4">
+                            <a [routerLink]="routes.loginEmail" class="btn btn-md btn-primary-gradient d-inline-flex align-items-center rounded-pill">
+                                <i class="isax isax-d-cube-scan5 me-2"></i>
+                                Load More 425 Doctors
+                            </a>
+                        </div>
+                    </div> -->
         </div>
         <div class="row mt-4">
             <div class="col-12 d-flex justify-content-center">

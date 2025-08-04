@@ -14,7 +14,7 @@
                             <h3>Reviews</h3>
                         </div>
                     </div>
-                
+
                     <!-- Review Listing -->
                     <ul class="comments-list">
 
@@ -31,17 +31,17 @@
                                 </div>
                                 <div class="position-relative daterange-wraper">
                                     <div class="input-groupicon calender-input">
-                                        <input type="text" class="form-control  date-range bookingrange" placeholder="From Date - To Date"  bsDaterangepicker [(ngModel)]="bsRangeValue" [bsConfig]="{ adaptivePosition: true }" (ngModelChange)="onDateRangeChange()">
+                                        <input type="text" class="form-control  date-range bookingrange"
+                                            placeholder="From Date - To Date" bsDaterangepicker
+                                            [(ngModel)]="bsRangeValue" [bsConfig]="{ adaptivePosition: true }"
+                                            (ngModelChange)="onDateRangeChange()">
                                     </div>
                                     <i class="fa-solid fa-calendar-days"></i>
                                 </div>
                             </div>
                         </li>
-                        <app-empty-state
-                          *ngIf="filteredReviews.length === 0"
-                          [icon]="'fa-solid fa-calendar-check'"
-                          [title]="'No Reviews'"
-                          [message]="'There are no reviews to show.'">
+                        <app-empty-state *ngIf="filteredReviews.length === 0" [icon]="'fa-solid fa-calendar-check'"
+                            [title]="'No Reviews'" [message]="'There are no reviews to show.'">
                         </app-empty-state>
                         <!-- Dynamic reviews rendering -->
                         <ng-container *ngIf="reviews && reviews.length > 0">
@@ -50,8 +50,18 @@
                                     <div class="comment-head">
                                         <div class="patinet-information">
                                             <a href="javascript:void(0);">
-                                                <img [src]="review.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="User Image">
+                                                <ng-container
+                                                    *ngIf="review?.patient?.profileImgUrl; else avatarFallback">
+                                                    <img [src]="review.patient.profileImgUrl" alt="User Image">
+                                                </ng-container>
+
+                                                <ng-template #avatarFallback>
+                                                    <app-avatar [name]="review?.patient?.name" [size]="40" [gap]="10"
+                                                        [marginRight]="10">
+                                                    </app-avatar>
+                                                </ng-template>
                                             </a>
+
                                             <div class="patient-info">
                                                 <h6><a href="javascript:void(0);">{{ review.patient?.name }}</a></h6>
                                                 <span>{{ review.createdAt | date:'dd MMM yyyy' }}</span>
@@ -80,27 +90,27 @@
                     <div class="pagination dashboard-pagination" *ngIf="totalPages > 1">
                         <ul>
                             <li [class.disabled]="currentPage === 1">
-                                <a href="javascript:void(0);" class="page-link" (click)="prevPage()"><i class="fa-solid fa-chevron-left"></i></a>
+                                <a href="javascript:void(0);" class="page-link" (click)="prevPage()"><i
+                                        class="fa-solid fa-chevron-left"></i></a>
                             </li>
                             <li *ngFor="let page of paginationPages">
-                                <a href="javascript:void(0);" class="page-link"
-                                   [class.active]="page === currentPage"
-                                   [class.disabled]="page === '...'"
-                                   (click)="onPageClick(page)">
+                                <a href="javascript:void(0);" class="page-link" [class.active]="page === currentPage"
+                                    [class.disabled]="page === '...'" (click)="onPageClick(page)">
                                     {{ page }}
                                 </a>
                             </li>
                             <li [class.disabled]="currentPage === totalPages">
-                                <a href="javascript:void(0);" class="page-link" (click)="nextPage()"><i class="fa-solid fa-chevron-right"></i></a>
+                                <a href="javascript:void(0);" class="page-link" (click)="nextPage()"><i
+                                        class="fa-solid fa-chevron-right"></i></a>
                             </li>
                         </ul>
                     </div>
                     <!-- /Pagination -->
-                    
+
                 </div>
             </div>
         </div>
     </div>
 
-</div>		
+</div>
 <!-- /Page Content -->

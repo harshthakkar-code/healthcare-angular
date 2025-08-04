@@ -1,12 +1,13 @@
 <div
   class="avatar-wrapper"
   [ngStyle]="{
-    width: size + 'px',
-    height: size + 'px',
-    gap:  gap + 'px',
+    width: avatarWidth,
+    height: avatarHeight,
+    gap: gap + 'px',
     backgroundColor: isDarkMode ? '#1a1a1a' : 'lightgrey',
     color: isDarkMode ? '#ffffff' : '#000000',
     marginRight: marginRight ? marginRight + 'px' : '0',
+    marginLeft: marginLeft ? marginLeft + 'px' : '0'
   }"
 >
   <img *ngIf="src; else initialsBlock" [src]="src" alt="User Image" />

@@ -236,9 +236,17 @@
                                     <li>
                                         <div class="patinet-information">
                                             <a [routerLink]="['../doctor-appointment-details', apt._id]">
-                                                <img [src]="apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                                                    alt="User Image">
+                                                <ng-container *ngIf="apt?.patient?.profileImgUrl; else avatarFallback">
+                                                    <img [src]="apt.patient.profileImgUrl" alt="User Image">
+                                                </ng-container>
+
+                                                <ng-template #avatarFallback>
+                                                    <app-avatar [name]="apt?.patient?.name" [size]="40" [gap]="10"
+                                                        [marginRight]="10">
+                                                    </app-avatar>
+                                                </ng-template>
                                             </a>
+
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>
@@ -313,9 +321,17 @@
                                     <li>
                                         <div class="patinet-information">
                                             <a [routerLink]="['../doctor-appointment-details', apt._id]">
-                                                <img [src]="apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                                                    alt="User Image">
+                                                <ng-container *ngIf="apt?.patient?.profileImgUrl; else avatarFallback">
+                                                    <img [src]="apt.patient.profileImgUrl" alt="User Image">
+                                                </ng-container>
+
+                                                <ng-template #avatarFallback>
+                                                    <app-avatar [name]="apt?.patient?.name" [size]="40" [gap]="10"
+                                                        [marginRight]="10">
+                                                    </app-avatar>
+                                                </ng-template>
                                             </a>
+
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>
@@ -361,9 +377,17 @@
                                     <li>
                                         <div class="patinet-information">
                                             <a [routerLink]="['../doctor-appointment-details', apt._id]">
-                                                <img [src]="apt.patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'"
-                                                    alt="User Image">
+                                                <ng-container *ngIf="apt?.patient?.profileImgUrl; else avatarFallback">
+                                                    <img [src]="apt.patient.profileImgUrl" alt="User Image">
+                                                </ng-container>
+
+                                                <ng-template #avatarFallback>
+                                                    <app-avatar [name]="apt?.patient?.name" [size]="40" [gap]="10"
+                                                        [marginRight]="10">
+                                                    </app-avatar>
+                                                </ng-template>
                                             </a>
+
                                             <div class="patient-info">
                                                 <p>#{{ apt._id.slice(-6) }}</p>
                                                 <h6>

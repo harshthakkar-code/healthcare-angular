@@ -12,12 +12,19 @@
         <div class="appointment-patient">
 
           <div class="dashboard-header">
-            <h3><a [routerLink] = "routes.myPatients"><i class="fa-solid fa-arrow-left"></i> Patient Details</a></h3>
+            <h3><a [routerLink]="routes.myPatients"><i class="fa-solid fa-arrow-left"></i> Patient Details</a></h3>
           </div>
 
           <div class="patient-wrap">
             <div class="patient-info">
-              <img [src]="patient?.profileImgUrl || 'assets/img/doctors-dashboard/profile-01.jpg'" alt="img">
+              <ng-container *ngIf="patient?.profileImgUrl; else avatarFallback">
+                <img [src]="patient.profileImgUrl" alt="img">
+              </ng-container>
+
+              <ng-template #avatarFallback>
+                <app-avatar [name]="patient?.name" [size]="80" [gap]="10" [marginRight]="10">
+                </app-avatar>
+              </ng-template>
               <div class="user-patient">
                 <h6>#{{ patient?._id?.slice(-6) || 'P0016' }}</h6>
                 <h5>{{ patient?.name || 'Patient Name' }}</h5>
@@ -51,21 +58,21 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#billing" data-bs-toggle="tab">Billing</a>
-              </li> 
+              </li>
             </ul>
           </div>
           <!-- /Appoitment Tabs -->
 
           <div class="tab-content pt-0">
-              
+
             <!-- Appointment Tab -->
             <div id="pat_appointments" class="tab-pane fade show active">
 
               <!-- Search -->
               <div class="search-header">
                 <div class="search-field">
-                  <input type="text" class="form-control" placeholder="Search"
-                         [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1">
+                  <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchTerm"
+                    (ngModelChange)="currentPage = 1">
                   <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                 </div>
               </div>
@@ -92,17 +99,26 @@
                           <td>
                             <h2 class="table-avatar">
                               <a [routerLink]="[routes.doctorProfile2, apt.doctor?._id]" class="avatar avatar-sm me-2">
-                                <img class="avatar-img rounded-3" [src]="apt.doctor?.profileImgUrl || 'assets/img/doctors/doctor-thumb-02.jpg'" alt="User Image">
+                                <ng-container *ngIf="apt?.doctor?.profileImgUrl; else avatarFallback">
+                                  <img class="avatar-img rounded-3" [src]="apt.doctor.profileImgUrl" alt="User Image">
+                                </ng-container>
+
+                                <ng-template #avatarFallback>
+                                  <app-avatar [name]="apt?.doctor?.name" [size]="40" [gap]="10" [marginRight]="0"
+                                    class="avatar-img rounded-3">
+                                  </app-avatar>
+                                </ng-template>
                               </a>
-                              <a [routerLink]="[routes.doctorProfile2, apt.doctor?._id]">{{ apt.doctor?.name || 'N/A' }}</a>
+                              <a [routerLink]="[routes.doctorProfile2, apt.doctor?._id]">{{ apt.doctor?.name || 'N/A'
+                                }}</a>
                             </h2>
                           </td>
-                          <td>{{ apt.date ? (apt.date | date:'dd MMM yyyy') : (apt.createdAt | date:'dd MMM yyyy') }}</td>
+                          <td>{{ apt.date ? (apt.date | date:'dd MMM yyyy') : (apt.createdAt | date:'dd MMM yyyy') }}
+                          </td>
                           <td>{{ apt.createdAt | date:'dd MMM yyyy' }}</td>
                           <td>{{ apt.amount ? ('$' + apt.amount) : '-' }}</td>
                           <td>
-                            <span class="badge"
-                              [ngClass]="{
+                            <span class="badge" [ngClass]="{
                                 'badge-yellow status-badge': apt.status === 'pending',
                                 'badge-blue status-badge': apt.status === 'accepted',
                                 'badge-danger status-badge': apt.status === 'rejected',
@@ -131,9 +147,8 @@
                       </a>
                     </li>
                     <li *ngFor="let page of [].constructor(totalPages); let i = index">
-                      <a href="javascript:void(0);" class="page-link"
-                         [class.active]="currentPage === (i + 1)"
-                         (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                      <a href="javascript:void(0);" class="page-link" [class.active]="currentPage === (i + 1)"
+                        (click)="goToPage(i + 1)">{{ i + 1 }}</a>
                     </li>
                     <li>
                       <a href="javascript:void(0);" class="page-link" (click)="nextPage()">
@@ -145,16 +160,14 @@
               </div>
 
               <!-- Show empty state if no appointments -->
-              <app-empty-state
-                *ngIf="filteredAppointments.length === 0 && !loading && !error"
-                [icon]="'fa-solid fa-calendar-check'"
-                [title]="'No Appointments'"
+              <app-empty-state *ngIf="filteredAppointments.length === 0 && !loading && !error"
+                [icon]="'fa-solid fa-calendar-check'" [title]="'No Appointments'"
                 [message]="'There are no appointments to show.'">
               </app-empty-state>
 
             </div>
             <!-- /Appointment Tab -->
-              
+
             <!-- Prescription Tab -->
             <div class="tab-pane fade" id="prescription">
               <div class="search-header">
@@ -163,7 +176,8 @@
                   <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                 </div>
                 <div>
-                  <a href="javascript:void(0);" class="btn btn-primary prime-btn" data-bs-toggle="modal" data-bs-target="#add_prescription">Add New Prescription</a>
+                  <a href="javascript:void(0);" class="btn btn-primary prime-btn" data-bs-toggle="modal"
+                    data-bs-target="#add_prescription">Add New Prescription</a>
                 </div>
               </div>
 
@@ -184,10 +198,11 @@
                         <td class="text-blue-600">#Apt123</td>
                         <td>
                           <h2 class="table-avatar">
-                            <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+                            <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-02.jpg"
+                                alt="User Image">
                             </a>
-                            <a [routerLink] = "routes.doctorProfile2">Edalin Hendry</a>
+                            <a [routerLink]="routes.doctorProfile2">Edalin Hendry</a>
                           </h2>
                         </td>
                         <td>Visit</td>
@@ -204,10 +219,11 @@
                         <td class="text-blue-600">#Apt124</td>
                         <td>
                           <h2 class="table-avatar">
-                            <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-05.jpg" alt="User Image">
+                            <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-05.jpg"
+                                alt="User Image">
                             </a>
-                            <a [routerLink] = "routes.doctorProfile2">John Homes</a>
+                            <a [routerLink]="routes.doctorProfile2">John Homes</a>
                           </h2>
                         </td>
                         <td>Visit</td>
@@ -224,10 +240,11 @@
                         <td class="text-blue-600">#Apt125</td>
                         <td>
                           <h2 class="table-avatar">
-                            <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
+                            <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-03.jpg"
+                                alt="User Image">
                             </a>
-                            <a [routerLink] = "routes.doctorProfile2">Shanta Neill</a>
+                            <a [routerLink]="routes.doctorProfile2">Shanta Neill</a>
                           </h2>
                         </td>
                         <td>Visit</td>
@@ -244,10 +261,11 @@
                         <td class="text-blue-600">#Apt126</td>
                         <td>
                           <h2 class="table-avatar">
-                            <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
+                            <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-08.jpg"
+                                alt="User Image">
                             </a>
-                            <a [routerLink] = "routes.doctorProfile2">Anthony Tran</a>
+                            <a [routerLink]="routes.doctorProfile2">Anthony Tran</a>
                           </h2>
                         </td>
                         <td>Visit</td>
@@ -264,10 +282,11 @@
                         <td class="text-blue-600">#Apt127</td>
                         <td>
                           <h2 class="table-avatar">
-                            <a [routerLink] = "routes.doctorProfile2" class="avatar avatar-sm me-2">
-                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+                            <a [routerLink]="routes.doctorProfile2" class="avatar avatar-sm me-2">
+                              <img class="avatar-img rounded-3" src="assets/img/doctors/doctor-thumb-01.jpg"
+                                alt="User Image">
                             </a>
-                            <a [routerLink] = "routes.doctorProfile2">Susan Lingo</a>
+                            <a [routerLink]="routes.doctorProfile2">Susan Lingo</a>
                           </h2>
                         </td>
                         <td>Visit</td>
@@ -294,9 +313,8 @@
                     </a>
                   </li>
                   <li *ngFor="let page of [].constructor(totalPages); let i = index">
-                    <a href="javascript:void(0);" class="page-link"
-                       [class.active]="currentPage === (i + 1)"
-                       (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                    <a href="javascript:void(0);" class="page-link" [class.active]="currentPage === (i + 1)"
+                      (click)="goToPage(i + 1)">{{ i + 1 }}</a>
                   </li>
                   <li *ngIf="totalPages > 1">
                     <a href="javascript:void(0);" class="page-link" (click)="nextPage()">
@@ -318,7 +336,8 @@
                   <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                 </div>
                 <div>
-                  <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#add_medical_records" class="btn btn-primary prime-btn">Add Medical Record</a>
+                  <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#add_medical_records"
+                    class="btn btn-primary prime-btn">Add Medical Record</a>
                 </div>
               </div>
 
@@ -450,7 +469,7 @@
                             <span><i class="fa-solid fa-paperclip"></i></span>Lab Report
                           </a>
                         </td>
-                        <td>02 May  2024</td>
+                        <td>02 May 2024</td>
                         <td>Lipid Panel </td>
                         <td>
                           <div class="action-item">
@@ -480,9 +499,8 @@
                     </a>
                   </li>
                   <li *ngFor="let page of [].constructor(totalPages); let i = index">
-                    <a href="javascript:void(0);" class="page-link"
-                       [class.active]="currentPage === (i + 1)"
-                       (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                    <a href="javascript:void(0);" class="page-link" [class.active]="currentPage === (i + 1)"
+                      (click)="goToPage(i + 1)">{{ i + 1 }}</a>
                   </li>
                   <li *ngIf="totalPages > 1">
                     <a href="javascript:void(0);" class="page-link" (click)="nextPage()">
@@ -495,7 +513,7 @@
 
             </div>
             <!-- /Medical Records Tab -->
-              
+
             <!-- Billing Tab -->
             <div class="tab-pane" id="billing">
               <div class="search-header">
@@ -504,7 +522,8 @@
                   <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
                 </div>
                 <div>
-                  <a href="javascript:void(0);" class="btn btn-primary prime-btn" data-bs-toggle="modal" data-bs-target="#add_billing">Add New Billing</a>
+                  <a href="javascript:void(0);" class="btn btn-primary prime-btn" data-bs-toggle="modal"
+                    data-bs-target="#add_billing">Add New Billing</a>
                 </div>
               </div>
 
@@ -606,9 +625,8 @@
                     </a>
                   </li>
                   <li *ngFor="let page of [].constructor(totalPages); let i = index">
-                    <a href="javascript:void(0);" class="page-link"
-                       [class.active]="currentPage === (i + 1)"
-                       (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                    <a href="javascript:void(0);" class="page-link" [class.active]="currentPage === (i + 1)"
+                      (click)="goToPage(i + 1)">{{ i + 1 }}</a>
                   </li>
                   <li *ngIf="totalPages > 1">
                     <a href="javascript:void(0);" class="page-link" (click)="nextPage()">
@@ -620,7 +638,7 @@
               <!-- /Pagination -->
             </div>
             <!-- Billing Tab -->
-                  
+
           </div>
         </div>
       </div>
@@ -629,5 +647,5 @@
     </div>
   </div>
 
-</div>	
+</div>
 <!-- /Page Content -->

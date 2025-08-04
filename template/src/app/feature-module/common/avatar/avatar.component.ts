@@ -9,9 +9,13 @@ import { Component, Input, OnInit } from '@angular/core';
 export class AvatarComponent implements OnInit {
   @Input() name: string = '';
   @Input() src: string = '';
-  @Input() size: number = 40; // default size in px
-  @Input() gap: number = 10; 
+  @Input() size: number = 40;
+  @Input() gap: number = 10;
   @Input() marginRight: number = 0;
+  @Input() marginLeft: number = 0;
+  @Input() width?: number;
+  @Input() height?: number;
+
 
   isDarkMode: boolean = false;
 
@@ -19,7 +23,7 @@ export class AvatarComponent implements OnInit {
     const theme = localStorage.getItem('themeColor');
     this.isDarkMode = theme === 'dark-mode';
   }
-  
+
 
 
   getInitials(): string {
@@ -28,4 +32,12 @@ export class AvatarComponent implements OnInit {
     if (parts.length === 1) return parts[0][0].toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
+  get avatarWidth(): string {
+    return (this.width ?? this.size) + 'px';
+  }
+
+  get avatarHeight(): string {
+    return (this.height ?? this.size) + 'px';
+  }
+
 }

@@ -133,8 +133,16 @@
                   <div *ngFor="let fav of dashboardFavourites" class="doctor-fav-list">
                     <div class="doctor-info-profile">
                       <a href="javascript:void(0);" class="table-avatar">
-                        <img [src]="fav.doctorId.profileImage || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                        <ng-container *ngIf="fav?.doctorId?.profileImage; else avatarFallback">
+                          <img [src]="fav.doctorId.profileImage" alt="Img">
+                        </ng-container>
+                  
+                        <ng-template #avatarFallback>
+                          <app-avatar [name]="fav?.doctorId?.name" [size]="40" [gap]="10" [marginRight]="10">
+                          </app-avatar>
+                        </ng-template>
                       </a>
+                  
                       <div class="doctor-name-info">
                         <h5><a href="javascript:void(0);">{{ fav.doctorId.doctorName || fav.doctorId.name }}</a></h5>
                         <span>{{ fav.doctorId.speciality || fav.doctorId.specialty }}</span>
@@ -178,8 +186,16 @@
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img [src]="apt?.doctor?.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                          <ng-container *ngIf="apt?.doctor?.profileImgUrl; else avatarFallback">
+                            <img [src]="apt.doctor.profileImgUrl" alt="Img">
+                          </ng-container>
+                      
+                          <ng-template #avatarFallback>
+                            <app-avatar [name]="apt?.doctor?.name" [size]="40" [gap]="10" [marginRight]="10">
+                            </app-avatar>
+                          </ng-template>
                         </a>
+                      
                         <div class="doctor-name-info">
                           <h5><a href="javascript:void(0);">{{ apt.doctorName || 'Doctor' }}</a></h5>
                           <span>{{ apt.specialty || 'Specialty' }}</span>
@@ -379,14 +395,22 @@
                     <div class="doctor-fav-list">
                       <div class="doctor-info-profile">
                         <a href="javascript:void(0);" class="table-avatar">
-                          <img [src]="dashboardPastAppointments[0]?.doctor.profileImgUrl || 'assets/img/doctors-dashboard/doctor-profile-img.jpg'" alt="Img">
+                          <ng-container *ngIf="dashboardPastAppointments[0]?.doctor?.profileImgUrl; else avatarFallback">
+                            <img [src]="dashboardPastAppointments[0].doctor.profileImgUrl" alt="Img">
+                          </ng-container>
+                      
+                          <ng-template #avatarFallback>
+                            <app-avatar [name]="dashboardPastAppointments[0]?.doctor?.name" [size]="40" [gap]="10" [marginRight]="10">
+                            </app-avatar>
+                          </ng-template>
                         </a>
+                      
                         <div class="doctor-name-info">
                           <h5><a href="javascript:void(0);">{{ dashboardPastAppointments[0]?.doctorName || 'Doctor' }}</a></h5>
                           <span>{{ dashboardPastAppointments[0]?.specialty || 'Specialty' }}</span>
                         </div>
                       </div>
-                      <span class="bg-orange badge"><i class="isax isax-video5 me-1"></i>{{ dashboardPastAppointments[0]?.duration || '30 Min' }}</span>
+                      <span class="bg-orange badge"><i class="isax isax-video5 me-1"></i>{{ getDuration(dashboardPastAppointments[0]?.time) || '30 Min' }}</span>
                     </div>
                     <div class="appointment-date-info">
                       <h6>{{ dashboardPastAppointments[0]?.date | date:'fullDate' }}</h6>
@@ -423,8 +447,16 @@
                 <div *ngFor="let d of dashboardDependants" class="doctor-fav-list">
                   <div class="doctor-info-profile">
                     <a href="javascript:void(0);" class="table-avatar">
-                      <img [src]="d.profileImage || d.profileImgUrl || 'assets/img/patients/patient-20.jpg'" alt="Img">
+                      <ng-container *ngIf="d?.profileImgUrl; else avatarFallback">
+                        <img [src]="d.profileImgUrl" alt="Img">
+                      </ng-container>
+                  
+                      <ng-template #avatarFallback>
+                        <app-avatar [name]="d?.name" [size]="40" [gap]="10" [marginRight]="10">
+                        </app-avatar>
+                      </ng-template>
                     </a>
+                  
                     <div class="doctor-name-info">
                       <h5><a href="javascript:void(0);">{{ d.name }}</a></h5>
                       <span>{{ d.relation }} - {{ getAgeFromDob(d.dob) }}</span>
@@ -495,12 +527,20 @@
                                  <a href="javascript:void(0);"><span class="link-primary">#{{ apt._id?.slice(-6) }}</span></a>
                                </td>
                                <td>
-                                 <h2 class="table-avatar">
-                                   <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                     <img class="avatar-img rounded-3" [src]="apt?.doctor?.profileImgUrl || 'assets/img/doctors/doctor-thumb-24.jpg'" alt="User Image">
-                                   </a>
-                                   <a [routerLink]="routes.doctorProfile1">{{ apt.doctorName || "Doctor Name" }}</a>
-                                 </h2>
+                                <h2 class="table-avatar">
+                                  <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
+                                    <ng-container *ngIf="apt?.doctor?.profileImgUrl; else avatarFallback">
+                                      <img class="avatar-img rounded-3" [src]="apt.doctor.profileImgUrl" alt="User Image">
+                                    </ng-container>
+                                
+                                    <ng-template #avatarFallback>
+                                      <app-avatar [name]="apt?.doctor?.name" [size]="40" [gap]="10" [marginRight]="0" class="avatar-img rounded-3">
+                                      </app-avatar>
+                                    </ng-template>
+                                  </a>
+                                
+                                  <a [routerLink]="routes.doctorProfile1">{{ apt.doctorName || "Doctor Name" }}</a>
+                                </h2>
                                </td>
                                <td>{{ apt.date | date:'mediumDate' }}{{ apt.time ? ', ' + apt.time : '' }}</td>
                                <td>{{ apt.appointmentType }}</td>
@@ -865,9 +905,18 @@
                                  <td><a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#invoice_view" class="link-primary">#{{ inv.invoiceNo?.slice(-6) }}</a></td>
                                  <td>
                                    <h2 class="table-avatar">
-                                     <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
-                                       <img class="avatar-img rounded-3" [src]="inv?.appointment?.doctorProfile?.profileImage || 'assets/img/doctors/doctor-thumb-21.jpg'" alt="User Image">
-                                     </a>
+                                    <a [routerLink]="routes.doctorProfile1" class="avatar avatar-sm me-2">
+                                      <ng-container *ngIf="inv?.appointment?.doctor?.profileImgUrl; else avatarFallback">
+                                        <img class="avatar-img rounded-3" [src]="inv.appointment.doctor.profileImgUrl" alt="User Image">
+                                      </ng-container>
+                                    
+                                      <ng-template #avatarFallback>
+                                        <app-avatar [name]="inv?.appointment?.doctor?.name" [size]="40" [gap]="10" [marginRight]="10"
+                                          class="avatar-img rounded-3">
+                                        </app-avatar>
+                                      </ng-template>
+                                    </a>
+
                                      <a [routerLink]="routes.doctorProfile1">{{ inv.appointment.doctor.name || "Doctor Name" }}</a>
                                    </h2>
                                  </td>
