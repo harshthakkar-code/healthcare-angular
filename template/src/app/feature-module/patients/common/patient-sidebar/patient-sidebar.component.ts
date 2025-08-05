@@ -46,4 +46,10 @@ export class PatientSidebarComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['']);
   }
+  getInitials(name: string): string {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+}
+
 }

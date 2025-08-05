@@ -142,5 +142,11 @@ getSpecializationRows(): any[][] {
   get pendingRequestDisplay(): string {
     return this.pendingRequestCount > 9 ? '9+' : this.pendingRequestCount.toString();
   }
+  getInitials(name: string): string {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+}
+
 }
 

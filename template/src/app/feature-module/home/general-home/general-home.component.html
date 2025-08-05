@@ -31,37 +31,35 @@
                             </div>
                         </div>
                     </div>
-                    <h1 class="display-5">Discover Health: Find Your Trusted <span class="banner-icon"><img src="assets/img/icons/video.svg" alt="img"></span> <span class="text-gradient">Doctors</span> Today</h1>
+                    <h1 class="display-5">Discover Health: Find Your Trusted <span class="banner-icon"><img
+                                src="assets/img/icons/video.svg" alt="img"></span> <span
+                            class="text-gradient">Doctors</span> Today</h1>
                     <div class="search-box-one aos" data-aos="fade-up">
-                        <form> 
+                        <form>
                             <div class="search-input search-line">
                                 <i class="isax isax-hospital5 bficon"></i>
                                 <div class=" mb-0">
-                                    <input type="text" class="form-control" placeholder="Search doctors, clinics, hospitals, etc">
+                                    <input type="text" class="form-control"
+                                        placeholder="Search doctors, clinics, hospitals, etc">
                                 </div>
                             </div>
                             <div class="search-input search-map-line">
                                 <i class="isax isax-location5"></i>
                                 <div class=" mb-0">
-                                    <input type="text" class="form-control" placeholder="Location"> 
+                                    <input type="text" class="form-control" placeholder="Location">
                                 </div>
                             </div>
                             <div class="search-input search-calendar-line">
                                 <i class="isax isax-calendar-tick5"></i>
                                 <div class=" mb-0">
-                                    <input
-                                                type="text"
-                                                class="form-control datetimepicker"
-                                                bsDatepicker
-                                                [bsConfig]="{ adaptivePosition: true }"
-                                                placeholder="21-10-2024"
-                                                [bsValue]="bsValue"
-                                                [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }"
-                                                />
+                                    <input type="text" class="form-control datetimepicker" bsDatepicker
+                                        [bsConfig]="{ adaptivePosition: true }" placeholder="21-10-2024"
+                                        [bsValue]="bsValue" [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }" />
                                 </div>
                             </div>
                             <div class="form-search-btn">
-                                <button class="btn btn-primary" type="submit" (click)="navigate()"><i class="isax isax-search-normal5 me-2"></i>Search</button>
+                                <button class="btn btn-primary" type="submit" (click)="navigate()"><i
+                                        class="isax isax-search-normal5 me-2"></i>Search</button>
                             </div>
                         </form>
                     </div>
@@ -80,7 +78,7 @@
                                 <img src="assets/img/patients/patient19.jpg" alt="img">
                             </span>
                             <span class="avatar avatar-rounded">
-                                <img  src="assets/img/patients/patient16.jpg" alt="img">
+                                <img src="assets/img/patients/patient16.jpg" alt="img">
                             </span>
                             <span class="avatar avatar-rounded">
                                 <img src="assets/img/patients/patient18.jpg" alt="img">
@@ -109,7 +107,8 @@
     <div class="container">
         <div class="list-card card mb-0">
             <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center justify-content-xl-between flex-wrap gap-4 list-wraps">
+                <div
+                    class="d-flex align-items-center justify-content-center justify-content-xl-between flex-wrap gap-4 list-wraps">
                     <a style="cursor: default;" class="list-item aos" data-aos="fade-up">
                         <div class="list-icon bg-secondary">
                             <img src="assets/img/icons/list-icon-01.svg" alt="img">
@@ -153,7 +152,7 @@
                         <h6>Home Care</h6>
                     </a>
                 </div>
-            </div>		
+            </div>
         </div>
     </div>
 </div>
@@ -197,14 +196,23 @@
             <ng-template carouselSlide *ngFor="let doctor of featuredDoctors">
                 <div class="card">
                     <div class="card-img card-img-hover">
-                        <a (click)="goToDoctorProfile(doctor._id)">
-                            <img 
-  [src]="doctor.profileImgUrl && doctor.profileImgUrl !== '' ? doctor.profileImgUrl : 'assets/img/doctor-grid/doctor-grid-01.jpg'" 
-  alt="Doctor"
-  style="width:100%; height:240px; object-fit:cover; background:#f5f5f5;">
-                        </a>
+<a (click)="goToDoctorProfile(doctor._id)">
+  <ng-container *ngIf="doctor.profileImgUrl && doctor.profileImgUrl !== ''; else initialsFallback">
+    <img
+      [src]="doctor.profileImgUrl"
+      alt="Doctor"
+      style="width: 100%; height: 240px; object-fit: cover; background: #f5f5f5;">
+  </ng-container>
+  <ng-template #initialsFallback>
+    <div class="doctor-initials-fallback">
+      {{ getInitials(doctor.name) }}
+    </div>
+  </ng-template>
+</a>
+
                         <div class="grid-overlay-item d-flex align-items-center justify-content-between">
-                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.rating || 'N/A' }}</span>
+                            <span class="badge bg-orange"><i class="fa-solid fa-star me-1"></i>{{ doctor.rating || 'N/A'
+                                }}</span>
                             <!-- <a href="javascript:void(0)" class="fav-icon">
                                 <i class="fa fa-heart"></i>
                             </a> -->
@@ -212,23 +220,26 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="d-flex active-bar align-items-center justify-content-between p-3"
-     [ngClass]="getActiveBarClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
-  <a href="javascript:void(0);"
-     class="fw-medium fs-14"
-     [ngClass]="getSpecializationClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
-    {{ (doctor.specializations && doctor.specializations.length > 0) ? doctor.specializations[0] : 'Specialist' }}
-  </a>
-  <span class="badge d-inline-flex align-items-center"
-      [ngClass]="doctor.availability === true || doctor.availability === 'true' ? 'bg-success-light' : 'bg-danger-light'">
-  <i class="fa-solid fa-circle fs-5 me-1"></i>
-  {{ doctor.availability === true || doctor.availability === 'true' ? 'Available' : 'Not Available' }}
-</span>
-</div>
+                            [ngClass]="getActiveBarClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
+                            <a href="javascript:void(0);" class="fw-medium fs-14"
+                                [ngClass]="getSpecializationClass(doctor.specializations && doctor.specializations.length > 0 ? doctor.specializations[0] : '')">
+                                {{ (doctor.specializations && doctor.specializations.length > 0) ?
+                                doctor.specializations[0] : 'Specialist' }}
+                            </a>
+                            <span class="badge d-inline-flex align-items-center"
+                                [ngClass]="doctor.availability === true || doctor.availability === 'true' ? 'bg-success-light' : 'bg-danger-light'">
+                                <i class="fa-solid fa-circle fs-5 me-1"></i>
+                                {{ doctor.availability === true || doctor.availability === 'true' ? 'Available' : 'Not
+                                Available' }}
+                            </span>
+                        </div>
                         <div class="p-3 pt-0">
                             <div class="doctor-info-detail mb-3 pb-3">
-                                <h3 class="mb-1"><a (click)="goToDoctorProfile(doctor._id)">{{ doctor.name || 'Doctor Name' }}</a></h3>
+                                <h3 class="mb-1"><a (click)="goToDoctorProfile(doctor._id)">{{ doctor.name || 'Doctor
+                                        Name' }}</a></h3>
                                 <div class="d-flex align-items-center">
-                                    <p class="d-flex align-items-center mb-0 fs-14"><i class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
+                                    <p class="d-flex align-items-center mb-0 fs-14"><i
+                                            class="isax isax-location me-2"></i>{{ doctor.city || 'City' }}</p>
                                     <i class="fa-solid fa-circle fs-5 text-primary mx-2 me-1"></i>
                                     <span class="fs-14 fw-medium">{{ doctor.consultationTime || '30 Min' }}</span>
                                 </div>
@@ -238,7 +249,8 @@
                                     <p class="mb-1">Consultation Fees</p>
                                     <h3 class="text-orange">{{ doctor.fees ? ('$' + doctor.fees) : '$0' }}</h3>
                                 </div>
-                                <a *ngIf="userRole !== 'doctor'" (click)="goToBooking(doctor._id)" class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
+                                <a *ngIf="userRole !== 'doctor'" (click)="goToBooking(doctor._id)"
+                                    class="btn btn-md btn-dark d-inline-flex align-items-center rounded-pill">
                                     <i class="isax isax-calendar-1 me-2"></i>
                                     Book Now
                                 </a>
@@ -248,8 +260,10 @@
                 </div>
             </ng-template>
             <ng-template carouselSlide *ngIf="featuredDoctors.length === featuredDoctorsLimit">
-                <div class="card d-flex align-items-center justify-content-center" style="height: 100%; min-height: 420px;">
-                    <a [routerLink]="'/patients/search-doctor/search1'" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-decoration-none">
+                <div class="card d-flex align-items-center justify-content-center"
+                    style="height: 100%; min-height: 420px;">
+                    <a [routerLink]="'/patients/search-doctor/search1'"
+                        class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-decoration-none">
                         <i class="fa fa-users fa-3x mb-3 text-primary"></i>
                         <span class="h4 mb-2">View All Doctors</span>
                         <button class="btn btn-primary-gradient btn-lg mt-2">View All</button>
@@ -258,8 +272,8 @@
             </ng-template>
         </owl-carousel-o>
         <div class="text-center mt-3" *ngIf="featuredDoctors.length === 10">
-  <a [routerLink]="'/patients/search-doctor/search1'" class="btn btn-primary-gradient btn-lg">View All</a>
-</div>
+            <a [routerLink]="'/patients/search-doctor/search1'" class="btn btn-primary-gradient btn-lg">View All</a>
+        </div>
     </div>
 </section>
 <!-- /Doctor Section -->
@@ -305,19 +319,23 @@
             <div class="col-lg-4 col-md-6">
                 <div class="reason-item aos" data-aos="fade-up">
                     <h6 class="mb-2"><i class="isax isax-tag-user5 text-orange me-2"></i>Follow-Up Care</h6>
-                    <p class="fs-14 mb-0">We ensure continuity of care through regular follow-ups and communication, helping you stay on track with health goals.</p>
+                    <p class="fs-14 mb-0">We ensure continuity of care through regular follow-ups and communication,
+                        helping you stay on track with health goals.</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="reason-item aos" data-aos="fade-up">
-                    <h6 class="mb-2"><i class="isax isax-voice-cricle text-purple me-2"></i>Patient-Centered Approach</h6>
-                    <p class="fs-14 mb-0">We prioritize your comfort and preferences, tailoring our services to meet your individual needs and Care from Our Experts</p>
+                    <h6 class="mb-2"><i class="isax isax-voice-cricle text-purple me-2"></i>Patient-Centered Approach
+                    </h6>
+                    <p class="fs-14 mb-0">We prioritize your comfort and preferences, tailoring our services to meet
+                        your individual needs and Care from Our Experts</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="reason-item aos" data-aos="fade-up">
                     <h6 class="mb-2"><i class="isax isax-wallet-add-15 text-cyan me-2"></i>Convenient Access</h6>
-                    <p class="fs-14 mb-0">Easily book appointments online or through our dedicated customer service team, with flexible hours to fit your schedule.</p>
+                    <p class="fs-14 mb-0">Easily book appointments online or through our dedicated customer service
+                        team, with flexible hours to fit your schedule.</p>
                 </div>
             </div>
         </div>
@@ -347,24 +365,30 @@
             <div class="col-lg-6">
                 <div class="section-header sec-header-one mb-2 aos" data-aos="fade-up">
                     <span class="badge badge-primary">Why Book With Us</span>
-                    <h2 class="text-white mb-3">We are committed to understanding your <span class="text-primary-gradient">unique needs and delivering care.</span></h2>
+                    <h2 class="text-white mb-3">We are committed to understanding your <span
+                            class="text-primary-gradient">unique needs and delivering care.</span></h2>
                 </div>
-                <p class="text-light mb-4">As a trusted healthAs a trusted healthcare provider in our community, we are passionate about promoting health and wellness beyond the clinic. We actively engage in community outreach programs, health fairs, and educational workshop.</p>
+                <p class="text-light mb-4">As a trusted healthAs a trusted healthcare provider in our community, we are
+                    passionate about promoting health and wellness beyond the clinic. We actively engage in community
+                    outreach programs, health fairs, and educational workshop.</p>
                 <div class="faq-info aos" data-aos="fade-up">
                     <div class="accordion" id="faq-details">
 
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
-                                <a href="javascript:void(0);" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <a href="javascript:void(0);" class="accordion-button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     01 . Our Vision
                                 </a>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faq-details">
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>We envision a community where everyone has access to high-quality healthcare and the resources they need to lead healthy, fulfilling lives.</p>
-                                    </div> 
+                                        <p>We envision a community where everyone has access to high-quality healthcare
+                                            and the resources they need to lead healthy, fulfilling lives.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -373,15 +397,18 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
-                                <a href="javascript:void(0);" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-controls="collapseTwo">
+                                <a href="javascript:void(0);" class="accordion-button collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-controls="collapseTwo">
                                     02 . Our Mission
                                 </a>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faq-details">
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>We envision a community where everyone has access to high-quality healthcare and the resources they need to lead healthy, fulfilling lives.</p>
-                                    </div> 
+                                        <p>We envision a community where everyone has access to high-quality healthcare
+                                            and the resources they need to lead healthy, fulfilling lives.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -399,7 +426,8 @@
                         </div>
                         <div class="book-info">
                             <h6 class="text-white mb-2">Search For Doctors</h6>
-                            <p class="fs-14 text-light">Search for a doctor based on specialization, location, or availability for your Treatements</p>
+                            <p class="fs-14 text-light">Search for a doctor based on specialization, location, or
+                                availability for your Treatements</p>
                         </div>
                         <div class="way-icon">
                             <img src="assets/img/icons/way-icon.svg" alt="img">
@@ -413,7 +441,8 @@
                         </div>
                         <div class="book-info">
                             <h6 class="text-white mb-2">Check Doctor Profile</h6>
-                            <p class="fs-14 text-light">Explore detailed doctor profiles on our platform to make informed healthcare decisions.</p>
+                            <p class="fs-14 text-light">Explore detailed doctor profiles on our platform to make
+                                informed healthcare decisions.</p>
                         </div>
                         <div class="way-icon">
                             <img src="assets/img/icons/way-icon.svg" alt="img">
@@ -427,7 +456,8 @@
                         </div>
                         <div class="book-info">
                             <h6 class="text-white mb-2">Schedule Appointment</h6>
-                            <p class="fs-14 text-light">After choose your preferred doctor, select a convenient time slot, & confirm your appointment.</p>
+                            <p class="fs-14 text-light">After choose your preferred doctor, select a convenient time
+                                slot, & confirm your appointment.</p>
                         </div>
                         <div class="way-icon">
                             <img src="assets/img/icons/way-icon.svg" alt="img">
@@ -441,12 +471,13 @@
                         </div>
                         <div class="book-info">
                             <h6 class="text-white mb-2">Get Your Solution</h6>
-                            <p class="fs-14 text-light">Discuss your health concerns with the doctor and receive the personalized advice & with solution.</p>
+                            <p class="fs-14 text-light">Discuss your health concerns with the doctor and receive the
+                                personalized advice & with solution.</p>
                         </div>
                     </div>
                 </div>
-            </div>		
-        </div>		
+            </div>
+        </div>
     </div>
 </section>
 <!-- /Bookus Section -->
@@ -467,7 +498,8 @@
                         <div class="d-flex align-items-center mb-4">
                             <div class="rating d-flex">
                                 <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
-                                    <i class="fa-solid fa-star" [ngClass]="{'filled': i < review.rating, 'me-1': true}"></i>
+                                    <i class="fa-solid fa-star"
+                                        [ngClass]="{'filled': i < review.rating, 'me-1': true}"></i>
                                 </ng-container>
                             </div>
                             <span>
@@ -477,10 +509,12 @@
                         <h6 class="fs-16 fw-medium mb-2">{{ review.comment || 'No comment' }}</h6>
                         <div class="d-flex align-items-center">
                             <a href="javascript:void(0);" class="avatar avatar-lg">
-                                <img [src]="review.patient?.profileImgUrl || 'assets/img/patients/patient22.jpg'" class="rounded-circle" alt="img">
+                                <img [src]="review.patient?.profileImgUrl || 'assets/img/patients/patient22.jpg'"
+                                    class="rounded-circle" alt="img">
                             </a>
                             <div class="ms-2">
-                                <h6 class="mb-1"><a href="javascript:void(0);">{{ review.patient?.name || 'Anonymous' }}</a></h6>
+                                <h6 class="mb-1"><a href="javascript:void(0);">{{ review.patient?.name || 'Anonymous'
+                                        }}</a></h6>
                                 <p class="fs-14 mb-0">{{ review.patient?.email || '' }}</p>
                             </div>
                         </div>
@@ -569,15 +603,19 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
-                                <a href="javascript:void(0);" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <a href="javascript:void(0);" class="accordion-button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     How do I book an appointment with a doctor?
                                 </a>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faq-details">
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>Yes, simply visit our website and log in or create an account. Search for a doctor based on specialization, location, or availability & confirm your booking.</p>
-                                    </div> 
+                                        <p>Yes, simply visit our website and log in or create an account. Search for a
+                                            doctor based on specialization, location, or availability & confirm your
+                                            booking.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -586,14 +624,18 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
-                                <a href="javascript:void(0);" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Can I request a specific doctor when booking my appointment? 
+                                <a href="javascript:void(0);" class="accordion-button collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                    aria-controls="collapseTwo">
+                                    Can I request a specific doctor when booking my appointment?
                                 </a>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faq-details">
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>Yes, you can usually request a specific doctor when booking your appointment, though availability may vary based on their schedule.</p>
+                                        <p>Yes, you can usually request a specific doctor when booking your appointment,
+                                            though availability may vary based on their schedule.</p>
                                     </div>
                                 </div>
                             </div>
@@ -603,14 +645,19 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
-                                <a href="javascript:void(0);" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <a href="javascript:void(0);" class="accordion-button collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                                    aria-controls="collapseThree">
                                     What should I do if I need to cancel or reschedule my appointment?
                                 </a>
                             </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faq-details">
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>If you need to cancel or reschedule your appointment, contact the doctor as soon as possible to inform them and to reschedule for another available time slot.</p>
+                                        <p>If you need to cancel or reschedule your appointment, contact the doctor as
+                                            soon as possible to inform them and to reschedule for another available time
+                                            slot.</p>
                                     </div>
                                 </div>
                             </div>
@@ -620,14 +667,19 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingFour">
-                                <a href="javascript:void(0);" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <a href="javascript:void(0);" class="accordion-button collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false"
+                                    aria-controls="collapseFour">
                                     What if I'm running late for my appointment?
                                 </a>
                             </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faq-details">
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>If you know you will be late, it's courteous to call the doctor's office and inform them. Depending on their policy and schedule, they may be able to accommodate you or reschedule your appointment.</p>
+                                        <p>If you know you will be late, it's courteous to call the doctor's office and
+                                            inform them. Depending on their policy and schedule, they may be able to
+                                            accommodate you or reschedule your appointment.</p>
                                     </div>
                                 </div>
                             </div>
@@ -637,20 +689,25 @@
                         <!-- FAQ Item -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingFive">
-                                <a href="javascript:void(0);" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <a href="javascript:void(0);" class="accordion-button collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false"
+                                    aria-controls="collapseFive">
                                     Can I book appointments for family members or dependents?
                                 </a>
                             </h2>
-                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faq-details">
+                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+                                data-bs-parent="#faq-details">
                                 <div class="accordion-body">
                                     <div class="accordion-content">
-                                        <p>Yes, in many cases, you can book appointments for family members or dependents. However, you may need to provide their personal information and consent to do so.</p>
+                                        <p>Yes, in many cases, you can book appointments for family members or
+                                            dependents. However, you may need to provide their personal information and
+                                            consent to do so.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- /FAQ Item -->
-                                    
+
                     </div>
                 </div>
 
@@ -781,7 +838,7 @@
 
 <!-- Info Section -->
 <section class="info-section">
-    <div class="container">					
+    <div class="container">
         <div class="contact-info">
             <div class="d-lg-flex align-items-center justify-content-between w-100 gap-4">
                 <div class="mb-4 mb-lg-0 aos" data-aos="fade-up">

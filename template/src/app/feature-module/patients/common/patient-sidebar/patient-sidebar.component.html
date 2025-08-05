@@ -1,24 +1,31 @@
 <!-- Profile Sidebar -->
 <div class="stickybar">
-							
+
     <!-- Profile Sidebar -->
     <div class="profile-sidebar patient-sidebar profile-sidebar-new">
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
                 <a [routerLink]="routes.profileSettings" class="booking-doc-img">
-                    <img *ngIf="patientProfile?.profileImgUrl || patientProfile?.profileImage ; else defaultImg"
-                         [src]="patientProfile.profileImgUrl || patientProfile?.profileImage"
-                         alt="User Image">
-                    <ng-template #defaultImg>
-                        <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image">
+                    <ng-container
+                        *ngIf="patientProfile?.profileImgUrl || patientProfile?.profileImage; else initialsFallback">
+                        <img [src]="patientProfile.profileImgUrl || patientProfile.profileImage" alt="User Image"
+                            class="avatar-img rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                    </ng-container>
+
+                    <ng-template #initialsFallback>
+                        <span class="avatar-fallback">
+                            {{ getInitials(patientProfile?.name) }}
+                        </span>
                     </ng-template>
                 </a>
+
                 <div class="profile-det-info">
                     <h3><a [routerLink]="routes.profileSettings">{{ patientProfile?.name || 'Patient Name' }}</a></h3>
                     <div class="patient-details">
                         <h5 class="mb-0">Patient ID : {{ patientProfile?._id || 'N/A' }}</h5>
                     </div>
-                    <span>{{ patientProfile?.gender || 'Gender' }} <i class="fa-solid fa-circle"></i> {{ patientProfile?.age ? (patientProfile.age + ' years') : '' }}</span>
+                    <span>{{ patientProfile?.gender || 'Gender' }} <i class="fa-solid fa-circle"></i> {{
+                        patientProfile?.age ? (patientProfile.age + ' years') : '' }}</span>
                 </div>
             </div>
         </div>
@@ -31,7 +38,7 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <li  [ngClass]="{'active': page === 'appointments'}">
+                    <li [ngClass]="{'active': page === 'appointments'}">
                         <a [routerLink]="routes.patientAppointment">
                             <i class="isax isax-calendar-1"></i>
                             <span>My Appointments</span>
@@ -66,7 +73,7 @@
                             <i class="isax isax-document-text"></i>
                             <span>Invoices</span>
                         </a>
-                    </li>																																				
+                    </li>
                     <li routerLinkActive="active">
                         <a [routerLink]="routes.chat">
                             <i class="isax isax-messages-1"></i>

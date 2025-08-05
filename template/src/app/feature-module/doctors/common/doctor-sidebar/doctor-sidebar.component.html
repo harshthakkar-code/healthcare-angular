@@ -2,14 +2,21 @@
     <div class="profile-sidebar doctor-sidebar profile-sidebar-new">
         <div class="widget-profile pro-widget-content">
             <div class="profile-info-widget">
-                <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img" [ngClass]="availability ? 'available' : 'unavailable'">
-                    <img *ngIf="doctorProfile?.profileImage || doctorProfile?.profileImgUrl ; else defaultImg"
-                         [src]="doctorProfile.profileImage || doctorProfile?.profileImgUrl"
-                         alt="User Image">
-                    <ng-template #defaultImg>
-                        <img src="assets/img/doctors-dashboard/profile-06.jpg" alt="User Image">
+                <a [routerLink]="[routes.doctorProfile2, doctorid]" class="booking-doc-img"
+                    [ngClass]="availability ? 'available' : 'unavailable'">
+
+                    <ng-container
+                        *ngIf="doctorProfile?.profileImage || doctorProfile?.profileImgUrl; else initialsFallback">
+                        <img [src]="doctorProfile.profileImage || doctorProfile.profileImgUrl" alt="User Image"
+                            class="avatar-img rounded-circle" />
+                    </ng-container>
+                                        <ng-template #initialsFallback>
+                        <span class="avatar-fallback">
+                            {{ getInitials(doctorProfile?.name) }}
+                        </span>
                     </ng-template>
                 </a>
+
                 <div class="profile-det-info">
                     <h3>
                         <a [routerLink]="[routes.doctorProfile1, doctorProfile?._id || doctorSettings?.doctorId]">
@@ -32,14 +39,17 @@
                         </ng-template>
                     </div>
                     <!-- Specializations (dynamic, 2 in one centered row) -->
-                    <div *ngIf="specializations.length === 2" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 4px;">
+                    <div *ngIf="specializations.length === 2"
+                        style="display: flex; justify-content: center; gap: 8px; margin-bottom: 4px;">
                         <span *ngFor="let spec of specializations" class="badge doctor-role-badge">
                             <i class="fa-solid fa-circle"></i>
                             {{ spec.name }}
                         </span>
                     </div>
-                    <div *ngIf="specializations.length !== 2" style="display: flex; flex-direction: column; align-items: center;">
-                        <span *ngFor="let spec of specializations" class="badge doctor-role-badge" style="margin-bottom: 4px;">
+                    <div *ngIf="specializations.length !== 2"
+                        style="display: flex; flex-direction: column; align-items: center;">
+                        <span *ngFor="let spec of specializations" class="badge doctor-role-badge"
+                            style="margin-bottom: 4px;">
                             <i class="fa-solid fa-circle"></i>
                             {{ spec.name }}
                         </span>
@@ -50,10 +60,7 @@
         <div class="doctor-available-head">
             <div class="input-block input-block-new">
                 <label class="form-label" for="availability">Availability <span class="text-danger">*</span></label>
-                <mat-select
-                    class="custom-mat-select"
-                    placeholder="I am Available Now"
-                    [(ngModel)]="availability"
+                <mat-select class="custom-mat-select" placeholder="I am Available Now" [(ngModel)]="availability"
                     (selectionChange)="onAvailabilityChange($event.value)">
                     <mat-option [value]="true">I am Available Now</mat-option>
                     <mat-option [value]="false">Not Available</mat-option>
@@ -64,87 +71,87 @@
             <nav class="dashboard-menu">
                 <ul>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorDashboard">
+                        <a [routerLink]="routes.doctorDashboard">
                             <i class="isax isax-category-2"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorRequest">
+                        <a [routerLink]="routes.doctorRequest">
                             <i class="isax isax-clipboard-tick"></i>
                             <span>Requests</span>
                             <span class="unread-msg">{{ pendingRequestDisplay }}</span>
                         </a>
                     </li>
                     <li [ngClass]="{'active': page === 'appointments'}">
-                        <a [routerLink] = "routes.appointmentsListUser">
+                        <a [routerLink]="routes.appointmentsListUser">
                             <i class="isax isax-calendar-1"></i>
                             <span>Appointments</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.availableTimings">
+                        <a [routerLink]="routes.availableTimings">
                             <i class="isax isax-calendar-tick"></i>
                             <span>Available Timings</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.myPatients">
+                        <a [routerLink]="routes.myPatients">
                             <i class="fa-solid fa-user-injured"></i>
                             <span>My Patients</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorSpecialities">
+                        <a [routerLink]="routes.doctorSpecialities">
                             <i class="isax isax-clock"></i>
                             <span>Specialties & Services</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.userReviews">
+                        <a [routerLink]="routes.userReviews">
                             <i class="isax isax-star-1"></i>
                             <span>Reviews</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.accounts">
+                        <a [routerLink]="routes.accounts">
                             <i class="isax isax-profile-tick"></i>
                             <span>Accounts</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorInvoices">
+                        <a [routerLink]="routes.doctorInvoices">
                             <i class="isax isax-document-text"></i>
                             <span>Invoices</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorPayment">
+                        <a [routerLink]="routes.doctorPayment">
                             <i class="fa-solid fa-money-bill-1"></i>
                             <span>Payout Settings</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.chatDoctor">
+                        <a [routerLink]="routes.chatDoctor">
                             <i class="isax isax-messages-1"></i>
                             <span>Message</span>
                             <small class="unread-msg">7</small>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorProfileSettings">
+                        <a [routerLink]="routes.doctorProfileSettings">
                             <i class="isax isax-setting-2"></i>
                             <span>Profile Settings</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.socialMedia">
+                        <a [routerLink]="routes.socialMedia">
                             <i class="fa-solid fa-shield-halved"></i>
                             <span>Social Media</span>
                         </a>
                     </li>
                     <li routerLinkActive="active">
-                        <a [routerLink] = "routes.doctorChangePassword">
+                        <a [routerLink]="routes.doctorChangePassword">
                             <i class="isax isax-key"></i>
                             <span>Change Password</span>
                         </a>

@@ -5,6 +5,7 @@ import { GeneralHomeComponent } from './general-home.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
+import { FeatureModuleModule } from '../../feature-module.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { HeaderComponent } from './header/header.component';
   imports: [
     CommonModule,
     GeneralHomeRoutingModule,
-    SharedModule
+    SharedModule,
+    FeatureModuleModule
   ]
 })
 export class GeneralHomeModule { }
